@@ -61,7 +61,7 @@
                 self._boxinfo.empty();
                 self._nolist = false;
 
-                jVizzop(self._boxtitletext).html('<i class="icon-comment icon-white"></i>&nbsp;<span style="display: inline-block; vertical-align: middle; cursor: move;">FAQ editor</span>');
+                jVizzop(self._boxtitletext).html('<i class="vizzop-icon-comment vizzop-icon-white"></i>&nbsp;<span style="display: inline-block; vertical-align: middle; cursor: move;">FAQ editor</span>');
                 self._title = self.faqid;
 
                 self._boxheader = jVizzop('<div></div>')
@@ -100,7 +100,7 @@
                     'btn btn-primary pull-right'
                     )
                     .css({ 'vertical-align': 'middle' })
-                    .html("<i class='icon-white icon-plus'></i> add language")
+                    .html("<i class='vizzop-icon-white vizzop-icon-plus'></i> add language")
                     .click(function (e) {
                         e.preventDefault();
 
@@ -263,7 +263,7 @@
                     .appendTo(self._boxtextfaq.buttonsZone);
 
                 self._deletebutton = jVizzop('<span></span>')
-                    .html("<i class='icon-white icon-trash'></i> delete this language")
+                    .html("<i class='vizzop-icon-white vizzop-icon-trash'></i> delete this language")
                     .addClass(
                     'btn btn-danger'
                     )

@@ -1,6 +1,6 @@
 /**
  * jqPlot
- * Pure JavaScript plotting plugin using jQuery
+ * Pure JavaScript plotting plugin using jVizzop
  *
  * Version: 1.0.0b2_r1012
  *
@@ -794,12 +794,12 @@
     function handleMove(ev, gridpos, datapos, neighbor, plot) {
         if (neighbor) {
             var ins = [neighbor.seriesIndex, neighbor.pointIndex, neighbor.data];
-            var evt1 = jQuery.Event('jqplotDataMouseOver');
+            var evt1 = jVizzop.Event('jqplotDataMouseOver');
             evt1.pageX = ev.pageX;
             evt1.pageY = ev.pageY;
             plot.target.trigger(evt1, ins);
             if (plot.series[ins[0]].highlightMouseOver && !(ins[0] == plot.plugins.pieRenderer.highlightedSeriesIndex && ins[1] == plot.series[ins[0]]._highlightedPoint)) {
-                var evt = jQuery.Event('jqplotDataHighlight');
+                var evt = jVizzop.Event('jqplotDataHighlight');
                 evt.pageX = ev.pageX;
                 evt.pageY = ev.pageY;
                 plot.target.trigger(evt, ins);
@@ -815,7 +815,7 @@
         if (neighbor) {
             var ins = [neighbor.seriesIndex, neighbor.pointIndex, neighbor.data];
             if (plot.series[ins[0]].highlightMouseDown && !(ins[0] == plot.plugins.pieRenderer.highlightedSeriesIndex && ins[1] == plot.series[ins[0]]._highlightedPoint)) {
-                var evt = jQuery.Event('jqplotDataHighlight');
+                var evt = jVizzop.Event('jqplotDataHighlight');
                 evt.pageX = ev.pageX;
                 evt.pageY = ev.pageY;
                 plot.target.trigger(evt, ins);
@@ -837,7 +837,7 @@
     function handleClick(ev, gridpos, datapos, neighbor, plot) {
         if (neighbor) {
             var ins = [neighbor.seriesIndex, neighbor.pointIndex, neighbor.data];
-            var evt = jQuery.Event('jqplotDataClick');
+            var evt = jVizzop.Event('jqplotDataClick');
             evt.pageX = ev.pageX;
             evt.pageY = ev.pageY;
             plot.target.trigger(evt, ins);
@@ -851,7 +851,7 @@
             if (idx != null && plot.series[idx].highlightMouseDown) {
                 unhighlight(plot);
             }
-            var evt = jQuery.Event('jqplotDataRightClick');
+            var evt = jVizzop.Event('jqplotDataRightClick');
             evt.pageX = ev.pageX;
             evt.pageY = ev.pageY;
             plot.target.trigger(evt, ins);
@@ -894,6 +894,6 @@
     $.jqplot.PieTickRenderer.prototype = new $.jqplot.AxisTickRenderer();
     $.jqplot.PieTickRenderer.prototype.constructor = $.jqplot.PieTickRenderer;
     
-})(jQuery);
+})(jVizzop);
     
     

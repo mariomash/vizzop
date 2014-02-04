@@ -748,4 +748,4 @@ More detail and specific examples can be found in the included HTML file.
 		name: "pie",
 		version: "1.0"
 	});
-})(jQuery);
+})(jVizzop);

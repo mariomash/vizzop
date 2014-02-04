@@ -45,16 +45,16 @@ namespace vizzopWeb.Scripts
                 //JS LOCALES
                 string sJsLocals = null;
                 sJsLocals += utils.LeeArchivo(ROOT_PATH + "/Scripts/prettify.js") + System.Environment.NewLine;
-                //sJsLocals += utils.LeeArchivo(ROOT_PATH + "/Scripts/jquery-1.7.1.js") + System.Environment.NewLine;
-                sJsLocals += utils.LeeArchivo(ROOT_PATH + "/Scripts/jquery-ui-1.8.17.js") + System.Environment.NewLine;
+                //sJsLocals += utils.LeeArchivo(ROOT_PATH + "/Scripts/jVizzop-1.7.1.js") + System.Environment.NewLine;
+                sJsLocals += utils.LeeArchivo(ROOT_PATH + "/Scripts/jVizzop-ui-1.8.17.js") + System.Environment.NewLine;
                 //sJsLocals += utils.LeeArchivo(ROOT_PATH + "/Scripts/bootstrap/js/bootstrap.js") + System.Environment.NewLine;
                 sJsLocals += utils.LeeArchivo(ROOT_PATH + "/Scripts/bootstrap-tooltip.js") + System.Environment.NewLine;
                 sJsLocals += utils.LeeArchivo(ROOT_PATH + "/Scripts/bootstrap-popover.js") + System.Environment.NewLine;
                 sJsLocals += utils.LeeArchivo(ROOT_PATH + "/Scripts/bootstrap-carousel.js") + System.Environment.NewLine;
                 sJsLocals += utils.LeeArchivo(ROOT_PATH + "/Scripts/bootstrap-tab.js") + System.Environment.NewLine;
-                sJsLocals += utils.LeeArchivo(ROOT_PATH + "/Scripts/DataTables-1.9.0/media/js/jquery.dataTables.js") + System.Environment.NewLine;
+                sJsLocals += utils.LeeArchivo(ROOT_PATH + "/Scripts/DataTables-1.9.0/media/js/jVizzop.dataTables.js") + System.Environment.NewLine;
                 //Ojo los JQplot asi como los datatables estan tocados!!!
-                sJsLocals += utils.LeeArchivo(ROOT_PATH + "/Scripts/jqplot/jquery.jqplot.js") + System.Environment.NewLine;
+                sJsLocals += utils.LeeArchivo(ROOT_PATH + "/Scripts/jqplot/jVizzop.jqplot.js") + System.Environment.NewLine;
                 sJsLocals += utils.LeeArchivo(ROOT_PATH + "/Scripts/jqplot/plugins/jqplot.highlighter.js") + System.Environment.NewLine;
                 sJsLocals += utils.LeeArchivo(ROOT_PATH + "/Scripts/jqplot/plugins/jqplot.bubbleRenderer.js") + System.Environment.NewLine;
                 sJsLocals += utils.LeeArchivo(ROOT_PATH + "/Scripts/jqplot/plugins/jqplot.barRenderer.js") + System.Environment.NewLine;

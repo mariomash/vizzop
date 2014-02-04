@@ -809,7 +809,7 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                     }
                 }
 
-                jVizzop(self._boxtitletext).html('<i class="icon-user icon-white"></i>&nbsp;<span style="display: inline-block; vertical-align: middle">' + title + "</span>");
+                jVizzop(self._boxtitletext).html('<i class="vizzop-icon-user vizzop-icon-white"></i>&nbsp;<span style="display: inline-block; vertical-align: middle">' + title + "</span>");
                 self._title = title;
 
                 //status text
@@ -873,7 +873,7 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                     var playerVersion = swfobject.getFlashPlayerVersion();
                     if (playerVersion.major >= 10) {
                         self.button_AddVideo = jVizzop('<button></button>')
-                            .html('<i class="icon-facetime-video"></i>&nbsp;' + LLang('add_video', null))
+                            .html('<i class="vizzop-icon-facetime-video"></i>&nbsp;' + LLang('add_video', null))
                             .addClass('btn small')
                             .css({ display: 'inline-block' })
                             .click(function (event) {
@@ -898,7 +898,7 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                 //Añadimos resto de botones
                 if (vizzop.mode == 'agent') {
                     self.button_AddScreenSharing = jVizzop('<button></button>')
-                        .html('<i class="icon-eye-open"></i>&nbsp;' + LLang('screen_view', null))
+                        .html('<i class="vizzop-icon-eye-open"></i>&nbsp;' + LLang('screen_view', null))
                         .addClass('btn small')
                         .css({ display: 'inline-block' })
                         .click(function (event) {

@@ -2,7 +2,7 @@
  * @summary     DataTables
  * @description Paginate, search and sort HTML tables
  * @version     1.9.2
- * @file        jquery.dataTables.js
+ * @file        jVizzop.dataTables.js
  * @author      Allan Jardine (www.sprymedia.co.uk)
  * @contact     www.sprymedia.co.uk/contact
  *
@@ -21,24 +21,24 @@
  */
 
 /*jslint evil: true, undef: true, browser: true */
-/*globals $, jQuery,_fnExternApiFunc,_fnInitialise,_fnInitComplete,_fnLanguageCompat,_fnAddColumn,_fnColumnOptions,_fnAddData,_fnCreateTr,_fnGatherData,_fnBuildHead,_fnDrawHead,_fnDraw,_fnReDraw,_fnAjaxUpdate,_fnAjaxParameters,_fnAjaxUpdateDraw,_fnServerParams,_fnAddOptionsHtml,_fnFeatureHtmlTable,_fnScrollDraw,_fnAdjustColumnSizing,_fnFeatureHtmlFilter,_fnFilterComplete,_fnFilterCustom,_fnFilterColumn,_fnFilter,_fnBuildSearchArray,_fnBuildSearchRow,_fnFilterCreateSearch,_fnDataToSearch,_fnSort,_fnSortAttachListener,_fnSortingClasses,_fnFeatureHtmlPaginate,_fnPageChange,_fnFeatureHtmlInfo,_fnUpdateInfo,_fnFeatureHtmlLength,_fnFeatureHtmlProcessing,_fnProcessingDisplay,_fnVisibleToColumnIndex,_fnColumnIndexToVisible,_fnNodeToDataIndex,_fnVisbleColumns,_fnCalculateEnd,_fnConvertToWidth,_fnCalculateColumnWidths,_fnScrollingWidthAdjust,_fnGetWidestNode,_fnGetMaxLenString,_fnStringToCss,_fnDetectType,_fnSettingsFromNode,_fnGetDataMaster,_fnGetTrNodes,_fnGetTdNodes,_fnEscapeRegex,_fnDeleteIndex,_fnReOrderIndex,_fnColumnOrdering,_fnLog,_fnClearTable,_fnSaveState,_fnLoadState,_fnCreateCookie,_fnReadCookie,_fnDetectHeader,_fnGetUniqueThs,_fnScrollBarWidth,_fnApplyToChildren,_fnMap,_fnGetRowData,_fnGetCellData,_fnSetCellData,_fnGetObjectDataFn,_fnSetObjectDataFn,_fnApplyColumnDefs,_fnBindAction,_fnCallbackReg,_fnCallbackFire,_fnJsonString,_fnRender,_fnNodeToColumnIndex,_fnInfoMacros*/
+/*globals $, jVizzop,_fnExternApiFunc,_fnInitialise,_fnInitComplete,_fnLanguageCompat,_fnAddColumn,_fnColumnOptions,_fnAddData,_fnCreateTr,_fnGatherData,_fnBuildHead,_fnDrawHead,_fnDraw,_fnReDraw,_fnAjaxUpdate,_fnAjaxParameters,_fnAjaxUpdateDraw,_fnServerParams,_fnAddOptionsHtml,_fnFeatureHtmlTable,_fnScrollDraw,_fnAdjustColumnSizing,_fnFeatureHtmlFilter,_fnFilterComplete,_fnFilterCustom,_fnFilterColumn,_fnFilter,_fnBuildSearchArray,_fnBuildSearchRow,_fnFilterCreateSearch,_fnDataToSearch,_fnSort,_fnSortAttachListener,_fnSortingClasses,_fnFeatureHtmlPaginate,_fnPageChange,_fnFeatureHtmlInfo,_fnUpdateInfo,_fnFeatureHtmlLength,_fnFeatureHtmlProcessing,_fnProcessingDisplay,_fnVisibleToColumnIndex,_fnColumnIndexToVisible,_fnNodeToDataIndex,_fnVisbleColumns,_fnCalculateEnd,_fnConvertToWidth,_fnCalculateColumnWidths,_fnScrollingWidthAdjust,_fnGetWidestNode,_fnGetMaxLenString,_fnStringToCss,_fnDetectType,_fnSettingsFromNode,_fnGetDataMaster,_fnGetTrNodes,_fnGetTdNodes,_fnEscapeRegex,_fnDeleteIndex,_fnReOrderIndex,_fnColumnOrdering,_fnLog,_fnClearTable,_fnSaveState,_fnLoadState,_fnCreateCookie,_fnReadCookie,_fnDetectHeader,_fnGetUniqueThs,_fnScrollBarWidth,_fnApplyToChildren,_fnMap,_fnGetRowData,_fnGetCellData,_fnSetCellData,_fnGetObjectDataFn,_fnSetObjectDataFn,_fnApplyColumnDefs,_fnBindAction,_fnCallbackReg,_fnCallbackFire,_fnJsonString,_fnRender,_fnNodeToColumnIndex,_fnInfoMacros*/
 
 (/** @lends <global> */function($, window, document, undefined) {
 	/** 
-	 * DataTables is a plug-in for the jQuery Javascript library. It is a 
+	 * DataTables is a plug-in for the jVizzop Javascript library. It is a 
 	 * highly flexible tool, based upon the foundations of progressive 
 	 * enhancement, which will add advanced interaction controls to any 
 	 * HTML table. For a full list of features please refer to
 	 * <a href="http://datatables.net">DataTables.net</a>.
 	 *
 	 * Note that the <i>DataTable</i> object is not a global variable but is
-	 * aliased to <i>jQuery.fn.DataTable</i> and <i>jQuery.fn.dataTable</i> through which 
+	 * aliased to <i>jVizzop.fn.DataTable</i> and <i>jVizzop.fn.dataTable</i> through which 
 	 * it may be  accessed.
 	 *
 	 *  @class
 	 *  @param {object} [oInit={}] Configuration object for DataTables. Options
 	 *    are defined by {@link DataTable.defaults}
-	 *  @requires jQuery 1.3+
+	 *  @requires jVizzop 1.3+
 	 * 
 	 *  @example
 	 *    // Basic initialisation
@@ -1106,7 +1106,7 @@
 			/* ARIA role for the rows */	
 			$(oSettings.nTHead).children('tr').attr('role', 'row');
 			
-			/* Add the extra markup needed by jQuery UI's themes */
+			/* Add the extra markup needed by jVizzop UI's themes */
 			if ( oSettings.bJUI )
 			{
 				for ( i=0, iLen=oSettings.aoColumns.length ; i<iLen ; i++ )
@@ -1410,7 +1410,7 @@
 			
 			/* 
 			 * Need to remove any old row from the display - note we can't just empty the tbody using
-			 * $().html('') since this will unbind the jQuery event handlers (even although the node 
+			 * $().html('') since this will unbind the jVizzop event handlers (even although the node 
 			 * still exists!) - equally we can't use innerHTML, since IE throws an exception.
 			 */
 			var
@@ -1540,7 +1540,7 @@
 							j++;
 						}
 						
-						/* Replace jQuery UI constants */
+						/* Replace jVizzop UI constants */
 						if ( sAttr == "H" )
 						{
 							sAttr = oSettings.oClasses.sJUIHeader;
@@ -4160,7 +4160,7 @@
 					
 					if ( oSettings.bJUI )
 					{
-						/* jQuery UI uses extra markup */
+						/* jVizzop UI uses extra markup */
 						var jqSpan = $("span."+oClasses.sSortIcon,  oSettings.aoColumns[i].nTh);
 						jqSpan.removeClass(oClasses.sSortJUIAsc +" "+ oClasses.sSortJUIDesc +" "+ 
 							oClasses.sSortJUI +" "+ oClasses.sSortJUIAscAllowed +" "+ oClasses.sSortJUIDescAllowed );
@@ -4196,9 +4196,9 @@
 			 * Note that this is given as a feature switch since it can significantly slow down a sort
 			 * on large data sets (adding and removing of classes is always slow at the best of times..)
 			 * Further to this, note that this code is admitadly fairly ugly. It could be made a lot 
-			 * simpiler using jQuery selectors and add/removeClass, but that is significantly slower
+			 * simpiler using jVizzop selectors and add/removeClass, but that is significantly slower
 			 * (on the order of 5 times slower) - hence the direct DOM manipulation here.
-			 * Note that for defered drawing we do use jQuery - the reason being that taking the first
+			 * Note that for defered drawing we do use jVizzop - the reason being that taking the first
 			 * row found to see if the whole column needs processed can miss classes since the first
 			 * column might be new.
 			 */
@@ -4619,7 +4619,7 @@
 		
 		
 		/**
-		 * Extend objects - very similar to jQuery.extend, but deep copy objects, and shallow
+		 * Extend objects - very similar to jVizzop.extend, but deep copy objects, and shallow
 		 * copy arrays. The reason we need to do this, is that we don't want to deep copy array
 		 * init values (such as aaSorting) since the dev wouldn't be able to override them, but
 		 * we do want to deep copy arrays.
@@ -4704,7 +4704,7 @@
 		 * in time sensitive applications (for example cell creation) as its slow.
 		 *  @param {object} oSettings dataTables settings object
 		 *  @param {string} sStore Name of the array storeage for the callbacks in oSettings
-		 *  @param {string} sTrigger Name of the jQuery custom event to trigger. If null no trigger
+		 *  @param {string} sTrigger Name of the jVizzop custom event to trigger. If null no trigger
 		 *    is fired
 		 *  @param {array} aArgs Array of arguments to pass to the callback function / trigger
 		 *  @memberof DataTable#oApi
@@ -4783,9 +4783,9 @@
 		
 		
 		/**
-		 * Perform a jQuery selector action on the table's TR elements (from the tbody) and
-		 * return the resulting jQuery object.
-		 *  @param {string|node|jQuery} sSelector jQuery selector or node collection to act on
+		 * Perform a jVizzop selector action on the table's TR elements (from the tbody) and
+		 * return the resulting jVizzop object.
+		 *  @param {string|node|jVizzop} sSelector jVizzop selector or node collection to act on
 		 *  @param {object} [oOpts] Optional parameters for modifying the rows to be included
 		 *  @param {string} [oOpts.filter=none] Select TR elements that meet the current filter
 		 *    criterion ("applied") or all TR elements (i.e. no filter).
@@ -4795,7 +4795,7 @@
 		 *  @param {string} [oOpts.page=all] Limit the selection to the currently displayed page
 		 *    ("current") or not ("all"). If 'current' is given, then order is assumed to be 
 		 *    'current' and filter is 'applied', regardless of what they might be given as.
-		 *  @returns {object} jQuery object, filtered by the given selector.
+		 *  @returns {object} jVizzop object, filtered by the given selector.
 		 *  @dtopt API
 		 *
 		 *  @example
@@ -4912,14 +4912,14 @@
 		
 		/**
 		 * Almost identical to $ in operation, but in this case returns the data for the matched
-		 * rows - as such, the jQuery selector used should match TR row nodes or TD/TH cell nodes
+		 * rows - as such, the jVizzop selector used should match TR row nodes or TD/TH cell nodes
 		 * rather than any decendents, so the data can be obtained for the row/cell. If matching
 		 * rows are found, the data returned is the original data array/object that was used to  
 		 * create the row (or a generated array if from a DOM source).
 		 *
 		 * This method is often useful incombination with $ where both functions are given the
 		 * same parameters and the array indexes will match identically.
-		 *  @param {string|node|jQuery} sSelector jQuery selector or node collection to act on
+		 *  @param {string|node|jVizzop} sSelector jVizzop selector or node collection to act on
 		 *  @param {object} [oOpts] Optional parameters for modifying the rows to be included
 		 *  @param {string} [oOpts.filter=none] Select elements that meet the current filter
 		 *    criterion ("applied") or all elements (i.e. no filter).
@@ -5660,7 +5660,7 @@
 		 * function. This can be used, for example, to ask for confirmation that a 
 		 * particular record should be deleted.
 		 *  @param {node} nTr The table row to 'open'
-		 *  @param {string|node|jQuery} mHtml The HTML to put into the row
+		 *  @param {string|node|jVizzop} mHtml The HTML to put into the row
 		 *  @param {string} sClass Class to give the new TD cell
 		 *  @returns {node} The row opened. Note that if the table row passed in as the
 		 *    first parameter, is not found in the table, this method will silently
@@ -6311,7 +6311,7 @@
 			_fnMap( oSettings, oInit, "oSearch", "oPreviousSearch" );
 			_fnMap( oSettings, oInit, "aoSearchCols", "aoPreSearchCols" );
 			_fnMap( oSettings, oInit, "iDisplayLength", "_iDisplayLength" );
-			_fnMap( oSettings, oInit, "bJQueryUI", "bJUI" );
+			_fnMap( oSettings, oInit, "bjVizzopUI", "bJUI" );
 			_fnMap( oSettings, oInit, "fnCookieCallback" );
 			_fnMap( oSettings, oInit, "fnStateLoad" );
 			_fnMap( oSettings, oInit, "fnStateSave" );
@@ -6343,7 +6343,7 @@
 				_fnCallbackReg( oSettings, 'aoDrawCallback', _fnSortingClasses, 'defer_sort_classes' );
 			}
 			
-			if ( oInit.bJQueryUI )
+			if ( oInit.bjVizzopUI )
 			{
 				/* Use the JUI classes object for display. You could clone the oStdClasses object if 
 				 * you want to have multiple tables with multiple independent classes 
@@ -6352,7 +6352,7 @@
 				
 				if ( oInit.sDom === DataTable.defaults.sDom && DataTable.defaults.sDom === "lfrtip" )
 				{
-					/* Set the DOM to use a layout suitable for jQuery UI's theming */
+					/* Set the DOM to use a layout suitable for jVizzop UI's theming */
 					oSettings.sDom = '<"H"lfr>t<"F"ip>';
 				}
 			}
@@ -6717,7 +6717,7 @@
 	{
 		var out = [];
 	
-		jQuery.each( DataTable.settings, function (i, o) {
+		jVizzop.each( DataTable.settings, function (i, o) {
 			if ( !bVisible || (bVisible === true && $(o.nTable).is(':visible')) )
 			{
 				out.push( o.nTable );
@@ -6742,8 +6742,8 @@
 	 * Private data store, containing all of the settings objects that are created for the
 	 * tables on a given page.
 	 * 
-	 * Note that the <i>DataTable.settings</i> object is aliased to <i>jQuery.fn.dataTableExt</i> 
-	 * through which it may be accessed and manipulated, or <i>jQuery.fn.dataTable.settings</i>.
+	 * Note that the <i>DataTable.settings</i> object is aliased to <i>jVizzop.fn.dataTableExt</i> 
+	 * through which it may be accessed and manipulated, or <i>jVizzop.fn.dataTable.settings</i>.
 	 *  @member
 	 *  @type array
 	 *  @default []
@@ -6766,7 +6766,7 @@
 	 * of the build in methods use this method to provide their own capabilities (sorting methods
 	 * for example).
 	 * 
-	 * Note that this namespace is aliased to jQuery.fn.dataTableExt so it can be readily accessed
+	 * Note that this namespace is aliased to jVizzop.fn.dataTableExt so it can be readily accessed
 	 * and modified by plug-ins.
 	 *  @namespace
 	 */
@@ -6862,7 +6862,7 @@
 		 *
 		 *  @example
 		 *    // Updating the cached sorting information with user entered values in HTML input elements
-		 *    jQuery.fn.dataTableExt.afnSortData['dom-text'] = function ( oSettings, iColumn )
+		 *    jVizzop.fn.dataTableExt.afnSortData['dom-text'] = function ( oSettings, iColumn )
 		 *    {
 		 *      var aData = [];
 		 *      $( 'td:eq('+iColumn+') input', oSettings.oApi._fnGetTrNodes(oSettings) ).each( function () {
@@ -6945,7 +6945,7 @@
 		 *  
 		 *  @example
 		 *    // Currency type detection plug-in:
-		 *    jQuery.fn.dataTableExt.aTypes.push(
+		 *    jVizzop.fn.dataTableExt.aTypes.push(
 		 *      function ( sData ) {
 		 *        var sValidChars = "0123456789.-";
 		 *        var Char;
@@ -7051,7 +7051,7 @@
 		
 	
 		/**
-		 * Storage for the various classes that DataTables uses - jQuery UI suitable
+		 * Storage for the various classes that DataTables uses - jVizzop UI suitable
 		 *  @type object
 		 *  @default {}
 		 */
@@ -7604,7 +7604,7 @@
 		
 		/**
 		 * Class to be applied to the header element when sorting on this column -
-		 * when jQuery UI theming is used.
+		 * when jVizzop UI theming is used.
 		 *  @type string
 		 *  @default null
 		 */
@@ -7969,7 +7969,7 @@
 	
 	
 		/**
-		 * Enable jQuery UI ThemeRoller support (required as ThemeRoller requires some
+		 * Enable jVizzop UI ThemeRoller support (required as ThemeRoller requires some
 		 * slightly different and additional mark-up from what DataTables has
 		 * traditionally used).
 		 *  @type boolean
@@ -7979,11 +7979,11 @@
 		 *  @example
 		 *    $(document).ready( function() {
 		 *      $('#example').dataTable( {
-		 *        "bJQueryUI": true
+		 *        "bjVizzopUI": true
 		 *      } );
 		 *    } );
 		 */
-		"bJQueryUI": false,
+		"bjVizzopUI": false,
 	
 	
 		/**
@@ -9446,8 +9446,8 @@
 		 *     </li>
 		 *     <li>The following constants are allowed:
 		 *       <ul>
-		 *         <li>'H' - jQueryUI theme "header" classes ('fg-toolbar ui-widget-header ui-corner-tl ui-corner-tr ui-helper-clearfix')</li>
-		 *         <li>'F' - jQueryUI theme "footer" classes ('fg-toolbar ui-widget-header ui-corner-bl ui-corner-br ui-helper-clearfix')</li>
+		 *         <li>'H' - jVizzopUI theme "header" classes ('fg-toolbar ui-widget-header ui-corner-tl ui-corner-tr ui-helper-clearfix')</li>
+		 *         <li>'F' - jVizzopUI theme "footer" classes ('fg-toolbar ui-widget-header ui-corner-bl ui-corner-br ui-helper-clearfix')</li>
 		 *       </ul>
 		 *     </li>
 		 *     <li>The following syntax is expected:
@@ -9465,8 +9465,8 @@
 		 *     </li>
 		 *   </ul>
 		 *  @type string
-		 *  @default lfrtip <i>(when bJQueryUI is false)</i> <b>or</b> 
-		 *    <"H"lfr>t<"F"ip> <i>(when bJQueryUI is true)</i>
+		 *  @default lfrtip <i>(when bjVizzopUI is false)</i> <b>or</b> 
+		 *    <"H"lfr>t<"F"ip> <i>(when bjVizzopUI is true)</i>
 		 *  @dtopt Options
 		 * 
 		 *  @example
@@ -10932,7 +10932,7 @@
 		"bAjaxDataGet": true,
 		
 		/**
-		 * The last jQuery XHR object that was used for server-side data gathering. 
+		 * The last jVizzop XHR object that was used for server-side data gathering. 
 		 * This can be used for working with the XHR information in one of the 
 		 * callbacks
 		 *  @type object
@@ -11050,7 +11050,7 @@
 		"_iRecordsDisplay": 0,
 		
 		/**
-		 * Flag to indicate if jQuery UI marking and classes should be used.
+		 * Flag to indicate if jVizzop UI marking and classes should be used.
 		 * Note that this parameter will be set by the initialisation routine. To
 		 * set a default use {@link DataTable.defaults}.
 		 *  @type boolean
@@ -11192,8 +11192,8 @@
 	 * Extension object for DataTables that is used to provide all extension options.
 	 * 
 	 * Note that the <i>DataTable.ext</i> object is available through
-	 * <i>jQuery.fn.dataTable.ext</i> where it may be accessed and manipulated. It is
-	 * also aliased to <i>jQuery.fn.dataTableExt</i> for historic reasons.
+	 * <i>jVizzop.fn.dataTable.ext</i> where it may be accessed and manipulated. It is
+	 * also aliased to <i>jVizzop.fn.dataTableExt</i> for historic reasons.
 	 *  @namespace
 	 *  @extends DataTable.models.ext
 	 */
@@ -11314,13 +11314,13 @@
 	/*
 	 * Variable: oPagination
 	 * Purpose:  
-	 * Scope:    jQuery.fn.dataTableExt
+	 * Scope:    jVizzop.fn.dataTableExt
 	 */
 	$.extend( DataTable.ext.oPagination, {
 		/*
 		 * Variable: two_button
 		 * Purpose:  Standard two button (forward/back) pagination
-		 * Scope:    jQuery.fn.dataTableExt.oPagination
+		 * Scope:    jVizzop.fn.dataTableExt.oPagination
 		 */
 		"two_button": {
 			/*
@@ -11405,14 +11405,14 @@
 		/*
 		 * Variable: iFullNumbersShowPages
 		 * Purpose:  Change the number of pages which can be seen
-		 * Scope:    jQuery.fn.dataTableExt.oPagination
+		 * Scope:    jVizzop.fn.dataTableExt.oPagination
 		 */
 		"iFullNumbersShowPages": 5,
 		
 		/*
 		 * Variable: full_numbers
 		 * Purpose:  Full numbers pagination
-		 * Scope:    jQuery.fn.dataTableExt.oPagination
+		 * Scope:    jVizzop.fn.dataTableExt.oPagination
 		 */
 		"full_numbers": {
 			/*
@@ -11742,7 +11742,7 @@
 	] );
 	
 
-	// jQuery aliases
+	// jVizzop aliases
 	$.fn.DataTable = DataTable;
 	$.fn.dataTable = DataTable;
 	$.fn.dataTableSettings = DataTable.settings;
@@ -11756,7 +11756,7 @@
 	 * the table is altered at all.
 	 *  @name DataTable#draw
 	 *  @event
-	 *  @param {event} e jQuery event object
+	 *  @param {event} e jVizzop event object
 	 *  @param {object} o DataTables settings object {@link DataTable.models.oSettings}
 	 */
 
@@ -11765,7 +11765,7 @@
 	 * global filter, or column filters) is altered.
 	 *  @name DataTable#filter
 	 *  @event
-	 *  @param {event} e jQuery event object
+	 *  @param {event} e jVizzop event object
 	 *  @param {object} o DataTables settings object {@link DataTable.models.oSettings}
 	 */
 
@@ -11773,7 +11773,7 @@
 	 * Page change event, fired when the paging of the table is altered.
 	 *  @name DataTable#page
 	 *  @event
-	 *  @param {event} e jQuery event object
+	 *  @param {event} e jVizzop event object
 	 *  @param {object} o DataTables settings object {@link DataTable.models.oSettings}
 	 */
 
@@ -11781,7 +11781,7 @@
 	 * Sort event, fired when the sorting applied to the table is altered.
 	 *  @name DataTable#sort
 	 *  @event
-	 *  @param {event} e jQuery event object
+	 *  @param {event} e jVizzop event object
 	 *  @param {object} o DataTables settings object {@link DataTable.models.oSettings}
 	 */
 
@@ -11790,7 +11790,7 @@
 	 * including Ajax data loaded, if Ajax data is required.
 	 *  @name DataTable#init
 	 *  @event
-	 *  @param {event} e jQuery event object
+	 *  @param {event} e jVizzop event object
 	 *  @param {object} oSettings DataTables settings object
 	 *  @param {object} json The JSON object request from the server - only
 	 *    present if client-side Ajax sourced data is used</li></ol>
@@ -11803,7 +11803,7 @@
 	 * of a DataTables core property.
 	 *  @name DataTable#stateSaveParams
 	 *  @event
-	 *  @param {event} e jQuery event object
+	 *  @param {event} e jVizzop event object
 	 *  @param {object} oSettings DataTables settings object
 	 *  @param {object} json The state information to be saved
 	 */
@@ -11814,7 +11814,7 @@
 	 * of the saved state is required or loading of state for a plug-in.
 	 *  @name DataTable#stateLoadParams
 	 *  @event
-	 *  @param {event} e jQuery event object
+	 *  @param {event} e jVizzop event object
 	 *  @param {object} oSettings DataTables settings object
 	 *  @param {object} json The saved state information
 	 */
@@ -11824,7 +11824,7 @@
 	 * object has been modified by the loaded data.
 	 *  @name DataTable#stateLoaded
 	 *  @event
-	 *  @param {event} e jQuery event object
+	 *  @param {event} e jVizzop event object
 	 *  @param {object} oSettings DataTables settings object
 	 *  @param {object} json The saved state information
 	 */
@@ -11835,7 +11835,7 @@
 	 * there is something happening, or that something has finished.
 	 *  @name DataTable#processing
 	 *  @event
-	 *  @param {event} e jQuery event object
+	 *  @param {event} e jVizzop event object
 	 *  @param {object} oSettings DataTables settings object
 	 *  @param {boolean} bShow Flag for if DataTables is doing processing or not
 	 */
@@ -11847,7 +11847,7 @@
 	 * you success function).
 	 *  @name DataTable#xhr
 	 *  @event
-	 *  @param {event} e jQuery event object
+	 *  @param {event} e jVizzop event object
 	 *  @param {object} o DataTables settings object {@link DataTable.models.oSettings}
 	 */
 
@@ -11857,7 +11857,7 @@
 	 * bound events, added DOM nodes, etc.
 	 *  @name DataTable#destroy
 	 *  @event
-	 *  @param {event} e jQuery event object
+	 *  @param {event} e jVizzop event object
 	 *  @param {object} o DataTables settings object {@link DataTable.models.oSettings}
 	 */
-}(jQuery, window, document, undefined));
+}(jVizzop, window, document, undefined));

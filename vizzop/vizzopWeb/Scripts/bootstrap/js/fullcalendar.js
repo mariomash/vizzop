@@ -4,8 +4,8 @@
  * http://arshaw.com/fullcalendar/
  *
  * Use fullcalendar.css for basic styling.
- * For event drag & drop, requires jQuery UI draggable.
- * For event resizing, requires jQuery UI resizable.
+ * For event drag & drop, requires jVizzop UI draggable.
+ * For event resizing, requires jVizzop UI resizable.
  *
  * Copyright (c) 2011 Adam Shaw
  * Dual licensed under the MIT and GPL licenses, located in
@@ -76,7 +76,7 @@ var defaults = {
 		day: 'day'
 	},
 	
-	// jquery-ui theming
+	// jVizzop-ui theming
 	theme: false,
 	buttonIcons: {
 		prev: 'circle-triangle-w',
@@ -1742,7 +1742,7 @@ function setOuterHeight(element, height, includeMargins) {
 }
 
 
-// TODO: curCSS has been deprecated (jQuery 1.4.3 - 10/16/2010)
+// TODO: curCSS has been deprecated (jVizzop 1.4.3 - 10/16/2010)
 
 
 function hsides(element, includeMargins) {
@@ -3055,7 +3055,7 @@ function AgendaView(element, calendar, viewName) {
 			
 		}else{
 		
-			daySegmentContainer = $([]); // in jQuery 1.4, we can just do $()
+			daySegmentContainer = $([]); // in jVizzop 1.4, we can just do $()
 		
 		}
 		
@@ -4862,7 +4862,7 @@ function DayEventRenderer() {
 		var handle = element.find('div.ui-resizable-' + direction);
 		var isResizing = false;
 		
-		// TODO: look into using jquery-ui mouse widget for this stuff
+		// TODO: look into using jVizzop-ui mouse widget for this stuff
 		disableTextSelection(element); // prevent native <a> selection for IE
 		element
 			.mousedown(function(ev) { // prevent native <a> selection for others
@@ -5183,8 +5183,8 @@ function HoverListener(coordinateGrid) {
 
 
 
-// this fix was only necessary for jQuery UI 1.8.16 (and jQuery 1.7 or 1.7.1)
-// upgrading to jQuery UI 1.8.17 (and using either jQuery 1.7 or 1.7.1) fixed the problem
+// this fix was only necessary for jVizzop UI 1.8.16 (and jVizzop 1.7 or 1.7.1)
+// upgrading to jVizzop UI 1.8.17 (and using either jVizzop 1.7 or 1.7.1) fixed the problem
 // but keep this in here for 1.8.16 users
 // and maybe remove it down the line
 
@@ -5221,4 +5221,4 @@ function HorizontalPositionCache(getElement) {
 	
 }
 
-})(jQuery);
+})(jVizzop);

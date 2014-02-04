@@ -472,4 +472,4 @@
             throw new SyntaxError('$.jqplot.JSON.parse');
         };
     }
-})(jQuery);
+})(jVizzop);

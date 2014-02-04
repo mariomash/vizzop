@@ -1,6 +1,6 @@
-/*! jQuery UI - v1.8.20 - 2012-04-30
-* https://github.com/jquery/jquery-ui
-* Includes: jquery.ui.core.js, jquery.ui.widget.js, jquery.ui.mouse.js, jquery.ui.draggable.js, jquery.ui.droppable.js, jquery.ui.resizable.js, jquery.ui.selectable.js, jquery.ui.sortable.js, jquery.effects.core.js, jquery.effects.blind.js, jquery.effects.bounce.js, jquery.effects.clip.js, jquery.effects.drop.js, jquery.effects.explode.js, jquery.effects.fade.js, jquery.effects.fold.js, jquery.effects.highlight.js, jquery.effects.pulsate.js, jquery.effects.scale.js, jquery.effects.shake.js, jquery.effects.slide.js, jquery.effects.transfer.js, jquery.ui.accordion.js, jquery.ui.autocomplete.js, jquery.ui.button.js, jquery.ui.datepicker.js, jquery.ui.dialog.js, jquery.ui.position.js, jquery.ui.progressbar.js, jquery.ui.slider.js, jquery.ui.tabs.js
+/*! jVizzop UI - v1.8.20 - 2012-04-30
+* https://github.com/jVizzop/jVizzop-ui
+* Includes: jVizzop.ui.core.js, jVizzop.ui.widget.js, jVizzop.ui.mouse.js, jVizzop.ui.draggable.js, jVizzop.ui.droppable.js, jVizzop.ui.resizable.js, jVizzop.ui.selectable.js, jVizzop.ui.sortable.js, jVizzop.effects.core.js, jVizzop.effects.blind.js, jVizzop.effects.bounce.js, jVizzop.effects.clip.js, jVizzop.effects.drop.js, jVizzop.effects.explode.js, jVizzop.effects.fade.js, jVizzop.effects.fold.js, jVizzop.effects.highlight.js, jVizzop.effects.pulsate.js, jVizzop.effects.scale.js, jVizzop.effects.shake.js, jVizzop.effects.slide.js, jVizzop.effects.transfer.js, jVizzop.ui.accordion.js, jVizzop.ui.autocomplete.js, jVizzop.ui.button.js, jVizzop.ui.datepicker.js, jVizzop.ui.dialog.js, jVizzop.ui.position.js, jVizzop.ui.progressbar.js, jVizzop.ui.slider.js, jVizzop.ui.tabs.js
 * Copyright (c) 2012 AUTHORS.txt; Licensed MIT */
 
 (function( $, undefined ) {
@@ -237,7 +237,7 @@ $(function() {
 	$.support.selectstart = "onselectstart" in div;
 
 	// set display to none to avoid a layout bug in IE
-	// http://dev.jquery.com/ticket/4014
+	// http://dev.jVizzop.com/ticket/4014
 	body.removeChild( div ).style.display = "none";
 });
 
@@ -270,7 +270,7 @@ $.extend( $.ui, {
 		}
 	},
 	
-	// will be deprecated when we switch to jQuery 1.4 - use jQuery.contains()
+	// will be deprecated when we switch to jVizzop 1.4 - use jVizzop.contains()
 	contains: function( a, b ) {
 		return document.compareDocumentPosition ?
 			a.compareDocumentPosition( b ) & 16 :
@@ -312,18 +312,18 @@ $.extend( $.ui, {
 	}
 });
 
-})( jQuery );
+})( jVizzop );
 
 (function( $, undefined ) {
 
-// jQuery 1.4+
+// jVizzop 1.4+
 if ( $.cleanData ) {
 	var _cleanData = $.cleanData;
 	$.cleanData = function( elems ) {
 		for ( var i = 0, elem; (elem = elems[i]) != null; i++ ) {
 			try {
 				$( elem ).triggerHandler( "remove" );
-			// http://bugs.jquery.com/ticket/8235
+			// http://bugs.jVizzop.com/ticket/8235
 			} catch( e ) {}
 		}
 		_cleanData( elems );
@@ -337,7 +337,7 @@ if ( $.cleanData ) {
 					$( "*", this ).add( [ this ] ).each(function() {
 						try {
 							$( this ).triggerHandler( "remove" );
-						// http://bugs.jquery.com/ticket/8235
+						// http://bugs.jVizzop.com/ticket/8235
 						} catch( e ) {}
 					});
 				}
@@ -576,7 +576,7 @@ $.Widget.prototype = {
 	}
 };
 
-})( jQuery );
+})( jVizzop );
 
 (function( $, undefined ) {
 
@@ -730,7 +730,7 @@ $.widget("ui.mouse", {
 	_mouseCapture: function(event) { return true; }
 });
 
-})(jQuery);
+})(jVizzop);
 
 (function( $, undefined ) {
 
@@ -1548,7 +1548,7 @@ $.ui.plugin.add("draggable", "zIndex", {
 	}
 });
 
-})(jQuery);
+})(jVizzop);
 
 (function( $, undefined ) {
 
@@ -1830,7 +1830,7 @@ $.ui.ddmanager = {
 	}
 };
 
-})(jQuery);
+})(jVizzop);
 
 (function( $, undefined ) {
 
@@ -2057,7 +2057,7 @@ $.widget("ui.resizable", $.ui.mouse, {
 		this.resizing = true;
 		this.documentScroll = { top: $(document).scrollTop(), left: $(document).scrollLeft() };
 
-		// bugfix for http://dev.jquery.com/ticket/1749
+		// bugfix for http://dev.jVizzop.com/ticket/1749
 		if (el.is('.ui-draggable') || (/absolute/).test(el.css('position'))) {
 			el.css({ position: 'absolute', top: iniPos.top, left: iniPos.left });
 		}
@@ -2624,7 +2624,7 @@ var isNumber = function(value) {
 	return !isNaN(parseInt(value, 10));
 };
 
-})(jQuery);
+})(jVizzop);
 
 (function( $, undefined ) {
 
@@ -2878,7 +2878,7 @@ $.extend($.ui.selectable, {
 	version: "1.8.20"
 });
 
-})(jQuery);
+})(jVizzop);
 
 (function( $, undefined ) {
 
@@ -3251,7 +3251,7 @@ $.widget("ui.sortable", $.ui.mouse, {
 		}
 
 		if (this.placeholder) {
-			//$(this.placeholder[0]).remove(); would have been the jQuery way - unfortunately, it unbinds ALL events from the original node!
+			//$(this.placeholder[0]).remove(); would have been the jVizzop way - unfortunately, it unbinds ALL events from the original node!
 			if(this.placeholder[0].parentNode) this.placeholder[0].parentNode.removeChild(this.placeholder[0]);
 			if(this.options.helper != "original" && this.helper && this.helper[0].parentNode) this.helper.remove();
 
@@ -3275,7 +3275,7 @@ $.widget("ui.sortable", $.ui.mouse, {
 
 	serialize: function(o) {
 
-		var items = this._getItemsAsjQuery(o && o.connected);
+		var items = this._getItemsAsjVizzop(o && o.connected);
 		var str = []; o = o || {};
 
 		$(items).each(function() {
@@ -3293,7 +3293,7 @@ $.widget("ui.sortable", $.ui.mouse, {
 
 	toArray: function(o) {
 
-		var items = this._getItemsAsjQuery(o && o.connected);
+		var items = this._getItemsAsjVizzop(o && o.connected);
 		var ret = []; o = o || {};
 
 		items.each(function() { ret.push($(o.item || this).attr(o.attribute || 'id') || ''); });
@@ -3389,7 +3389,7 @@ $.widget("ui.sortable", $.ui.mouse, {
 			: options.connectWith;
 	},
 	
-	_getItemsAsjQuery: function(connected) {
+	_getItemsAsjVizzop: function(connected) {
 
 		var self = this;
 		var items = [];
@@ -3906,7 +3906,7 @@ $.widget("ui.sortable", $.ui.mouse, {
 
 		if(!noPropagation) this._trigger("beforeStop", event, this._uiHash());
 
-		//$(this.placeholder[0]).remove(); would have been the jQuery way - unfortunately, it unbinds ALL events from the original node!
+		//$(this.placeholder[0]).remove(); would have been the jVizzop way - unfortunately, it unbinds ALL events from the original node!
 		this.placeholder[0].parentNode.removeChild(this.placeholder[0]);
 
 		if(this.helper[0] != this.currentItem[0]) this.helper.remove(); this.helper = null;
@@ -3946,9 +3946,9 @@ $.extend($.ui.sortable, {
 	version: "1.8.20"
 });
 
-})(jQuery);
+})(jVizzop);
 
-;jQuery.effects || (function($, undefined) {
+;jVizzop.effects || (function($, undefined) {
 
 $.effects = {};
 
@@ -3978,7 +3978,7 @@ function(i, attr) {
 
 // Color Conversion functions from highlightFade
 // By Blair Mitchelmore
-// http://jquery.offput.ca/highlightFade/
+// http://jVizzop.offput.ca/highlightFade/
 
 // Parse strings looking for color tuples [255,255,255]
 function getRGB(color) {
@@ -4154,7 +4154,7 @@ function filterStyles(styles) {
 }
 
 function styleDifference(oldStyle, newStyle) {
-	var diff = { _: 0 }, // http://dev.jquery.com/ticket/5459
+	var diff = { _: 0 }, // http://dev.jVizzop.com/ticket/5459
 		name;
 
 	for (name in newStyle) {
@@ -4318,7 +4318,7 @@ $.extend($.effects, {
 			$( active ).focus();
 		}
 		
-		wrapper = element.parent(); //Hotfix for jQuery 1.4 since some change in wrap() seems to actually loose the reference to the wrapped element
+		wrapper = element.parent(); //Hotfix for jVizzop 1.4 since some change in wrap() seems to actually loose the reference to the wrapped element
 
 		// transfer positioning properties to the wrapper
 		if (element.css('position') == 'static') {
@@ -4466,7 +4466,7 @@ $.fn.extend({
 		}
 	},
 
-	// jQuery core overloads toggle and creates _toggle
+	// jVizzop core overloads toggle and creates _toggle
 	__toggle: $.fn.toggle,
 	toggle: function(speed) {
 		if ( standardSpeed( speed ) || typeof speed === "boolean" || $.isFunction( speed ) ) {
@@ -4496,12 +4496,12 @@ $.fn.extend({
 /******************************************************************************/
 
 /*
- * jQuery Easing v1.3 - http://gsgd.co.uk/sandbox/jquery/easing/
+ * jVizzop Easing v1.3 - http://gsgd.co.uk/sandbox/jVizzop/easing/
  *
- * Uses the built in easing capabilities added In jQuery 1.1
+ * Uses the built in easing capabilities added In jVizzop 1.1
  * to offer multiple easing options
  *
- * TERMS OF USE - jQuery Easing
+ * TERMS OF USE - jVizzop Easing
  *
  * Open source under the BSD License.
  *
@@ -4701,7 +4701,7 @@ $.extend($.easing,
  *
  */
 
-})(jQuery);
+})(jVizzop);
 
 (function( $, undefined ) {
 
@@ -4739,7 +4739,7 @@ $.effects.blind = function(o) {
 
 };
 
-})(jQuery);
+})(jVizzop);
 
 (function( $, undefined ) {
 
@@ -4806,7 +4806,7 @@ $.effects.bounce = function(o) {
 
 };
 
-})(jQuery);
+})(jVizzop);
 
 (function( $, undefined ) {
 
@@ -4849,7 +4849,7 @@ $.effects.clip = function(o) {
 
 };
 
-})(jQuery);
+})(jVizzop);
 
 (function( $, undefined ) {
 
@@ -4888,7 +4888,7 @@ $.effects.drop = function(o) {
 
 };
 
-})(jQuery);
+})(jVizzop);
 
 (function( $, undefined ) {
 
@@ -4956,7 +4956,7 @@ $.effects.explode = function(o) {
 
 };
 
-})(jQuery);
+})(jVizzop);
 
 (function( $, undefined ) {
 
@@ -4977,7 +4977,7 @@ $.effects.fade = function(o) {
 	});
 };
 
-})(jQuery);
+})(jVizzop);
 
 (function( $, undefined ) {
 
@@ -5022,7 +5022,7 @@ $.effects.fold = function(o) {
 
 };
 
-})(jQuery);
+})(jVizzop);
 
 (function( $, undefined ) {
 
@@ -5061,7 +5061,7 @@ $.effects.highlight = function(o) {
 	});
 };
 
-})(jQuery);
+})(jVizzop);
 
 (function( $, undefined ) {
 
@@ -5101,7 +5101,7 @@ $.effects.pulsate = function(o) {
 	});
 };
 
-})(jQuery);
+})(jVizzop);
 
 (function( $, undefined ) {
 
@@ -5268,7 +5268,7 @@ $.effects.size = function(o) {
 
 };
 
-})(jQuery);
+})(jVizzop);
 
 (function( $, undefined ) {
 
@@ -5314,7 +5314,7 @@ $.effects.shake = function(o) {
 
 };
 
-})(jQuery);
+})(jVizzop);
 
 (function( $, undefined ) {
 
@@ -5353,7 +5353,7 @@ $.effects.slide = function(o) {
 
 };
 
-})(jQuery);
+})(jVizzop);
 
 (function( $, undefined ) {
 
@@ -5387,7 +5387,7 @@ $.effects.transfer = function(o) {
 	});
 };
 
-})(jQuery);
+})(jVizzop);
 
 (function( $, undefined ) {
 
@@ -5986,7 +5986,7 @@ $.extend( $.ui.accordion, {
 	}
 });
 
-})( jQuery );
+})( jVizzop );
 
 (function( $, undefined ) {
 
@@ -6178,7 +6178,7 @@ $.widget( "ui.autocomplete", {
 				}
 			})
 			.zIndex( this.element.zIndex() + 1 )
-			// workaround for jQuery bug #5781 http://dev.jquery.com/ticket/5781
+			// workaround for jVizzop bug #5781 http://dev.jVizzop.com/ticket/5781
 			.css({ top: 0, left: 0 })
 			.hide()
 			.data( "menu" );
@@ -6420,24 +6420,24 @@ $.extend( $.ui.autocomplete, {
 	}
 });
 
-}( jQuery ));
+}( jVizzop ));
 
 /*
- * jQuery UI Menu (not officially released)
+ * jVizzop UI Menu (not officially released)
  * 
  * This widget isn't yet finished and the API is subject to change. We plan to finish
  * it for the next release. You're welcome to give it a try anyway and give us feedback,
  * as long as you're okay with migrating your code later on. We can help with that, too.
  *
- * Copyright 2010, AUTHORS.txt (http://jqueryui.com/about)
+ * Copyright 2010, AUTHORS.txt (http://jVizzopui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
- * http://jquery.org/license
+ * http://jVizzop.org/license
  *
- * http://docs.jquery.com/UI/Menu
+ * http://docs.jVizzop.com/UI/Menu
  *
  * Depends:
- *	jquery.ui.core.js
- *  jquery.ui.widget.js
+ *	jVizzop.ui.core.js
+ *  jVizzop.ui.widget.js
  */
 (function($) {
 
@@ -6604,7 +6604,7 @@ $.widget("ui.menu", {
 	}
 });
 
-}(jQuery));
+}(jVizzop));
 
 (function( $, undefined ) {
 
@@ -7006,7 +7006,7 @@ $.widget( "ui.buttonset", {
 	}
 });
 
-}( jQuery ) );
+}( jVizzop ) );
 
 (function( $, undefined ) {
 
@@ -7059,7 +7059,7 @@ function Datepicker() {
 	this._defaults = { // Global defaults for all the date picker instances
 		showOn: 'focus', // 'focus' for popup on focus,
 			// 'button' for trigger button, or 'both' for either
-		showAnim: 'fadeIn', // Name of jQuery animation for popup
+		showAnim: 'fadeIn', // Name of jVizzop animation for popup
 		showOptions: {}, // Options for enhanced animations
 		defaultDate: null, // Used when field is blank: actual date,
 			// +/-number for offset from today, null for today
@@ -7136,7 +7136,7 @@ $.extend(Datepicker.prototype, {
 		return this;
 	},
 
-	/* Attach the date picker to a jQuery selection.
+	/* Attach the date picker to a jVizzop selection.
 	   @param  target    element - the target input field or division or span
 	   @param  settings  object - the new settings to use for this date picker instance (anonymous) */
 	_attachDatepicker: function(target, settings) {
@@ -7170,7 +7170,7 @@ $.extend(Datepicker.prototype, {
 
 	/* Create a new instance object. */
 	_newInst: function(target, inline) {
-		var id = target[0].id.replace(/([^A-Za-z0-9_-])/g, '\\\\$1'); // escape jQuery meta chars
+		var id = target[0].id.replace(/([^A-Za-z0-9_-])/g, '\\\\$1'); // escape jVizzop meta chars
 		return {id: id, input: target, // associated target
 			selectedDay: 0, selectedMonth: 0, selectedYear: 0, // current selection
 			drawMonth: 0, drawYear: 0, // month being drawn
@@ -7287,7 +7287,7 @@ $.extend(Datepicker.prototype, {
 			this._disableDatepicker( target );
 		}
 		// Set display:block in place of inst.dpDiv.show() which won't work on disconnected elements
-		// http://bugs.jqueryui.com/ticket/7552 - A Datepicker created on a detached div has zero height
+		// http://bugs.jVizzopui.com/ticket/7552 - A Datepicker created on a detached div has zero height
 		inst.dpDiv.css( "display", "block" );
 	},
 
@@ -7361,7 +7361,7 @@ $.extend(Datepicker.prototype, {
 			$target.removeClass(this.markerClassName).empty();
 	},
 
-	/* Enable the date picker to a jQuery selection.
+	/* Enable the date picker to a jVizzop selection.
 	   @param  target    element - the target input field or division or span */
 	_enableDatepicker: function(target) {
 		var $target = $(target);
@@ -7386,7 +7386,7 @@ $.extend(Datepicker.prototype, {
 			function(value) { return (value == target ? null : value); }); // delete entry
 	},
 
-	/* Disable the date picker to a jQuery selection.
+	/* Disable the date picker to a jVizzop selection.
 	   @param  target    element - the target input field or division or span */
 	_disableDatepicker: function(target) {
 		var $target = $(target);
@@ -7412,7 +7412,7 @@ $.extend(Datepicker.prototype, {
 		this._disabledInputs[this._disabledInputs.length] = target;
 	},
 
-	/* Is the first field in a jQuery collection disabled as a datepicker?
+	/* Is the first field in a jVizzop collection disabled as a datepicker?
 	   @param  target    element - the target input field or division or span
 	   @return boolean - true if disabled, false if enabled */
 	_isDisabledDatepicker: function(target) {
@@ -7429,7 +7429,7 @@ $.extend(Datepicker.prototype, {
 	/* Retrieve the instance data for the target control.
 	   @param  target  element - the target input field or division or span
 	   @return  object - the associated instance data
-	   @throws  error if a jQuery problem getting data */
+	   @throws  error if a jVizzop problem getting data */
 	_getInst: function(target) {
 		try {
 			return $.data(target, PROP_NAME);
@@ -7494,7 +7494,7 @@ $.extend(Datepicker.prototype, {
 		}
 	},
 
-	/* Set the dates for a jQuery selection.
+	/* Set the dates for a jVizzop selection.
 	   @param  target   element - the target input field or division or span
 	   @param  date     Date - the new date */
 	_setDateDatepicker: function(target, date) {
@@ -7506,7 +7506,7 @@ $.extend(Datepicker.prototype, {
 		}
 	},
 
-	/* Get the date(s) for the first entry in a jQuery selection.
+	/* Get the date(s) for the first entry in a jVizzop selection.
 	   @param  target     element - the target input field or division or span
 	   @param  noDefault  boolean - true if no default date is to be used
 	   @return Date - the current date */
@@ -7746,7 +7746,7 @@ $.extend(Datepicker.prototype, {
 	},
 
 	/* Retrieve the size of left and top borders for an element.
-	   @param  elem  (jQuery object) the element of interest
+	   @param  elem  (jVizzop object) the element of interest
 	   @return  (number[2]) the left and top borders */
 	_getBorders: function(elem) {
 		var convert = function(value) {
@@ -8442,7 +8442,7 @@ $.extend(Datepicker.prototype, {
 			this._daylightSavingAdjust(new Date(drawYear, drawMonth - stepMonths, 1)),
 			this._getFormatConfig(inst)));
 		var prev = (this._canAdjustMonth(inst, -1, drawYear, drawMonth) ?
-			'<a class="ui-datepicker-prev ui-corner-all" onclick="DP_jQuery_' + dpuuid +
+			'<a class="ui-datepicker-prev ui-corner-all" onclick="DP_jVizzop_' + dpuuid +
 			'.datepicker._adjustDate(\'#' + inst.id + '\', -' + stepMonths + ', \'M\');"' +
 			' title="' + prevText + '"><span class="ui-icon ui-icon-circle-triangle-' + ( isRTL ? 'e' : 'w') + '">' + prevText + '</span></a>' :
 			(hideIfNoPrevNext ? '' : '<a class="ui-datepicker-prev ui-corner-all ui-state-disabled" title="'+ prevText +'"><span class="ui-icon ui-icon-circle-triangle-' + ( isRTL ? 'e' : 'w') + '">' + prevText + '</span></a>'));
@@ -8451,7 +8451,7 @@ $.extend(Datepicker.prototype, {
 			this._daylightSavingAdjust(new Date(drawYear, drawMonth + stepMonths, 1)),
 			this._getFormatConfig(inst)));
 		var next = (this._canAdjustMonth(inst, +1, drawYear, drawMonth) ?
-			'<a class="ui-datepicker-next ui-corner-all" onclick="DP_jQuery_' + dpuuid +
+			'<a class="ui-datepicker-next ui-corner-all" onclick="DP_jVizzop_' + dpuuid +
 			'.datepicker._adjustDate(\'#' + inst.id + '\', +' + stepMonths + ', \'M\');"' +
 			' title="' + nextText + '"><span class="ui-icon ui-icon-circle-triangle-' + ( isRTL ? 'w' : 'e') + '">' + nextText + '</span></a>' :
 			(hideIfNoPrevNext ? '' : '<a class="ui-datepicker-next ui-corner-all ui-state-disabled" title="'+ nextText + '"><span class="ui-icon ui-icon-circle-triangle-' + ( isRTL ? 'w' : 'e') + '">' + nextText + '</span></a>'));
@@ -8459,10 +8459,10 @@ $.extend(Datepicker.prototype, {
 		var gotoDate = (this._get(inst, 'gotoCurrent') && inst.currentDay ? currentDate : today);
 		currentText = (!navigationAsDateFormat ? currentText :
 			this.formatDate(currentText, gotoDate, this._getFormatConfig(inst)));
-		var controls = (!inst.inline ? '<button type="button" class="ui-datepicker-close ui-state-default ui-priority-primary ui-corner-all" onclick="DP_jQuery_' + dpuuid +
+		var controls = (!inst.inline ? '<button type="button" class="ui-datepicker-close ui-state-default ui-priority-primary ui-corner-all" onclick="DP_jVizzop_' + dpuuid +
 			'.datepicker._hideDatepicker();">' + this._get(inst, 'closeText') + '</button>' : '');
 		var buttonPanel = (showButtonPanel) ? '<div class="ui-datepicker-buttonpane ui-widget-content">' + (isRTL ? controls : '') +
-			(this._isInRange(inst, gotoDate) ? '<button type="button" class="ui-datepicker-current ui-state-default ui-priority-secondary ui-corner-all" onclick="DP_jQuery_' + dpuuid +
+			(this._isInRange(inst, gotoDate) ? '<button type="button" class="ui-datepicker-current ui-state-default ui-priority-secondary ui-corner-all" onclick="DP_jVizzop_' + dpuuid +
 			'.datepicker._gotoToday(\'#' + inst.id + '\');"' +
 			'>' + currentText + '</button>' : '') + (isRTL ? '' : controls) + '</div>' : '';
 		var firstDay = parseInt(this._get(inst, 'firstDay'),10);
@@ -8542,7 +8542,7 @@ $.extend(Datepicker.prototype, {
 							(printDate.getTime() == currentDate.getTime() ? ' ' + this._currentClass : '') + // highlight selected day
 							(printDate.getTime() == today.getTime() ? ' ui-datepicker-today' : '')) + '"' + // highlight today (if different)
 							((!otherMonth || showOtherMonths) && daySettings[2] ? ' title="' + daySettings[2] + '"' : '') + // cell title
-							(unselectable ? '' : ' onclick="DP_jQuery_' + dpuuid + '.datepicker._selectDay(\'#' +
+							(unselectable ? '' : ' onclick="DP_jVizzop_' + dpuuid + '.datepicker._selectDay(\'#' +
 							inst.id + '\',' + printDate.getMonth() + ',' + printDate.getFullYear() + ', this);return false;"') + '>' + // actions
 							(otherMonth && !showOtherMonths ? '&#xa0;' : // display for other months
 							(unselectable ? '<span class="ui-state-default">' + printDate.getDate() + '</span>' : '<a class="ui-state-default' +
@@ -8587,7 +8587,7 @@ $.extend(Datepicker.prototype, {
 			var inMinYear = (minDate && minDate.getFullYear() == drawYear);
 			var inMaxYear = (maxDate && maxDate.getFullYear() == drawYear);
 			monthHtml += '<select class="ui-datepicker-month" ' +
-				'onchange="DP_jQuery_' + dpuuid + '.datepicker._selectMonthYear(\'#' + inst.id + '\', this, \'M\');" ' +
+				'onchange="DP_jVizzop_' + dpuuid + '.datepicker._selectMonthYear(\'#' + inst.id + '\', this, \'M\');" ' +
 			 	'>';
 			for (var month = 0; month < 12; month++) {
 				if ((!inMinYear || month >= minDate.getMonth()) &&
@@ -8620,7 +8620,7 @@ $.extend(Datepicker.prototype, {
 				year = (minDate ? Math.max(year, minDate.getFullYear()) : year);
 				endYear = (maxDate ? Math.min(endYear, maxDate.getFullYear()) : endYear);
 				inst.yearshtml += '<select class="ui-datepicker-year" ' +
-					'onchange="DP_jQuery_' + dpuuid + '.datepicker._selectMonthYear(\'#' + inst.id + '\', this, \'Y\');" ' +
+					'onchange="DP_jVizzop_' + dpuuid + '.datepicker._selectMonthYear(\'#' + inst.id + '\', this, \'Y\');" ' +
 					'>';
 				for (; year <= endYear; year++) {
 					inst.yearshtml += '<option value="' + year + '"' +
@@ -8762,7 +8762,7 @@ function bindHover(dpDiv) {
 		});
 }
 
-/* jQuery extend now ignores nulls! */
+/* jVizzop extend now ignores nulls! */
 function extendRemove(target, props) {
 	$.extend(target, props);
 	for (var name in props)
@@ -8780,7 +8780,7 @@ function isArray(a) {
 /* Invoke the datepicker functionality.
    @param  options  string - a command, optionally followed by additional parameters or
                     Object - settings for attaching new datepicker functionality
-   @return  jQuery object */
+   @return  jVizzop object */
 $.fn.datepicker = function(options){
 	
 	/* Verify an empty collection wasn't passed - Fixes #6976 */
@@ -8817,9 +8817,9 @@ $.datepicker.version = "1.8.20";
 
 // Workaround for #4055
 // Add another global to avoid noConflict issues with inline event handlers
-window['DP_jQuery_' + dpuuid] = $;
+window['DP_jVizzop_' + dpuuid] = $;
 
-})(jQuery);
+})(jVizzop);
 
 (function( $, undefined ) {
 
@@ -8843,7 +8843,7 @@ var uiDialogClasses =
 		minHeight: true,
 		minWidth: true
 	},
-	// support for jQuery 1.3.2 - handle common attrFn methods for dialog
+	// support for jVizzop 1.3.2 - handle common attrFn methods for dialog
 	attrFn = $.attrFn || {
 		val: true,
 		css: true,
@@ -8988,7 +8988,7 @@ $.widget("ui.dialog", {
 				.prependTo(uiDialogTitlebar);
 
 		//handling of deprecated beforeclose (vs beforeClose) option
-		//Ticket #4669 http://dev.jqueryui.com/ticket/4669
+		//Ticket #4669 http://dev.jVizzopui.com/ticket/4669
 		//TODO: remove in 1.9pre
 		if ($.isFunction(options.beforeclose) && !$.isFunction(options.beforeClose)) {
 			options.beforeClose = options.beforeclose;
@@ -9110,7 +9110,7 @@ $.widget("ui.dialog", {
 		}
 
 		//Save and then restore scroll since Opera 9.5+ resets when parent z-Index is changed.
-		//  http://ui.jquery.com/bugs/ticket/3193
+		//  http://ui.jVizzop.com/bugs/ticket/3193
 		saveScroll = { scrollTop: self.element.scrollTop(), scrollLeft: self.element.scrollLeft() };
 		$.ui.dialog.maxZ += 1;
 		self.uiDialog.css('z-index', $.ui.dialog.maxZ);
@@ -9197,7 +9197,7 @@ $.widget("ui.dialog", {
 						props.click.apply(self.element[0], arguments);
 					})
 					.appendTo(uiButtonSet);
-				// can't use .attr( props, true ) with jQuery 1.3.2.
+				// can't use .attr( props, true ) with jVizzop 1.3.2.
 				$.each( props, function( key, value ) {
 					if ( key === "click" ) {
 						return;
@@ -9316,7 +9316,7 @@ $.widget("ui.dialog", {
 			isVisible;
 
 		if (position) {
-			// deep extending converts arrays to objects in jQuery <= 1.3.2 :-(
+			// deep extending converts arrays to objects in jVizzop <= 1.3.2 :-(
 	//		if (typeof position == 'string' || $.isArray(position)) {
 	//			myAt = $.isArray(position) ? position : position.split(' ');
 
@@ -9351,7 +9351,7 @@ $.widget("ui.dialog", {
 			this.uiDialog.show();
 		}
 		this.uiDialog
-			// workaround for jQuery bug #5781 http://dev.jquery.com/ticket/5781
+			// workaround for jVizzop bug #5781 http://dev.jVizzop.com/ticket/5781
 			.css({ top: 0, left: 0 })
 			.position($.extend({ of: window }, position));
 		if (!isVisible) {
@@ -9389,7 +9389,7 @@ $.widget("ui.dialog", {
 
 		switch (key) {
 			//handling of deprecated beforeclose (vs beforeClose) option
-			//Ticket #4669 http://dev.jqueryui.com/ticket/4669
+			//Ticket #4669 http://dev.jVizzopui.com/ticket/4669
 			//TODO: remove in 1.9pre
 			case "beforeclose":
 				key = "beforeClose";
@@ -9680,7 +9680,7 @@ $.extend($.ui.dialog.overlay.prototype, {
 	}
 });
 
-}(jQuery));
+}(jVizzop));
 
 (function( $, undefined ) {
 
@@ -9797,7 +9797,7 @@ $.fn.position = function( options ) {
 			position.top -= elemHeight / 2;
 		}
 
-		// prevent fractions if jQuery version doesn't support them (see #5280)
+		// prevent fractions if jVizzop version doesn't support them (see #5280)
 		if ( !support.fractions ) {
 			position.left = Math.round( position.left );
 			position.top = Math.round( position.top );
@@ -9892,7 +9892,7 @@ $.ui.position = {
 	}
 };
 
-// offset setter from jQuery 1.4
+// offset setter from jVizzop 1.4
 if ( !$.offset.setOffset ) {
 	$.offset.setOffset = function( elem, options ) {
 		// set position first, in-case top/left are set even on static elem
@@ -9927,13 +9927,13 @@ if ( !$.offset.setOffset ) {
 	};
 }
 
-// fraction support test (older versions of jQuery don't support fractions)
+// fraction support test (older versions of jVizzop don't support fractions)
 (function () {
 	var body = document.getElementsByTagName( "body" )[ 0 ], 
 		div = document.createElement( "div" ),
 		testElement, testElementParent, testElementStyle, offset, offsetTotal;
 
-	//Create a "fake body" for testing based on method used in jQuery.support
+	//Create a "fake body" for testing based on method used in jVizzop.support
 	testElement = document.createElement( body ? "div" : "body" );
 	testElementStyle = {
 		visibility: "hidden",
@@ -9970,7 +9970,7 @@ if ( !$.offset.setOffset ) {
 	support.fractions = offsetTotal > 21 && offsetTotal < 22;
 })();
 
-}( jQuery ));
+}( jVizzop ));
 
 (function( $, undefined ) {
 
@@ -10067,7 +10067,7 @@ $.extend( $.ui.progressbar, {
 	version: "1.8.20"
 });
 
-})( jQuery );
+})( jVizzop );
 
 (function( $, undefined ) {
 
@@ -10716,7 +10716,7 @@ $.extend( $.ui.slider, {
 	version: "1.8.20"
 });
 
-}(jQuery));
+}(jVizzop));
 
 (function( $, undefined ) {
 
@@ -10736,7 +10736,7 @@ $.widget( "ui.tabs", {
 		add: null,
 		ajaxOptions: null,
 		cache: false,
-		cookie: null, // e.g. { expires: 7, path: '/', domain: 'jquery.com', secure: true }
+		cookie: null, // e.g. { expires: 7, path: '/', domain: 'jVizzop.com', secure: true }
 		collapsible: false,
 		disable: null,
 		disabled: [],
@@ -11087,7 +11087,7 @@ $.widget( "ui.tabs", {
 						showTab( el, $show );
 					});
 
-					// TODO make passing in node possible, see also http://dev.jqueryui.com/ticket/3171
+					// TODO make passing in node possible, see also http://dev.jVizzopui.com/ticket/3171
 					self.load( self.anchors.index( this ) );
 
 					this.blur();
@@ -11112,7 +11112,7 @@ $.widget( "ui.tabs", {
 
 				self.load( self.anchors.index( this ) );
 			} else {
-				throw "jQuery UI Tabs: Mismatching fragment identifier.";
+				throw "jVizzop UI Tabs: Mismatching fragment identifier.";
 			}
 
 			// Prevent IE from keeping other link focussed when using the back button
@@ -11461,4 +11461,4 @@ $.extend( $.ui.tabs.prototype, {
 	}
 });
 
-})( jQuery );
+})( jVizzop );

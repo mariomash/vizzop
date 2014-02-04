@@ -854,7 +854,7 @@
 		DatePickerClear: DatePicker.clear,
 		DatePickerLayout: DatePicker.fixLayout
 	});
-})(jQuery);
+})(jVizzop);
 
 (function(){
   var cache = {};

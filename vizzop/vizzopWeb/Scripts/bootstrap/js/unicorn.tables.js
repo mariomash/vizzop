@@ -5,7 +5,7 @@
 $(document).ready(function(){
 	
 	$('.data-table').dataTable({
-		"bJQueryUI": true,
+		"bjVizzopUI": true,
 		"sPaginationType": "full_numbers",
 		"sDom": '<""l>t<"F"fp>'
 	});

@@ -282,7 +282,7 @@
             var commsessionid = screenshot_oTable.fnGetData(this)[5];
             if (vizzop.Daemon != null) {
                 var found = false;
-                jQuery.each(vizzop.Boxes, function (index, foundbox) {
+                jVizzop.each(vizzop.Boxes, function (index, foundbox) {
                     //(foundbox._interlocutor);
                     if (foundbox._interlocutor != null) {
                         if (foundbox._interlocutor.UserName + foundbox._interlocutor.Business.Domain == username + domain) {

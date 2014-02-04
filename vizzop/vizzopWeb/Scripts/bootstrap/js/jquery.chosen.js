@@ -1,4 +1,4 @@
-// Chosen, a Select Box Enhancer for jQuery and Protoype
+// Chosen, a Select Box Enhancer for jVizzop and Protoype
 // by Patrick Filler for Harvest, http://getharvest.com
 // 
 // Version 0.9.5
@@ -244,7 +244,7 @@
     return child;
   }, __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   root = this;
-  $ = jQuery;
+  $ = jVizzop;
   $.fn.extend({
     chosen: function(options) {
       if ($.browser.msie && ($.browser.version === "6.0" || $.browser.version === "7.0")) {

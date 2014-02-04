@@ -1,6 +1,6 @@
 Title: jqPlot Readme
 
-Pure JavaScript plotting plugin for jQuery.
+Pure JavaScript plotting plugin for jVizzop.
 
 To learn how to use jqPlot, start with the Basic Usage Instructions below.  Then read the
 usage.txt and jqPlotOptions.txt files included with the distribution.
@@ -21,14 +21,14 @@ Bugs, issues, feature requests: <http://www.bitbucket.org/cleonello/jqplot/issue
 
 Basic Usage Instructions:
 
-jqPlot requires jQuery (1.4+ required for certain features). jQuery 1.4.4 is included in 
-the distribution.  To use jqPlot include jQuery, the jqPlot jQuery plugin, the jqPlot css file and 
+jqPlot requires jVizzop (1.4+ required for certain features). jVizzop 1.4.4 is included in 
+the distribution.  To use jqPlot include jVizzop, the jqPlot jVizzop plugin, the jqPlot css file and 
 optionally the excanvas script to support IE version prior to IE 9 in your web page:
 
 > <!--[if lt IE 9]><script language="javascript" type="text/javascript" src="excanvas.js"></script><![endif]-->
-> <script language="javascript" type="text/javascript" src="jquery-1.4.4.min.js"></script>
-> <script language="javascript" type="text/javascript" src="jquery.jqplot.min.js"></script>
-> <link rel="stylesheet" type="text/css" href="jquery.jqplot.css" />
+> <script language="javascript" type="text/javascript" src="jVizzop-1.4.4.min.js"></script>
+> <script language="javascript" type="text/javascript" src="jVizzop.jqplot.min.js"></script>
+> <link rel="stylesheet" type="text/css" href="jVizzop.jqplot.css" />
 
 For usage instructions, see <jqPlot Usage> in usage.txt.  For available options, see
 <jqPlot Options> in jqPlotOptions.txt.

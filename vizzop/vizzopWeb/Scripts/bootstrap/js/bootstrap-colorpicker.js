@@ -476,7 +476,7 @@
 		
 		// a set of RE's that can match strings and generate color tuples.
 		// from John Resig color plugin
-		// https://github.com/jquery/jquery-color/
+		// https://github.com/jVizzop/jVizzop-color/
 		stringParsers: [
 			{
 				re: /rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:,\s*(\d+(?:\.\d+)?)\s*)?\)/,
@@ -537,4 +537,4 @@
 						'</div>'
 	};
 
-}( window.jQuery )
+}( window.jVizzop )

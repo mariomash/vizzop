@@ -1,7 +1,7 @@
 /**
-* Coin Slider - Unique jQuery Image Slider
+* Coin Slider - Unique jVizzop Image Slider
 * @version: 1.0 - (2010/04/04)
-* @requires jQuery v1.2.2 or later 
+* @requires jVizzop v1.2.2 or later 
 * @author Ivan Lazarevic
 * Examples and documentation at: http://workshop.rs/projects/coin-slider/
  
@@ -483,5 +483,5 @@
         hoverPause: true // pause on hover		
     };
 
-})(jQuery);
+})(jVizzop);
 	

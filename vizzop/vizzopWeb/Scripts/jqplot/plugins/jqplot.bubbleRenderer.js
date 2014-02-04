@@ -1,6 +1,6 @@
 /**
  * jqPlot
- * Pure JavaScript plotting plugin using jQuery
+ * Pure JavaScript plotting plugin using jVizzop
  *
  * Version: 1.0.0b2_r1012
  *
@@ -140,7 +140,7 @@
         this.maxRadius = 0;
         // index of the currenty highlighted point, if any
         this._highlightedPoint = null;
-        // array of jQuery labels.
+        // array of jVizzop labels.
         this.labels = [];
         this.bubbleCanvases = [];
         this._type = 'bubble';
@@ -625,12 +625,12 @@
             var si = neighbor.seriesIndex;
             var pi = neighbor.pointIndex;
             var ins = [si, pi, neighbor.data, plot.series[si].gridData[pi][2]];
-            var evt1 = jQuery.Event('jqplotDataMouseOver');
+            var evt1 = jVizzop.Event('jqplotDataMouseOver');
             evt1.pageX = ev.pageX;
             evt1.pageY = ev.pageY;
             plot.target.trigger(evt1, ins);
             if (plot.series[ins[0]].highlightMouseOver && !(ins[0] == plot.plugins.bubbleRenderer.highlightedSeriesIndex && ins[1] == plot.series[ins[0]]._highlightedPoint)) {
-                var evt = jQuery.Event('jqplotDataHighlight');
+                var evt = jVizzop.Event('jqplotDataHighlight');
                 evt.pageX = ev.pageX;
                 evt.pageY = ev.pageY;
                 plot.target.trigger(evt, ins);
@@ -648,7 +648,7 @@
             var pi = neighbor.pointIndex;
             var ins = [si, pi, neighbor.data, plot.series[si].gridData[pi][2]];
             if (plot.series[ins[0]].highlightMouseDown && !(ins[0] == plot.plugins.bubbleRenderer.highlightedSeriesIndex && ins[1] == plot.series[ins[0]]._highlightedPoint)) {
-                var evt = jQuery.Event('jqplotDataHighlight');
+                var evt = jVizzop.Event('jqplotDataHighlight');
                 evt.pageX = ev.pageX;
                 evt.pageY = ev.pageY;
                 plot.target.trigger(evt, ins);
@@ -672,7 +672,7 @@
             var si = neighbor.seriesIndex;
             var pi = neighbor.pointIndex;
             var ins = [si, pi, neighbor.data, plot.series[si].gridData[pi][2]];
-            var evt = jQuery.Event('jqplotDataClick');
+            var evt = jVizzop.Event('jqplotDataClick');
             evt.pageX = ev.pageX;
             evt.pageY = ev.pageY;
             plot.target.trigger(evt, ins);
@@ -688,7 +688,7 @@
             if (idx != null && plot.series[idx].highlightMouseDown) {
                 unhighlight(plot);
             }
-            var evt = jQuery.Event('jqplotDataRightClick');
+            var evt = jVizzop.Event('jqplotDataRightClick');
             evt.pageX = ev.pageX;
             evt.pageY = ev.pageY;
             plot.target.trigger(evt, ins);
@@ -749,6 +749,6 @@
     
     $.jqplot.preInitHooks.push(preInit);
     
-})(jQuery);
+})(jVizzop);
     
     

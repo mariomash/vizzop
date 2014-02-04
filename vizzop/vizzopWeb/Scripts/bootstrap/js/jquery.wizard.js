@@ -1,5 +1,5 @@
 /*
- * jQuery wizard plug-in 3.0.5
+ * jVizzop wizard plug-in 3.0.5
  *
  *
  * Copyright (c) 2011 Jan Sundman (jan.sundman[at]aland.net)
@@ -87,7 +87,7 @@
 				this.backButtonInitinalValue = this.backButton.val();
 				this.backButton.val(this.options.textBack);
 
-			if(this.options.validationEnabled && jQuery().validate  == undefined){
+			if(this.options.validationEnabled && jVizzop().validate  == undefined){
 				this.options.validationEnabled = false;
 				if( (window['console'] !== undefined) ){
 					console.log("%s", "validationEnabled option set, but the validation plugin is not included");
@@ -95,7 +95,7 @@
 			}else if(this.options.validationEnabled){
 				this.element.validate(this.options.validationOptions);
 			}
-			if(this.options.formPluginEnabled && jQuery().ajaxSubmit == undefined){
+			if(this.options.formPluginEnabled && jVizzop().ajaxSubmit == undefined){
 				this.options.formPluginEnabled = false;
 				if( (window['console'] !== undefined) ){
 					console.log("%s", "formPluginEnabled option set but the form plugin is not included");
@@ -453,4 +453,4 @@
 		}
    }
  });
-})(jQuery);
+})(jVizzop);

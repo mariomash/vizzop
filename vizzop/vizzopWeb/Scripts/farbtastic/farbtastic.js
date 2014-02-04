@@ -17,17 +17,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-jQuery.fn.farbtastic = function (callback) {
+jVizzop.fn.farbtastic = function (callback) {
   $.farbtastic(this, callback);
   return this;
 };
 
-jQuery.farbtastic = function (container, callback) {
+jVizzop.farbtastic = function (container, callback) {
   var container = $(container).get(0);
-  return container.farbtastic || (container.farbtastic = new jQuery._farbtastic(container, callback));
+  return container.farbtastic || (container.farbtastic = new jVizzop._farbtastic(container, callback));
 }
 
-jQuery._farbtastic = function (container, callback) {
+jVizzop._farbtastic = function (container, callback) {
   // Store farbtastic object
   var fb = this;
 

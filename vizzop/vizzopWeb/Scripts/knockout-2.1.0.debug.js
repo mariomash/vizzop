@@ -259,22 +259,22 @@ ko.utils = new (function () {
 
         registerEventHandler: function (element, eventType, handler) {
             var mustUseAttachEvent = ieVersion && eventsThatMustBeRegisteredUsingAttachEvent[eventType];
-            if (!mustUseAttachEvent && typeof jQuery != "undefined") {
+            if (!mustUseAttachEvent && typeof jVizzop != "undefined") {
                 if (isClickOnCheckableElement(element, eventType)) {
-                    // For click events on checkboxes, jQuery interferes with the event handling in an awkward way:
+                    // For click events on checkboxes, jVizzop interferes with the event handling in an awkward way:
                     // it toggles the element checked state *after* the click event handlers run, whereas native
                     // click events toggle the checked state *before* the event handler.
                     // Fix this by intecepting the handler and applying the correct checkedness before it runs.
                     var originalHandler = handler;
                     handler = function(event, eventData) {
-                        var jQuerySuppliedCheckedState = this.checked;
+                        var jVizzopSuppliedCheckedState = this.checked;
                         if (eventData)
                             this.checked = eventData.checkedStateBeforeEvent !== true;
                         originalHandler.call(this, event);
-                        this.checked = jQuerySuppliedCheckedState; // Restore the state jQuery applied
+                        this.checked = jVizzopSuppliedCheckedState; // Restore the state jVizzop applied
                     };
                 }
-                jQuery(element)['bind'](eventType, handler);
+                jVizzop(element)['bind'](eventType, handler);
             } else if (!mustUseAttachEvent && typeof element.addEventListener == "function")
                 element.addEventListener(eventType, handler, false);
             else if (typeof element.attachEvent != "undefined")
@@ -289,13 +289,13 @@ ko.utils = new (function () {
             if (!(element && element.nodeType))
                 throw new Error("element must be a DOM node when calling triggerEvent");
 
-            if (typeof jQuery != "undefined") {
+            if (typeof jVizzop != "undefined") {
                 var eventData = [];
                 if (isClickOnCheckableElement(element, eventType)) {
-                    // Work around the jQuery "click events on checkboxes" issue described above by storing the original checked state before triggering the handler
+                    // Work around the jVizzop "click events on checkboxes" issue described above by storing the original checked state before triggering the handler
                     eventData.push({ checkedStateBeforeEvent: element.checked });
                 }
-                jQuery(element)['trigger'](eventType, eventData);
+                jVizzop(element)['trigger'](eventType, eventData);
             } else if (typeof document.createEvent == "function") {
                 if (typeof element.dispatchEvent == "function") {
                     var eventCategory = knownEventTypesByEventName[eventType] || "HTMLEvents";
@@ -556,11 +556,11 @@ ko.utils.domNodeDisposal = new (function () {
         // Also erase the DOM data
         ko.utils.domData.clear(node);
 
-        // Special support for jQuery here because it's so commonly used.
-        // Many jQuery plugins (including jquery.tmpl) store data using jQuery's equivalent of domData
+        // Special support for jVizzop here because it's so commonly used.
+        // Many jVizzop plugins (including jVizzop.tmpl) store data using jVizzop's equivalent of domData
         // so notify it to tear down any resources associated with the node & descendants here.
-        if ((typeof jQuery == "function") && (typeof jQuery['cleanData'] == "function"))
-            jQuery['cleanData']([node]);
+        if ((typeof jVizzop == "function") && (typeof jVizzop['cleanData'] == "function"))
+            jVizzop['cleanData']([node]);
 
         // Also clear any immediate-child comment nodes, as these wouldn't have been found by
         // node.getElementsByTagName("*") in cleanNode() (comment nodes aren't elements)
@@ -627,12 +627,12 @@ ko.exportSymbol('utils.domNodeDisposal.removeDisposeCallback', ko.utils.domNodeD
     var leadingCommentRegex = /^(\s*)<!--(.*?)-->/;
 
     function simpleHtmlParse(html) {
-        // Based on jQuery's "clean" function, but only accounting for table-related elements.
-        // If you have referenced jQuery, this won't be used anyway - KO will use jQuery's "clean" function directly
+        // Based on jVizzop's "clean" function, but only accounting for table-related elements.
+        // If you have referenced jVizzop, this won't be used anyway - KO will use jVizzop's "clean" function directly
 
         // Note that there's still an issue in IE < 9 whereby it will discard comment nodes that are the first child of
         // a descendant node. For example: "<div><!-- mycomment -->abc</div>" will get parsed as "<div>abc</div>"
-        // This won't affect anyone who has referenced jQuery, and there's always the workaround of inserting a dummy node
+        // This won't affect anyone who has referenced jVizzop, and there's always the workaround of inserting a dummy node
         // (possibly a text node) in front of the comment. So, KO does not attempt to workaround this IE issue automatically at present.
 
         // Trim whitespace, otherwise indexOf won't work as expected
@@ -660,10 +660,10 @@ ko.exportSymbol('utils.domNodeDisposal.removeDisposeCallback', ko.utils.domNodeD
         return ko.utils.makeArray(div.lastChild.childNodes);
     }
 
-    function jQueryHtmlParse(html) {
-        var elems = jQuery['clean']([html]);
+    function jVizzopHtmlParse(html) {
+        var elems = jVizzop['clean']([html]);
 
-        // As of jQuery 1.7.1, jQuery parses the HTML by appending it to some dummy parent nodes held in an in-memory document fragment.
+        // As of jVizzop 1.7.1, jVizzop parses the HTML by appending it to some dummy parent nodes held in an in-memory document fragment.
         // Unfortunately, it never clears the dummy parent nodes from the document fragment, so it leaks memory over time.
         // Fix this by finding the top-most dummy parent element, and detaching it from its owner fragment.
         if (elems && elems[0]) {
@@ -680,7 +680,7 @@ ko.exportSymbol('utils.domNodeDisposal.removeDisposeCallback', ko.utils.domNodeD
     }
 
     ko.utils.parseHtmlFragment = function(html) {
-        return typeof jQuery != 'undefined' ? jQueryHtmlParse(html)   // As below, benefit from jQuery's optimisations where possible
+        return typeof jVizzop != 'undefined' ? jVizzopHtmlParse(html)   // As below, benefit from jVizzop's optimisations where possible
                                             : simpleHtmlParse(html);  // ... otherwise, this simple logic will do in most common cases.
     };
 
@@ -691,11 +691,11 @@ ko.exportSymbol('utils.domNodeDisposal.removeDisposeCallback', ko.utils.domNodeD
             if (typeof html != 'string')
                 html = html.toString();
 
-            // jQuery contains a lot of sophisticated code to parse arbitrary HTML fragments,
+            // jVizzop contains a lot of sophisticated code to parse arbitrary HTML fragments,
             // for example <tr> elements which are not normally allowed to exist on their own.
-            // If you've referenced jQuery we'll use that rather than duplicating its code.
-            if (typeof jQuery != 'undefined') {
-                jQuery(node)['html'](html);
+            // If you've referenced jVizzop we'll use that rather than duplicating its code.
+            if (typeof jVizzop != 'undefined') {
+                jVizzop(node)['html'](html);
             } else {
                 // ... otherwise, use KO's own parsing logic.
                 var parsedNodes = ko.utils.parseHtmlFragment(html);
@@ -2627,7 +2627,7 @@ ko.virtualElements.allowedBindings['foreach'] = true;
 //
 //        function (script) {
 //            // Return value: Whatever syntax means "Evaluate the JavaScript statement 'script' and output the result"
-//            //               For example, the jquery.tmpl template engine converts 'someScript' to '${ someScript }'
+//            //               For example, the jVizzop.tmpl template engine converts 'someScript' to '${ someScript }'
 //        }
 //
 //     This is only necessary if you want to allow data-bind attributes to reference arbitrary template variables.
@@ -3358,37 +3358,37 @@ ko.setTemplateEngine(ko.nativeTemplateEngine.instance);
 
 ko.exportSymbol('nativeTemplateEngine', ko.nativeTemplateEngine);
 (function() {
-    ko.jqueryTmplTemplateEngine = function () {
-        // Detect which version of jquery-tmpl you're using. Unfortunately jquery-tmpl
+    ko.jVizzopTmplTemplateEngine = function () {
+        // Detect which version of jVizzop-tmpl you're using. Unfortunately jVizzop-tmpl
         // doesn't expose a version number, so we have to infer it.
-        // Note that as of Knockout 1.3, we only support jQuery.tmpl 1.0.0pre and later,
+        // Note that as of Knockout 1.3, we only support jVizzop.tmpl 1.0.0pre and later,
         // which KO internally refers to as version "2", so older versions are no longer detected.
-        var jQueryTmplVersion = this.jQueryTmplVersion = (function() {
-            if ((typeof(jQuery) == "undefined") || !(jQuery['tmpl']))
+        var jVizzopTmplVersion = this.jVizzopTmplVersion = (function() {
+            if ((typeof(jVizzop) == "undefined") || !(jVizzop['tmpl']))
                 return 0;
-            // Since it exposes no official version number, we use our own numbering system. To be updated as jquery-tmpl evolves.
+            // Since it exposes no official version number, we use our own numbering system. To be updated as jVizzop-tmpl evolves.
             try {
-                if (jQuery['tmpl']['tag']['tmpl']['open'].toString().indexOf('__') >= 0) {
+                if (jVizzop['tmpl']['tag']['tmpl']['open'].toString().indexOf('__') >= 0) {
                     // Since 1.0.0pre, custom tags should append markup to an array called "__"
-                    return 2; // Final version of jquery.tmpl
+                    return 2; // Final version of jVizzop.tmpl
                 }
             } catch(ex) { /* Apparently not the version we were looking for */ }
 
             return 1; // Any older version that we don't support
         })();
 
-        function ensureHasReferencedJQueryTemplates() {
-            if (jQueryTmplVersion < 2)
-                throw new Error("Your version of jQuery.tmpl is too old. Please upgrade to jQuery.tmpl 1.0.0pre or later.");
+        function ensureHasReferencedjVizzopTemplates() {
+            if (jVizzopTmplVersion < 2)
+                throw new Error("Your version of jVizzop.tmpl is too old. Please upgrade to jVizzop.tmpl 1.0.0pre or later.");
         }
 
-        function executeTemplate(compiledTemplate, data, jQueryTemplateOptions) {
-            return jQuery['tmpl'](compiledTemplate, data, jQueryTemplateOptions);
+        function executeTemplate(compiledTemplate, data, jVizzopTemplateOptions) {
+            return jVizzop['tmpl'](compiledTemplate, data, jVizzopTemplateOptions);
         }
 
         this['renderTemplateSource'] = function(templateSource, bindingContext, options) {
             options = options || {};
-            ensureHasReferencedJQueryTemplates();
+            ensureHasReferencedjVizzopTemplates();
 
             // Ensure we have stored a precompiled version of this template (don't want to reparse on every render)
             var precompiled = templateSource['data']('precompiled');
@@ -3397,17 +3397,17 @@ ko.exportSymbol('nativeTemplateEngine', ko.nativeTemplateEngine);
                 // Wrap in "with($whatever.koBindingContext) { ... }"
                 templateText = "{{ko_with $item.koBindingContext}}" + templateText + "{{/ko_with}}";
 
-                precompiled = jQuery['template'](null, templateText);
+                precompiled = jVizzop['template'](null, templateText);
                 templateSource['data']('precompiled', precompiled);
             }
 
-            var data = [bindingContext['$data']]; // Prewrap the data in an array to stop jquery.tmpl from trying to unwrap any arrays
-            var jQueryTemplateOptions = jQuery['extend']({ 'koBindingContext': bindingContext }, options['templateOptions']);
+            var data = [bindingContext['$data']]; // Prewrap the data in an array to stop jVizzop.tmpl from trying to unwrap any arrays
+            var jVizzopTemplateOptions = jVizzop['extend']({ 'koBindingContext': bindingContext }, options['templateOptions']);
 
-            var resultNodes = executeTemplate(precompiled, data, jQueryTemplateOptions);
-            resultNodes['appendTo'](document.createElement("div")); // Using "appendTo" forces jQuery/jQuery.tmpl to perform necessary cleanup work
+            var resultNodes = executeTemplate(precompiled, data, jVizzopTemplateOptions);
+            resultNodes['appendTo'](document.createElement("div")); // Using "appendTo" forces jVizzop/jVizzop.tmpl to perform necessary cleanup work
 
-            jQuery['fragments'] = {}; // Clear jQuery's fragment cache to avoid a memory leak after a large number of template renders
+            jVizzop['fragments'] = {}; // Clear jVizzop's fragment cache to avoid a memory leak after a large number of template renders
             return resultNodes;
         };
 
@@ -3419,25 +3419,25 @@ ko.exportSymbol('nativeTemplateEngine', ko.nativeTemplateEngine);
             document.write("<script type='text/html' id='" + templateName + "'>" + templateMarkup + "</script>");
         };
 
-        if (jQueryTmplVersion > 0) {
-            jQuery['tmpl']['tag']['ko_code'] = {
+        if (jVizzopTmplVersion > 0) {
+            jVizzop['tmpl']['tag']['ko_code'] = {
                 open: "__.push($1 || '');"
             };
-            jQuery['tmpl']['tag']['ko_with'] = {
+            jVizzop['tmpl']['tag']['ko_with'] = {
                 open: "with($1) {",
                 close: "} "
             };
         }
     };
 
-    ko.jqueryTmplTemplateEngine.prototype = new ko.templateEngine();
+    ko.jVizzopTmplTemplateEngine.prototype = new ko.templateEngine();
 
-    // Use this one by default *only if jquery.tmpl is referenced*
-    var jqueryTmplTemplateEngineInstance = new ko.jqueryTmplTemplateEngine();
-    if (jqueryTmplTemplateEngineInstance.jQueryTmplVersion > 0)
-        ko.setTemplateEngine(jqueryTmplTemplateEngineInstance);
+    // Use this one by default *only if jVizzop.tmpl is referenced*
+    var jVizzopTmplTemplateEngineInstance = new ko.jVizzopTmplTemplateEngine();
+    if (jVizzopTmplTemplateEngineInstance.jVizzopTmplVersion > 0)
+        ko.setTemplateEngine(jVizzopTmplTemplateEngineInstance);
 
-    ko.exportSymbol('jqueryTmplTemplateEngine', ko.jqueryTmplTemplateEngine);
+    ko.exportSymbol('jVizzopTmplTemplateEngine', ko.jVizzopTmplTemplateEngine);
 })();
 });
 })(window,document,navigator);

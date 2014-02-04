@@ -63,34 +63,34 @@ var Box = jVizzop.zs_Class.create({
 
             self._closebutton = jVizzop('<span></span>')
 					.addClass('zs_dialogclosebutton')
-					.html('<i class="icon-remove icon-white"></i>')
+					.html('<i class="vizzop-icon-remove vizzop-icon-white"></i>')
 					.click(function (event) {
 					    //self.destroyBox();
 					    return false;
 					})
 					.hover(
 					function (event) {
-					    //jVizzop(this).html('<i class="icon-remove icon-white"></i>');
+					    //jVizzop(this).html('<i class="vizzop-icon-remove vizzop-icon-white"></i>');
 					},
 					function (event) {
-					    //jVizzop(this).html('<i class="icon-remove"></i>');
+					    //jVizzop(this).html('<i class="vizzop-icon-remove"></i>');
 					}
 					)
 					.appendTo(self._boxtitle);
             /*
 			self._togglebarbutton = jVizzop('<span></span>')
 					.addClass('zs_dialogtogglebarbutton')
-					.html('<i class="icon-minus"></i>')
+					.html('<i class="vizzop-icon-minus"></i>')
 					.click(function (event) {
 						jVizzop(self._boxinfo).toggle();
 						return false;
 					})
 					.hover(
 					function (event) {
-						jVizzop(this).html('<i class="icon-minus icon-white"></i>');
+						jVizzop(this).html('<i class="vizzop-icon-minus vizzop-icon-white"></i>');
 					},
 					function (event) {
-						jVizzop(this).html('<i class="icon-minus"></i>');
+						jVizzop(this).html('<i class="vizzop-icon-minus"></i>');
 					}
 					)
 					.appendTo(self._boxtitle);

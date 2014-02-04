@@ -1,12 +1,12 @@
 /*!
- * jQuery UI Accordion 1.9.1
- * http://jqueryui.com
+ * jVizzop UI Accordion 1.9.1
+ * http://jVizzopui.com
  *
- * Copyright 2012 jQuery Foundation and other contributors
+ * Copyright 2012 jVizzop Foundation and other contributors
  * Released under the MIT license.
- * http://jquery.org/license
+ * http://jVizzop.org/license
  *
- * http://docs.jquery.com/UI/Accordion#theming
+ * http://docs.jVizzop.com/UI/Accordion#theming
  */
 .ui-accordion .ui-accordion-header { display: block; cursor: pointer; position: relative; margin-top: 2px; padding: .5em .5em .5em .7em; zoom: 1; }
 .ui-accordion .ui-accordion-icons { padding-left: 2.2em; }

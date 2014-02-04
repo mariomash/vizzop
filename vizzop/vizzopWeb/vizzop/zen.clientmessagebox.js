@@ -280,7 +280,7 @@ var ClientMessageBox = jVizzop.zs_Class.create(MessageBox, {
                 .appendTo(self._bubbleinner);
             self.checkBubble();
             /*<img src="' + vizzop.mainURL + '/Content/images/help_25.png"/>')*/
-            self._helpimg = jVizzop('<i class="icon-comment"></i>')
+            self._helpimg = jVizzop('<i class="vizzop-icon-comment"></i>')
                 .addClass('zs_hoverbarimg')
                 .appendTo(self._handle);
             self._hoverbartext = jVizzop('<span></span>')

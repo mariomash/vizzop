@@ -1,12 +1,12 @@
-﻿/// <reference path="jquery-1.7.1.js" />
+﻿/// <reference path="jVizzop-1.7.1.js" />
 
 /*!
-** Unobtrusive Ajax support library for jQuery
+** Unobtrusive Ajax support library for jVizzop
 ** Copyright (C) Microsoft Corporation. All rights reserved.
 */
 
 /*jslint white: true, browser: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: false */
-/*global window: false, jQuery: false */
+/*global window: false, jVizzop: false */
 
 (function ($) {
     var data_click = "unobtrusiveAjaxClick",
@@ -37,7 +37,7 @@
     function asyncOnSuccess(element, data, contentType) {
         var mode;
 
-        if (contentType.indexOf("application/x-javascript") !== -1) {  // jQuery already executes JavaScript for us
+        if (contentType.indexOf("application/x-javascript") !== -1) {  // jVizzop already executes JavaScript for us
             return;
         }
 
@@ -162,4 +162,4 @@
             data: clickInfo.concat($(this).serializeArray())
         });
     });
-}(jQuery));
+}(jVizzop));

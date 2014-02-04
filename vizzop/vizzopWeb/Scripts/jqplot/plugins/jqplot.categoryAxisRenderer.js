@@ -1,6 +1,6 @@
 /**
  * jqPlot
- * Pure JavaScript plotting plugin using jQuery
+ * Pure JavaScript plotting plugin using jVizzop
  *
  * Version: 1.0.0b2_r1012
  *
@@ -633,4 +633,4 @@
     };    
     
     
-})(jQuery);
+})(jVizzop);

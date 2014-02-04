@@ -1,25 +1,25 @@
 /*!
- * jQuery UI CSS Framework 1.9.1
- * http://jqueryui.com
+ * jVizzop UI CSS Framework 1.9.1
+ * http://jVizzopui.com
  *
- * Copyright 2012 jQuery Foundation and other contributors
+ * Copyright 2012 jVizzop Foundation and other contributors
  * Released under the MIT license.
- * http://jquery.org/license
+ * http://jVizzop.org/license
  *
- * http://docs.jquery.com/UI/Theming
+ * http://docs.jVizzop.com/UI/Theming
  */
-@import url("jquery.ui.core.css");
+@import url("jVizzop.ui.core.css");
 
-@import url("jquery.ui.accordion.css");
-@import url("jquery.ui.autocomplete.css");
-@import url("jquery.ui.button.css");
-@import url("jquery.ui.datepicker.css");
-@import url("jquery.ui.dialog.css");
-@import url("jquery.ui.menu.css");
-@import url("jquery.ui.progressbar.css");
-@import url("jquery.ui.resizable.css");
-@import url("jquery.ui.selectable.css");
-@import url("jquery.ui.slider.css");
-@import url("jquery.ui.spinner.css");
-@import url("jquery.ui.tabs.css");
-@import url("jquery.ui.tooltip.css");
+@import url("jVizzop.ui.accordion.css");
+@import url("jVizzop.ui.autocomplete.css");
+@import url("jVizzop.ui.button.css");
+@import url("jVizzop.ui.datepicker.css");
+@import url("jVizzop.ui.dialog.css");
+@import url("jVizzop.ui.menu.css");
+@import url("jVizzop.ui.progressbar.css");
+@import url("jVizzop.ui.resizable.css");
+@import url("jVizzop.ui.selectable.css");
+@import url("jVizzop.ui.slider.css");
+@import url("jVizzop.ui.spinner.css");
+@import url("jVizzop.ui.tabs.css");
+@import url("jVizzop.ui.tooltip.css");

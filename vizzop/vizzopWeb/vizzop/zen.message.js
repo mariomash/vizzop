@@ -188,7 +188,7 @@ var Message = jVizzop.zs_Class.create({
             var msg_error_text = jVizzop('<span></span>')
                         .addClass('label ' + 'label-important')
             //.text(LLang('error_sending', null))
-                        .html('<i class="icon-exclamation-sign icon-white"></i>')
+                        .html('<i class="vizzop-icon-exclamation-sign vizzop-icon-white"></i>')
                         .appendTo(jVizzop(self.msg_error));
 
             var msg_error_a = jVizzop('<a/>')
@@ -212,7 +212,7 @@ var Message = jVizzop.zs_Class.create({
 
             /*
             var msg_ok_text = jVizzop('<i></i>')
-                        .addClass('icon-ok')
+                        .addClass('vizzop-icon-ok')
                         .css({
                             'float': 'right'
                         })

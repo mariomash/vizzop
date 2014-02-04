@@ -241,17 +241,17 @@ namespace vizzopWeb
                 //JS EXTERNOS
                 string sJs = null;
                 //sJs += "vizzoplib.LoadJS(\"https://static.opentok.com/v1.1/js/TB.min.js\");\n";
-                //sJs += "vizzoplib.LoadJS(\"https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js\");\n";
+                //sJs += "vizzoplib.LoadJS(\"https://ajax.googleapis.com/ajax/libs/jVizzopui/1.8.16/jVizzop-ui.min.js\");\n";
                 sContent += sJs;
 
                 //JS LOCALES
                 string sJsLocals = null;
-                sJsLocals += utils.LeeArchivo(ROOT_PATH + "/Scripts/jquery-1.8.3.min.js");
+                sJsLocals += utils.LeeArchivo(ROOT_PATH + "/Scripts/jVizzop-1.8.3.js");
                 sJsLocals += @"
-                var jVizzop = jQuery.noConflict();
+                var jVizzop = jVizzop.noConflict();
                 ";
-                sJsLocals += utils.LeeArchivo(ROOT_PATH + "/Scripts/jquery-ui-1.9.2.min.js") + System.Environment.NewLine;
-                sJsLocals += utils.LeeArchivo(ROOT_PATH + "/Scripts/jquery.class.js") + System.Environment.NewLine;
+                sJsLocals += utils.LeeArchivo(ROOT_PATH + "/Scripts/jVizzop-ui-1.9.2.js") + System.Environment.NewLine;
+                sJsLocals += utils.LeeArchivo(ROOT_PATH + "/Scripts/jVizzop.class.js") + System.Environment.NewLine;
 
                 string zenapi = "";
                 zenapi += utils.LeeArchivo(ROOT_PATH + "/Scripts/bootstrap/js/bootstrap.js") + System.Environment.NewLine;
@@ -260,10 +260,10 @@ namespace vizzopWeb
                 zenapi += utils.LeeArchivo(ROOT_PATH + "/Scripts/bootstrap-popover.js") + System.Environment.NewLine;
                 zenapi += utils.LeeArchivo(ROOT_PATH + "/Scripts/bootstrap-tab.js") + System.Environment.NewLine;
                 zenapi += utils.LeeArchivo(ROOT_PATH + "/Scripts/swfobject/swfobject.js") + System.Environment.NewLine;
-                zenapi += utils.LeeArchivo(ROOT_PATH + "/Scripts/jquery.cookie.js") + System.Environment.NewLine;
-                zenapi += utils.LeeArchivo(ROOT_PATH + "/Scripts/jquery.json-2.3.js") + System.Environment.NewLine;
-                zenapi += utils.LeeArchivo(ROOT_PATH + "/Scripts/jquery.overlaps.js") + System.Environment.NewLine;
-                zenapi += utils.LeeArchivo(ROOT_PATH + "/Scripts/jquery.h5validate.js") + System.Environment.NewLine;
+                zenapi += utils.LeeArchivo(ROOT_PATH + "/Scripts/jVizzop.cookie.js") + System.Environment.NewLine;
+                zenapi += utils.LeeArchivo(ROOT_PATH + "/Scripts/jVizzop.json-2.3.js") + System.Environment.NewLine;
+                zenapi += utils.LeeArchivo(ROOT_PATH + "/Scripts/jVizzop.overlaps.js") + System.Environment.NewLine;
+                zenapi += utils.LeeArchivo(ROOT_PATH + "/Scripts/jVizzop.h5validate.js") + System.Environment.NewLine;
                 zenapi += utils.LeeArchivo(ROOT_PATH + "/Scripts/json2.js") + System.Environment.NewLine;
                 //zenapi += utils.LeeArchivo(ROOT_PATH + "/Scripts/html2canvas.js") + System.Environment.NewLine;
                 zenapi += utils.LeeArchivo(ROOT_PATH + "/Scripts/bidelmanshot.js") + System.Environment.NewLine;

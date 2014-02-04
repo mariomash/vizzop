@@ -22,7 +22,7 @@
             self._nolist = false;
 
             jVizzop(self._boxtitletext)
-                .html('<i class="icon-user icon-white"></i>&nbsp;<span style="display: inline-block; vertical-align: middle">' + self._interlocutor.FullName + "</span>");
+                .html('<i class="vizzop-icon-user vizzop-icon-white"></i>&nbsp;<span style="display: inline-block; vertical-align: middle">' + self._interlocutor.FullName + "</span>");
             self._title = self._interlocutor.FullName;
 
             self._boxheader = jVizzop('<div></div>')
@@ -35,7 +35,7 @@
 
             var statusicon = jVizzop('<i></i>')
                 .css({ 'display': 'inline-block', 'vertical-align': 'middle' }).addClass(
-                'icon-flag'
+                'vizzop-icon-flag'
                 )
                 .appendTo(self._topstatusdiv);
 
@@ -55,7 +55,7 @@
 
             var lockicon = jVizzop('<i></i>')
                 .css({ 'display': 'inline-block', 'vertical-align': 'middle' }).addClass(
-                'icon-lock'
+                'vizzop-icon-lock'
                 )
                 .appendTo(self._lockedbydiv);
 

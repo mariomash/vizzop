@@ -1632,7 +1632,7 @@
         margin-left: 0 !important;
     }
 
-    .zs_dialog [class^="icon-"] {
+    .zs_dialog [class^="vizzop-icon-"] {
         display: inline-block;
         width: 14px !important;
         height: 14px !important;
@@ -1644,503 +1644,503 @@
         vertical-align: middle !important;
     }
 
-        .zs_dialog [class^="icon-"]:last-child {
+        .zs_dialog [class^="vizzop-icon-"]:last-child {
             *margin-left: 0 !important;
         }
 
-    .zs_dialog .icon-white {
+    .zs_dialog .vizzop-icon-white {
         background-image: url(../img/glyphicons-halflings-white.png) !important;
     }
 
-    .zs_dialog .icon-red {
+    .zs_dialog .vizzop-icon-red {
         background-image: url(../img/glyphicons-halflings-red.png) !important;
     }
 
-    .zs_dialog .icon-green {
+    .zs_dialog .vizzop-icon-green {
         background-image: url(../img/glyphicons-halflings-green.png) !important;
     }
 
-    .zs_dialog .icon-blue {
+    .zs_dialog .vizzop-icon-blue {
         background-image: url(../img/glyphicons-halflings-blue.png) !important;
     }
 
-    .zs_dialog .icon-glass {
+    .zs_dialog .vizzop-icon-glass {
         background-position: 0 0 !important;
     }
 
-    .zs_dialog .icon-music {
+    .zs_dialog .vizzop-icon-music {
         background-position: -24px 0 !important;
     }
 
-    .zs_dialog .icon-search {
+    .zs_dialog .vizzop-icon-search {
         background-position: -48px 0 !important;
     }
 
-    .zs_dialog .icon-envelope {
+    .zs_dialog .vizzop-icon-envelope {
         background-position: -72px 0 !important;
     }
 
-    .zs_dialog .icon-heart {
+    .zs_dialog .vizzop-icon-heart {
         background-position: -96px 0 !important;
     }
 
-    .zs_dialog .icon-star {
+    .zs_dialog .vizzop-icon-star {
         background-position: -120px 0 !important;
     }
 
-    .zs_dialog .icon-star-empty {
+    .zs_dialog .vizzop-icon-star-empty {
         background-position: -144px 0 !important;
     }
 
-    .zs_dialog .icon-user {
+    .zs_dialog .vizzop-icon-user {
         background-position: -168px 0 !important;
     }
 
-    .zs_dialog .icon-film {
+    .zs_dialog .vizzop-icon-film {
         background-position: -192px 0 !important;
     }
 
-    .zs_dialog .icon-th-large {
+    .zs_dialog .vizzop-icon-th-large {
         background-position: -216px 0 !important;
     }
 
-    .zs_dialog .icon-th {
+    .zs_dialog .vizzop-icon-th {
         background-position: -240px 0 !important;
     }
 
-    .zs_dialog .icon-th-list {
+    .zs_dialog .vizzop-icon-th-list {
         background-position: -264px 0 !important;
     }
 
-    .zs_dialog .icon-ok {
+    .zs_dialog .vizzop-icon-ok {
         background-position: -288px 0 !important;
     }
 
-    .zs_dialog .icon-remove {
+    .zs_dialog .vizzop-icon-remove {
         background-position: -312px 0 !important;
     }
 
-    .zs_dialog .icon-zoom-in {
+    .zs_dialog .vizzop-icon-zoom-in {
         background-position: -336px 0 !important;
     }
 
-    .zs_dialog .icon-zoom-out {
+    .zs_dialog .vizzop-icon-zoom-out {
         background-position: -360px 0 !important;
     }
 
-    .zs_dialog .icon-off {
+    .zs_dialog .vizzop-icon-off {
         background-position: -384px 0 !important;
     }
 
-    .zs_dialog .icon-signal {
+    .zs_dialog .vizzop-icon-signal {
         background-position: -408px 0 !important;
     }
 
-    .zs_dialog .icon-cog {
+    .zs_dialog .vizzop-icon-cog {
         background-position: -432px 0 !important;
     }
 
-    .zs_dialog .icon-trash {
+    .zs_dialog .vizzop-icon-trash {
         background-position: -456px 0 !important;
     }
 
-    .zs_dialog .icon-home {
+    .zs_dialog .vizzop-icon-home {
         background-position: 0 -24px !important;
     }
 
-    .zs_dialog .icon-file {
+    .zs_dialog .vizzop-icon-file {
         background-position: -24px -24px !important;
     }
 
-    .zs_dialog .icon-time {
+    .zs_dialog .vizzop-icon-time {
         background-position: -48px -24px !important;
     }
 
-    .zs_dialog .icon-road {
+    .zs_dialog .vizzop-icon-road {
         background-position: -72px -24px !important;
     }
 
-    .zs_dialog .icon-download-alt {
+    .zs_dialog .vizzop-icon-download-alt {
         background-position: -96px -24px !important;
     }
 
-    .zs_dialog .icon-download {
+    .zs_dialog .vizzop-icon-download {
         background-position: -120px -24px !important;
     }
 
-    .zs_dialog .icon-upload {
+    .zs_dialog .vizzop-icon-upload {
         background-position: -144px -24px !important;
     }
 
-    .zs_dialog .icon-inbox {
+    .zs_dialog .vizzop-icon-inbox {
         background-position: -168px -24px !important;
     }
 
-    .zs_dialog .icon-play-circle {
+    .zs_dialog .vizzop-icon-play-circle {
         background-position: -192px -24px !important;
     }
 
-    .zs_dialog .icon-repeat {
+    .zs_dialog .vizzop-icon-repeat {
         background-position: -216px -24px !important;
     }
 
-    .zs_dialog .icon-refresh {
+    .zs_dialog .vizzop-icon-refresh {
         background-position: -240px -24px !important;
     }
 
-    .zs_dialog .icon-list-alt {
+    .zs_dialog .vizzop-icon-list-alt {
         background-position: -264px -24px !important;
     }
 
-    .zs_dialog .icon-lock {
+    .zs_dialog .vizzop-icon-lock {
         background-position: -287px -24px !important;
     }
 
-    .zs_dialog .icon-flag {
+    .zs_dialog .vizzop-icon-flag {
         background-position: -312px -24px !important;
     }
 
-    .zs_dialog .icon-headphones {
+    .zs_dialog .vizzop-icon-headphones {
         background-position: -336px -24px !important;
     }
 
-    .zs_dialog .icon-volume-off {
+    .zs_dialog .vizzop-icon-volume-off {
         background-position: -360px -24px !important;
     }
 
-    .zs_dialog .icon-volume-down {
+    .zs_dialog .vizzop-icon-volume-down {
         background-position: -384px -24px !important;
     }
 
-    .zs_dialog .icon-volume-up {
+    .zs_dialog .vizzop-icon-volume-up {
         background-position: -408px -24px !important;
     }
 
-    .zs_dialog .icon-qrcode {
+    .zs_dialog .vizzop-icon-qrcode {
         background-position: -432px -24px !important;
     }
 
-    .zs_dialog .icon-barcode {
+    .zs_dialog .vizzop-icon-barcode {
         background-position: -456px -24px !important;
     }
 
-    .zs_dialog .icon-tag {
+    .zs_dialog .vizzop-icon-tag {
         background-position: 0 -48px !important;
     }
 
-    .zs_dialog .icon-tags {
+    .zs_dialog .vizzop-icon-tags {
         background-position: -25px -48px !important;
     }
 
-    .zs_dialog .icon-book {
+    .zs_dialog .vizzop-icon-book {
         background-position: -48px -48px !important;
     }
 
-    .zs_dialog .icon-bookmark {
+    .zs_dialog .vizzop-icon-bookmark {
         background-position: -72px -48px !important;
     }
 
-    .zs_dialog .icon-print {
+    .zs_dialog .vizzop-icon-print {
         background-position: -96px -48px !important;
     }
 
-    .zs_dialog .icon-camera {
+    .zs_dialog .vizzop-icon-camera {
         background-position: -120px -48px !important;
     }
 
-    .zs_dialog .icon-font {
+    .zs_dialog .vizzop-icon-font {
         background-position: -144px -48px !important;
     }
 
-    .zs_dialog .icon-bold {
+    .zs_dialog .vizzop-icon-bold {
         background-position: -167px -48px !important;
     }
 
-    .zs_dialog .icon-italic {
+    .zs_dialog .vizzop-icon-italic {
         background-position: -192px -48px !important;
     }
 
-    .zs_dialog .icon-text-height {
+    .zs_dialog .vizzop-icon-text-height {
         background-position: -216px -48px !important;
     }
 
-    .zs_dialog .icon-text-width {
+    .zs_dialog .vizzop-icon-text-width {
         background-position: -240px -48px !important;
     }
 
-    .zs_dialog .icon-align-left {
+    .zs_dialog .vizzop-icon-align-left {
         background-position: -264px -48px !important;
     }
 
-    .zs_dialog .icon-align-center {
+    .zs_dialog .vizzop-icon-align-center {
         background-position: -288px -48px !important;
     }
 
-    .zs_dialog .icon-align-right {
+    .zs_dialog .vizzop-icon-align-right {
         background-position: -312px -48px !important;
     }
 
-    .zs_dialog .icon-align-justify {
+    .zs_dialog .vizzop-icon-align-justify {
         background-position: -336px -48px !important;
     }
 
-    .zs_dialog .icon-list {
+    .zs_dialog .vizzop-icon-list {
         background-position: -360px -48px !important;
     }
 
-    .zs_dialog .icon-indent-left {
+    .zs_dialog .vizzop-icon-indent-left {
         background-position: -384px -48px !important;
     }
 
-    .zs_dialog .icon-indent-right {
+    .zs_dialog .vizzop-icon-indent-right {
         background-position: -408px -48px !important;
     }
 
-    .zs_dialog .icon-facetime-video {
+    .zs_dialog .vizzop-icon-facetime-video {
         background-position: -432px -48px !important;
     }
 
-    .zs_dialog .icon-picture {
+    .zs_dialog .vizzop-icon-picture {
         background-position: -456px -48px !important;
     }
 
-    .zs_dialog .icon-pencil {
+    .zs_dialog .vizzop-icon-pencil {
         background-position: 0 -72px !important;
     }
 
-    .zs_dialog .icon-map-marker {
+    .zs_dialog .vizzop-icon-map-marker {
         background-position: -24px -72px !important;
     }
 
-    .zs_dialog .icon-adjust {
+    .zs_dialog .vizzop-icon-adjust {
         background-position: -48px -72px !important;
     }
 
-    .zs_dialog .icon-tint {
+    .zs_dialog .vizzop-icon-tint {
         background-position: -72px -72px !important;
     }
 
-    .zs_dialog .icon-edit {
+    .zs_dialog .vizzop-icon-edit {
         background-position: -96px -72px !important;
     }
 
-    .zs_dialog .icon-share {
+    .zs_dialog .vizzop-icon-share {
         background-position: -120px -72px !important;
     }
 
-    .zs_dialog .icon-check {
+    .zs_dialog .vizzop-icon-check {
         background-position: -144px -72px !important;
     }
 
-    .zs_dialog .icon-move {
+    .zs_dialog .vizzop-icon-move {
         background-position: -168px -72px !important;
     }
 
-    .zs_dialog .icon-step-backward {
+    .zs_dialog .vizzop-icon-step-backward {
         background-position: -192px -72px !important;
     }
 
-    .zs_dialog .icon-fast-backward {
+    .zs_dialog .vizzop-icon-fast-backward {
         background-position: -216px -72px !important;
     }
 
-    .zs_dialog .icon-backward {
+    .zs_dialog .vizzop-icon-backward {
         background-position: -240px -72px !important;
     }
 
-    .zs_dialog .icon-play {
+    .zs_dialog .vizzop-icon-play {
         background-position: -264px -72px !important;
     }
 
-    .zs_dialog .icon-pause {
+    .zs_dialog .vizzop-icon-pause {
         background-position: -288px -72px !important;
     }
 
-    .zs_dialog .icon-stop {
+    .zs_dialog .vizzop-icon-stop {
         background-position: -312px -72px !important;
     }
 
-    .zs_dialog .icon-forward {
+    .zs_dialog .vizzop-icon-forward {
         background-position: -336px -72px !important;
     }
 
-    .zs_dialog .icon-fast-forward {
+    .zs_dialog .vizzop-icon-fast-forward {
         background-position: -360px -72px !important;
     }
 
-    .zs_dialog .icon-step-forward {
+    .zs_dialog .vizzop-icon-step-forward {
         background-position: -384px -72px !important;
     }
 
-    .zs_dialog .icon-eject {
+    .zs_dialog .vizzop-icon-eject {
         background-position: -408px -72px !important;
     }
 
-    .zs_dialog .icon-chevron-left {
+    .zs_dialog .vizzop-icon-chevron-left {
         background-position: -432px -72px !important;
     }
 
-    .zs_dialog .icon-chevron-right {
+    .zs_dialog .vizzop-icon-chevron-right {
         background-position: -456px -72px !important;
     }
 
-    .zs_dialog .icon-plus-sign {
+    .zs_dialog .vizzop-icon-plus-sign {
         background-position: 0 -96px !important;
     }
 
-    .zs_dialog .icon-minus-sign {
+    .zs_dialog .vizzop-icon-minus-sign {
         background-position: -24px -96px !important;
     }
 
-    .zs_dialog .icon-remove-sign {
+    .zs_dialog .vizzop-icon-remove-sign {
         background-position: -48px -96px !important;
     }
 
-    .zs_dialog .icon-ok-sign {
+    .zs_dialog .vizzop-icon-ok-sign {
         background-position: -72px -96px !important;
     }
 
-    .zs_dialog .icon-question-sign {
+    .zs_dialog .vizzop-icon-question-sign {
         background-position: -96px -96px !important;
     }
 
-    .zs_dialog .icon-info-sign {
+    .zs_dialog .vizzop-icon-info-sign {
         background-position: -120px -96px !important;
     }
 
-    .zs_dialog .icon-screenshot {
+    .zs_dialog .vizzop-icon-screenshot {
         background-position: -144px -96px !important;
     }
 
-    .zs_dialog .icon-remove-circle {
+    .zs_dialog .vizzop-icon-remove-circle {
         background-position: -168px -96px !important;
     }
 
-    .zs_dialog .icon-ok-circle {
+    .zs_dialog .vizzop-icon-ok-circle {
         background-position: -192px -96px !important;
     }
 
-    .zs_dialog .icon-ban-circle {
+    .zs_dialog .vizzop-icon-ban-circle {
         background-position: -216px -96px !important;
     }
 
-    .zs_dialog .icon-arrow-left {
+    .zs_dialog .vizzop-icon-arrow-left {
         background-position: -240px -96px !important;
     }
 
-    .zs_dialog .icon-arrow-right {
+    .zs_dialog .vizzop-icon-arrow-right {
         background-position: -264px -96px !important;
     }
 
-    .zs_dialog .icon-arrow-up {
+    .zs_dialog .vizzop-icon-arrow-up {
         background-position: -289px -96px !important;
     }
 
-    .zs_dialog .icon-arrow-down {
+    .zs_dialog .vizzop-icon-arrow-down {
         background-position: -312px -96px !important;
     }
 
-    .zs_dialog .icon-share-alt {
+    .zs_dialog .vizzop-icon-share-alt {
         background-position: -336px -96px !important;
     }
 
-    .zs_dialog .icon-resize-full {
+    .zs_dialog .vizzop-icon-resize-full {
         background-position: -360px -96px !important;
     }
 
-    .zs_dialog .icon-resize-small {
+    .zs_dialog .vizzop-icon-resize-small {
         background-position: -384px -96px !important;
     }
 
-    .zs_dialog .icon-plus {
+    .zs_dialog .vizzop-icon-plus {
         background-position: -408px -96px !important;
     }
 
-    .zs_dialog .icon-minus {
+    .zs_dialog .vizzop-icon-minus {
         background-position: -433px -96px !important;
     }
 
-    .zs_dialog .icon-asterisk {
+    .zs_dialog .vizzop-icon-asterisk {
         background-position: -456px -96px !important;
     }
 
-    .zs_dialog .icon-exclamation-sign {
+    .zs_dialog .vizzop-icon-exclamation-sign {
         background-position: 0 -120px !important;
     }
 
-    .zs_dialog .icon-gift {
+    .zs_dialog .vizzop-icon-gift {
         background-position: -24px -120px !important;
     }
 
-    .zs_dialog .icon-leaf {
+    .zs_dialog .vizzop-icon-leaf {
         background-position: -48px -120px !important;
     }
 
-    .zs_dialog .icon-fire {
+    .zs_dialog .vizzop-icon-fire {
         background-position: -72px -120px !important;
     }
 
-    .zs_dialog .icon-eye-open {
+    .zs_dialog .vizzop-icon-eye-open {
         background-position: -96px -120px !important;
     }
 
-    .zs_dialog .icon-eye-close {
+    .zs_dialog .vizzop-icon-eye-close {
         background-position: -120px -120px !important;
     }
 
-    .zs_dialog .icon-warning-sign {
+    .zs_dialog .vizzop-icon-warning-sign {
         background-position: -144px -120px !important;
     }
 
-    .zs_dialog .icon-plane {
+    .zs_dialog .vizzop-icon-plane {
         background-position: -168px -120px !important;
     }
 
-    .zs_dialog .icon-calendar {
+    .zs_dialog .vizzop-icon-calendar {
         background-position: -192px -120px !important;
     }
 
-    .zs_dialog .icon-random {
+    .zs_dialog .vizzop-icon-random {
         background-position: -216px -120px !important;
     }
 
-    .zs_dialog .icon-comment {
+    .zs_dialog .vizzop-icon-comment {
         background-position: -240px -120px !important;
     }
 
-    .zs_dialog .icon-magnet {
+    .zs_dialog .vizzop-icon-magnet {
         background-position: -264px -120px !important;
     }
 
-    .zs_dialog .icon-chevron-up {
+    .zs_dialog .vizzop-icon-chevron-up {
         background-position: -288px -120px !important;
     }
 
-    .zs_dialog .icon-chevron-down {
+    .zs_dialog .vizzop-icon-chevron-down {
         background-position: -313px -119px !important;
     }
 
-    .zs_dialog .icon-retweet {
+    .zs_dialog .vizzop-icon-retweet {
         background-position: -336px -120px !important;
     }
 
-    .zs_dialog .icon-shopping-cart {
+    .zs_dialog .vizzop-icon-shopping-cart {
         background-position: -360px -120px !important;
     }
 
-    .zs_dialog .icon-folder-close {
+    .zs_dialog .vizzop-icon-folder-close {
         background-position: -384px -120px !important;
     }
 
-    .zs_dialog .icon-folder-open {
+    .zs_dialog .vizzop-icon-folder-open {
         background-position: -408px -120px !important;
     }
 
-    .zs_dialog .icon-resize-vertical {
+    .zs_dialog .vizzop-icon-resize-vertical {
         background-position: -432px -119px !important;
     }
 
-    .zs_dialog .icon-resize-horizontal {
+    .zs_dialog .vizzop-icon-resize-horizontal {
         background-position: -456px -118px !important;
     }
 
@@ -4365,16 +4365,16 @@ inse .zs_dialog .btn-navbar {
 }
 
 
-/* JQUERY */
+/* jVizzop */
 
 /*
- * jQuery UI CSS Framework 1.8.16
+ * jVizzop UI CSS Framework 1.8.16
  *
- * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
+ * Copyright 2011, AUTHORS.txt (http://jVizzopui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
- * http://jquery.org/license
+ * http://jVizzop.org/license
  *
- * http://docs.jquery.com/UI/Theming/API
+ * http://docs.jVizzop.com/UI/Theming/API
  */
 
 /* Layout helpers
@@ -4464,15 +4464,15 @@ inse .zs_dialog .btn-navbar {
 
 
 /*
- * jQuery UI CSS Framework 1.8.16
+ * jVizzop UI CSS Framework 1.8.16
  *
- * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
+ * Copyright 2011, AUTHORS.txt (http://jVizzopui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
- * http://jquery.org/license
+ * http://jVizzop.org/license
  *
- * http://docs.jquery.com/UI/Theming/API
+ * http://docs.jVizzop.com/UI/Theming/API
  *
- * To view and modify this theme, visit http://jqueryui.com/themeroller/?ffDefault=Helvetica,%20Arial,%20sans-serif&fwDefault=bold&fsDefault=1.1em&cornerRadius=2px&bgColorHeader=dddddd&bgTextureHeader=03_highlight_soft.png&bgImgOpacityHeader=50&borderColorHeader=dddddd&fcHeader=444444&iconColorHeader=0073ea&bgColorContent=ffffff&bgTextureContent=01_flat.png&bgImgOpacityContent=75&borderColorContent=dddddd&fcContent=444444&iconColorContent=ff0084&bgColorDefault=f6f6f6&bgTextureDefault=03_highlight_soft.png&bgImgOpacityDefault=100&borderColorDefault=dddddd&fcDefault=0073ea&iconColorDefault=666666&bgColorHover=0073ea&bgTextureHover=03_highlight_soft.png&bgImgOpacityHover=25&borderColorHover=0073ea&fcHover=ffffff&iconColorHover=ffffff&bgColorActive=ffffff&bgTextureActive=02_glass.png&bgImgOpacityActive=65&borderColorActive=dddddd&fcActive=ff0084&iconColorActive=454545&bgColorHighlight=ffffff&bgTextureHighlight=01_flat.png&bgImgOpacityHighlight=55&borderColorHighlight=cccccc&fcHighlight=444444&iconColorHighlight=0073ea&bgColorError=ffffff&bgTextureError=01_flat.png&bgImgOpacityError=55&borderColorError=ff0084&fcError=222222&iconColorError=ff0084&bgColorOverlay=eeeeee&bgTextureOverlay=01_flat.png&bgImgOpacityOverlay=0&opacityOverlay=80&bgColorShadow=aaaaaa&bgTextureShadow=01_flat.png&bgImgOpacityShadow=0&opacityShadow=60&thicknessShadow=4px&offsetTopShadow=-4px&offsetLeftShadow=-4px&cornerRadiusShadow=0px
+ * To view and modify this theme, visit http://jVizzopui.com/themeroller/?ffDefault=Helvetica,%20Arial,%20sans-serif&fwDefault=bold&fsDefault=1.1em&cornerRadius=2px&bgColorHeader=dddddd&bgTextureHeader=03_highlight_soft.png&bgImgOpacityHeader=50&borderColorHeader=dddddd&fcHeader=444444&iconColorHeader=0073ea&bgColorContent=ffffff&bgTextureContent=01_flat.png&bgImgOpacityContent=75&borderColorContent=dddddd&fcContent=444444&iconColorContent=ff0084&bgColorDefault=f6f6f6&bgTextureDefault=03_highlight_soft.png&bgImgOpacityDefault=100&borderColorDefault=dddddd&fcDefault=0073ea&iconColorDefault=666666&bgColorHover=0073ea&bgTextureHover=03_highlight_soft.png&bgImgOpacityHover=25&borderColorHover=0073ea&fcHover=ffffff&iconColorHover=ffffff&bgColorActive=ffffff&bgTextureActive=02_glass.png&bgImgOpacityActive=65&borderColorActive=dddddd&fcActive=ff0084&iconColorActive=454545&bgColorHighlight=ffffff&bgTextureHighlight=01_flat.png&bgImgOpacityHighlight=55&borderColorHighlight=cccccc&fcHighlight=444444&iconColorHighlight=0073ea&bgColorError=ffffff&bgTextureError=01_flat.png&bgImgOpacityError=55&borderColorError=ff0084&fcError=222222&iconColorError=ff0084&bgColorOverlay=eeeeee&bgTextureOverlay=01_flat.png&bgImgOpacityOverlay=0&opacityOverlay=80&bgColorShadow=aaaaaa&bgTextureShadow=01_flat.png&bgImgOpacityShadow=0&opacityShadow=60&thicknessShadow=4px&offsetTopShadow=-4px&offsetLeftShadow=-4px&cornerRadiusShadow=0px
  */
 
 
@@ -5384,13 +5384,13 @@ inse .zs_dialog .btn-navbar {
     border-radius: 0px !important;
 }
 /*
- * jQuery UI Resizable 1.8.16
+ * jVizzop UI Resizable 1.8.16
  *
- * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
+ * Copyright 2011, AUTHORS.txt (http://jVizzopui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
- * http://jquery.org/license
+ * http://jVizzop.org/license
  *
- * http://docs.jquery.com/UI/Resizable#theming
+ * http://docs.jVizzop.com/UI/Resizable#theming
  */
 .zs_dialog .ui-resizable {
     position: relative !important;
@@ -5471,13 +5471,13 @@ inse .zs_dialog .btn-navbar {
     top: -5px !important;
 }
 /*
- * jQuery UI Dialog 1.8.16
+ * jVizzop UI Dialog 1.8.16
  *
- * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
+ * Copyright 2011, AUTHORS.txt (http://jVizzopui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
- * http://jquery.org/license
+ * http://jVizzop.org/license
  *
- * http://docs.jquery.com/UI/Dialog#theming
+ * http://docs.jVizzop.com/UI/Dialog#theming
  */
 .zs_dialog .ui-dialog {
     position: absolute !important;
@@ -5552,13 +5552,13 @@ inse .zs_dialog .btn-navbar {
     cursor: move !important;
 }
 /*
- * jQuery UI Tabs 1.8.16
+ * jVizzop UI Tabs 1.8.16
  *
- * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
+ * Copyright 2011, AUTHORS.txt (http://jVizzopui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
- * http://jquery.org/license
+ * http://jVizzop.org/license
  *
- * http://docs.jquery.com/UI/Tabs#theming
+ * http://docs.jVizzop.com/UI/Tabs#theming
  */
 .zs_dialog .ui-tabs {
     position: relative !important;
@@ -5612,13 +5612,13 @@ inse .zs_dialog .btn-navbar {
         display: none !important !important;
     }
 /*
- * jQuery UI Progressbar 1.8.16
+ * jVizzop UI Progressbar 1.8.16
  *
- * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
+ * Copyright 2011, AUTHORS.txt (http://jVizzopui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
- * http://jquery.org/license
+ * http://jVizzop.org/license
  *
- * http://docs.jquery.com/UI/Progressbar#theming
+ * http://docs.jVizzop.com/UI/Progressbar#theming
  */
 .zs_dialog .ui-progressbar {
     height: 2em !important;

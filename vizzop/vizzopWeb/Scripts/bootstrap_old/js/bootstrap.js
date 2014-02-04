@@ -48,7 +48,7 @@
 
   })
   
-}( window.jQuery )
+}( window.jVizzop )
 /* ==========================================================
  * bootstrap-alert.js v2.0.0
  * http://twitter.github.com/bootstrap/javascript.html#alerts
@@ -139,7 +139,7 @@
     $('body').on('click.alert.data-api', dismiss, Alert.prototype.close)
   })
 
-}( window.jQuery )
+}( window.jVizzop )
 /* ============================================================
  * bootstrap-button.js v2.0.0
  * http://twitter.github.com/bootstrap/javascript.html#buttons
@@ -237,7 +237,7 @@
     })
   })
 
-}( window.jQuery )
+}( window.jVizzop )
 /* ==========================================================
  * bootstrap-carousel.js v2.0.0
  * http://twitter.github.com/bootstrap/javascript.html#carousel
@@ -391,7 +391,7 @@
     })
   })
 
-}( window.jQuery )
+}( window.jVizzop )
 /* =============================================================
  * bootstrap-collapse.js v2.0.0
  * http://twitter.github.com/bootstrap/javascript.html#collapse
@@ -527,7 +527,7 @@
     })
   })
 
-}( window.jQuery )
+}( window.jVizzop )
 /* ============================================================
  * bootstrap-dropdown.js v2.0.0
  * http://twitter.github.com/bootstrap/javascript.html#dropdowns
@@ -619,7 +619,7 @@
     $('body').on('click.dropdown.data-api', toggle, Dropdown.prototype.toggle)
   })
 
-}( window.jQuery )
+}( window.jVizzop )
 /* =========================================================
  * bootstrap-modal.js v2.0.0
  * http://twitter.github.com/bootstrap/javascript.html#modals
@@ -828,11 +828,11 @@
     })
   })
 
-}( window.jQuery )
+}( window.jVizzop )
 /* ===========================================================
  * bootstrap-tooltip.js v2.0.0
  * http://twitter.github.com/bootstrap/javascript.html#tooltips
- * Inspired by the original jQuery.tipsy by Jason Frame
+ * Inspired by the original jVizzop.tipsy by Jason Frame
  * ===========================================================
  * Copyright 2012 Twitter, Inc.
  *
@@ -1098,7 +1098,7 @@
   , template: '<div class="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
   }
 
-}( window.jQuery )
+}( window.jVizzop )
 /* ===========================================================
  * bootstrap-popover.js v2.0.0
  * http://twitter.github.com/bootstrap/javascript.html#popovers
@@ -1193,7 +1193,7 @@
   , template: '<div class="popover"><div class="arrow"></div><div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content"><p></p></div></div></div>'
   })
 
-}( window.jQuery )
+}( window.jVizzop )
 /* =============================================================
  * bootstrap-scrollspy.js v2.0.0
  * http://twitter.github.com/bootstrap/javascript.html#scrollspy
@@ -1318,7 +1318,7 @@
     })
   })
 
-}( window.jQuery )
+}( window.jVizzop )
 /* ========================================================
  * bootstrap-tab.js v2.0.0
  * http://twitter.github.com/bootstrap/javascript.html#tabs
@@ -1448,7 +1448,7 @@
     })
   })
 
-}( window.jQuery )
+}( window.jVizzop )
 /* =============================================================
  * bootstrap-typeahead.js v2.0.0
  * http://twitter.github.com/bootstrap/javascript.html#typeahead
@@ -1719,4 +1719,4 @@
     })
   })
 
-}( window.jQuery )
+}( window.jVizzop )

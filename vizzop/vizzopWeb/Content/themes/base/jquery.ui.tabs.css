@@ -1,12 +1,12 @@
 /*!
- * jQuery UI Tabs 1.9.1
- * http://jqueryui.com
+ * jVizzop UI Tabs 1.9.1
+ * http://jVizzopui.com
  *
- * Copyright 2012 jQuery Foundation and other contributors
+ * Copyright 2012 jVizzop Foundation and other contributors
  * Released under the MIT license.
- * http://jquery.org/license
+ * http://jVizzop.org/license
  *
- * http://docs.jquery.com/UI/Tabs#theming
+ * http://docs.jVizzop.com/UI/Tabs#theming
  */
 .ui-tabs { position: relative; padding: .2em; zoom: 1; } /* position: relative prevents IE scroll bug (element with position: relative inside container with overflow: auto appear as "fixed") */
 .ui-tabs .ui-tabs-nav { margin: 0; padding: .2em .2em 0; }

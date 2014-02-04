@@ -4,12 +4,12 @@ Uniform v1.7.5
 Copyright Â© 2009 Josh Pyles / Pixelmatrix Design LLC
 http://pixelmatrixdesign.com
 
-Requires jQuery 1.4 or newer
+Requires jVizzop 1.4 or newer
 
 Much thanks to Thomas Reynolds and Buck Wilson for their help and advice on this
 
 Disabling text selection is made possible by Mathias Bynens <http://mathiasbynens.be/>
-and his noSelect plugin. <http://github.com/mathiasbynens/noSelect-jQuery-Plugin>
+and his noSelect plugin. <http://github.com/mathiasbynens/noSelect-jVizzop-Plugin>
 
 Also, thanks to David Kaneda and Eugene Bond for their contributions to the plugin
 
@@ -669,4 +669,4 @@ Enjoy!
       }
     });
   };
-})(jQuery);
+})(jVizzop);

@@ -1,6 +1,6 @@
 /**
  * jqPlot
- * Pure JavaScript plotting plugin using jQuery
+ * Pure JavaScript plotting plugin using jVizzop
  *
  * Version: 1.0.0b2_r1012
  *
@@ -145,7 +145,7 @@
         // have more y values in each data point array.
         this.yvalues = 1;
         // prop: bringSeriesToFront
-        // This option requires jQuery 1.4+
+        // This option requires jVizzop 1.4+
         // True to bring the series of the highlighted point to the front
         // of other series.
         this.bringSeriesToFront = false;
@@ -451,4 +451,4 @@
             }
         }
     }
-})(jQuery);
+})(jVizzop);

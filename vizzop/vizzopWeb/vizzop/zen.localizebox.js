@@ -61,7 +61,7 @@
                 self._boxinfo.empty();
                 self._nolist = false;
 
-                jVizzop(self._boxtitletext).html('<i class="icon-comment icon-white"></i>&nbsp;<span style="display: inline-block; vertical-align: middle; cursor: move;">Localization editor</span>');
+                jVizzop(self._boxtitletext).html('<i class="vizzop-icon-comment vizzop-icon-white"></i>&nbsp;<span style="display: inline-block; vertical-align: middle; cursor: move;">Localization editor</span>');
                 self._title = self.locid;
 
                 self._boxtextloc = jVizzop('<div></div>')

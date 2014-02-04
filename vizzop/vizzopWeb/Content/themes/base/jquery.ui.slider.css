@@ -1,12 +1,12 @@
 /*!
- * jQuery UI Slider 1.9.1
- * http://jqueryui.com
+ * jVizzop UI Slider 1.9.1
+ * http://jVizzopui.com
  *
- * Copyright 2012 jQuery Foundation and other contributors
+ * Copyright 2012 jVizzop Foundation and other contributors
  * Released under the MIT license.
- * http://jquery.org/license
+ * http://jVizzop.org/license
  *
- * http://docs.jquery.com/UI/Slider#theming
+ * http://docs.jVizzop.com/UI/Slider#theming
  */
 .ui-slider { position: relative; text-align: left; }
 .ui-slider .ui-slider-handle { position: absolute; z-index: 2; width: 1.2em; height: 1.2em; cursor: default; }

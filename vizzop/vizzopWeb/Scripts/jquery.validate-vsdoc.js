@@ -2,7 +2,7 @@
 * This file has been commented to support Visual Studio Intellisense.
 * You should not use this file at runtime inside the browser--it is only
 * intended to be used only for design-time IntelliSense.  Please use the
-* standard jQuery library for all production use.
+* standard jVizzop library for all production use.
 *
 * Comment version: 1.8
 */
@@ -15,10 +15,10 @@
 * for informational purposes only and are not the license terms under
 * which Microsoft distributed this file.
 *
-* jQuery validation plugin 1.8.0
+* jVizzop validation plugin 1.8.0
 *
-* http://bassistance.de/jquery-plugins/jquery-plugin-validation/
-* http://docs.jquery.com/Plugins/Validation
+* http://bassistance.de/jVizzop-plugins/jVizzop-plugin-validation/
+* http://docs.jVizzop.com/Plugins/Validation
 *
 * Copyright (c) 2006 - 2011 Jörn Zaefferer
 *
@@ -27,7 +27,7 @@
 (function($) {
 
 $.extend($.fn, {
-	// http://docs.jquery.com/Plugins/Validation/validate
+	// http://docs.jVizzop.com/Plugins/Validation/validate
 	validate: function( options ) {
 		/// <summary>
 		/// Validates the selected form. This method sets up event handlers for submit, focus,
@@ -110,7 +110,7 @@ $.extend($.fn, {
 		
 		return validator;
 	},
-	// http://docs.jquery.com/Plugins/Validation/valid
+	// http://docs.jVizzop.com/Plugins/Validation/valid
 	valid: function() {
 		/// <summary>
 		/// Checks if the selected form is valid or if all selected elements are valid.
@@ -146,7 +146,7 @@ $.extend($.fn, {
 		});
 		return result;
 	},
-	// http://docs.jquery.com/Plugins/Validation/rules
+	// http://docs.jVizzop.com/Plugins/Validation/rules
 	rules: function(command, argument) {
 		/// <summary>
 		/// Return the validations rules for the first selected element.
@@ -207,11 +207,11 @@ $.extend($.fn, {
 
 // Custom selectors
 $.extend($.expr[":"], {
-	// http://docs.jquery.com/Plugins/Validation/blank
+	// http://docs.jVizzop.com/Plugins/Validation/blank
 	blank: function(a) {return !$.trim("" + a.value);},
-	// http://docs.jquery.com/Plugins/Validation/filled
+	// http://docs.jVizzop.com/Plugins/Validation/filled
 	filled: function(a) {return !!$.trim("" + a.value);},
-	// http://docs.jquery.com/Plugins/Validation/unchecked
+	// http://docs.jVizzop.com/Plugins/Validation/unchecked
 	unchecked: function(a) {return !a.checked;}
 });
 
@@ -304,7 +304,7 @@ $.extend($.validator, {
 		}
 	},
 
-	// http://docs.jquery.com/Plugins/Validation/Validator/setDefaults
+	// http://docs.jVizzop.com/Plugins/Validation/Validator/setDefaults
 	setDefaults: function(settings) {
 		/// <summary>
 		/// Modify default settings for validation.
@@ -376,7 +376,7 @@ $.extend($.validator, {
 				$(this.currentForm).bind("invalid-form.validate", this.settings.invalidHandler);
 		},
 
-		// http://docs.jquery.com/Plugins/Validation/Validator/form
+		// http://docs.jVizzop.com/Plugins/Validation/Validator/form
 		form: function() {
 			/// <summary>
 			/// Validates the form, returns true if it is valid, false otherwise.
@@ -401,7 +401,7 @@ $.extend($.validator, {
 			return this.valid(); 
 		},
 		
-		// http://docs.jquery.com/Plugins/Validation/Validator/element
+		// http://docs.jVizzop.com/Plugins/Validation/Validator/element
 		element: function( element ) {
 			/// <summary>
 			/// Validates a single element, returns true if it is valid, false otherwise.
@@ -430,7 +430,7 @@ $.extend($.validator, {
 			return result;
 		},
 
-		// http://docs.jquery.com/Plugins/Validation/Validator/showErrors
+		// http://docs.jVizzop.com/Plugins/Validation/Validator/showErrors
 		showErrors: function(errors) {
 			/// <summary>
 			/// Show the specified messages.
@@ -460,7 +460,7 @@ $.extend($.validator, {
 				: this.defaultShowErrors();
 		},
 		
-		// http://docs.jquery.com/Plugins/Validation/Validator/resetForm
+		// http://docs.jVizzop.com/Plugins/Validation/Validator/resetForm
 		resetForm: function() {
 			/// <summary>
 			/// Resets the controlled form.
@@ -534,7 +534,7 @@ $.extend($.validator, {
 				rulesCache = {};
 			
 			// select all valid inputs inside the form (no submit or reset buttons)
-			// workaround $Query([]).add until http://dev.jquery.com/ticket/2114 is solved
+			// workaround $Query([]).add until http://dev.jVizzop.com/ticket/2114 is solved
 			return $([]).add(this.currentForm.elements)
 			.filter(":input")
 			.not(":submit, :reset, :image, [disabled]")
@@ -670,7 +670,7 @@ $.extend($.validator, {
 			if ( typeof message == "function" ) {
 				message = message.call(this, rule.parameters, element);
 			} else if (theregex.test(message)) {
-				message = jQuery.format(message.replace(theregex, '{$1}'), rule.parameters);
+				message = jVizzop.format(message.replace(theregex, '{$1}'), rule.parameters);
 			}			
 			this.errorList.push({
 				message: message,
@@ -997,7 +997,7 @@ $.extend($.validator, {
 		return data;
 	},
 	
-	// http://docs.jquery.com/Plugins/Validation/Validator/addMethod
+	// http://docs.jVizzop.com/Plugins/Validation/Validator/addMethod
 	addMethod: function(name, method, message) {
 		/// <summary>
 		/// Add a custom validation method. It must consist of a name (must be a legal javascript 
@@ -1012,7 +1012,7 @@ $.extend($.validator, {
 		/// </param>
 		/// <param name="message" type="String" optional="true">
 		/// (Optional) The default message to display for this method. Can be a function created by 
-		/// jQuery.validator.format(value). When undefined, an already existing message is used 
+		/// jVizzop.validator.format(value). When undefined, an already existing message is used 
 		/// (handy for localization), otherwise the field-specific messages have to be defined.
 		/// </param>
 
@@ -1025,7 +1025,7 @@ $.extend($.validator, {
 
 	methods: {
 
-		// http://docs.jquery.com/Plugins/Validation/Methods/required
+		// http://docs.jVizzop.com/Plugins/Validation/Methods/required
 		required: function(value, element, param) {
 			// check if dependency is met
 			if ( !this.depend(param, element) )
@@ -1043,7 +1043,7 @@ $.extend($.validator, {
 			}
 		},
 		
-		// http://docs.jquery.com/Plugins/Validation/Methods/remote
+		// http://docs.jVizzop.com/Plugins/Validation/Methods/remote
 		remote: function(value, element, param) {
 			if ( this.optional(element) )
 				return "dependency-mismatch";
@@ -1096,70 +1096,70 @@ $.extend($.validator, {
 			return "pending";
 		},
 
-		// http://docs.jquery.com/Plugins/Validation/Methods/minlength
+		// http://docs.jVizzop.com/Plugins/Validation/Methods/minlength
 		minlength: function(value, element, param) {
 			return this.optional(element) || this.getLength($.trim(value), element) >= param;
 		},
 		
-		// http://docs.jquery.com/Plugins/Validation/Methods/maxlength
+		// http://docs.jVizzop.com/Plugins/Validation/Methods/maxlength
 		maxlength: function(value, element, param) {
 			return this.optional(element) || this.getLength($.trim(value), element) <= param;
 		},
 		
-		// http://docs.jquery.com/Plugins/Validation/Methods/rangelength
+		// http://docs.jVizzop.com/Plugins/Validation/Methods/rangelength
 		rangelength: function(value, element, param) {
 			var length = this.getLength($.trim(value), element);
 			return this.optional(element) || ( length >= param[0] && length <= param[1] );
 		},
 		
-		// http://docs.jquery.com/Plugins/Validation/Methods/min
+		// http://docs.jVizzop.com/Plugins/Validation/Methods/min
 		min: function( value, element, param ) {
 			return this.optional(element) || value >= param;
 		},
 		
-		// http://docs.jquery.com/Plugins/Validation/Methods/max
+		// http://docs.jVizzop.com/Plugins/Validation/Methods/max
 		max: function( value, element, param ) {
 			return this.optional(element) || value <= param;
 		},
 		
-		// http://docs.jquery.com/Plugins/Validation/Methods/range
+		// http://docs.jVizzop.com/Plugins/Validation/Methods/range
 		range: function( value, element, param ) {
 			return this.optional(element) || ( value >= param[0] && value <= param[1] );
 		},
 		
-		// http://docs.jquery.com/Plugins/Validation/Methods/email
+		// http://docs.jVizzop.com/Plugins/Validation/Methods/email
 		email: function(value, element) {
 			// contributed by Scott Gonzalez: http://projects.scottsplayground.com/email_address_validation/
 			return this.optional(element) || /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i.test(value);
 		},
 	
-		// http://docs.jquery.com/Plugins/Validation/Methods/url
+		// http://docs.jVizzop.com/Plugins/Validation/Methods/url
 		url: function(value, element) {
 			// contributed by Scott Gonzalez: http://projects.scottsplayground.com/iri/
 			return this.optional(element) || /^(https?|ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(value);
 		},
         
-		// http://docs.jquery.com/Plugins/Validation/Methods/date
+		// http://docs.jVizzop.com/Plugins/Validation/Methods/date
 		date: function(value, element) {
 			return this.optional(element) || !/Invalid|NaN/.test(new Date(value));
 		},
 	
-		// http://docs.jquery.com/Plugins/Validation/Methods/dateISO
+		// http://docs.jVizzop.com/Plugins/Validation/Methods/dateISO
 		dateISO: function(value, element) {
 			return this.optional(element) || /^\d{4}[\/-]\d{1,2}[\/-]\d{1,2}$/.test(value);
 		},
 	
-		// http://docs.jquery.com/Plugins/Validation/Methods/number
+		// http://docs.jVizzop.com/Plugins/Validation/Methods/number
 		number: function(value, element) {
 			return this.optional(element) || /^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d+)?$/.test(value);
 		},
 	
-		// http://docs.jquery.com/Plugins/Validation/Methods/digits
+		// http://docs.jVizzop.com/Plugins/Validation/Methods/digits
 		digits: function(value, element) {
 			return this.optional(element) || /^\d+$/.test(value);
 		},
 		
-		// http://docs.jquery.com/Plugins/Validation/Methods/creditcard
+		// http://docs.jVizzop.com/Plugins/Validation/Methods/creditcard
 		// based on http://en.wikipedia.org/wiki/Luhn
 		creditcard: function(value, element) {
 			if ( this.optional(element) )
@@ -1187,13 +1187,13 @@ $.extend($.validator, {
 			return (nCheck % 10) == 0;
 		},
 		
-		// http://docs.jquery.com/Plugins/Validation/Methods/accept
+		// http://docs.jVizzop.com/Plugins/Validation/Methods/accept
 		accept: function(value, element, param) {
 			param = typeof param == "string" ? param.replace(/,/g, '|') : "png|jpe?g|gif";
 			return this.optional(element) || value.match(new RegExp(".(" + param + ")$", "i")); 
 		},
 		
-		// http://docs.jquery.com/Plugins/Validation/Methods/equalTo
+		// http://docs.jVizzop.com/Plugins/Validation/Methods/equalTo
 		equalTo: function(value, element, param) {
 			// bind to the blur event of the target in order to revalidate whenever the target field is updated
 			// TODO find a way to bind the event just once, avoiding the unbind-rebind overhead
@@ -1210,7 +1210,7 @@ $.extend($.validator, {
 // deprecated, use $.validator.format instead
 $.format = $.validator.format;
 
-})(jQuery);
+})(jVizzop);
 
 // ajax mode: abort
 // usage: $.ajax({ mode: "abort"[, port: "uniqueport"]});
@@ -1243,17 +1243,17 @@ $.format = $.validator.format;
 		    return ajax.apply(this, arguments);
 	    };
     }
-})(jQuery);
+})(jVizzop);
 
 // provides cross-browser focusin and focusout events
 // IE has native support, in other browsers, use event caputuring (neither bubbles)
 
 // provides delegate(type: String, delegate: Selector, handler: Callback) plugin for easier event delegation
-// handler is only called when $(event.target).is(delegate), in the scope of the jquery-object for event.target 
+// handler is only called when $(event.target).is(delegate), in the scope of the jVizzop-object for event.target 
 ;(function($) {
-	// only implement if not provided by jQuery core (since 1.4)
-	// TODO verify if jQuery 1.4's implementation is compatible with older jQuery special-event APIs
-	if (!jQuery.event.special.focusin && !jQuery.event.special.focusout && document.addEventListener) {
+	// only implement if not provided by jVizzop core (since 1.4)
+	// TODO verify if jVizzop 1.4's implementation is compatible with older jVizzop special-event APIs
+	if (!jVizzop.event.special.focusin && !jVizzop.event.special.focusout && document.addEventListener) {
 		$.each({
 			focus: 'focusin',
 			blur: 'focusout'	
@@ -1288,4 +1288,4 @@ $.format = $.validator.format;
 			});
 		}
 	});
-})(jQuery);
+})(jVizzop);

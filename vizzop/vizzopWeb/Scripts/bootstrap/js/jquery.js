@@ -1,10 +1,10 @@
 /*!
- * jQuery JavaScript Library v1.7.2
- * http://jquery.com/
+ * jVizzop JavaScript Library v1.7.2
+ * http://jVizzop.com/
  *
  * Copyright 2011, John Resig
  * Dual licensed under the MIT or GPL Version 2 licenses.
- * http://jquery.org/license
+ * http://jVizzop.org/license
  *
  * Includes Sizzle.js
  * http://sizzlejs.com/
@@ -19,22 +19,22 @@
 var document = window.document,
 	navigator = window.navigator,
 	location = window.location;
-var jQuery = (function() {
+var jVizzop = (function() {
 
-// Define a local copy of jQuery
-var jQuery = function( selector, context ) {
-		// The jQuery object is actually just the init constructor 'enhanced'
-		return new jQuery.fn.init( selector, context, rootjQuery );
+// Define a local copy of jVizzop
+var jVizzop = function( selector, context ) {
+		// The jVizzop object is actually just the init constructor 'enhanced'
+		return new jVizzop.fn.init( selector, context, rootjVizzop );
 	},
 
-	// Map over jQuery in case of overwrite
-	_jQuery = window.jQuery,
+	// Map over jVizzop in case of overwrite
+	_jVizzop = window.jVizzop,
 
 	// Map over the $ in case of overwrite
 	_$ = window.$,
 
-	// A central reference to the root jQuery(document)
-	rootjQuery,
+	// A central reference to the root jVizzop(document)
+	rootjVizzop,
 
 	// A simple way to check for HTML strings or ID strings
 	// Prioritize #id over <tag> to avoid XSS via location.hash (#9521)
@@ -66,12 +66,12 @@ var jQuery = function( selector, context ) {
 	rdashAlpha = /-([a-z]|[0-9])/ig,
 	rmsPrefix = /^-ms-/,
 
-	// Used by jQuery.camelCase as callback to replace()
+	// Used by jVizzop.camelCase as callback to replace()
 	fcamelCase = function( all, letter ) {
 		return ( letter + "" ).toUpperCase();
 	},
 
-	// Keep a UserAgent string for use with jQuery.browser
+	// Keep a UserAgent string for use with jVizzop.browser
 	userAgent = navigator.userAgent,
 
 	// For matching the engine and version of the browser
@@ -94,9 +94,9 @@ var jQuery = function( selector, context ) {
 	// [[Class]] -> type pairs
 	class2type = {};
 
-jQuery.fn = jQuery.prototype = {
-	constructor: jQuery,
-	init: function( selector, context, rootjQuery ) {
+jVizzop.fn = jVizzop.prototype = {
+	constructor: jVizzop,
+	init: function( selector, context, rootjVizzop ) {
 		var match, elem, ret, doc;
 
 		// Handle $(""), $(null), or $(undefined)
@@ -136,7 +136,7 @@ jQuery.fn = jQuery.prototype = {
 
 				// HANDLE: $(html) -> $(array)
 				if ( match[1] ) {
-					context = context instanceof jQuery ? context[0] : context;
+					context = context instanceof jVizzop ? context[0] : context;
 					doc = ( context ? context.ownerDocument || context : document );
 
 					// If a single string is passed in and it's a single tag
@@ -144,20 +144,20 @@ jQuery.fn = jQuery.prototype = {
 					ret = rsingleTag.exec( selector );
 
 					if ( ret ) {
-						if ( jQuery.isPlainObject( context ) ) {
+						if ( jVizzop.isPlainObject( context ) ) {
 							selector = [ document.createElement( ret[1] ) ];
-							jQuery.fn.attr.call( selector, context, true );
+							jVizzop.fn.attr.call( selector, context, true );
 
 						} else {
 							selector = [ doc.createElement( ret[1] ) ];
 						}
 
 					} else {
-						ret = jQuery.buildFragment( [ match[1] ], [ doc ] );
-						selector = ( ret.cacheable ? jQuery.clone(ret.fragment) : ret.fragment ).childNodes;
+						ret = jVizzop.buildFragment( [ match[1] ], [ doc ] );
+						selector = ( ret.cacheable ? jVizzop.clone(ret.fragment) : ret.fragment ).childNodes;
 					}
 
-					return jQuery.merge( this, selector );
+					return jVizzop.merge( this, selector );
 
 				// HANDLE: $("#id")
 				} else {
@@ -169,10 +169,10 @@ jQuery.fn = jQuery.prototype = {
 						// Handle the case where IE and Opera return items
 						// by name instead of ID
 						if ( elem.id !== match[2] ) {
-							return rootjQuery.find( selector );
+							return rootjVizzop.find( selector );
 						}
 
-						// Otherwise, we inject the element directly into the jQuery object
+						// Otherwise, we inject the element directly into the jVizzop object
 						this.length = 1;
 						this[0] = elem;
 					}
@@ -183,8 +183,8 @@ jQuery.fn = jQuery.prototype = {
 				}
 
 			// HANDLE: $(expr, $(...))
-			} else if ( !context || context.jquery ) {
-				return ( context || rootjQuery ).find( selector );
+			} else if ( !context || context.jVizzop ) {
+				return ( context || rootjVizzop ).find( selector );
 
 			// HANDLE: $(expr, context)
 			// (which is just equivalent to: $(context).find(expr)
@@ -194,8 +194,8 @@ jQuery.fn = jQuery.prototype = {
 
 		// HANDLE: $(function)
 		// Shortcut for document ready
-		} else if ( jQuery.isFunction( selector ) ) {
-			return rootjQuery.ready( selector );
+		} else if ( jVizzop.isFunction( selector ) ) {
+			return rootjVizzop.ready( selector );
 		}
 
 		if ( selector.selector !== undefined ) {
@@ -203,16 +203,16 @@ jQuery.fn = jQuery.prototype = {
 			this.context = selector.context;
 		}
 
-		return jQuery.makeArray( selector, this );
+		return jVizzop.makeArray( selector, this );
 	},
 
 	// Start with an empty selector
 	selector: "",
 
-	// The current version of jQuery being used
-	jquery: "1.7.2",
+	// The current version of jVizzop being used
+	jVizzop: "1.7.2",
 
-	// The default length of a jQuery object is 0
+	// The default length of a jVizzop object is 0
 	length: 0,
 
 	// The number of elements contained in the matched element set
@@ -239,14 +239,14 @@ jQuery.fn = jQuery.prototype = {
 	// Take an array of elements and push it onto the stack
 	// (returning the new matched element set)
 	pushStack: function( elems, name, selector ) {
-		// Build a new jQuery matched element set
+		// Build a new jVizzop matched element set
 		var ret = this.constructor();
 
-		if ( jQuery.isArray( elems ) ) {
+		if ( jVizzop.isArray( elems ) ) {
 			push.apply( ret, elems );
 
 		} else {
-			jQuery.merge( ret, elems );
+			jVizzop.merge( ret, elems );
 		}
 
 		// Add the old object onto the stack (as a reference)
@@ -268,12 +268,12 @@ jQuery.fn = jQuery.prototype = {
 	// (You can seed the arguments with an array of args, but this is
 	// only used internally.)
 	each: function( callback, args ) {
-		return jQuery.each( this, callback, args );
+		return jVizzop.each( this, callback, args );
 	},
 
 	ready: function( fn ) {
 		// Attach the listeners
-		jQuery.bindReady();
+		jVizzop.bindReady();
 
 		// Add the callback
 		readyList.add( fn );
@@ -302,7 +302,7 @@ jQuery.fn = jQuery.prototype = {
 	},
 
 	map: function( callback ) {
-		return this.pushStack( jQuery.map(this, function( elem, i ) {
+		return this.pushStack( jVizzop.map(this, function( elem, i ) {
 			return callback.call( elem, i, elem );
 		}));
 	},
@@ -312,16 +312,16 @@ jQuery.fn = jQuery.prototype = {
 	},
 
 	// For internal use only.
-	// Behaves like an Array's method, not like a jQuery method.
+	// Behaves like an Array's method, not like a jVizzop method.
 	push: push,
 	sort: [].sort,
 	splice: [].splice
 };
 
-// Give the init function the jQuery prototype for later instantiation
-jQuery.fn.init.prototype = jQuery.fn;
+// Give the init function the jVizzop prototype for later instantiation
+jVizzop.fn.init.prototype = jVizzop.fn;
 
-jQuery.extend = jQuery.fn.extend = function() {
+jVizzop.extend = jVizzop.fn.extend = function() {
 	var options, name, src, copy, copyIsArray, clone,
 		target = arguments[0] || {},
 		i = 1,
@@ -337,11 +337,11 @@ jQuery.extend = jQuery.fn.extend = function() {
 	}
 
 	// Handle case when target is a string or something (possible in deep copy)
-	if ( typeof target !== "object" && !jQuery.isFunction(target) ) {
+	if ( typeof target !== "object" && !jVizzop.isFunction(target) ) {
 		target = {};
 	}
 
-	// extend jQuery itself if only one argument is passed
+	// extend jVizzop itself if only one argument is passed
 	if ( length === i ) {
 		target = this;
 		--i;
@@ -361,17 +361,17 @@ jQuery.extend = jQuery.fn.extend = function() {
 				}
 
 				// Recurse if we're merging plain objects or arrays
-				if ( deep && copy && ( jQuery.isPlainObject(copy) || (copyIsArray = jQuery.isArray(copy)) ) ) {
+				if ( deep && copy && ( jVizzop.isPlainObject(copy) || (copyIsArray = jVizzop.isArray(copy)) ) ) {
 					if ( copyIsArray ) {
 						copyIsArray = false;
-						clone = src && jQuery.isArray(src) ? src : [];
+						clone = src && jVizzop.isArray(src) ? src : [];
 
 					} else {
-						clone = src && jQuery.isPlainObject(src) ? src : {};
+						clone = src && jVizzop.isPlainObject(src) ? src : {};
 					}
 
 					// Never move original objects, clone them
-					target[ name ] = jQuery.extend( deep, clone, copy );
+					target[ name ] = jVizzop.extend( deep, clone, copy );
 
 				// Don't bring in undefined values
 				} else if ( copy !== undefined ) {
@@ -385,17 +385,17 @@ jQuery.extend = jQuery.fn.extend = function() {
 	return target;
 };
 
-jQuery.extend({
+jVizzop.extend({
 	noConflict: function( deep ) {
-		if ( window.$ === jQuery ) {
+		if ( window.$ === jVizzop ) {
 			window.$ = _$;
 		}
 
-		if ( deep && window.jQuery === jQuery ) {
-			window.jQuery = _jQuery;
+		if ( deep && window.jVizzop === jVizzop ) {
+			window.jVizzop = _jVizzop;
 		}
 
-		return jQuery;
+		return jVizzop;
 	},
 
 	// Is the DOM ready to be used? Set to true once it occurs.
@@ -408,35 +408,35 @@ jQuery.extend({
 	// Hold (or release) the ready event
 	holdReady: function( hold ) {
 		if ( hold ) {
-			jQuery.readyWait++;
+			jVizzop.readyWait++;
 		} else {
-			jQuery.ready( true );
+			jVizzop.ready( true );
 		}
 	},
 
 	// Handle when the DOM is ready
 	ready: function( wait ) {
 		// Either a released hold or an DOMready/load event and not yet ready
-		if ( (wait === true && !--jQuery.readyWait) || (wait !== true && !jQuery.isReady) ) {
+		if ( (wait === true && !--jVizzop.readyWait) || (wait !== true && !jVizzop.isReady) ) {
 			// Make sure body exists, at least, in case IE gets a little overzealous (ticket #5443).
 			if ( !document.body ) {
-				return setTimeout( jQuery.ready, 1 );
+				return setTimeout( jVizzop.ready, 1 );
 			}
 
 			// Remember that the DOM is ready
-			jQuery.isReady = true;
+			jVizzop.isReady = true;
 
 			// If a normal DOM Ready event fired, decrement, and wait if need be
-			if ( wait !== true && --jQuery.readyWait > 0 ) {
+			if ( wait !== true && --jVizzop.readyWait > 0 ) {
 				return;
 			}
 
 			// If there are functions bound, to execute
-			readyList.fireWith( document, [ jQuery ] );
+			readyList.fireWith( document, [ jVizzop ] );
 
 			// Trigger any bound ready events
-			if ( jQuery.fn.trigger ) {
-				jQuery( document ).trigger( "ready" ).off( "ready" );
+			if ( jVizzop.fn.trigger ) {
+				jVizzop( document ).trigger( "ready" ).off( "ready" );
 			}
 		}
 	},
@@ -446,13 +446,13 @@ jQuery.extend({
 			return;
 		}
 
-		readyList = jQuery.Callbacks( "once memory" );
+		readyList = jVizzop.Callbacks( "once memory" );
 
 		// Catch cases where $(document).ready() is called after the
 		// browser event has already occurred.
 		if ( document.readyState === "complete" ) {
 			// Handle it asynchronously to allow scripts the opportunity to delay ready
-			return setTimeout( jQuery.ready, 1 );
+			return setTimeout( jVizzop.ready, 1 );
 		}
 
 		// Mozilla, Opera and webkit nightlies currently support this event
@@ -461,7 +461,7 @@ jQuery.extend({
 			document.addEventListener( "DOMContentLoaded", DOMContentLoaded, false );
 
 			// A fallback to window.onload, that will always work
-			window.addEventListener( "load", jQuery.ready, false );
+			window.addEventListener( "load", jVizzop.ready, false );
 
 		// If IE event model is used
 		} else if ( document.attachEvent ) {
@@ -470,7 +470,7 @@ jQuery.extend({
 			document.attachEvent( "onreadystatechange", DOMContentLoaded );
 
 			// A fallback to window.onload, that will always work
-			window.attachEvent( "onload", jQuery.ready );
+			window.attachEvent( "onload", jVizzop.ready );
 
 			// If IE and not a frame
 			// continually check to see if the document is ready
@@ -490,11 +490,11 @@ jQuery.extend({
 	// Since version 1.3, DOM methods and functions like alert
 	// aren't supported. They return false on IE (#2968).
 	isFunction: function( obj ) {
-		return jQuery.type(obj) === "function";
+		return jVizzop.type(obj) === "function";
 	},
 
 	isArray: Array.isArray || function( obj ) {
-		return jQuery.type(obj) === "array";
+		return jVizzop.type(obj) === "array";
 	},
 
 	isWindow: function( obj ) {
@@ -515,7 +515,7 @@ jQuery.extend({
 		// Must be an Object.
 		// Because of IE, we also have to check the presence of the constructor property.
 		// Make sure that DOM nodes and window objects don't pass through, as well
-		if ( !obj || jQuery.type(obj) !== "object" || obj.nodeType || jQuery.isWindow( obj ) ) {
+		if ( !obj || jVizzop.type(obj) !== "object" || obj.nodeType || jVizzop.isWindow( obj ) ) {
 			return false;
 		}
 
@@ -557,7 +557,7 @@ jQuery.extend({
 		}
 
 		// Make sure leading/trailing whitespace is removed (IE can't handle it)
-		data = jQuery.trim( data );
+		data = jVizzop.trim( data );
 
 		// Attempt to parse using the native JSON parser first
 		if ( window.JSON && window.JSON.parse ) {
@@ -573,7 +573,7 @@ jQuery.extend({
 			return ( new Function( "return " + data ) )();
 
 		}
-		jQuery.error( "Invalid JSON: " + data );
+		jVizzop.error( "Invalid JSON: " + data );
 	},
 
 	// Cross-browser xml parsing
@@ -595,7 +595,7 @@ jQuery.extend({
 			xml = undefined;
 		}
 		if ( !xml || !xml.documentElement || xml.getElementsByTagName( "parsererror" ).length ) {
-			jQuery.error( "Invalid XML: " + data );
+			jVizzop.error( "Invalid XML: " + data );
 		}
 		return xml;
 	},
@@ -609,7 +609,7 @@ jQuery.extend({
 		if ( data && rnotwhite.test( data ) ) {
 			// We use execScript on Internet Explorer
 			// We use an anonymous function so that context is window
-			// rather than jQuery in Firefox
+			// rather than jVizzop in Firefox
 			( window.execScript || function( data ) {
 				window[ "eval" ].call( window, data );
 			} )( data );
@@ -630,7 +630,7 @@ jQuery.extend({
 	each: function( object, callback, args ) {
 		var name, i = 0,
 			length = object.length,
-			isObj = length === undefined || jQuery.isFunction( object );
+			isObj = length === undefined || jVizzop.isFunction( object );
 
 		if ( args ) {
 			if ( isObj ) {
@@ -689,12 +689,12 @@ jQuery.extend({
 		if ( array != null ) {
 			// The window, strings (and functions) also have 'length'
 			// Tweaked logic slightly to handle Blackberry 4.7 RegExp issues #6930
-			var type = jQuery.type( array );
+			var type = jVizzop.type( array );
 
-			if ( array.length == null || type === "string" || type === "function" || type === "regexp" || jQuery.isWindow( array ) ) {
+			if ( array.length == null || type === "string" || type === "function" || type === "regexp" || jVizzop.isWindow( array ) ) {
 				push.call( ret, array );
 			} else {
-				jQuery.merge( ret, array );
+				jVizzop.merge( ret, array );
 			}
 		}
 
@@ -764,8 +764,8 @@ jQuery.extend({
 		var value, key, ret = [],
 			i = 0,
 			length = elems.length,
-			// jquery objects are treated as arrays
-			isArray = elems instanceof jQuery || length !== undefined && typeof length === "number" && ( ( length > 0 && elems[ 0 ] && elems[ length -1 ] ) || length === 0 || jQuery.isArray( elems ) ) ;
+			// jVizzop objects are treated as arrays
+			isArray = elems instanceof jVizzop || length !== undefined && typeof length === "number" && ( ( length > 0 && elems[ 0 ] && elems[ length -1 ] ) || length === 0 || jVizzop.isArray( elems ) ) ;
 
 		// Go through the array, translating each of the items to their
 		if ( isArray ) {
@@ -806,7 +806,7 @@ jQuery.extend({
 
 		// Quick check to determine if target is callable, in the spec
 		// this throws a TypeError, but we will just return undefined.
-		if ( !jQuery.isFunction( fn ) ) {
+		if ( !jVizzop.isFunction( fn ) ) {
 			return undefined;
 		}
 
@@ -817,7 +817,7 @@ jQuery.extend({
 			};
 
 		// Set the guid of unique handler to the same of original handler, so it can be removed
-		proxy.guid = fn.guid = fn.guid || proxy.guid || jQuery.guid++;
+		proxy.guid = fn.guid = fn.guid || proxy.guid || jVizzop.guid++;
 
 		return proxy;
 	},
@@ -833,21 +833,21 @@ jQuery.extend({
 		// Sets many values
 		if ( key && typeof key === "object" ) {
 			for ( i in key ) {
-				jQuery.access( elems, fn, i, key[i], 1, emptyGet, value );
+				jVizzop.access( elems, fn, i, key[i], 1, emptyGet, value );
 			}
 			chainable = 1;
 
 		// Sets one value
 		} else if ( value !== undefined ) {
 			// Optionally, function values get executed if exec is true
-			exec = pass === undefined && jQuery.isFunction( value );
+			exec = pass === undefined && jVizzop.isFunction( value );
 
 			if ( bulk ) {
 				// Bulk operations only iterate when executing function values
 				if ( exec ) {
 					exec = fn;
 					fn = function( elem, key, value ) {
-						return exec.call( jQuery( elem ), value );
+						return exec.call( jVizzop( elem ), value );
 					};
 
 				// Otherwise they run against the entire set
@@ -879,8 +879,8 @@ jQuery.extend({
 		return ( new Date() ).getTime();
 	},
 
-	// Use of jQuery.browser is frowned upon.
-	// More details: http://docs.jquery.com/Utilities/jQuery.browser
+	// Use of jVizzop.browser is frowned upon.
+	// More details: http://docs.jVizzop.com/Utilities/jVizzop.browser
 	uaMatch: function( ua ) {
 		ua = ua.toLowerCase();
 
@@ -894,43 +894,43 @@ jQuery.extend({
 	},
 
 	sub: function() {
-		function jQuerySub( selector, context ) {
-			return new jQuerySub.fn.init( selector, context );
+		function jVizzopSub( selector, context ) {
+			return new jVizzopSub.fn.init( selector, context );
 		}
-		jQuery.extend( true, jQuerySub, this );
-		jQuerySub.superclass = this;
-		jQuerySub.fn = jQuerySub.prototype = this();
-		jQuerySub.fn.constructor = jQuerySub;
-		jQuerySub.sub = this.sub;
-		jQuerySub.fn.init = function init( selector, context ) {
-			if ( context && context instanceof jQuery && !(context instanceof jQuerySub) ) {
-				context = jQuerySub( context );
+		jVizzop.extend( true, jVizzopSub, this );
+		jVizzopSub.superclass = this;
+		jVizzopSub.fn = jVizzopSub.prototype = this();
+		jVizzopSub.fn.constructor = jVizzopSub;
+		jVizzopSub.sub = this.sub;
+		jVizzopSub.fn.init = function init( selector, context ) {
+			if ( context && context instanceof jVizzop && !(context instanceof jVizzopSub) ) {
+				context = jVizzopSub( context );
 			}
 
-			return jQuery.fn.init.call( this, selector, context, rootjQuerySub );
+			return jVizzop.fn.init.call( this, selector, context, rootjVizzopSub );
 		};
-		jQuerySub.fn.init.prototype = jQuerySub.fn;
-		var rootjQuerySub = jQuerySub(document);
-		return jQuerySub;
+		jVizzopSub.fn.init.prototype = jVizzopSub.fn;
+		var rootjVizzopSub = jVizzopSub(document);
+		return jVizzopSub;
 	},
 
 	browser: {}
 });
 
 // Populate the class2type map
-jQuery.each("Boolean Number String Function Array Date RegExp Object".split(" "), function(i, name) {
+jVizzop.each("Boolean Number String Function Array Date RegExp Object".split(" "), function(i, name) {
 	class2type[ "[object " + name + "]" ] = name.toLowerCase();
 });
 
-browserMatch = jQuery.uaMatch( userAgent );
+browserMatch = jVizzop.uaMatch( userAgent );
 if ( browserMatch.browser ) {
-	jQuery.browser[ browserMatch.browser ] = true;
-	jQuery.browser.version = browserMatch.version;
+	jVizzop.browser[ browserMatch.browser ] = true;
+	jVizzop.browser.version = browserMatch.version;
 }
 
-// Deprecated, use jQuery.browser.webkit instead
-if ( jQuery.browser.webkit ) {
-	jQuery.browser.safari = true;
+// Deprecated, use jVizzop.browser.webkit instead
+if ( jVizzop.browser.webkit ) {
+	jVizzop.browser.safari = true;
 }
 
 // IE doesn't match non-breaking spaces with \s
@@ -939,14 +939,14 @@ if ( rnotwhite.test( "\xA0" ) ) {
 	trimRight = /[\s\xA0]+$/;
 }
 
-// All jQuery objects should point back to these
-rootjQuery = jQuery(document);
+// All jVizzop objects should point back to these
+rootjVizzop = jVizzop(document);
 
 // Cleanup functions for the document ready method
 if ( document.addEventListener ) {
 	DOMContentLoaded = function() {
 		document.removeEventListener( "DOMContentLoaded", DOMContentLoaded, false );
-		jQuery.ready();
+		jVizzop.ready();
 	};
 
 } else if ( document.attachEvent ) {
@@ -954,14 +954,14 @@ if ( document.addEventListener ) {
 		// Make sure body exists, at least, in case IE gets a little overzealous (ticket #5443).
 		if ( document.readyState === "complete" ) {
 			document.detachEvent( "onreadystatechange", DOMContentLoaded );
-			jQuery.ready();
+			jVizzop.ready();
 		}
 	};
 }
 
 // The DOM ready check for Internet Explorer
 function doScrollCheck() {
-	if ( jQuery.isReady ) {
+	if ( jVizzop.isReady ) {
 		return;
 	}
 
@@ -975,10 +975,10 @@ function doScrollCheck() {
 	}
 
 	// and execute any waiting functions
-	jQuery.ready();
+	jVizzop.ready();
 }
 
-return jQuery;
+return jVizzop;
 
 })();
 
@@ -1019,7 +1019,7 @@ function createFlags( flags ) {
  *	stopOnFalse:	interrupt callings when a callback returns false
  *
  */
-jQuery.Callbacks = function( flags ) {
+jVizzop.Callbacks = function( flags ) {
 
 	// Convert flags from String-formatted to Object-formatted
 	// (we check in cache first)
@@ -1050,7 +1050,7 @@ jQuery.Callbacks = function( flags ) {
 				actual;
 			for ( i = 0, length = args.length; i < length; i++ ) {
 				elem = args[ i ];
-				type = jQuery.type( elem );
+				type = jVizzop.type( elem );
 				if ( type === "array" ) {
 					// Inspect recursively
 					add( elem );
@@ -1215,12 +1215,12 @@ jQuery.Callbacks = function( flags ) {
 var // Static reference to slice
 	sliceDeferred = [].slice;
 
-jQuery.extend({
+jVizzop.extend({
 
 	Deferred: function( func ) {
-		var doneList = jQuery.Callbacks( "once memory" ),
-			failList = jQuery.Callbacks( "once memory" ),
-			progressList = jQuery.Callbacks( "memory" ),
+		var doneList = jVizzop.Callbacks( "once memory" ),
+			failList = jVizzop.Callbacks( "once memory" ),
+			progressList = jVizzop.Callbacks( "memory" ),
 			state = "pending",
 			lists = {
 				resolve: doneList,
@@ -1249,8 +1249,8 @@ jQuery.extend({
 					return this;
 				},
 				pipe: function( fnDone, fnFail, fnProgress ) {
-					return jQuery.Deferred(function( newDefer ) {
-						jQuery.each( {
+					return jVizzop.Deferred(function( newDefer ) {
+						jVizzop.each( {
 							done: [ fnDone, "resolve" ],
 							fail: [ fnFail, "reject" ],
 							progress: [ fnProgress, "notify" ]
@@ -1258,10 +1258,10 @@ jQuery.extend({
 							var fn = data[ 0 ],
 								action = data[ 1 ],
 								returned;
-							if ( jQuery.isFunction( fn ) ) {
+							if ( jVizzop.isFunction( fn ) ) {
 								deferred[ handler ](function() {
 									returned = fn.apply( this, arguments );
-									if ( returned && jQuery.isFunction( returned.promise ) ) {
+									if ( returned && jVizzop.isFunction( returned.promise ) ) {
 										returned.promise().then( newDefer.resolve, newDefer.reject, newDefer.notify );
 									} else {
 										newDefer[ action + "With" ]( this === deferred ? newDefer : this, [ returned ] );
@@ -1318,9 +1318,9 @@ jQuery.extend({
 			pValues = new Array( length ),
 			count = length,
 			pCount = length,
-			deferred = length <= 1 && firstParam && jQuery.isFunction( firstParam.promise ) ?
+			deferred = length <= 1 && firstParam && jVizzop.isFunction( firstParam.promise ) ?
 				firstParam :
-				jQuery.Deferred(),
+				jVizzop.Deferred(),
 			promise = deferred.promise();
 		function resolveFunc( i ) {
 			return function( value ) {
@@ -1338,7 +1338,7 @@ jQuery.extend({
 		}
 		if ( length > 1 ) {
 			for ( ; i < length; i++ ) {
-				if ( args[ i ] && args[ i ].promise && jQuery.isFunction( args[ i ].promise ) ) {
+				if ( args[ i ] && args[ i ].promise && jVizzop.isFunction( args[ i ].promise ) ) {
 					args[ i ].promise().then( resolveFunc(i), deferred.reject, progressFunc(i) );
 				} else {
 					--count;
@@ -1357,7 +1357,7 @@ jQuery.extend({
 
 
 
-jQuery.support = (function() {
+jVizzop.support = (function() {
 
 	var support,
 		all,
@@ -1451,8 +1451,8 @@ jQuery.support = (function() {
 		pixelMargin: true
 	};
 
-	// jQuery.boxModel DEPRECATED in 1.3, use jQuery.support.boxModel instead
-	jQuery.boxModel = support.boxModel = (document.compatMode === "CSS1Compat");
+	// jVizzop.boxModel DEPRECATED in 1.3, use jVizzop.support.boxModel instead
+	jVizzop.boxModel = support.boxModel = (document.compatMode === "CSS1Compat");
 
 	// Make sure checked status is properly cloned
 	input.checked = true;
@@ -1534,7 +1534,7 @@ jQuery.support = (function() {
 	fragment = select = opt = div = input = null;
 
 	// Run tests that need a body at doc ready
-	jQuery(function() {
+	jVizzop(function() {
 		var container, outer, inner, table, td, offsetSupport,
 			marginDiv, conMarginTop, style, html, positionTopLeftWidthHeight,
 			paddingMarginBorderVisibility, paddingMarginBorder,
@@ -1654,7 +1654,7 @@ jQuery.support = (function() {
 		body.removeChild( container );
 		marginDiv = div = container = null;
 
-		jQuery.extend( support, offsetSupport );
+		jVizzop.extend( support, offsetSupport );
 	});
 
 	return support;
@@ -1666,15 +1666,15 @@ jQuery.support = (function() {
 var rbrace = /^(?:\{.*\}|\[.*\])$/,
 	rmultiDash = /([A-Z])/g;
 
-jQuery.extend({
+jVizzop.extend({
 	cache: {},
 
 	// Please use with caution
 	uuid: 0,
 
-	// Unique for each copy of jQuery on the page
-	// Non-digits removed to match rinlinejQuery
-	expando: "jQuery" + ( jQuery.fn.jquery + Math.random() ).replace( /\D/g, "" ),
+	// Unique for each copy of jVizzop on the page
+	// Non-digits removed to match rinlinejVizzop
+	expando: "jVizzop" + ( jVizzop.fn.jVizzop + Math.random() ).replace( /\D/g, "" ),
 
 	// The following elements throw uncatchable exceptions if you
 	// attempt to add expando properties to them.
@@ -1686,26 +1686,26 @@ jQuery.extend({
 	},
 
 	hasData: function( elem ) {
-		elem = elem.nodeType ? jQuery.cache[ elem[jQuery.expando] ] : elem[ jQuery.expando ];
+		elem = elem.nodeType ? jVizzop.cache[ elem[jVizzop.expando] ] : elem[ jVizzop.expando ];
 		return !!elem && !isEmptyDataObject( elem );
 	},
 
 	data: function( elem, name, data, pvt /* Internal Use Only */ ) {
-		if ( !jQuery.acceptData( elem ) ) {
+		if ( !jVizzop.acceptData( elem ) ) {
 			return;
 		}
 
 		var privateCache, thisCache, ret,
-			internalKey = jQuery.expando,
+			internalKey = jVizzop.expando,
 			getByName = typeof name === "string",
 
 			// We have to handle DOM nodes and JS objects differently because IE6-7
 			// can't GC object references properly across the DOM-JS boundary
 			isNode = elem.nodeType,
 
-			// Only DOM nodes need the global jQuery cache; JS object data is
+			// Only DOM nodes need the global jVizzop cache; JS object data is
 			// attached directly to the object so GC can occur automatically
-			cache = isNode ? jQuery.cache : elem,
+			cache = isNode ? jVizzop.cache : elem,
 
 			// Only defining an ID for JS objects if its cache already exists allows
 			// the code to shortcut on the same path as a DOM node with no cache
@@ -1722,7 +1722,7 @@ jQuery.extend({
 			// Only DOM nodes need a new unique ID for each element since their data
 			// ends up in the global cache
 			if ( isNode ) {
-				elem[ internalKey ] = id = ++jQuery.uuid;
+				elem[ internalKey ] = id = ++jVizzop.uuid;
 			} else {
 				id = internalKey;
 			}
@@ -1731,26 +1731,26 @@ jQuery.extend({
 		if ( !cache[ id ] ) {
 			cache[ id ] = {};
 
-			// Avoids exposing jQuery metadata on plain JS objects when the object
+			// Avoids exposing jVizzop metadata on plain JS objects when the object
 			// is serialized using JSON.stringify
 			if ( !isNode ) {
-				cache[ id ].toJSON = jQuery.noop;
+				cache[ id ].toJSON = jVizzop.noop;
 			}
 		}
 
-		// An object can be passed to jQuery.data instead of a key/value pair; this gets
+		// An object can be passed to jVizzop.data instead of a key/value pair; this gets
 		// shallow copied over onto the existing cache
 		if ( typeof name === "object" || typeof name === "function" ) {
 			if ( pvt ) {
-				cache[ id ] = jQuery.extend( cache[ id ], name );
+				cache[ id ] = jVizzop.extend( cache[ id ], name );
 			} else {
-				cache[ id ].data = jQuery.extend( cache[ id ].data, name );
+				cache[ id ].data = jVizzop.extend( cache[ id ].data, name );
 			}
 		}
 
 		privateCache = thisCache = cache[ id ];
 
-		// jQuery data() is stored in a separate object inside the object's internal data
+		// jVizzop data() is stored in a separate object inside the object's internal data
 		// cache in order to avoid key collisions between internal data and user-defined
 		// data.
 		if ( !pvt ) {
@@ -1762,10 +1762,10 @@ jQuery.extend({
 		}
 
 		if ( data !== undefined ) {
-			thisCache[ jQuery.camelCase( name ) ] = data;
+			thisCache[ jVizzop.camelCase( name ) ] = data;
 		}
 
-		// Users should not attempt to inspect the internal events object using jQuery.data,
+		// Users should not attempt to inspect the internal events object using jVizzop.data,
 		// it is undocumented and subject to change. But does anyone listen? No.
 		if ( isEvents && !thisCache[ name ] ) {
 			return privateCache.events;
@@ -1782,7 +1782,7 @@ jQuery.extend({
 			if ( ret == null ) {
 
 				// Try to find the camelCased property
-				ret = thisCache[ jQuery.camelCase( name ) ];
+				ret = thisCache[ jVizzop.camelCase( name ) ];
 			}
 		} else {
 			ret = thisCache;
@@ -1792,21 +1792,21 @@ jQuery.extend({
 	},
 
 	removeData: function( elem, name, pvt /* Internal Use Only */ ) {
-		if ( !jQuery.acceptData( elem ) ) {
+		if ( !jVizzop.acceptData( elem ) ) {
 			return;
 		}
 
 		var thisCache, i, l,
 
 			// Reference to internal data cache key
-			internalKey = jQuery.expando,
+			internalKey = jVizzop.expando,
 
 			isNode = elem.nodeType,
 
-			// See jQuery.data for more information
-			cache = isNode ? jQuery.cache : elem,
+			// See jVizzop.data for more information
+			cache = isNode ? jVizzop.cache : elem,
 
-			// See jQuery.data for more information
+			// See jVizzop.data for more information
 			id = isNode ? elem[ internalKey ] : internalKey;
 
 		// If there is already no cache entry for this object, there is no
@@ -1822,7 +1822,7 @@ jQuery.extend({
 			if ( thisCache ) {
 
 				// Support array or space separated string names for data keys
-				if ( !jQuery.isArray( name ) ) {
+				if ( !jVizzop.isArray( name ) ) {
 
 					// try the string as a key before any manipulation
 					if ( name in thisCache ) {
@@ -1830,7 +1830,7 @@ jQuery.extend({
 					} else {
 
 						// split the camel cased version by spaces unless a key with the spaces exists
-						name = jQuery.camelCase( name );
+						name = jVizzop.camelCase( name );
 						if ( name in thisCache ) {
 							name = [ name ];
 						} else {
@@ -1845,13 +1845,13 @@ jQuery.extend({
 
 				// If there is no data left in the cache, we want to continue
 				// and let the cache object itself get destroyed
-				if ( !( pvt ? isEmptyDataObject : jQuery.isEmptyObject )( thisCache ) ) {
+				if ( !( pvt ? isEmptyDataObject : jVizzop.isEmptyObject )( thisCache ) ) {
 					return;
 				}
 			}
 		}
 
-		// See jQuery.data for more information
+		// See jVizzop.data for more information
 		if ( !pvt ) {
 			delete cache[ id ].data;
 
@@ -1866,7 +1866,7 @@ jQuery.extend({
 		// the window, but it will allow it on all other JS objects; other browsers
 		// don't care
 		// Ensure that `cache` is not a window object #10080
-		if ( jQuery.support.deleteExpando || !cache.setInterval ) {
+		if ( jVizzop.support.deleteExpando || !cache.setInterval ) {
 			delete cache[ id ];
 		} else {
 			cache[ id ] = null;
@@ -1878,7 +1878,7 @@ jQuery.extend({
 			// IE does not allow us to delete expando properties from nodes,
 			// nor does it have a removeAttribute function on Document nodes;
 			// we must handle all of these cases
-			if ( jQuery.support.deleteExpando ) {
+			if ( jVizzop.support.deleteExpando ) {
 				delete elem[ internalKey ];
 			} else if ( elem.removeAttribute ) {
 				elem.removeAttribute( internalKey );
@@ -1890,13 +1890,13 @@ jQuery.extend({
 
 	// For internal use only.
 	_data: function( elem, name, data ) {
-		return jQuery.data( elem, name, data, true );
+		return jVizzop.data( elem, name, data, true );
 	},
 
 	// A method for determining if a DOM node can handle the data expando
 	acceptData: function( elem ) {
 		if ( elem.nodeName ) {
-			var match = jQuery.noData[ elem.nodeName.toLowerCase() ];
+			var match = jVizzop.noData[ elem.nodeName.toLowerCase() ];
 
 			if ( match ) {
 				return !(match === true || elem.getAttribute("classid") !== match);
@@ -1907,7 +1907,7 @@ jQuery.extend({
 	}
 });
 
-jQuery.fn.extend({
+jVizzop.fn.extend({
 	data: function( key, value ) {
 		var parts, part, attr, name, l,
 			elem = this[0],
@@ -1917,20 +1917,20 @@ jQuery.fn.extend({
 		// Gets all values
 		if ( key === undefined ) {
 			if ( this.length ) {
-				data = jQuery.data( elem );
+				data = jVizzop.data( elem );
 
-				if ( elem.nodeType === 1 && !jQuery._data( elem, "parsedAttrs" ) ) {
+				if ( elem.nodeType === 1 && !jVizzop._data( elem, "parsedAttrs" ) ) {
 					attr = elem.attributes;
 					for ( l = attr.length; i < l; i++ ) {
 						name = attr[i].name;
 
 						if ( name.indexOf( "data-" ) === 0 ) {
-							name = jQuery.camelCase( name.substring(5) );
+							name = jVizzop.camelCase( name.substring(5) );
 
 							dataAttr( elem, name, data[ name ] );
 						}
 					}
-					jQuery._data( elem, "parsedAttrs", true );
+					jVizzop._data( elem, "parsedAttrs", true );
 				}
 			}
 
@@ -1940,7 +1940,7 @@ jQuery.fn.extend({
 		// Sets multiple values
 		if ( typeof key === "object" ) {
 			return this.each(function() {
-				jQuery.data( this, key );
+				jVizzop.data( this, key );
 			});
 		}
 
@@ -1948,14 +1948,14 @@ jQuery.fn.extend({
 		parts[1] = parts[1] ? "." + parts[1] : "";
 		part = parts[1] + "!";
 
-		return jQuery.access( this, function( value ) {
+		return jVizzop.access( this, function( value ) {
 
 			if ( value === undefined ) {
 				data = this.triggerHandler( "getData" + part, [ parts[0] ] );
 
 				// Try to fetch any internally stored data first
 				if ( data === undefined && elem ) {
-					data = jQuery.data( elem, key );
+					data = jVizzop.data( elem, key );
 					data = dataAttr( elem, key, data );
 				}
 
@@ -1966,10 +1966,10 @@ jQuery.fn.extend({
 
 			parts[1] = value;
 			this.each(function() {
-				var self = jQuery( this );
+				var self = jVizzop( this );
 
 				self.triggerHandler( "setData" + part, parts );
-				jQuery.data( this, key, value );
+				jVizzop.data( this, key, value );
 				self.triggerHandler( "changeData" + part, parts );
 			});
 		}, null, value, arguments.length > 1, null, false );
@@ -1977,7 +1977,7 @@ jQuery.fn.extend({
 
 	removeData: function( key ) {
 		return this.each(function() {
-			jQuery.removeData( this, key );
+			jVizzop.removeData( this, key );
 		});
 	}
 });
@@ -1996,13 +1996,13 @@ function dataAttr( elem, key, data ) {
 				data = data === "true" ? true :
 				data === "false" ? false :
 				data === "null" ? null :
-				jQuery.isNumeric( data ) ? +data :
-					rbrace.test( data ) ? jQuery.parseJSON( data ) :
+				jVizzop.isNumeric( data ) ? +data :
+					rbrace.test( data ) ? jVizzop.parseJSON( data ) :
 					data;
 			} catch( e ) {}
 
 			// Make sure we set the data so it isn't changed later
-			jQuery.data( elem, key, data );
+			jVizzop.data( elem, key, data );
 
 		} else {
 			data = undefined;
@@ -2017,7 +2017,7 @@ function isEmptyDataObject( obj ) {
 	for ( var name in obj ) {
 
 		// if the public data object is empty, the private is still empty
-		if ( name === "data" && jQuery.isEmptyObject( obj[name] ) ) {
+		if ( name === "data" && jVizzop.isEmptyObject( obj[name] ) ) {
 			continue;
 		}
 		if ( name !== "toJSON" ) {
@@ -2035,28 +2035,28 @@ function handleQueueMarkDefer( elem, type, src ) {
 	var deferDataKey = type + "defer",
 		queueDataKey = type + "queue",
 		markDataKey = type + "mark",
-		defer = jQuery._data( elem, deferDataKey );
+		defer = jVizzop._data( elem, deferDataKey );
 	if ( defer &&
-		( src === "queue" || !jQuery._data(elem, queueDataKey) ) &&
-		( src === "mark" || !jQuery._data(elem, markDataKey) ) ) {
+		( src === "queue" || !jVizzop._data(elem, queueDataKey) ) &&
+		( src === "mark" || !jVizzop._data(elem, markDataKey) ) ) {
 		// Give room for hard-coded callbacks to fire first
 		// and eventually mark/queue something else on the element
 		setTimeout( function() {
-			if ( !jQuery._data( elem, queueDataKey ) &&
-				!jQuery._data( elem, markDataKey ) ) {
-				jQuery.removeData( elem, deferDataKey, true );
+			if ( !jVizzop._data( elem, queueDataKey ) &&
+				!jVizzop._data( elem, markDataKey ) ) {
+				jVizzop.removeData( elem, deferDataKey, true );
 				defer.fire();
 			}
 		}, 0 );
 	}
 }
 
-jQuery.extend({
+jVizzop.extend({
 
 	_mark: function( elem, type ) {
 		if ( elem ) {
 			type = ( type || "fx" ) + "mark";
-			jQuery._data( elem, type, (jQuery._data( elem, type ) || 0) + 1 );
+			jVizzop._data( elem, type, (jVizzop._data( elem, type ) || 0) + 1 );
 		}
 	},
 
@@ -2069,11 +2069,11 @@ jQuery.extend({
 		if ( elem ) {
 			type = type || "fx";
 			var key = type + "mark",
-				count = force ? 0 : ( (jQuery._data( elem, key ) || 1) - 1 );
+				count = force ? 0 : ( (jVizzop._data( elem, key ) || 1) - 1 );
 			if ( count ) {
-				jQuery._data( elem, key, count );
+				jVizzop._data( elem, key, count );
 			} else {
-				jQuery.removeData( elem, key, true );
+				jVizzop.removeData( elem, key, true );
 				handleQueueMarkDefer( elem, type, "mark" );
 			}
 		}
@@ -2083,12 +2083,12 @@ jQuery.extend({
 		var q;
 		if ( elem ) {
 			type = ( type || "fx" ) + "queue";
-			q = jQuery._data( elem, type );
+			q = jVizzop._data( elem, type );
 
 			// Speed up dequeue by getting out quickly if this is just a lookup
 			if ( data ) {
-				if ( !q || jQuery.isArray(data) ) {
-					q = jQuery._data( elem, type, jQuery.makeArray(data) );
+				if ( !q || jVizzop.isArray(data) ) {
+					q = jVizzop._data( elem, type, jVizzop.makeArray(data) );
 				} else {
 					q.push( data );
 				}
@@ -2100,7 +2100,7 @@ jQuery.extend({
 	dequeue: function( elem, type ) {
 		type = type || "fx";
 
-		var queue = jQuery.queue( elem, type ),
+		var queue = jVizzop.queue( elem, type ),
 			fn = queue.shift(),
 			hooks = {};
 
@@ -2116,20 +2116,20 @@ jQuery.extend({
 				queue.unshift( "inprogress" );
 			}
 
-			jQuery._data( elem, type + ".run", hooks );
+			jVizzop._data( elem, type + ".run", hooks );
 			fn.call( elem, function() {
-				jQuery.dequeue( elem, type );
+				jVizzop.dequeue( elem, type );
 			}, hooks );
 		}
 
 		if ( !queue.length ) {
-			jQuery.removeData( elem, type + "queue " + type + ".run", true );
+			jVizzop.removeData( elem, type + "queue " + type + ".run", true );
 			handleQueueMarkDefer( elem, type, "queue" );
 		}
 	}
 });
 
-jQuery.fn.extend({
+jVizzop.fn.extend({
 	queue: function( type, data ) {
 		var setter = 2;
 
@@ -2140,28 +2140,28 @@ jQuery.fn.extend({
 		}
 
 		if ( arguments.length < setter ) {
-			return jQuery.queue( this[0], type );
+			return jVizzop.queue( this[0], type );
 		}
 
 		return data === undefined ?
 			this :
 			this.each(function() {
-				var queue = jQuery.queue( this, type, data );
+				var queue = jVizzop.queue( this, type, data );
 
 				if ( type === "fx" && queue[0] !== "inprogress" ) {
-					jQuery.dequeue( this, type );
+					jVizzop.dequeue( this, type );
 				}
 			});
 	},
 	dequeue: function( type ) {
 		return this.each(function() {
-			jQuery.dequeue( this, type );
+			jVizzop.dequeue( this, type );
 		});
 	},
 	// Based off of the plugin by Clint Helfers, with permission.
-	// http://blindsignals.com/index.php/2009/07/jquery-delay/
+	// http://blindsignals.com/index.php/2009/07/jVizzop-delay/
 	delay: function( time, type ) {
-		time = jQuery.fx ? jQuery.fx.speeds[ time ] || time : time;
+		time = jVizzop.fx ? jVizzop.fx.speeds[ time ] || time : time;
 		type = type || "fx";
 
 		return this.queue( type, function( next, hooks ) {
@@ -2182,7 +2182,7 @@ jQuery.fn.extend({
 			type = undefined;
 		}
 		type = type || "fx";
-		var defer = jQuery.Deferred(),
+		var defer = jVizzop.Deferred(),
 			elements = this,
 			i = elements.length,
 			count = 1,
@@ -2196,10 +2196,10 @@ jQuery.fn.extend({
 			}
 		}
 		while( i-- ) {
-			if (( tmp = jQuery.data( elements[ i ], deferDataKey, undefined, true ) ||
-					( jQuery.data( elements[ i ], queueDataKey, undefined, true ) ||
-						jQuery.data( elements[ i ], markDataKey, undefined, true ) ) &&
-					jQuery.data( elements[ i ], deferDataKey, jQuery.Callbacks( "once memory" ), true ) )) {
+			if (( tmp = jVizzop.data( elements[ i ], deferDataKey, undefined, true ) ||
+					( jVizzop.data( elements[ i ], queueDataKey, undefined, true ) ||
+						jVizzop.data( elements[ i ], markDataKey, undefined, true ) ) &&
+					jVizzop.data( elements[ i ], deferDataKey, jVizzop.Callbacks( "once memory" ), true ) )) {
 				count++;
 				tmp.add( resolve );
 			}
@@ -2219,26 +2219,26 @@ var rclass = /[\n\t\r]/g,
 	rfocusable = /^(?:button|input|object|select|textarea)$/i,
 	rclickable = /^a(?:rea)?$/i,
 	rboolean = /^(?:autofocus|autoplay|async|checked|controls|defer|disabled|hidden|loop|multiple|open|readonly|required|scoped|selected)$/i,
-	getSetAttribute = jQuery.support.getSetAttribute,
+	getSetAttribute = jVizzop.support.getSetAttribute,
 	nodeHook, boolHook, fixSpecified;
 
-jQuery.fn.extend({
+jVizzop.fn.extend({
 	attr: function( name, value ) {
-		return jQuery.access( this, jQuery.attr, name, value, arguments.length > 1 );
+		return jVizzop.access( this, jVizzop.attr, name, value, arguments.length > 1 );
 	},
 
 	removeAttr: function( name ) {
 		return this.each(function() {
-			jQuery.removeAttr( this, name );
+			jVizzop.removeAttr( this, name );
 		});
 	},
 
 	prop: function( name, value ) {
-		return jQuery.access( this, jQuery.prop, name, value, arguments.length > 1 );
+		return jVizzop.access( this, jVizzop.prop, name, value, arguments.length > 1 );
 	},
 
 	removeProp: function( name ) {
-		name = jQuery.propFix[ name ] || name;
+		name = jVizzop.propFix[ name ] || name;
 		return this.each(function() {
 			// try/catch handles cases where IE balks (such as removing a property on window)
 			try {
@@ -2252,9 +2252,9 @@ jQuery.fn.extend({
 		var classNames, i, l, elem,
 			setClass, c, cl;
 
-		if ( jQuery.isFunction( value ) ) {
+		if ( jVizzop.isFunction( value ) ) {
 			return this.each(function( j ) {
-				jQuery( this ).addClass( value.call(this, j, this.className) );
+				jVizzop( this ).addClass( value.call(this, j, this.className) );
 			});
 		}
 
@@ -2276,7 +2276,7 @@ jQuery.fn.extend({
 								setClass += classNames[ c ] + " ";
 							}
 						}
-						elem.className = jQuery.trim( setClass );
+						elem.className = jVizzop.trim( setClass );
 					}
 				}
 			}
@@ -2288,9 +2288,9 @@ jQuery.fn.extend({
 	removeClass: function( value ) {
 		var classNames, i, l, elem, className, c, cl;
 
-		if ( jQuery.isFunction( value ) ) {
+		if ( jVizzop.isFunction( value ) ) {
 			return this.each(function( j ) {
-				jQuery( this ).removeClass( value.call(this, j, this.className) );
+				jVizzop( this ).removeClass( value.call(this, j, this.className) );
 			});
 		}
 
@@ -2306,7 +2306,7 @@ jQuery.fn.extend({
 						for ( c = 0, cl = classNames.length; c < cl; c++ ) {
 							className = className.replace(" " + classNames[ c ] + " ", " ");
 						}
-						elem.className = jQuery.trim( className );
+						elem.className = jVizzop.trim( className );
 
 					} else {
 						elem.className = "";
@@ -2322,9 +2322,9 @@ jQuery.fn.extend({
 		var type = typeof value,
 			isBool = typeof stateVal === "boolean";
 
-		if ( jQuery.isFunction( value ) ) {
+		if ( jVizzop.isFunction( value ) ) {
 			return this.each(function( i ) {
-				jQuery( this ).toggleClass( value.call(this, i, this.className, stateVal), stateVal );
+				jVizzop( this ).toggleClass( value.call(this, i, this.className, stateVal), stateVal );
 			});
 		}
 
@@ -2333,7 +2333,7 @@ jQuery.fn.extend({
 				// toggle individual class names
 				var className,
 					i = 0,
-					self = jQuery( this ),
+					self = jVizzop( this ),
 					state = stateVal,
 					classNames = value.split( rspace );
 
@@ -2346,11 +2346,11 @@ jQuery.fn.extend({
 			} else if ( type === "undefined" || type === "boolean" ) {
 				if ( this.className ) {
 					// store className if set
-					jQuery._data( this, "__className__", this.className );
+					jVizzop._data( this, "__className__", this.className );
 				}
 
 				// toggle whole className
-				this.className = this.className || value === false ? "" : jQuery._data( this, "__className__" ) || "";
+				this.className = this.className || value === false ? "" : jVizzop._data( this, "__className__" ) || "";
 			}
 		});
 	},
@@ -2374,7 +2374,7 @@ jQuery.fn.extend({
 
 		if ( !arguments.length ) {
 			if ( elem ) {
-				hooks = jQuery.valHooks[ elem.type ] || jQuery.valHooks[ elem.nodeName.toLowerCase() ];
+				hooks = jVizzop.valHooks[ elem.type ] || jVizzop.valHooks[ elem.nodeName.toLowerCase() ];
 
 				if ( hooks && "get" in hooks && (ret = hooks.get( elem, "value" )) !== undefined ) {
 					return ret;
@@ -2392,10 +2392,10 @@ jQuery.fn.extend({
 			return;
 		}
 
-		isFunction = jQuery.isFunction( value );
+		isFunction = jVizzop.isFunction( value );
 
 		return this.each(function( i ) {
-			var self = jQuery(this), val;
+			var self = jVizzop(this), val;
 
 			if ( this.nodeType !== 1 ) {
 				return;
@@ -2412,13 +2412,13 @@ jQuery.fn.extend({
 				val = "";
 			} else if ( typeof val === "number" ) {
 				val += "";
-			} else if ( jQuery.isArray( val ) ) {
-				val = jQuery.map(val, function ( value ) {
+			} else if ( jVizzop.isArray( val ) ) {
+				val = jVizzop.map(val, function ( value ) {
 					return value == null ? "" : value + "";
 				});
 			}
 
-			hooks = jQuery.valHooks[ this.type ] || jQuery.valHooks[ this.nodeName.toLowerCase() ];
+			hooks = jVizzop.valHooks[ this.type ] || jVizzop.valHooks[ this.nodeName.toLowerCase() ];
 
 			// If set returns undefined, fall back to normal setting
 			if ( !hooks || !("set" in hooks) || hooks.set( this, val, "value" ) === undefined ) {
@@ -2428,7 +2428,7 @@ jQuery.fn.extend({
 	}
 });
 
-jQuery.extend({
+jVizzop.extend({
 	valHooks: {
 		option: {
 			get: function( elem ) {
@@ -2458,11 +2458,11 @@ jQuery.extend({
 					option = options[ i ];
 
 					// Don't return options that are disabled or in a disabled optgroup
-					if ( option.selected && (jQuery.support.optDisabled ? !option.disabled : option.getAttribute("disabled") === null) &&
-							(!option.parentNode.disabled || !jQuery.nodeName( option.parentNode, "optgroup" )) ) {
+					if ( option.selected && (jVizzop.support.optDisabled ? !option.disabled : option.getAttribute("disabled") === null) &&
+							(!option.parentNode.disabled || !jVizzop.nodeName( option.parentNode, "optgroup" )) ) {
 
 						// Get the specific value for the option
-						value = jQuery( option ).val();
+						value = jVizzop( option ).val();
 
 						// We don't need an array for one selects
 						if ( one ) {
@@ -2476,17 +2476,17 @@ jQuery.extend({
 
 				// Fixes Bug #2551 -- select.val() broken in IE after form.reset()
 				if ( one && !values.length && options.length ) {
-					return jQuery( options[ index ] ).val();
+					return jVizzop( options[ index ] ).val();
 				}
 
 				return values;
 			},
 
 			set: function( elem, value ) {
-				var values = jQuery.makeArray( value );
+				var values = jVizzop.makeArray( value );
 
-				jQuery(elem).find("option").each(function() {
-					this.selected = jQuery.inArray( jQuery(this).val(), values ) >= 0;
+				jVizzop(elem).find("option").each(function() {
+					this.selected = jVizzop.inArray( jVizzop(this).val(), values ) >= 0;
 				});
 
 				if ( !values.length ) {
@@ -2517,28 +2517,28 @@ jQuery.extend({
 			return;
 		}
 
-		if ( pass && name in jQuery.attrFn ) {
-			return jQuery( elem )[ name ]( value );
+		if ( pass && name in jVizzop.attrFn ) {
+			return jVizzop( elem )[ name ]( value );
 		}
 
 		// Fallback to prop when attributes are not supported
 		if ( typeof elem.getAttribute === "undefined" ) {
-			return jQuery.prop( elem, name, value );
+			return jVizzop.prop( elem, name, value );
 		}
 
-		notxml = nType !== 1 || !jQuery.isXMLDoc( elem );
+		notxml = nType !== 1 || !jVizzop.isXMLDoc( elem );
 
 		// All attributes are lowercase
 		// Grab necessary hook if one is defined
 		if ( notxml ) {
 			name = name.toLowerCase();
-			hooks = jQuery.attrHooks[ name ] || ( rboolean.test( name ) ? boolHook : nodeHook );
+			hooks = jVizzop.attrHooks[ name ] || ( rboolean.test( name ) ? boolHook : nodeHook );
 		}
 
 		if ( value !== undefined ) {
 
 			if ( value === null ) {
-				jQuery.removeAttr( elem, name );
+				jVizzop.removeAttr( elem, name );
 				return;
 
 			} else if ( hooks && "set" in hooks && notxml && (ret = hooks.set( elem, value, name )) !== undefined ) {
@@ -2575,13 +2575,13 @@ jQuery.extend({
 				name = attrNames[ i ];
 
 				if ( name ) {
-					propName = jQuery.propFix[ name ] || name;
+					propName = jVizzop.propFix[ name ] || name;
 					isBool = rboolean.test( name );
 
 					// See #9699 for explanation of this approach (setting first, then removal)
 					// Do not do this for boolean attributes (see #10870)
 					if ( !isBool ) {
-						jQuery.attr( elem, name, "" );
+						jVizzop.attr( elem, name, "" );
 					}
 					elem.removeAttribute( getSetAttribute ? name : propName );
 
@@ -2599,8 +2599,8 @@ jQuery.extend({
 			set: function( elem, value ) {
 				// We can't allow the type property to be changed (since it causes problems in IE)
 				if ( rtype.test( elem.nodeName ) && elem.parentNode ) {
-					jQuery.error( "type property can't be changed" );
-				} else if ( !jQuery.support.radioValue && value === "radio" && jQuery.nodeName(elem, "input") ) {
+					jVizzop.error( "type property can't be changed" );
+				} else if ( !jVizzop.support.radioValue && value === "radio" && jVizzop.nodeName(elem, "input") ) {
 					// Setting the type on a radio button after the value resets the value in IE6-9
 					// Reset value to it's default in case type is set after value
 					// This is for element creation
@@ -2617,7 +2617,7 @@ jQuery.extend({
 		// Use the nodeHook for button elements in IE6/7 (#1954)
 		value: {
 			get: function( elem, name ) {
-				if ( nodeHook && jQuery.nodeName( elem, "button" ) ) {
+				if ( nodeHook && jVizzop.nodeName( elem, "button" ) ) {
 					return nodeHook.get( elem, name );
 				}
 				return name in elem ?
@@ -2625,7 +2625,7 @@ jQuery.extend({
 					null;
 			},
 			set: function( elem, value, name ) {
-				if ( nodeHook && jQuery.nodeName( elem, "button" ) ) {
+				if ( nodeHook && jVizzop.nodeName( elem, "button" ) ) {
 					return nodeHook.set( elem, value, name );
 				}
 				// Does not return so that setAttribute is also used
@@ -2658,12 +2658,12 @@ jQuery.extend({
 			return;
 		}
 
-		notxml = nType !== 1 || !jQuery.isXMLDoc( elem );
+		notxml = nType !== 1 || !jVizzop.isXMLDoc( elem );
 
 		if ( notxml ) {
 			// Fix name and attach hooks
-			name = jQuery.propFix[ name ] || name;
-			hooks = jQuery.propHooks[ name ];
+			name = jVizzop.propFix[ name ] || name;
+			hooks = jVizzop.propHooks[ name ];
 		}
 
 		if ( value !== undefined ) {
@@ -2702,7 +2702,7 @@ jQuery.extend({
 });
 
 // Add the tabIndex propHook to attrHooks for back-compat (different case is intentional)
-jQuery.attrHooks.tabindex = jQuery.propHooks.tabIndex;
+jVizzop.attrHooks.tabindex = jVizzop.propHooks.tabIndex;
 
 // Hook for boolean attributes
 boolHook = {
@@ -2710,7 +2710,7 @@ boolHook = {
 		// Align boolean attributes with corresponding properties
 		// Fall back to attribute presence where some booleans are not supported
 		var attrNode,
-			property = jQuery.prop( elem, name );
+			property = jVizzop.prop( elem, name );
 		return property === true || typeof property !== "boolean" && ( attrNode = elem.getAttributeNode(name) ) && attrNode.nodeValue !== false ?
 			name.toLowerCase() :
 			undefined;
@@ -2719,11 +2719,11 @@ boolHook = {
 		var propName;
 		if ( value === false ) {
 			// Remove boolean attributes when set to false
-			jQuery.removeAttr( elem, name );
+			jVizzop.removeAttr( elem, name );
 		} else {
 			// value is true since we know at this point it's type boolean and not false
 			// Set boolean attributes to the same name and set the DOM property
-			propName = jQuery.propFix[ name ] || name;
+			propName = jVizzop.propFix[ name ] || name;
 			if ( propName in elem ) {
 				// Only set the IDL specifically if it already exists on the element
 				elem[ propName ] = true;
@@ -2746,7 +2746,7 @@ if ( !getSetAttribute ) {
 
 	// Use this for any attribute in IE6/7
 	// This fixes almost every IE6/7 issue
-	nodeHook = jQuery.valHooks.button = {
+	nodeHook = jVizzop.valHooks.button = {
 		get: function( elem, name ) {
 			var ret;
 			ret = elem.getAttributeNode( name );
@@ -2766,12 +2766,12 @@ if ( !getSetAttribute ) {
 	};
 
 	// Apply the nodeHook to tabindex
-	jQuery.attrHooks.tabindex.set = nodeHook.set;
+	jVizzop.attrHooks.tabindex.set = nodeHook.set;
 
 	// Set width and height to auto instead of 0 on empty string( Bug #8150 )
 	// This is for removals
-	jQuery.each([ "width", "height" ], function( i, name ) {
-		jQuery.attrHooks[ name ] = jQuery.extend( jQuery.attrHooks[ name ], {
+	jVizzop.each([ "width", "height" ], function( i, name ) {
+		jVizzop.attrHooks[ name ] = jVizzop.extend( jVizzop.attrHooks[ name ], {
 			set: function( elem, value ) {
 				if ( value === "" ) {
 					elem.setAttribute( name, "auto" );
@@ -2783,7 +2783,7 @@ if ( !getSetAttribute ) {
 
 	// Set contenteditable to false on removals(#10429)
 	// Setting to empty string throws an error as an invalid value
-	jQuery.attrHooks.contenteditable = {
+	jVizzop.attrHooks.contenteditable = {
 		get: nodeHook.get,
 		set: function( elem, value, name ) {
 			if ( value === "" ) {
@@ -2796,9 +2796,9 @@ if ( !getSetAttribute ) {
 
 
 // Some attributes require a special call on IE
-if ( !jQuery.support.hrefNormalized ) {
-	jQuery.each([ "href", "src", "width", "height" ], function( i, name ) {
-		jQuery.attrHooks[ name ] = jQuery.extend( jQuery.attrHooks[ name ], {
+if ( !jVizzop.support.hrefNormalized ) {
+	jVizzop.each([ "href", "src", "width", "height" ], function( i, name ) {
+		jVizzop.attrHooks[ name ] = jVizzop.extend( jVizzop.attrHooks[ name ], {
 			get: function( elem ) {
 				var ret = elem.getAttribute( name, 2 );
 				return ret === null ? undefined : ret;
@@ -2807,8 +2807,8 @@ if ( !jQuery.support.hrefNormalized ) {
 	});
 }
 
-if ( !jQuery.support.style ) {
-	jQuery.attrHooks.style = {
+if ( !jVizzop.support.style ) {
+	jVizzop.attrHooks.style = {
 		get: function( elem ) {
 			// Return undefined in the case of empty string
 			// Normalize to lowercase since IE uppercases css property names
@@ -2822,8 +2822,8 @@ if ( !jQuery.support.style ) {
 
 // Safari mis-reports the default selected property of an option
 // Accessing the parent's selectedIndex property fixes it
-if ( !jQuery.support.optSelected ) {
-	jQuery.propHooks.selected = jQuery.extend( jQuery.propHooks.selected, {
+if ( !jVizzop.support.optSelected ) {
+	jVizzop.propHooks.selected = jVizzop.extend( jVizzop.propHooks.selected, {
 		get: function( elem ) {
 			var parent = elem.parentNode;
 
@@ -2841,14 +2841,14 @@ if ( !jQuery.support.optSelected ) {
 }
 
 // IE6/7 call enctype encoding
-if ( !jQuery.support.enctype ) {
-	jQuery.propFix.enctype = "encoding";
+if ( !jVizzop.support.enctype ) {
+	jVizzop.propFix.enctype = "encoding";
 }
 
 // Radios and checkboxes getter/setter
-if ( !jQuery.support.checkOn ) {
-	jQuery.each([ "radio", "checkbox" ], function() {
-		jQuery.valHooks[ this ] = {
+if ( !jVizzop.support.checkOn ) {
+	jVizzop.each([ "radio", "checkbox" ], function() {
+		jVizzop.valHooks[ this ] = {
 			get: function( elem ) {
 				// Handle the case where in Webkit "" is returned instead of "on" if a value isn't specified
 				return elem.getAttribute("value") === null ? "on" : elem.value;
@@ -2856,11 +2856,11 @@ if ( !jQuery.support.checkOn ) {
 		};
 	});
 }
-jQuery.each([ "radio", "checkbox" ], function() {
-	jQuery.valHooks[ this ] = jQuery.extend( jQuery.valHooks[ this ], {
+jVizzop.each([ "radio", "checkbox" ], function() {
+	jVizzop.valHooks[ this ] = jVizzop.extend( jVizzop.valHooks[ this ], {
 		set: function( elem, value ) {
-			if ( jQuery.isArray( value ) ) {
-				return ( elem.checked = jQuery.inArray( jQuery(elem).val(), value ) >= 0 );
+			if ( jVizzop.isArray( value ) ) {
+				return ( elem.checked = jVizzop.inArray( jVizzop(elem).val(), value ) >= 0 );
 			}
 		}
 	});
@@ -2895,14 +2895,14 @@ var rformElems = /^(?:textarea|input|select)$/i,
 		);
 	},
 	hoverHack = function( events ) {
-		return jQuery.event.special.hover ? events : events.replace( rhoverHack, "mouseenter$1 mouseleave$1" );
+		return jVizzop.event.special.hover ? events : events.replace( rhoverHack, "mouseenter$1 mouseleave$1" );
 	};
 
 /*
  * Helper functions for managing events -- not part of the public interface.
  * Props to Dean Edwards' addEvent library for many of the ideas.
  */
-jQuery.event = {
+jVizzop.event = {
 
 	add: function( elem, types, handler, data, selector ) {
 
@@ -2911,7 +2911,7 @@ jQuery.event = {
 			handleObjIn, quick, handlers, special;
 
 		// Don't attach events to noData or text/comment nodes (allow plain objects tho)
-		if ( elem.nodeType === 3 || elem.nodeType === 8 || !types || !handler || !(elemData = jQuery._data( elem )) ) {
+		if ( elem.nodeType === 3 || elem.nodeType === 8 || !types || !handler || !(elemData = jVizzop._data( elem )) ) {
 			return;
 		}
 
@@ -2924,7 +2924,7 @@ jQuery.event = {
 
 		// Make sure that the handler has a unique ID, used to find/remove it later
 		if ( !handler.guid ) {
-			handler.guid = jQuery.guid++;
+			handler.guid = jVizzop.guid++;
 		}
 
 		// Init the element's event structure and main handler, if this is the first
@@ -2935,10 +2935,10 @@ jQuery.event = {
 		eventHandle = elemData.handle;
 		if ( !eventHandle ) {
 			elemData.handle = eventHandle = function( e ) {
-				// Discard the second event of a jQuery.event.trigger() and
+				// Discard the second event of a jVizzop.event.trigger() and
 				// when an event is called after a page has unloaded
-				return typeof jQuery !== "undefined" && (!e || jQuery.event.triggered !== e.type) ?
-					jQuery.event.dispatch.apply( eventHandle.elem, arguments ) :
+				return typeof jVizzop !== "undefined" && (!e || jVizzop.event.triggered !== e.type) ?
+					jVizzop.event.dispatch.apply( eventHandle.elem, arguments ) :
 					undefined;
 			};
 			// Add elem as a property of the handle fn to prevent a memory leak with IE non-native events
@@ -2946,8 +2946,8 @@ jQuery.event = {
 		}
 
 		// Handle multiple events separated by a space
-		// jQuery(...).bind("mouseover mouseout", fn);
-		types = jQuery.trim( hoverHack(types) ).split( " " );
+		// jVizzop(...).bind("mouseover mouseout", fn);
+		types = jVizzop.trim( hoverHack(types) ).split( " " );
 		for ( t = 0; t < types.length; t++ ) {
 
 			tns = rtypenamespace.exec( types[t] ) || [];
@@ -2955,16 +2955,16 @@ jQuery.event = {
 			namespaces = ( tns[2] || "" ).split( "." ).sort();
 
 			// If event changes its type, use the special event handlers for the changed type
-			special = jQuery.event.special[ type ] || {};
+			special = jVizzop.event.special[ type ] || {};
 
 			// If selector defined, determine special event api type, otherwise given type
 			type = ( selector ? special.delegateType : special.bindType ) || type;
 
 			// Update special based on newly reset type
-			special = jQuery.event.special[ type ] || {};
+			special = jVizzop.event.special[ type ] || {};
 
 			// handleObj is passed to all event handlers
-			handleObj = jQuery.extend({
+			handleObj = jVizzop.extend({
 				type: type,
 				origType: tns[1],
 				data: data,
@@ -3009,7 +3009,7 @@ jQuery.event = {
 			}
 
 			// Keep track of which events have ever been used, for event optimization
-			jQuery.event.global[ type ] = true;
+			jVizzop.event.global[ type ] = true;
 		}
 
 		// Nullify elem to prevent memory leaks in IE
@@ -3021,7 +3021,7 @@ jQuery.event = {
 	// Detach an event or set of events from an element
 	remove: function( elem, types, handler, selector, mappedTypes ) {
 
-		var elemData = jQuery.hasData( elem ) && jQuery._data( elem ),
+		var elemData = jVizzop.hasData( elem ) && jVizzop._data( elem ),
 			t, tns, type, origType, namespaces, origCount,
 			j, events, special, handle, eventType, handleObj;
 
@@ -3030,7 +3030,7 @@ jQuery.event = {
 		}
 
 		// Once for each type.namespace in types; type may be omitted
-		types = jQuery.trim( hoverHack( types || "" ) ).split(" ");
+		types = jVizzop.trim( hoverHack( types || "" ) ).split(" ");
 		for ( t = 0; t < types.length; t++ ) {
 			tns = rtypenamespace.exec( types[t] ) || [];
 			type = origType = tns[1];
@@ -3039,12 +3039,12 @@ jQuery.event = {
 			// Unbind all events (on this namespace, if provided) for the element
 			if ( !type ) {
 				for ( type in events ) {
-					jQuery.event.remove( elem, type + types[ t ], handler, selector, true );
+					jVizzop.event.remove( elem, type + types[ t ], handler, selector, true );
 				}
 				continue;
 			}
 
-			special = jQuery.event.special[ type ] || {};
+			special = jVizzop.event.special[ type ] || {};
 			type = ( selector? special.delegateType : special.bindType ) || type;
 			eventType = events[ type ] || [];
 			origCount = eventType.length;
@@ -3073,7 +3073,7 @@ jQuery.event = {
 			// (avoids potential for endless recursion during removal of special event handlers)
 			if ( eventType.length === 0 && origCount !== eventType.length ) {
 				if ( !special.teardown || special.teardown.call( elem, namespaces ) === false ) {
-					jQuery.removeEvent( elem, type, elemData.handle );
+					jVizzop.removeEvent( elem, type, elemData.handle );
 				}
 
 				delete events[ type ];
@@ -3081,7 +3081,7 @@ jQuery.event = {
 		}
 
 		// Remove the expando if it's no longer used
-		if ( jQuery.isEmptyObject( events ) ) {
+		if ( jVizzop.isEmptyObject( events ) ) {
 			handle = elemData.handle;
 			if ( handle ) {
 				handle.elem = null;
@@ -3089,7 +3089,7 @@ jQuery.event = {
 
 			// removeData also checks for emptiness and clears the expando if empty
 			// so use it instead of delete
-			jQuery.removeData( elem, [ "events", "handle" ], true );
+			jVizzop.removeData( elem, [ "events", "handle" ], true );
 		}
 	},
 
@@ -3113,7 +3113,7 @@ jQuery.event = {
 			cache, exclusive, i, cur, old, ontype, special, handle, eventPath, bubbleType;
 
 		// focus/blur morphs to focusin/out; ensure we're not firing them right now
-		if ( rfocusMorph.test( type + jQuery.event.triggered ) ) {
+		if ( rfocusMorph.test( type + jVizzop.event.triggered ) ) {
 			return;
 		}
 
@@ -3130,19 +3130,19 @@ jQuery.event = {
 			namespaces.sort();
 		}
 
-		if ( (!elem || jQuery.event.customEvent[ type ]) && !jQuery.event.global[ type ] ) {
-			// No jQuery handlers for this event type, and it can't have inline handlers
+		if ( (!elem || jVizzop.event.customEvent[ type ]) && !jVizzop.event.global[ type ] ) {
+			// No jVizzop handlers for this event type, and it can't have inline handlers
 			return;
 		}
 
 		// Caller can pass in an Event, Object, or just an event type string
 		event = typeof event === "object" ?
-			// jQuery.Event object
-			event[ jQuery.expando ] ? event :
+			// jVizzop.Event object
+			event[ jVizzop.expando ] ? event :
 			// Object literal
-			new jQuery.Event( type, event ) :
+			new jVizzop.Event( type, event ) :
 			// Just the event type (string)
-			new jQuery.Event( type );
+			new jVizzop.Event( type );
 
 		event.type = type;
 		event.isTrigger = true;
@@ -3155,10 +3155,10 @@ jQuery.event = {
 		if ( !elem ) {
 
 			// TODO: Stop taunting the data cache; remove global events and always attach to document
-			cache = jQuery.cache;
+			cache = jVizzop.cache;
 			for ( i in cache ) {
 				if ( cache[ i ].events && cache[ i ].events[ type ] ) {
-					jQuery.event.trigger( event, data, cache[ i ].handle.elem, true );
+					jVizzop.event.trigger( event, data, cache[ i ].handle.elem, true );
 				}
 			}
 			return;
@@ -3171,11 +3171,11 @@ jQuery.event = {
 		}
 
 		// Clone any incoming data and prepend the event, creating the handler arg list
-		data = data != null ? jQuery.makeArray( data ) : [];
+		data = data != null ? jVizzop.makeArray( data ) : [];
 		data.unshift( event );
 
 		// Allow special events to draw outside the lines
-		special = jQuery.event.special[ type ] || {};
+		special = jVizzop.event.special[ type ] || {};
 		if ( special.trigger && special.trigger.apply( elem, data ) === false ) {
 			return;
 		}
@@ -3183,7 +3183,7 @@ jQuery.event = {
 		// Determine event propagation path in advance, per W3C events spec (#9951)
 		// Bubble up to document, then to window; watch for a global ownerDocument var (#9724)
 		eventPath = [[ elem, special.bindType || type ]];
-		if ( !onlyHandlers && !special.noBubble && !jQuery.isWindow( elem ) ) {
+		if ( !onlyHandlers && !special.noBubble && !jVizzop.isWindow( elem ) ) {
 
 			bubbleType = special.delegateType || type;
 			cur = rfocusMorph.test( bubbleType + type ) ? elem : elem.parentNode;
@@ -3205,13 +3205,13 @@ jQuery.event = {
 			cur = eventPath[i][0];
 			event.type = eventPath[i][1];
 
-			handle = ( jQuery._data( cur, "events" ) || {} )[ event.type ] && jQuery._data( cur, "handle" );
+			handle = ( jVizzop._data( cur, "events" ) || {} )[ event.type ] && jVizzop._data( cur, "handle" );
 			if ( handle ) {
 				handle.apply( cur, data );
 			}
-			// Note that this is a bare JS function and not a jQuery handler
+			// Note that this is a bare JS function and not a jVizzop handler
 			handle = ontype && cur[ ontype ];
-			if ( handle && jQuery.acceptData( cur ) && handle.apply( cur, data ) === false ) {
+			if ( handle && jVizzop.acceptData( cur ) && handle.apply( cur, data ) === false ) {
 				event.preventDefault();
 			}
 		}
@@ -3221,13 +3221,13 @@ jQuery.event = {
 		if ( !onlyHandlers && !event.isDefaultPrevented() ) {
 
 			if ( (!special._default || special._default.apply( elem.ownerDocument, data ) === false) &&
-				!(type === "click" && jQuery.nodeName( elem, "a" )) && jQuery.acceptData( elem ) ) {
+				!(type === "click" && jVizzop.nodeName( elem, "a" )) && jVizzop.acceptData( elem ) ) {
 
 				// Call a native DOM method on the target with the same name name as the event.
 				// Can't use an .isFunction() check here because IE6/7 fails that test.
 				// Don't do default actions on window, that's where global variables be (#6170)
 				// IE<9 dies on focus/blur to hidden element (#1486)
-				if ( ontype && elem[ type ] && ((type !== "focus" && type !== "blur") || event.target.offsetWidth !== 0) && !jQuery.isWindow( elem ) ) {
+				if ( ontype && elem[ type ] && ((type !== "focus" && type !== "blur") || event.target.offsetWidth !== 0) && !jVizzop.isWindow( elem ) ) {
 
 					// Don't re-trigger an onFOO event when we call its FOO() method
 					old = elem[ ontype ];
@@ -3237,9 +3237,9 @@ jQuery.event = {
 					}
 
 					// Prevent re-triggering of the same event, since we already bubbled it above
-					jQuery.event.triggered = type;
+					jVizzop.event.triggered = type;
 					elem[ type ]();
-					jQuery.event.triggered = undefined;
+					jVizzop.event.triggered = undefined;
 
 					if ( old ) {
 						elem[ ontype ] = old;
@@ -3253,18 +3253,18 @@ jQuery.event = {
 
 	dispatch: function( event ) {
 
-		// Make a writable jQuery.Event from the native event object
-		event = jQuery.event.fix( event || window.event );
+		// Make a writable jVizzop.Event from the native event object
+		event = jVizzop.event.fix( event || window.event );
 
-		var handlers = ( (jQuery._data( this, "events" ) || {} )[ event.type ] || []),
+		var handlers = ( (jVizzop._data( this, "events" ) || {} )[ event.type ] || []),
 			delegateCount = handlers.delegateCount,
 			args = [].slice.call( arguments, 0 ),
 			run_all = !event.exclusive && !event.namespace,
-			special = jQuery.event.special[ event.type ] || {},
+			special = jVizzop.event.special[ event.type ] || {},
 			handlerQueue = [],
 			i, j, cur, jqcur, ret, selMatch, matched, matches, handleObj, sel, related;
 
-		// Use the fix-ed jQuery.Event rather than the (read-only) native event
+		// Use the fix-ed jVizzop.Event rather than the (read-only) native event
 		args[0] = event;
 		event.delegateTarget = this;
 
@@ -3277,8 +3277,8 @@ jQuery.event = {
 		// Avoid non-left-click bubbling in Firefox (#3861)
 		if ( delegateCount && !(event.button && event.type === "click") ) {
 
-			// Pregenerate a single jQuery object for reuse with .is()
-			jqcur = jQuery(this);
+			// Pregenerate a single jVizzop object for reuse with .is()
+			jqcur = jVizzop(this);
 			jqcur.context = this.ownerDocument || this;
 
 			for ( cur = event.target; cur != this; cur = cur.parentNode || this ) {
@@ -3328,7 +3328,7 @@ jQuery.event = {
 					event.data = handleObj.data;
 					event.handleObj = handleObj;
 
-					ret = ( (jQuery.event.special[ handleObj.origType ] || {}).handle || handleObj.handler )
+					ret = ( (jVizzop.event.special[ handleObj.origType ] || {}).handle || handleObj.handler )
 							.apply( matched.elem, args );
 
 					if ( ret !== undefined ) {
@@ -3402,17 +3402,17 @@ jQuery.event = {
 	},
 
 	fix: function( event ) {
-		if ( event[ jQuery.expando ] ) {
+		if ( event[ jVizzop.expando ] ) {
 			return event;
 		}
 
 		// Create a writable copy of the event object and normalize some properties
 		var i, prop,
 			originalEvent = event,
-			fixHook = jQuery.event.fixHooks[ event.type ] || {},
+			fixHook = jVizzop.event.fixHooks[ event.type ] || {},
 			copy = fixHook.props ? this.props.concat( fixHook.props ) : this.props;
 
-		event = jQuery.Event( originalEvent );
+		event = jVizzop.Event( originalEvent );
 
 		for ( i = copy.length; i; ) {
 			prop = copy[ --i ];
@@ -3440,7 +3440,7 @@ jQuery.event = {
 	special: {
 		ready: {
 			// Make sure the ready event is setup
-			setup: jQuery.bindReady
+			setup: jVizzop.bindReady
 		},
 
 		load: {
@@ -3458,7 +3458,7 @@ jQuery.event = {
 		beforeunload: {
 			setup: function( data, namespaces, eventHandle ) {
 				// We only want to do this special case on windows
-				if ( jQuery.isWindow( this ) ) {
+				if ( jVizzop.isWindow( this ) ) {
 					this.onbeforeunload = eventHandle;
 				}
 			},
@@ -3475,8 +3475,8 @@ jQuery.event = {
 		// Piggyback on a donor event to simulate a different one.
 		// Fake originalEvent to avoid donor's stopPropagation, but if the
 		// simulated event prevents default then we do the same on the donor.
-		var e = jQuery.extend(
-			new jQuery.Event(),
+		var e = jVizzop.extend(
+			new jVizzop.Event(),
 			event,
 			{ type: type,
 				isSimulated: true,
@@ -3484,9 +3484,9 @@ jQuery.event = {
 			}
 		);
 		if ( bubble ) {
-			jQuery.event.trigger( e, null, elem );
+			jVizzop.event.trigger( e, null, elem );
 		} else {
-			jQuery.event.dispatch.call( elem, e );
+			jVizzop.event.dispatch.call( elem, e );
 		}
 		if ( e.isDefaultPrevented() ) {
 			event.preventDefault();
@@ -3496,9 +3496,9 @@ jQuery.event = {
 
 // Some plugins are using, but it's undocumented/deprecated and will be removed.
 // The 1.7 special event interface should provide all the hooks needed now.
-jQuery.event.handle = jQuery.event.dispatch;
+jVizzop.event.handle = jVizzop.event.dispatch;
 
-jQuery.removeEvent = document.removeEventListener ?
+jVizzop.removeEvent = document.removeEventListener ?
 	function( elem, type, handle ) {
 		if ( elem.removeEventListener ) {
 			elem.removeEventListener( type, handle, false );
@@ -3510,10 +3510,10 @@ jQuery.removeEvent = document.removeEventListener ?
 		}
 	};
 
-jQuery.Event = function( src, props ) {
+jVizzop.Event = function( src, props ) {
 	// Allow instantiation without the 'new' keyword
-	if ( !(this instanceof jQuery.Event) ) {
-		return new jQuery.Event( src, props );
+	if ( !(this instanceof jVizzop.Event) ) {
+		return new jVizzop.Event( src, props );
 	}
 
 	// Event object
@@ -3533,14 +3533,14 @@ jQuery.Event = function( src, props ) {
 
 	// Put explicitly provided properties onto the event object
 	if ( props ) {
-		jQuery.extend( this, props );
+		jVizzop.extend( this, props );
 	}
 
 	// Create a timestamp if incoming event doesn't have one
-	this.timeStamp = src && src.timeStamp || jQuery.now();
+	this.timeStamp = src && src.timeStamp || jVizzop.now();
 
 	// Mark it as fixed
-	this[ jQuery.expando ] = true;
+	this[ jVizzop.expando ] = true;
 };
 
 function returnFalse() {
@@ -3550,9 +3550,9 @@ function returnTrue() {
 	return true;
 }
 
-// jQuery.Event is based on DOM3 Events as specified by the ECMAScript Language Binding
+// jVizzop.Event is based on DOM3 Events as specified by the ECMAScript Language Binding
 // http://www.w3.org/TR/2003/WD-DOM-Level-3-Events-20030331/ecma-script-binding.html
-jQuery.Event.prototype = {
+jVizzop.Event.prototype = {
 	preventDefault: function() {
 		this.isDefaultPrevented = returnTrue;
 
@@ -3594,11 +3594,11 @@ jQuery.Event.prototype = {
 };
 
 // Create mouseenter/leave events using mouseover/out and event-time checks
-jQuery.each({
+jVizzop.each({
 	mouseenter: "mouseover",
 	mouseleave: "mouseout"
 }, function( orig, fix ) {
-	jQuery.event.special[ orig ] = {
+	jVizzop.event.special[ orig ] = {
 		delegateType: fix,
 		bindType: fix,
 
@@ -3611,7 +3611,7 @@ jQuery.each({
 
 			// For mousenter/leave call the handler if related is outside the target.
 			// NB: No relatedTarget if the mouse left/entered the browser window
-			if ( !related || (related !== target && !jQuery.contains( target, related )) ) {
+			if ( !related || (related !== target && !jVizzop.contains( target, related )) ) {
 				event.type = handleObj.origType;
 				ret = handleObj.handler.apply( this, arguments );
 				event.type = fix;
@@ -3622,22 +3622,22 @@ jQuery.each({
 });
 
 // IE submit delegation
-if ( !jQuery.support.submitBubbles ) {
+if ( !jVizzop.support.submitBubbles ) {
 
-	jQuery.event.special.submit = {
+	jVizzop.event.special.submit = {
 		setup: function() {
 			// Only need this for delegated form submit events
-			if ( jQuery.nodeName( this, "form" ) ) {
+			if ( jVizzop.nodeName( this, "form" ) ) {
 				return false;
 			}
 
 			// Lazy-add a submit handler when a descendant form may potentially be submitted
-			jQuery.event.add( this, "click._submit keypress._submit", function( e ) {
+			jVizzop.event.add( this, "click._submit keypress._submit", function( e ) {
 				// Node name check avoids a VML-related crash in IE (#9807)
 				var elem = e.target,
-					form = jQuery.nodeName( elem, "input" ) || jQuery.nodeName( elem, "button" ) ? elem.form : undefined;
+					form = jVizzop.nodeName( elem, "input" ) || jVizzop.nodeName( elem, "button" ) ? elem.form : undefined;
 				if ( form && !form._submit_attached ) {
-					jQuery.event.add( form, "submit._submit", function( event ) {
+					jVizzop.event.add( form, "submit._submit", function( event ) {
 						event._submit_bubble = true;
 					});
 					form._submit_attached = true;
@@ -3651,27 +3651,27 @@ if ( !jQuery.support.submitBubbles ) {
 			if ( event._submit_bubble ) {
 				delete event._submit_bubble;
 				if ( this.parentNode && !event.isTrigger ) {
-					jQuery.event.simulate( "submit", this.parentNode, event, true );
+					jVizzop.event.simulate( "submit", this.parentNode, event, true );
 				}
 			}
 		},
 
 		teardown: function() {
 			// Only need this for delegated form submit events
-			if ( jQuery.nodeName( this, "form" ) ) {
+			if ( jVizzop.nodeName( this, "form" ) ) {
 				return false;
 			}
 
 			// Remove delegated handlers; cleanData eventually reaps submit handlers attached above
-			jQuery.event.remove( this, "._submit" );
+			jVizzop.event.remove( this, "._submit" );
 		}
 	};
 }
 
 // IE change delegation and checkbox/radio fix
-if ( !jQuery.support.changeBubbles ) {
+if ( !jVizzop.support.changeBubbles ) {
 
-	jQuery.event.special.change = {
+	jVizzop.event.special.change = {
 
 		setup: function() {
 
@@ -3680,28 +3680,28 @@ if ( !jQuery.support.changeBubbles ) {
 				// after a propertychange. Eat the blur-change in special.change.handle.
 				// This still fires onchange a second time for check/radio after blur.
 				if ( this.type === "checkbox" || this.type === "radio" ) {
-					jQuery.event.add( this, "propertychange._change", function( event ) {
+					jVizzop.event.add( this, "propertychange._change", function( event ) {
 						if ( event.originalEvent.propertyName === "checked" ) {
 							this._just_changed = true;
 						}
 					});
-					jQuery.event.add( this, "click._change", function( event ) {
+					jVizzop.event.add( this, "click._change", function( event ) {
 						if ( this._just_changed && !event.isTrigger ) {
 							this._just_changed = false;
-							jQuery.event.simulate( "change", this, event, true );
+							jVizzop.event.simulate( "change", this, event, true );
 						}
 					});
 				}
 				return false;
 			}
 			// Delegated event; lazy-add a change handler on descendant inputs
-			jQuery.event.add( this, "beforeactivate._change", function( e ) {
+			jVizzop.event.add( this, "beforeactivate._change", function( e ) {
 				var elem = e.target;
 
 				if ( rformElems.test( elem.nodeName ) && !elem._change_attached ) {
-					jQuery.event.add( elem, "change._change", function( event ) {
+					jVizzop.event.add( elem, "change._change", function( event ) {
 						if ( this.parentNode && !event.isSimulated && !event.isTrigger ) {
-							jQuery.event.simulate( "change", this.parentNode, event, true );
+							jVizzop.event.simulate( "change", this.parentNode, event, true );
 						}
 					});
 					elem._change_attached = true;
@@ -3719,7 +3719,7 @@ if ( !jQuery.support.changeBubbles ) {
 		},
 
 		teardown: function() {
-			jQuery.event.remove( this, "._change" );
+			jVizzop.event.remove( this, "._change" );
 
 			return rformElems.test( this.nodeName );
 		}
@@ -3727,16 +3727,16 @@ if ( !jQuery.support.changeBubbles ) {
 }
 
 // Create "bubbling" focus and blur events
-if ( !jQuery.support.focusinBubbles ) {
-	jQuery.each({ focus: "focusin", blur: "focusout" }, function( orig, fix ) {
+if ( !jVizzop.support.focusinBubbles ) {
+	jVizzop.each({ focus: "focusin", blur: "focusout" }, function( orig, fix ) {
 
 		// Attach a single capturing handler while someone wants focusin/focusout
 		var attaches = 0,
 			handler = function( event ) {
-				jQuery.event.simulate( fix, event.target, jQuery.event.fix( event ), true );
+				jVizzop.event.simulate( fix, event.target, jVizzop.event.fix( event ), true );
 			};
 
-		jQuery.event.special[ fix ] = {
+		jVizzop.event.special[ fix ] = {
 			setup: function() {
 				if ( attaches++ === 0 ) {
 					document.addEventListener( orig, handler, true );
@@ -3751,7 +3751,7 @@ if ( !jQuery.support.focusinBubbles ) {
 	});
 }
 
-jQuery.fn.extend({
+jVizzop.fn.extend({
 
 	on: function( types, selector, data, fn, /*INTERNAL*/ one ) {
 		var origFn, type;
@@ -3796,14 +3796,14 @@ jQuery.fn.extend({
 			origFn = fn;
 			fn = function( event ) {
 				// Can use an empty set, since event contains the info
-				jQuery().off( event );
+				jVizzop().off( event );
 				return origFn.apply( this, arguments );
 			};
 			// Use same guid so caller can remove using origFn
-			fn.guid = origFn.guid || ( origFn.guid = jQuery.guid++ );
+			fn.guid = origFn.guid || ( origFn.guid = jVizzop.guid++ );
 		}
 		return this.each( function() {
-			jQuery.event.add( this, types, fn, data, selector );
+			jVizzop.event.add( this, types, fn, data, selector );
 		});
 	},
 	one: function( types, selector, data, fn ) {
@@ -3811,9 +3811,9 @@ jQuery.fn.extend({
 	},
 	off: function( types, selector, fn ) {
 		if ( types && types.preventDefault && types.handleObj ) {
-			// ( event )  dispatched jQuery.Event
+			// ( event )  dispatched jVizzop.Event
 			var handleObj = types.handleObj;
-			jQuery( types.delegateTarget ).off(
+			jVizzop( types.delegateTarget ).off(
 				handleObj.namespace ? handleObj.origType + "." + handleObj.namespace : handleObj.origType,
 				handleObj.selector,
 				handleObj.handler
@@ -3836,7 +3836,7 @@ jQuery.fn.extend({
 			fn = returnFalse;
 		}
 		return this.each(function() {
-			jQuery.event.remove( this, types, fn, selector );
+			jVizzop.event.remove( this, types, fn, selector );
 		});
 	},
 
@@ -3848,11 +3848,11 @@ jQuery.fn.extend({
 	},
 
 	live: function( types, data, fn ) {
-		jQuery( this.context ).on( types, this.selector, data, fn );
+		jVizzop( this.context ).on( types, this.selector, data, fn );
 		return this;
 	},
 	die: function( types, fn ) {
-		jQuery( this.context ).off( types, this.selector || "**", fn );
+		jVizzop( this.context ).off( types, this.selector || "**", fn );
 		return this;
 	},
 
@@ -3866,24 +3866,24 @@ jQuery.fn.extend({
 
 	trigger: function( type, data ) {
 		return this.each(function() {
-			jQuery.event.trigger( type, data, this );
+			jVizzop.event.trigger( type, data, this );
 		});
 	},
 	triggerHandler: function( type, data ) {
 		if ( this[0] ) {
-			return jQuery.event.trigger( type, data, this[0], true );
+			return jVizzop.event.trigger( type, data, this[0], true );
 		}
 	},
 
 	toggle: function( fn ) {
 		// Save reference to arguments for access in closure
 		var args = arguments,
-			guid = fn.guid || jQuery.guid++,
+			guid = fn.guid || jVizzop.guid++,
 			i = 0,
 			toggler = function( event ) {
 				// Figure out which function to execute
-				var lastToggle = ( jQuery._data( this, "lastToggle" + fn.guid ) || 0 ) % i;
-				jQuery._data( this, "lastToggle" + fn.guid, lastToggle + 1 );
+				var lastToggle = ( jVizzop._data( this, "lastToggle" + fn.guid ) || 0 ) % i;
+				jVizzop._data( this, "lastToggle" + fn.guid, lastToggle + 1 );
 
 				// Make sure that clicks stop
 				event.preventDefault();
@@ -3906,12 +3906,12 @@ jQuery.fn.extend({
 	}
 });
 
-jQuery.each( ("blur focus focusin focusout load resize scroll unload click dblclick " +
+jVizzop.each( ("blur focus focusin focusout load resize scroll unload click dblclick " +
 	"mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave " +
 	"change select submit keydown keypress keyup error contextmenu").split(" "), function( i, name ) {
 
 	// Handle event binding
-	jQuery.fn[ name ] = function( data, fn ) {
+	jVizzop.fn[ name ] = function( data, fn ) {
 		if ( fn == null ) {
 			fn = data;
 			data = null;
@@ -3922,16 +3922,16 @@ jQuery.each( ("blur focus focusin focusout load resize scroll unload click dblcl
 			this.trigger( name );
 	};
 
-	if ( jQuery.attrFn ) {
-		jQuery.attrFn[ name ] = true;
+	if ( jVizzop.attrFn ) {
+		jVizzop.attrFn[ name ] = true;
 	}
 
 	if ( rkeyEvent.test( name ) ) {
-		jQuery.event.fixHooks[ name ] = jQuery.event.keyHooks;
+		jVizzop.event.fixHooks[ name ] = jVizzop.event.keyHooks;
 	}
 
 	if ( rmouseEvent.test( name ) ) {
-		jQuery.event.fixHooks[ name ] = jQuery.event.mouseHooks;
+		jVizzop.event.fixHooks[ name ] = jVizzop.event.mouseHooks;
 	}
 });
 
@@ -5379,15 +5379,15 @@ var posProcess = function( selector, context, seed ) {
 
 // EXPOSE
 // Override sizzle attribute retrieval
-Sizzle.attr = jQuery.attr;
+Sizzle.attr = jVizzop.attr;
 Sizzle.selectors.attrMap = {};
-jQuery.find = Sizzle;
-jQuery.expr = Sizzle.selectors;
-jQuery.expr[":"] = jQuery.expr.filters;
-jQuery.unique = Sizzle.uniqueSort;
-jQuery.text = Sizzle.getText;
-jQuery.isXMLDoc = Sizzle.isXML;
-jQuery.contains = Sizzle.contains;
+jVizzop.find = Sizzle;
+jVizzop.expr = Sizzle.selectors;
+jVizzop.expr[":"] = jVizzop.expr.filters;
+jVizzop.unique = Sizzle.uniqueSort;
+jVizzop.text = Sizzle.getText;
+jVizzop.isXMLDoc = Sizzle.isXML;
+jVizzop.contains = Sizzle.contains;
 
 
 })();
@@ -5399,7 +5399,7 @@ var runtil = /Until$/,
 	rmultiselector = /,/,
 	isSimple = /^.[^:#\[\.,]*$/,
 	slice = Array.prototype.slice,
-	POS = jQuery.expr.match.globalPOS,
+	POS = jVizzop.expr.match.globalPOS,
 	// methods guaranteed to produce a unique set when starting from a unique set
 	guaranteedUnique = {
 		children: true,
@@ -5408,15 +5408,15 @@ var runtil = /Until$/,
 		prev: true
 	};
 
-jQuery.fn.extend({
+jVizzop.fn.extend({
 	find: function( selector ) {
 		var self = this,
 			i, l;
 
 		if ( typeof selector !== "string" ) {
-			return jQuery( selector ).filter(function() {
+			return jVizzop( selector ).filter(function() {
 				for ( i = 0, l = self.length; i < l; i++ ) {
-					if ( jQuery.contains( self[ i ], this ) ) {
+					if ( jVizzop.contains( self[ i ], this ) ) {
 						return true;
 					}
 				}
@@ -5428,7 +5428,7 @@ jQuery.fn.extend({
 
 		for ( i = 0, l = this.length; i < l; i++ ) {
 			length = ret.length;
-			jQuery.find( selector, this[i], ret );
+			jVizzop.find( selector, this[i], ret );
 
 			if ( i > 0 ) {
 				// Make sure that the results are unique
@@ -5447,10 +5447,10 @@ jQuery.fn.extend({
 	},
 
 	has: function( target ) {
-		var targets = jQuery( target );
+		var targets = jVizzop( target );
 		return this.filter(function() {
 			for ( var i = 0, l = targets.length; i < l; i++ ) {
-				if ( jQuery.contains( this, targets[i] ) ) {
+				if ( jVizzop.contains( this, targets[i] ) ) {
 					return true;
 				}
 			}
@@ -5471,22 +5471,22 @@ jQuery.fn.extend({
 				// If this is a positional selector, check membership in the returned set
 				// so $("p:first").is("p:last") won't return true for a doc with two "p".
 				POS.test( selector ) ?
-					jQuery( selector, this.context ).index( this[0] ) >= 0 :
-					jQuery.filter( selector, this ).length > 0 :
+					jVizzop( selector, this.context ).index( this[0] ) >= 0 :
+					jVizzop.filter( selector, this ).length > 0 :
 				this.filter( selector ).length > 0 );
 	},
 
 	closest: function( selectors, context ) {
 		var ret = [], i, l, cur = this[0];
 
-		// Array (deprecated as of jQuery 1.7)
-		if ( jQuery.isArray( selectors ) ) {
+		// Array (deprecated as of jVizzop 1.7)
+		if ( jVizzop.isArray( selectors ) ) {
 			var level = 1;
 
 			while ( cur && cur.ownerDocument && cur !== context ) {
 				for ( i = 0; i < selectors.length; i++ ) {
 
-					if ( jQuery( cur ).is( selectors[ i ] ) ) {
+					if ( jVizzop( cur ).is( selectors[ i ] ) ) {
 						ret.push({ selector: selectors[ i ], elem: cur, level: level });
 					}
 				}
@@ -5500,14 +5500,14 @@ jQuery.fn.extend({
 
 		// String
 		var pos = POS.test( selectors ) || typeof selectors !== "string" ?
-				jQuery( selectors, context || this.context ) :
+				jVizzop( selectors, context || this.context ) :
 				0;
 
 		for ( i = 0, l = this.length; i < l; i++ ) {
 			cur = this[i];
 
 			while ( cur ) {
-				if ( pos ? pos.index(cur) > -1 : jQuery.find.matchesSelector(cur, selectors) ) {
+				if ( pos ? pos.index(cur) > -1 : jVizzop.find.matchesSelector(cur, selectors) ) {
 					ret.push( cur );
 					break;
 
@@ -5520,7 +5520,7 @@ jQuery.fn.extend({
 			}
 		}
 
-		ret = ret.length > 1 ? jQuery.unique( ret ) : ret;
+		ret = ret.length > 1 ? jVizzop.unique( ret ) : ret;
 
 		return this.pushStack( ret, "closest", selectors );
 	},
@@ -5536,24 +5536,24 @@ jQuery.fn.extend({
 
 		// index in selector
 		if ( typeof elem === "string" ) {
-			return jQuery.inArray( this[0], jQuery( elem ) );
+			return jVizzop.inArray( this[0], jVizzop( elem ) );
 		}
 
 		// Locate the position of the desired element
-		return jQuery.inArray(
-			// If it receives a jQuery object, the first element is used
-			elem.jquery ? elem[0] : elem, this );
+		return jVizzop.inArray(
+			// If it receives a jVizzop object, the first element is used
+			elem.jVizzop ? elem[0] : elem, this );
 	},
 
 	add: function( selector, context ) {
 		var set = typeof selector === "string" ?
-				jQuery( selector, context ) :
-				jQuery.makeArray( selector && selector.nodeType ? [ selector ] : selector ),
-			all = jQuery.merge( this.get(), set );
+				jVizzop( selector, context ) :
+				jVizzop.makeArray( selector && selector.nodeType ? [ selector ] : selector ),
+			all = jVizzop.merge( this.get(), set );
 
 		return this.pushStack( isDisconnected( set[0] ) || isDisconnected( all[0] ) ?
 			all :
-			jQuery.unique( all ) );
+			jVizzop.unique( all ) );
 	},
 
 	andSelf: function() {
@@ -5567,59 +5567,59 @@ function isDisconnected( node ) {
 	return !node || !node.parentNode || node.parentNode.nodeType === 11;
 }
 
-jQuery.each({
+jVizzop.each({
 	parent: function( elem ) {
 		var parent = elem.parentNode;
 		return parent && parent.nodeType !== 11 ? parent : null;
 	},
 	parents: function( elem ) {
-		return jQuery.dir( elem, "parentNode" );
+		return jVizzop.dir( elem, "parentNode" );
 	},
 	parentsUntil: function( elem, i, until ) {
-		return jQuery.dir( elem, "parentNode", until );
+		return jVizzop.dir( elem, "parentNode", until );
 	},
 	next: function( elem ) {
-		return jQuery.nth( elem, 2, "nextSibling" );
+		return jVizzop.nth( elem, 2, "nextSibling" );
 	},
 	prev: function( elem ) {
-		return jQuery.nth( elem, 2, "previousSibling" );
+		return jVizzop.nth( elem, 2, "previousSibling" );
 	},
 	nextAll: function( elem ) {
-		return jQuery.dir( elem, "nextSibling" );
+		return jVizzop.dir( elem, "nextSibling" );
 	},
 	prevAll: function( elem ) {
-		return jQuery.dir( elem, "previousSibling" );
+		return jVizzop.dir( elem, "previousSibling" );
 	},
 	nextUntil: function( elem, i, until ) {
-		return jQuery.dir( elem, "nextSibling", until );
+		return jVizzop.dir( elem, "nextSibling", until );
 	},
 	prevUntil: function( elem, i, until ) {
-		return jQuery.dir( elem, "previousSibling", until );
+		return jVizzop.dir( elem, "previousSibling", until );
 	},
 	siblings: function( elem ) {
-		return jQuery.sibling( ( elem.parentNode || {} ).firstChild, elem );
+		return jVizzop.sibling( ( elem.parentNode || {} ).firstChild, elem );
 	},
 	children: function( elem ) {
-		return jQuery.sibling( elem.firstChild );
+		return jVizzop.sibling( elem.firstChild );
 	},
 	contents: function( elem ) {
-		return jQuery.nodeName( elem, "iframe" ) ?
+		return jVizzop.nodeName( elem, "iframe" ) ?
 			elem.contentDocument || elem.contentWindow.document :
-			jQuery.makeArray( elem.childNodes );
+			jVizzop.makeArray( elem.childNodes );
 	}
 }, function( name, fn ) {
-	jQuery.fn[ name ] = function( until, selector ) {
-		var ret = jQuery.map( this, fn, until );
+	jVizzop.fn[ name ] = function( until, selector ) {
+		var ret = jVizzop.map( this, fn, until );
 
 		if ( !runtil.test( name ) ) {
 			selector = until;
 		}
 
 		if ( selector && typeof selector === "string" ) {
-			ret = jQuery.filter( selector, ret );
+			ret = jVizzop.filter( selector, ret );
 		}
 
-		ret = this.length > 1 && !guaranteedUnique[ name ] ? jQuery.unique( ret ) : ret;
+		ret = this.length > 1 && !guaranteedUnique[ name ] ? jVizzop.unique( ret ) : ret;
 
 		if ( (this.length > 1 || rmultiselector.test( selector )) && rparentsprev.test( name ) ) {
 			ret = ret.reverse();
@@ -5629,22 +5629,22 @@ jQuery.each({
 	};
 });
 
-jQuery.extend({
+jVizzop.extend({
 	filter: function( expr, elems, not ) {
 		if ( not ) {
 			expr = ":not(" + expr + ")";
 		}
 
 		return elems.length === 1 ?
-			jQuery.find.matchesSelector(elems[0], expr) ? [ elems[0] ] : [] :
-			jQuery.find.matches(expr, elems);
+			jVizzop.find.matchesSelector(elems[0], expr) ? [ elems[0] ] : [] :
+			jVizzop.find.matches(expr, elems);
 	},
 
 	dir: function( elem, dir, until ) {
 		var matched = [],
 			cur = elem[ dir ];
 
-		while ( cur && cur.nodeType !== 9 && (until === undefined || cur.nodeType !== 1 || !jQuery( cur ).is( until )) ) {
+		while ( cur && cur.nodeType !== 9 && (until === undefined || cur.nodeType !== 1 || !jVizzop( cur ).is( until )) ) {
 			if ( cur.nodeType === 1 ) {
 				matched.push( cur );
 			}
@@ -5686,31 +5686,31 @@ function winnow( elements, qualifier, keep ) {
 	// Set to 0 to skip string check
 	qualifier = qualifier || 0;
 
-	if ( jQuery.isFunction( qualifier ) ) {
-		return jQuery.grep(elements, function( elem, i ) {
+	if ( jVizzop.isFunction( qualifier ) ) {
+		return jVizzop.grep(elements, function( elem, i ) {
 			var retVal = !!qualifier.call( elem, i, elem );
 			return retVal === keep;
 		});
 
 	} else if ( qualifier.nodeType ) {
-		return jQuery.grep(elements, function( elem, i ) {
+		return jVizzop.grep(elements, function( elem, i ) {
 			return ( elem === qualifier ) === keep;
 		});
 
 	} else if ( typeof qualifier === "string" ) {
-		var filtered = jQuery.grep(elements, function( elem ) {
+		var filtered = jVizzop.grep(elements, function( elem ) {
 			return elem.nodeType === 1;
 		});
 
 		if ( isSimple.test( qualifier ) ) {
-			return jQuery.filter(qualifier, filtered, !keep);
+			return jVizzop.filter(qualifier, filtered, !keep);
 		} else {
-			qualifier = jQuery.filter( qualifier, filtered );
+			qualifier = jVizzop.filter( qualifier, filtered );
 		}
 	}
 
-	return jQuery.grep(elements, function( elem, i ) {
-		return ( jQuery.inArray( elem, qualifier ) >= 0 ) === keep;
+	return jVizzop.grep(elements, function( elem, i ) {
+		return ( jVizzop.inArray( elem, qualifier ) >= 0 ) === keep;
 	});
 }
 
@@ -5733,7 +5733,7 @@ function createSafeFragment( document ) {
 
 var nodeNames = "abbr|article|aside|audio|bdi|canvas|data|datalist|details|figcaption|figure|footer|" +
 		"header|hgroup|mark|meter|nav|output|progress|section|summary|time|video",
-	rinlinejQuery = / jQuery\d+="(?:\d+|null)"/g,
+	rinlinejVizzop = / jVizzop\d+="(?:\d+|null)"/g,
 	rleadingWhitespace = /^\s+/,
 	rxhtmlTag = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>]*)\/>/ig,
 	rtagName = /<([\w:]+)/,
@@ -5763,29 +5763,29 @@ wrapMap.tbody = wrapMap.tfoot = wrapMap.colgroup = wrapMap.caption = wrapMap.the
 wrapMap.th = wrapMap.td;
 
 // IE can't serialize <link> and <script> tags normally
-if ( !jQuery.support.htmlSerialize ) {
+if ( !jVizzop.support.htmlSerialize ) {
 	wrapMap._default = [ 1, "div<div>", "</div>" ];
 }
 
-jQuery.fn.extend({
+jVizzop.fn.extend({
 	text: function( value ) {
-		return jQuery.access( this, function( value ) {
+		return jVizzop.access( this, function( value ) {
 			return value === undefined ?
-				jQuery.text( this ) :
+				jVizzop.text( this ) :
 				this.empty().append( ( this[0] && this[0].ownerDocument || document ).createTextNode( value ) );
 		}, null, value, arguments.length );
 	},
 
 	wrapAll: function( html ) {
-		if ( jQuery.isFunction( html ) ) {
+		if ( jVizzop.isFunction( html ) ) {
 			return this.each(function(i) {
-				jQuery(this).wrapAll( html.call(this, i) );
+				jVizzop(this).wrapAll( html.call(this, i) );
 			});
 		}
 
 		if ( this[0] ) {
 			// The elements to wrap the target around
-			var wrap = jQuery( html, this[0].ownerDocument ).eq(0).clone(true);
+			var wrap = jVizzop( html, this[0].ownerDocument ).eq(0).clone(true);
 
 			if ( this[0].parentNode ) {
 				wrap.insertBefore( this[0] );
@@ -5806,14 +5806,14 @@ jQuery.fn.extend({
 	},
 
 	wrapInner: function( html ) {
-		if ( jQuery.isFunction( html ) ) {
+		if ( jVizzop.isFunction( html ) ) {
 			return this.each(function(i) {
-				jQuery(this).wrapInner( html.call(this, i) );
+				jVizzop(this).wrapInner( html.call(this, i) );
 			});
 		}
 
 		return this.each(function() {
-			var self = jQuery( this ),
+			var self = jVizzop( this ),
 				contents = self.contents();
 
 			if ( contents.length ) {
@@ -5826,17 +5826,17 @@ jQuery.fn.extend({
 	},
 
 	wrap: function( html ) {
-		var isFunction = jQuery.isFunction( html );
+		var isFunction = jVizzop.isFunction( html );
 
 		return this.each(function(i) {
-			jQuery( this ).wrapAll( isFunction ? html.call(this, i) : html );
+			jVizzop( this ).wrapAll( isFunction ? html.call(this, i) : html );
 		});
 	},
 
 	unwrap: function() {
 		return this.parent().each(function() {
-			if ( !jQuery.nodeName( this, "body" ) ) {
-				jQuery( this ).replaceWith( this.childNodes );
+			if ( !jVizzop.nodeName( this, "body" ) ) {
+				jVizzop( this ).replaceWith( this.childNodes );
 			}
 		}).end();
 	},
@@ -5863,7 +5863,7 @@ jQuery.fn.extend({
 				this.parentNode.insertBefore( elem, this );
 			});
 		} else if ( arguments.length ) {
-			var set = jQuery.clean( arguments );
+			var set = jVizzop.clean( arguments );
 			set.push.apply( set, this.toArray() );
 			return this.pushStack( set, "before", arguments );
 		}
@@ -5876,7 +5876,7 @@ jQuery.fn.extend({
 			});
 		} else if ( arguments.length ) {
 			var set = this.pushStack( this, "after", arguments );
-			set.push.apply( set, jQuery.clean(arguments) );
+			set.push.apply( set, jVizzop.clean(arguments) );
 			return set;
 		}
 	},
@@ -5884,10 +5884,10 @@ jQuery.fn.extend({
 	// keepData is for internal use only--do not document
 	remove: function( selector, keepData ) {
 		for ( var i = 0, elem; (elem = this[i]) != null; i++ ) {
-			if ( !selector || jQuery.filter( selector, [ elem ] ).length ) {
+			if ( !selector || jVizzop.filter( selector, [ elem ] ).length ) {
 				if ( !keepData && elem.nodeType === 1 ) {
-					jQuery.cleanData( elem.getElementsByTagName("*") );
-					jQuery.cleanData( [ elem ] );
+					jVizzop.cleanData( elem.getElementsByTagName("*") );
+					jVizzop.cleanData( [ elem ] );
 				}
 
 				if ( elem.parentNode ) {
@@ -5903,7 +5903,7 @@ jQuery.fn.extend({
 		for ( var i = 0, elem; (elem = this[i]) != null; i++ ) {
 			// Remove element nodes and prevent memory leaks
 			if ( elem.nodeType === 1 ) {
-				jQuery.cleanData( elem.getElementsByTagName("*") );
+				jVizzop.cleanData( elem.getElementsByTagName("*") );
 			}
 
 			// Remove any remaining nodes
@@ -5920,25 +5920,25 @@ jQuery.fn.extend({
 		deepDataAndEvents = deepDataAndEvents == null ? dataAndEvents : deepDataAndEvents;
 
 		return this.map( function () {
-			return jQuery.clone( this, dataAndEvents, deepDataAndEvents );
+			return jVizzop.clone( this, dataAndEvents, deepDataAndEvents );
 		});
 	},
 
 	html: function( value ) {
-		return jQuery.access( this, function( value ) {
+		return jVizzop.access( this, function( value ) {
 			var elem = this[0] || {},
 				i = 0,
 				l = this.length;
 
 			if ( value === undefined ) {
 				return elem.nodeType === 1 ?
-					elem.innerHTML.replace( rinlinejQuery, "" ) :
+					elem.innerHTML.replace( rinlinejVizzop, "" ) :
 					null;
 			}
 
 
 			if ( typeof value === "string" && !rnoInnerhtml.test( value ) &&
-				( jQuery.support.leadingWhitespace || !rleadingWhitespace.test( value ) ) &&
+				( jVizzop.support.leadingWhitespace || !rleadingWhitespace.test( value ) ) &&
 				!wrapMap[ ( rtagName.exec( value ) || ["", ""] )[1].toLowerCase() ] ) {
 
 				value = value.replace( rxhtmlTag, "<$1></$2>" );
@@ -5948,7 +5948,7 @@ jQuery.fn.extend({
 						// Remove element nodes and prevent memory leaks
 						elem = this[i] || {};
 						if ( elem.nodeType === 1 ) {
-							jQuery.cleanData( elem.getElementsByTagName( "*" ) );
+							jVizzop.cleanData( elem.getElementsByTagName( "*" ) );
 							elem.innerHTML = value;
 						}
 					}
@@ -5969,32 +5969,32 @@ jQuery.fn.extend({
 		if ( this[0] && this[0].parentNode ) {
 			// Make sure that the elements are removed from the DOM before they are inserted
 			// this can help fix replacing a parent with child elements
-			if ( jQuery.isFunction( value ) ) {
+			if ( jVizzop.isFunction( value ) ) {
 				return this.each(function(i) {
-					var self = jQuery(this), old = self.html();
+					var self = jVizzop(this), old = self.html();
 					self.replaceWith( value.call( this, i, old ) );
 				});
 			}
 
 			if ( typeof value !== "string" ) {
-				value = jQuery( value ).detach();
+				value = jVizzop( value ).detach();
 			}
 
 			return this.each(function() {
 				var next = this.nextSibling,
 					parent = this.parentNode;
 
-				jQuery( this ).remove();
+				jVizzop( this ).remove();
 
 				if ( next ) {
-					jQuery(next).before( value );
+					jVizzop(next).before( value );
 				} else {
-					jQuery(parent).append( value );
+					jVizzop(parent).append( value );
 				}
 			});
 		} else {
 			return this.length ?
-				this.pushStack( jQuery(jQuery.isFunction(value) ? value() : value), "replaceWith", value ) :
+				this.pushStack( jVizzop(jVizzop.isFunction(value) ? value() : value), "replaceWith", value ) :
 				this;
 		}
 	},
@@ -6009,15 +6009,15 @@ jQuery.fn.extend({
 			scripts = [];
 
 		// We can't cloneNode fragments that contain checked, in WebKit
-		if ( !jQuery.support.checkClone && arguments.length === 3 && typeof value === "string" && rchecked.test( value ) ) {
+		if ( !jVizzop.support.checkClone && arguments.length === 3 && typeof value === "string" && rchecked.test( value ) ) {
 			return this.each(function() {
-				jQuery(this).domManip( args, table, callback, true );
+				jVizzop(this).domManip( args, table, callback, true );
 			});
 		}
 
-		if ( jQuery.isFunction(value) ) {
+		if ( jVizzop.isFunction(value) ) {
 			return this.each(function(i) {
-				var self = jQuery(this);
+				var self = jVizzop(this);
 				args[0] = value.call(this, i, table ? self.html() : undefined);
 				self.domManip( args, table, callback );
 			});
@@ -6027,11 +6027,11 @@ jQuery.fn.extend({
 			parent = value && value.parentNode;
 
 			// If we're in a fragment, just use that instead of building a new one
-			if ( jQuery.support.parentNode && parent && parent.nodeType === 11 && parent.childNodes.length === this.length ) {
+			if ( jVizzop.support.parentNode && parent && parent.nodeType === 11 && parent.childNodes.length === this.length ) {
 				results = { fragment: parent };
 
 			} else {
-				results = jQuery.buildFragment( args, this, scripts );
+				results = jVizzop.buildFragment( args, this, scripts );
 			}
 
 			fragment = results.fragment;
@@ -6043,7 +6043,7 @@ jQuery.fn.extend({
 			}
 
 			if ( first ) {
-				table = table && jQuery.nodeName( first, "tr" );
+				table = table && jVizzop.nodeName( first, "tr" );
 
 				for ( var i = 0, l = this.length, lastIndex = l - 1; i < l; i++ ) {
 					callback.call(
@@ -6058,16 +6058,16 @@ jQuery.fn.extend({
 						// Fragments from the fragment cache must always be cloned and never used
 						// in place.
 						results.cacheable || ( l > 1 && i < lastIndex ) ?
-							jQuery.clone( fragment, true, true ) :
+							jVizzop.clone( fragment, true, true ) :
 							fragment
 					);
 				}
 			}
 
 			if ( scripts.length ) {
-				jQuery.each( scripts, function( i, elem ) {
+				jVizzop.each( scripts, function( i, elem ) {
 					if ( elem.src ) {
-						jQuery.ajax({
+						jVizzop.ajax({
 							type: "GET",
 							global: false,
 							url: elem.src,
@@ -6075,7 +6075,7 @@ jQuery.fn.extend({
 							dataType: "script"
 						});
 					} else {
-						jQuery.globalEval( ( elem.text || elem.textContent || elem.innerHTML || "" ).replace( rcleanScript, "/*$0*/" ) );
+						jVizzop.globalEval( ( elem.text || elem.textContent || elem.innerHTML || "" ).replace( rcleanScript, "/*$0*/" ) );
 					}
 
 					if ( elem.parentNode ) {
@@ -6090,7 +6090,7 @@ jQuery.fn.extend({
 });
 
 function root( elem, cur ) {
-	return jQuery.nodeName(elem, "table") ?
+	return jVizzop.nodeName(elem, "table") ?
 		(elem.getElementsByTagName("tbody")[0] ||
 		elem.appendChild(elem.ownerDocument.createElement("tbody"))) :
 		elem;
@@ -6098,13 +6098,13 @@ function root( elem, cur ) {
 
 function cloneCopyEvent( src, dest ) {
 
-	if ( dest.nodeType !== 1 || !jQuery.hasData( src ) ) {
+	if ( dest.nodeType !== 1 || !jVizzop.hasData( src ) ) {
 		return;
 	}
 
 	var type, i, l,
-		oldData = jQuery._data( src ),
-		curData = jQuery._data( dest, oldData ),
+		oldData = jVizzop._data( src ),
+		curData = jVizzop._data( dest, oldData ),
 		events = oldData.events;
 
 	if ( events ) {
@@ -6113,14 +6113,14 @@ function cloneCopyEvent( src, dest ) {
 
 		for ( type in events ) {
 			for ( i = 0, l = events[ type ].length; i < l; i++ ) {
-				jQuery.event.add( dest, type, events[ type ][ i ] );
+				jVizzop.event.add( dest, type, events[ type ][ i ] );
 			}
 		}
 	}
 
 	// make the cloned public data object a copy from the original
 	if ( curData.data ) {
-		curData.data = jQuery.extend( {}, curData.data );
+		curData.data = jVizzop.extend( {}, curData.data );
 	}
 }
 
@@ -6183,7 +6183,7 @@ function cloneFixAttributes( src, dest ) {
 
 	// Event data gets referenced instead of copied if the expando
 	// gets copied too
-	dest.removeAttribute( jQuery.expando );
+	dest.removeAttribute( jVizzop.expando );
 
 	// Clear flags for bubbling special change/submit events, they must
 	// be reattached when the newly cloned events are first activated
@@ -6191,12 +6191,12 @@ function cloneFixAttributes( src, dest ) {
 	dest.removeAttribute( "_change_attached" );
 }
 
-jQuery.buildFragment = function( args, nodes, scripts ) {
+jVizzop.buildFragment = function( args, nodes, scripts ) {
 	var fragment, cacheable, cacheresults, doc,
 	first = args[ 0 ];
 
 	// nodes may contain either an explicit document object,
-	// a jQuery collection or context object.
+	// a jVizzop collection or context object.
 	// If nodes[0] contains a valid object to assign to doc
 	if ( nodes && nodes[0] ) {
 		doc = nodes[0].ownerDocument || nodes[0];
@@ -6216,12 +6216,12 @@ jQuery.buildFragment = function( args, nodes, scripts ) {
 	// Lastly, IE6,7,8 will not correctly reuse cached fragments that were created from unknown elems #10501
 	if ( args.length === 1 && typeof first === "string" && first.length < 512 && doc === document &&
 		first.charAt(0) === "<" && !rnocache.test( first ) &&
-		(jQuery.support.checkClone || !rchecked.test( first )) &&
-		(jQuery.support.html5Clone || !rnoshimcache.test( first )) ) {
+		(jVizzop.support.checkClone || !rchecked.test( first )) &&
+		(jVizzop.support.html5Clone || !rnoshimcache.test( first )) ) {
 
 		cacheable = true;
 
-		cacheresults = jQuery.fragments[ first ];
+		cacheresults = jVizzop.fragments[ first ];
 		if ( cacheresults && cacheresults !== 1 ) {
 			fragment = cacheresults;
 		}
@@ -6229,28 +6229,28 @@ jQuery.buildFragment = function( args, nodes, scripts ) {
 
 	if ( !fragment ) {
 		fragment = doc.createDocumentFragment();
-		jQuery.clean( args, doc, fragment, scripts );
+		jVizzop.clean( args, doc, fragment, scripts );
 	}
 
 	if ( cacheable ) {
-		jQuery.fragments[ first ] = cacheresults ? fragment : 1;
+		jVizzop.fragments[ first ] = cacheresults ? fragment : 1;
 	}
 
 	return { fragment: fragment, cacheable: cacheable };
 };
 
-jQuery.fragments = {};
+jVizzop.fragments = {};
 
-jQuery.each({
+jVizzop.each({
 	appendTo: "append",
 	prependTo: "prepend",
 	insertBefore: "before",
 	insertAfter: "after",
 	replaceAll: "replaceWith"
 }, function( name, original ) {
-	jQuery.fn[ name ] = function( selector ) {
+	jVizzop.fn[ name ] = function( selector ) {
 		var ret = [],
-			insert = jQuery( selector ),
+			insert = jVizzop( selector ),
 			parent = this.length === 1 && this[0].parentNode;
 
 		if ( parent && parent.nodeType === 11 && parent.childNodes.length === 1 && insert.length === 1 ) {
@@ -6260,7 +6260,7 @@ jQuery.each({
 		} else {
 			for ( var i = 0, l = insert.length; i < l; i++ ) {
 				var elems = ( i > 0 ? this.clone(true) : this ).get();
-				jQuery( insert[i] )[ original ]( elems );
+				jVizzop( insert[i] )[ original ]( elems );
 				ret = ret.concat( elems );
 			}
 
@@ -6294,7 +6294,7 @@ function findInputs( elem ) {
 		fixDefaultChecked( elem );
 	// Skip scripts, get other children
 	} else if ( nodeName !== "script" && typeof elem.getElementsByTagName !== "undefined" ) {
-		jQuery.grep( elem.getElementsByTagName("input"), fixDefaultChecked );
+		jVizzop.grep( elem.getElementsByTagName("input"), fixDefaultChecked );
 	}
 }
 
@@ -6307,18 +6307,18 @@ function shimCloneNode( elem ) {
 	return div.firstChild;
 }
 
-jQuery.extend({
+jVizzop.extend({
 	clone: function( elem, dataAndEvents, deepDataAndEvents ) {
 		var srcElements,
 			destElements,
 			i,
 			// IE<=8 does not properly clone detached, unknown element nodes
-			clone = jQuery.support.html5Clone || jQuery.isXMLDoc(elem) || !rnoshimcache.test( "<" + elem.nodeName + ">" ) ?
+			clone = jVizzop.support.html5Clone || jVizzop.isXMLDoc(elem) || !rnoshimcache.test( "<" + elem.nodeName + ">" ) ?
 				elem.cloneNode( true ) :
 				shimCloneNode( elem );
 
-		if ( (!jQuery.support.noCloneEvent || !jQuery.support.noCloneChecked) &&
-				(elem.nodeType === 1 || elem.nodeType === 11) && !jQuery.isXMLDoc(elem) ) {
+		if ( (!jVizzop.support.noCloneEvent || !jVizzop.support.noCloneChecked) &&
+				(elem.nodeType === 1 || elem.nodeType === 11) && !jVizzop.isXMLDoc(elem) ) {
 			// IE copies events bound via attachEvent when using cloneNode.
 			// Calling detachEvent on the clone will also remove the events
 			// from the original. In order to get around this, we use some
@@ -6416,7 +6416,7 @@ jQuery.extend({
 					}
 
 					// Remove IE's autoinserted <tbody> from table fragments
-					if ( !jQuery.support.tbody ) {
+					if ( !jVizzop.support.tbody ) {
 
 						// String was a <table>, *may* have spurious <tbody>
 						var hasBody = rtbody.test(elem),
@@ -6429,14 +6429,14 @@ jQuery.extend({
 									[];
 
 						for ( j = tbody.length - 1; j >= 0 ; --j ) {
-							if ( jQuery.nodeName( tbody[ j ], "tbody" ) && !tbody[ j ].childNodes.length ) {
+							if ( jVizzop.nodeName( tbody[ j ], "tbody" ) && !tbody[ j ].childNodes.length ) {
 								tbody[ j ].parentNode.removeChild( tbody[ j ] );
 							}
 						}
 					}
 
 					// IE completely kills leading whitespace when innerHTML is used
-					if ( !jQuery.support.leadingWhitespace && rleadingWhitespace.test( elem ) ) {
+					if ( !jVizzop.support.leadingWhitespace && rleadingWhitespace.test( elem ) ) {
 						div.insertBefore( context.createTextNode( rleadingWhitespace.exec(elem)[0] ), div.firstChild );
 					}
 
@@ -6462,7 +6462,7 @@ jQuery.extend({
 			// Resets defaultChecked for any radios and checkboxes
 			// about to be appended to the DOM in IE 6/7 (#8060)
 			var len;
-			if ( !jQuery.support.appendChecked ) {
+			if ( !jVizzop.support.appendChecked ) {
 				if ( elem[0] && typeof (len = elem.length) === "number" ) {
 					for ( j = 0; j < len; j++ ) {
 						findInputs( elem[j] );
@@ -6475,7 +6475,7 @@ jQuery.extend({
 			if ( elem.nodeType ) {
 				ret.push( elem );
 			} else {
-				ret = jQuery.merge( ret, elem );
+				ret = jVizzop.merge( ret, elem );
 			}
 		}
 
@@ -6485,12 +6485,12 @@ jQuery.extend({
 			};
 			for ( i = 0; ret[i]; i++ ) {
 				script = ret[i];
-				if ( scripts && jQuery.nodeName( script, "script" ) && (!script.type || rscriptType.test( script.type )) ) {
+				if ( scripts && jVizzop.nodeName( script, "script" ) && (!script.type || rscriptType.test( script.type )) ) {
 					scripts.push( script.parentNode ? script.parentNode.removeChild( script ) : script );
 
 				} else {
 					if ( script.nodeType === 1 ) {
-						var jsTags = jQuery.grep( script.getElementsByTagName( "script" ), checkScriptType );
+						var jsTags = jVizzop.grep( script.getElementsByTagName( "script" ), checkScriptType );
 
 						ret.splice.apply( ret, [i + 1, 0].concat( jsTags ) );
 					}
@@ -6504,16 +6504,16 @@ jQuery.extend({
 
 	cleanData: function( elems ) {
 		var data, id,
-			cache = jQuery.cache,
-			special = jQuery.event.special,
-			deleteExpando = jQuery.support.deleteExpando;
+			cache = jVizzop.cache,
+			special = jVizzop.event.special,
+			deleteExpando = jVizzop.support.deleteExpando;
 
 		for ( var i = 0, elem; (elem = elems[i]) != null; i++ ) {
-			if ( elem.nodeName && jQuery.noData[elem.nodeName.toLowerCase()] ) {
+			if ( elem.nodeName && jVizzop.noData[elem.nodeName.toLowerCase()] ) {
 				continue;
 			}
 
-			id = elem[ jQuery.expando ];
+			id = elem[ jVizzop.expando ];
 
 			if ( id ) {
 				data = cache[ id ];
@@ -6521,11 +6521,11 @@ jQuery.extend({
 				if ( data && data.events ) {
 					for ( var type in data.events ) {
 						if ( special[ type ] ) {
-							jQuery.event.remove( elem, type );
+							jVizzop.event.remove( elem, type );
 
-						// This is a shortcut to avoid jQuery.event.remove's overhead
+						// This is a shortcut to avoid jVizzop.event.remove's overhead
 						} else {
-							jQuery.removeEvent( elem, type, data.handle );
+							jVizzop.removeEvent( elem, type, data.handle );
 						}
 					}
 
@@ -6536,10 +6536,10 @@ jQuery.extend({
 				}
 
 				if ( deleteExpando ) {
-					delete elem[ jQuery.expando ];
+					delete elem[ jVizzop.expando ];
 
 				} else if ( elem.removeAttribute ) {
-					elem.removeAttribute( jQuery.expando );
+					elem.removeAttribute( jVizzop.expando );
 				}
 
 				delete cache[ id ];
@@ -6570,15 +6570,15 @@ var ralpha = /alpha\([^)]*\)/i,
 	getComputedStyle,
 	currentStyle;
 
-jQuery.fn.css = function( name, value ) {
-	return jQuery.access( this, function( elem, name, value ) {
+jVizzop.fn.css = function( name, value ) {
+	return jVizzop.access( this, function( elem, name, value ) {
 		return value !== undefined ?
-			jQuery.style( elem, name, value ) :
-			jQuery.css( elem, name );
+			jVizzop.style( elem, name, value ) :
+			jVizzop.css( elem, name );
 	}, name, value, arguments.length > 1 );
 };
 
-jQuery.extend({
+jVizzop.extend({
 	// Add in style property hooks for overriding the default
 	// behavior of getting and setting a style property
 	cssHooks: {
@@ -6612,7 +6612,7 @@ jQuery.extend({
 	// setting or getting the value
 	cssProps: {
 		// normalize float css property
-		"float": jQuery.support.cssFloat ? "cssFloat" : "styleFloat"
+		"float": jVizzop.support.cssFloat ? "cssFloat" : "styleFloat"
 	},
 
 	// Get and set the style property on a DOM Node
@@ -6623,10 +6623,10 @@ jQuery.extend({
 		}
 
 		// Make sure that we're working with the right name
-		var ret, type, origName = jQuery.camelCase( name ),
-			style = elem.style, hooks = jQuery.cssHooks[ origName ];
+		var ret, type, origName = jVizzop.camelCase( name ),
+			style = elem.style, hooks = jVizzop.cssHooks[ origName ];
 
-		name = jQuery.cssProps[ origName ] || origName;
+		name = jVizzop.cssProps[ origName ] || origName;
 
 		// Check if we're setting a value
 		if ( value !== undefined ) {
@@ -6634,7 +6634,7 @@ jQuery.extend({
 
 			// convert relative number strings (+= or -=) to relative numbers. #7345
 			if ( type === "string" && (ret = rrelNum.exec( value )) ) {
-				value = ( +( ret[1] + 1) * +ret[2] ) + parseFloat( jQuery.css( elem, name ) );
+				value = ( +( ret[1] + 1) * +ret[2] ) + parseFloat( jVizzop.css( elem, name ) );
 				// Fixes bug #9237
 				type = "number";
 			}
@@ -6645,7 +6645,7 @@ jQuery.extend({
 			}
 
 			// If a number was passed in, add 'px' to the (except for certain CSS properties)
-			if ( type === "number" && !jQuery.cssNumber[ origName ] ) {
+			if ( type === "number" && !jVizzop.cssNumber[ origName ] ) {
 				value += "px";
 			}
 
@@ -6673,9 +6673,9 @@ jQuery.extend({
 		var ret, hooks;
 
 		// Make sure that we're working with the right name
-		name = jQuery.camelCase( name );
-		hooks = jQuery.cssHooks[ name ];
-		name = jQuery.cssProps[ name ] || name;
+		name = jVizzop.camelCase( name );
+		hooks = jVizzop.cssHooks[ name ];
+		name = jVizzop.cssProps[ name ] || name;
 
 		// cssFloat needs a special treatment
 		if ( name === "cssFloat" ) {
@@ -6714,8 +6714,8 @@ jQuery.extend({
 	}
 });
 
-// DEPRECATED in 1.3, Use jQuery.css() instead
-jQuery.curCSS = jQuery.css;
+// DEPRECATED in 1.3, Use jVizzop.css() instead
+jVizzop.curCSS = jVizzop.css;
 
 if ( document.defaultView && document.defaultView.getComputedStyle ) {
 	getComputedStyle = function( elem, name ) {
@@ -6728,15 +6728,15 @@ if ( document.defaultView && document.defaultView.getComputedStyle ) {
 				(computedStyle = defaultView.getComputedStyle( elem, null )) ) {
 
 			ret = computedStyle.getPropertyValue( name );
-			if ( ret === "" && !jQuery.contains( elem.ownerDocument.documentElement, elem ) ) {
-				ret = jQuery.style( elem, name );
+			if ( ret === "" && !jVizzop.contains( elem.ownerDocument.documentElement, elem ) ) {
+				ret = jVizzop.style( elem, name );
 			}
 		}
 
 		// A tribute to the "awesome hack by Dean Edwards"
 		// WebKit uses "computed value (percentage if specified)" instead of "used value" for margins
 		// which is against the CSSOM draft spec: http://dev.w3.org/csswg/cssom/#resolved-values
-		if ( !jQuery.support.pixelMargin && computedStyle && rmargin.test( name ) && rnumnonpx.test( ret ) ) {
+		if ( !jVizzop.support.pixelMargin && computedStyle && rmargin.test( name ) && rnumnonpx.test( ret ) ) {
 			width = style.width;
 			style.width = ret;
 			ret = computedStyle.width;
@@ -6801,12 +6801,12 @@ function getWidthOrHeight( elem, name, extra ) {
 		if ( extra !== "border" ) {
 			for ( ; i < len; i += 2 ) {
 				if ( !extra ) {
-					val -= parseFloat( jQuery.css( elem, "padding" + cssExpand[ i ] ) ) || 0;
+					val -= parseFloat( jVizzop.css( elem, "padding" + cssExpand[ i ] ) ) || 0;
 				}
 				if ( extra === "margin" ) {
-					val += parseFloat( jQuery.css( elem, extra + cssExpand[ i ] ) ) || 0;
+					val += parseFloat( jVizzop.css( elem, extra + cssExpand[ i ] ) ) || 0;
 				} else {
-					val -= parseFloat( jQuery.css( elem, "border" + cssExpand[ i ] + "Width" ) ) || 0;
+					val -= parseFloat( jVizzop.css( elem, "border" + cssExpand[ i ] + "Width" ) ) || 0;
 				}
 			}
 		}
@@ -6831,12 +6831,12 @@ function getWidthOrHeight( elem, name, extra ) {
 	// Add padding, border, margin
 	if ( extra ) {
 		for ( ; i < len; i += 2 ) {
-			val += parseFloat( jQuery.css( elem, "padding" + cssExpand[ i ] ) ) || 0;
+			val += parseFloat( jVizzop.css( elem, "padding" + cssExpand[ i ] ) ) || 0;
 			if ( extra !== "padding" ) {
-				val += parseFloat( jQuery.css( elem, "border" + cssExpand[ i ] + "Width" ) ) || 0;
+				val += parseFloat( jVizzop.css( elem, "border" + cssExpand[ i ] + "Width" ) ) || 0;
 			}
 			if ( extra === "margin" ) {
-				val += parseFloat( jQuery.css( elem, extra + cssExpand[ i ]) ) || 0;
+				val += parseFloat( jVizzop.css( elem, extra + cssExpand[ i ]) ) || 0;
 			}
 		}
 	}
@@ -6844,14 +6844,14 @@ function getWidthOrHeight( elem, name, extra ) {
 	return val + "px";
 }
 
-jQuery.each([ "height", "width" ], function( i, name ) {
-	jQuery.cssHooks[ name ] = {
+jVizzop.each([ "height", "width" ], function( i, name ) {
+	jVizzop.cssHooks[ name ] = {
 		get: function( elem, computed, extra ) {
 			if ( computed ) {
 				if ( elem.offsetWidth !== 0 ) {
 					return getWidthOrHeight( elem, name, extra );
 				} else {
-					return jQuery.swap( elem, cssShow, function() {
+					return jVizzop.swap( elem, cssShow, function() {
 						return getWidthOrHeight( elem, name, extra );
 					});
 				}
@@ -6866,8 +6866,8 @@ jQuery.each([ "height", "width" ], function( i, name ) {
 	};
 });
 
-if ( !jQuery.support.opacity ) {
-	jQuery.cssHooks.opacity = {
+if ( !jVizzop.support.opacity ) {
+	jVizzop.cssHooks.opacity = {
 		get: function( elem, computed ) {
 			// IE uses filters for opacity
 			return ropacity.test( (computed && elem.currentStyle ? elem.currentStyle.filter : elem.style.filter) || "" ) ?
@@ -6878,7 +6878,7 @@ if ( !jQuery.support.opacity ) {
 		set: function( elem, value ) {
 			var style = elem.style,
 				currentStyle = elem.currentStyle,
-				opacity = jQuery.isNumeric( value ) ? "alpha(opacity=" + value * 100 + ")" : "",
+				opacity = jVizzop.isNumeric( value ) ? "alpha(opacity=" + value * 100 + ")" : "",
 				filter = currentStyle && currentStyle.filter || style.filter || "";
 
 			// IE has trouble with opacity if it does not have layout
@@ -6886,7 +6886,7 @@ if ( !jQuery.support.opacity ) {
 			style.zoom = 1;
 
 			// if setting opacity to 1, and no other filters exist - attempt to remove filter attribute #6652
-			if ( value >= 1 && jQuery.trim( filter.replace( ralpha, "" ) ) === "" ) {
+			if ( value >= 1 && jVizzop.trim( filter.replace( ralpha, "" ) ) === "" ) {
 
 				// Setting style.filter to null, "" & " " still leave "filter:" in the cssText
 				// if "filter:" is present at all, clearType is disabled, we want to avoid this
@@ -6907,15 +6907,15 @@ if ( !jQuery.support.opacity ) {
 	};
 }
 
-jQuery(function() {
+jVizzop(function() {
 	// This hook cannot be added until DOM ready because the support test
 	// for it is not run until after DOM ready
-	if ( !jQuery.support.reliableMarginRight ) {
-		jQuery.cssHooks.marginRight = {
+	if ( !jVizzop.support.reliableMarginRight ) {
+		jVizzop.cssHooks.marginRight = {
 			get: function( elem, computed ) {
 				// WebKit Bug 13343 - getComputedStyle returns wrong value for margin-right
 				// Work around by temporarily setting element display to inline-block
-				return jQuery.swap( elem, { "display": "inline-block" }, function() {
+				return jVizzop.swap( elem, { "display": "inline-block" }, function() {
 					if ( computed ) {
 						return curCSS( elem, "margin-right" );
 					} else {
@@ -6927,27 +6927,27 @@ jQuery(function() {
 	}
 });
 
-if ( jQuery.expr && jQuery.expr.filters ) {
-	jQuery.expr.filters.hidden = function( elem ) {
+if ( jVizzop.expr && jVizzop.expr.filters ) {
+	jVizzop.expr.filters.hidden = function( elem ) {
 		var width = elem.offsetWidth,
 			height = elem.offsetHeight;
 
-		return ( width === 0 && height === 0 ) || (!jQuery.support.reliableHiddenOffsets && ((elem.style && elem.style.display) || jQuery.css( elem, "display" )) === "none");
+		return ( width === 0 && height === 0 ) || (!jVizzop.support.reliableHiddenOffsets && ((elem.style && elem.style.display) || jVizzop.css( elem, "display" )) === "none");
 	};
 
-	jQuery.expr.filters.visible = function( elem ) {
-		return !jQuery.expr.filters.hidden( elem );
+	jVizzop.expr.filters.visible = function( elem ) {
+		return !jVizzop.expr.filters.hidden( elem );
 	};
 }
 
 // These hooks are used by animate to expand properties
-jQuery.each({
+jVizzop.each({
 	margin: "",
 	padding: "",
 	border: "Width"
 }, function( prefix, suffix ) {
 
-	jQuery.cssHooks[ prefix + suffix ] = {
+	jVizzop.cssHooks[ prefix + suffix ] = {
 		expand: function( value ) {
 			var i,
 
@@ -6986,7 +6986,7 @@ var r20 = /%20/g,
 	rurl = /^([\w\+\.\-]+:)(?:\/\/([^\/?#:]*)(?::(\d+))?)?/,
 
 	// Keep a copy of the old load method
-	_load = jQuery.fn.load,
+	_load = jVizzop.fn.load,
 
 	/* Prefilters
 	 * 1) They are useful to introduce custom dataTypes (see ajax/jsonp.js for an example)
@@ -7030,7 +7030,7 @@ try {
 // Segment location into parts
 ajaxLocParts = rurl.exec( ajaxLocation.toLowerCase() ) || [];
 
-// Base "constructor" for jQuery.ajaxPrefilter and jQuery.ajaxTransport
+// Base "constructor" for jVizzop.ajaxPrefilter and jVizzop.ajaxTransport
 function addToPrefiltersOrTransports( structure ) {
 
 	// dataTypeExpression is optional and defaults to "*"
@@ -7041,7 +7041,7 @@ function addToPrefiltersOrTransports( structure ) {
 			dataTypeExpression = "*";
 		}
 
-		if ( jQuery.isFunction( func ) ) {
+		if ( jVizzop.isFunction( func ) ) {
 			var dataTypes = dataTypeExpression.toLowerCase().split( rspacesAjax ),
 				i = 0,
 				length = dataTypes.length,
@@ -7111,18 +7111,18 @@ function inspectPrefiltersOrTransports( structure, options, originalOptions, jqX
 // Fixes #9887
 function ajaxExtend( target, src ) {
 	var key, deep,
-		flatOptions = jQuery.ajaxSettings.flatOptions || {};
+		flatOptions = jVizzop.ajaxSettings.flatOptions || {};
 	for ( key in src ) {
 		if ( src[ key ] !== undefined ) {
 			( flatOptions[ key ] ? target : ( deep || ( deep = {} ) ) )[ key ] = src[ key ];
 		}
 	}
 	if ( deep ) {
-		jQuery.extend( true, target, deep );
+		jVizzop.extend( true, target, deep );
 	}
 }
 
-jQuery.fn.extend({
+jVizzop.fn.extend({
 	load: function( url, params, callback ) {
 		if ( typeof url !== "string" && _load ) {
 			return _load.apply( this, arguments );
@@ -7144,14 +7144,14 @@ jQuery.fn.extend({
 		// If the second parameter was provided
 		if ( params ) {
 			// If it's a function
-			if ( jQuery.isFunction( params ) ) {
+			if ( jVizzop.isFunction( params ) ) {
 				// We assume that it's the callback
 				callback = params;
 				params = undefined;
 
 			// Otherwise, build a param string
 			} else if ( typeof params === "object" ) {
-				params = jQuery.param( params, jQuery.ajaxSettings.traditional );
+				params = jVizzop.param( params, jVizzop.ajaxSettings.traditional );
 				type = "POST";
 			}
 		}
@@ -7159,7 +7159,7 @@ jQuery.fn.extend({
 		var self = this;
 
 		// Request the remote document
-		jQuery.ajax({
+		jVizzop.ajax({
 			url: url,
 			type: type,
 			dataType: "html",
@@ -7178,7 +7178,7 @@ jQuery.fn.extend({
 					// See if a selector was specified
 					self.html( selector ?
 						// Create a dummy div to hold the results
-						jQuery("<div>")
+						jVizzop("<div>")
 							// inject the contents of the document in, removing the scripts
 							// to avoid any 'Permission Denied' errors in IE
 							.append(responseText.replace(rscript, ""))
@@ -7200,12 +7200,12 @@ jQuery.fn.extend({
 	},
 
 	serialize: function() {
-		return jQuery.param( this.serializeArray() );
+		return jVizzop.param( this.serializeArray() );
 	},
 
 	serializeArray: function() {
 		return this.map(function(){
-			return this.elements ? jQuery.makeArray( this.elements ) : this;
+			return this.elements ? jVizzop.makeArray( this.elements ) : this;
 		})
 		.filter(function(){
 			return this.name && !this.disabled &&
@@ -7213,12 +7213,12 @@ jQuery.fn.extend({
 					rinput.test( this.type ) );
 		})
 		.map(function( i, elem ){
-			var val = jQuery( this ).val();
+			var val = jVizzop( this ).val();
 
 			return val == null ?
 				null :
-				jQuery.isArray( val ) ?
-					jQuery.map( val, function( val, i ){
+				jVizzop.isArray( val ) ?
+					jVizzop.map( val, function( val, i ){
 						return { name: elem.name, value: val.replace( rCRLF, "\r\n" ) };
 					}) :
 					{ name: elem.name, value: val.replace( rCRLF, "\r\n" ) };
@@ -7227,22 +7227,22 @@ jQuery.fn.extend({
 });
 
 // Attach a bunch of functions for handling common AJAX events
-jQuery.each( "ajaxStart ajaxStop ajaxComplete ajaxError ajaxSuccess ajaxSend".split( " " ), function( i, o ){
-	jQuery.fn[ o ] = function( f ){
+jVizzop.each( "ajaxStart ajaxStop ajaxComplete ajaxError ajaxSuccess ajaxSend".split( " " ), function( i, o ){
+	jVizzop.fn[ o ] = function( f ){
 		return this.on( o, f );
 	};
 });
 
-jQuery.each( [ "get", "post" ], function( i, method ) {
-	jQuery[ method ] = function( url, data, callback, type ) {
+jVizzop.each( [ "get", "post" ], function( i, method ) {
+	jVizzop[ method ] = function( url, data, callback, type ) {
 		// shift arguments if data argument was omitted
-		if ( jQuery.isFunction( data ) ) {
+		if ( jVizzop.isFunction( data ) ) {
 			type = type || callback;
 			callback = data;
 			data = undefined;
 		}
 
-		return jQuery.ajax({
+		return jVizzop.ajax({
 			type: method,
 			url: url,
 			data: data,
@@ -7252,14 +7252,14 @@ jQuery.each( [ "get", "post" ], function( i, method ) {
 	};
 });
 
-jQuery.extend({
+jVizzop.extend({
 
 	getScript: function( url, callback ) {
-		return jQuery.get( url, undefined, callback, "script" );
+		return jVizzop.get( url, undefined, callback, "script" );
 	},
 
 	getJSON: function( url, data, callback ) {
-		return jQuery.get( url, data, callback, "json" );
+		return jVizzop.get( url, data, callback, "json" );
 	},
 
 	// Creates a full fledged settings object into target
@@ -7268,11 +7268,11 @@ jQuery.extend({
 	ajaxSetup: function( target, settings ) {
 		if ( settings ) {
 			// Building a settings object
-			ajaxExtend( target, jQuery.ajaxSettings );
+			ajaxExtend( target, jVizzop.ajaxSettings );
 		} else {
 			// Extending ajaxSettings
 			settings = target;
-			target = jQuery.ajaxSettings;
+			target = jVizzop.ajaxSettings;
 		}
 		ajaxExtend( target, settings );
 		return target;
@@ -7328,10 +7328,10 @@ jQuery.extend({
 			"text html": true,
 
 			// Evaluate text as a json expression
-			"text json": jQuery.parseJSON,
+			"text json": jVizzop.parseJSON,
 
 			// Parse text as xml
-			"text xml": jQuery.parseXML
+			"text xml": jVizzop.parseXML
 		},
 
 		// For options that shouldn't be deep extended:
@@ -7360,18 +7360,18 @@ jQuery.extend({
 		options = options || {};
 
 		var // Create the final options object
-			s = jQuery.ajaxSetup( {}, options ),
+			s = jVizzop.ajaxSetup( {}, options ),
 			// Callbacks context
 			callbackContext = s.context || s,
 			// Context for global events
 			// It's the callbackContext if one was provided in the options
-			// and if it's a DOM node or a jQuery collection
+			// and if it's a DOM node or a jVizzop collection
 			globalEventContext = callbackContext !== s &&
-				( callbackContext.nodeType || callbackContext instanceof jQuery ) ?
-						jQuery( callbackContext ) : jQuery.event,
+				( callbackContext.nodeType || callbackContext instanceof jVizzop ) ?
+						jVizzop( callbackContext ) : jVizzop.event,
 			// Deferreds
-			deferred = jQuery.Deferred(),
-			completeDeferred = jQuery.Callbacks( "once memory" ),
+			deferred = jVizzop.Deferred(),
+			completeDeferred = jVizzop.Callbacks( "once memory" ),
 			// Status-dependent callbacks
 			statusCode = s.statusCode || {},
 			// ifModified key
@@ -7491,10 +7491,10 @@ jQuery.extend({
 				if ( s.ifModified ) {
 
 					if ( ( lastModified = jqXHR.getResponseHeader( "Last-Modified" ) ) ) {
-						jQuery.lastModified[ ifModifiedKey ] = lastModified;
+						jVizzop.lastModified[ ifModifiedKey ] = lastModified;
 					}
 					if ( ( etag = jqXHR.getResponseHeader( "Etag" ) ) ) {
-						jQuery.etag[ ifModifiedKey ] = etag;
+						jVizzop.etag[ ifModifiedKey ] = etag;
 					}
 				}
 
@@ -7555,8 +7555,8 @@ jQuery.extend({
 			if ( fireGlobals ) {
 				globalEventContext.trigger( "ajaxComplete", [ jqXHR, s ] );
 				// Handle the global AJAX counter
-				if ( !( --jQuery.active ) ) {
-					jQuery.event.trigger( "ajaxStop" );
+				if ( !( --jVizzop.active ) ) {
+					jVizzop.event.trigger( "ajaxStop" );
 				}
 			}
 		}
@@ -7589,7 +7589,7 @@ jQuery.extend({
 		s.url = ( ( url || s.url ) + "" ).replace( rhash, "" ).replace( rprotocol, ajaxLocParts[ 1 ] + "//" );
 
 		// Extract dataTypes list
-		s.dataTypes = jQuery.trim( s.dataType || "*" ).toLowerCase().split( rspacesAjax );
+		s.dataTypes = jVizzop.trim( s.dataType || "*" ).toLowerCase().split( rspacesAjax );
 
 		// Determine if a cross-domain request is in order
 		if ( s.crossDomain == null ) {
@@ -7603,7 +7603,7 @@ jQuery.extend({
 
 		// Convert data if not already a string
 		if ( s.data && s.processData && typeof s.data !== "string" ) {
-			s.data = jQuery.param( s.data, s.traditional );
+			s.data = jVizzop.param( s.data, s.traditional );
 		}
 
 		// Apply prefilters
@@ -7624,8 +7624,8 @@ jQuery.extend({
 		s.hasContent = !rnoContent.test( s.type );
 
 		// Watch for a new set of requests
-		if ( fireGlobals && jQuery.active++ === 0 ) {
-			jQuery.event.trigger( "ajaxStart" );
+		if ( fireGlobals && jVizzop.active++ === 0 ) {
+			jVizzop.event.trigger( "ajaxStart" );
 		}
 
 		// More options handling for requests with no content
@@ -7644,7 +7644,7 @@ jQuery.extend({
 			// Add anti-cache in url if needed
 			if ( s.cache === false ) {
 
-				var ts = jQuery.now(),
+				var ts = jVizzop.now(),
 					// try replacing _= if it is there
 					ret = s.url.replace( rts, "$1_=" + ts );
 
@@ -7661,11 +7661,11 @@ jQuery.extend({
 		// Set the If-Modified-Since and/or If-None-Match header, if in ifModified mode.
 		if ( s.ifModified ) {
 			ifModifiedKey = ifModifiedKey || s.url;
-			if ( jQuery.lastModified[ ifModifiedKey ] ) {
-				jqXHR.setRequestHeader( "If-Modified-Since", jQuery.lastModified[ ifModifiedKey ] );
+			if ( jVizzop.lastModified[ ifModifiedKey ] ) {
+				jqXHR.setRequestHeader( "If-Modified-Since", jVizzop.lastModified[ ifModifiedKey ] );
 			}
-			if ( jQuery.etag[ ifModifiedKey ] ) {
-				jqXHR.setRequestHeader( "If-None-Match", jQuery.etag[ ifModifiedKey ] );
+			if ( jVizzop.etag[ ifModifiedKey ] ) {
+				jqXHR.setRequestHeader( "If-None-Match", jVizzop.etag[ ifModifiedKey ] );
 			}
 		}
 
@@ -7737,19 +7737,19 @@ jQuery.extend({
 		var s = [],
 			add = function( key, value ) {
 				// If value is a function, invoke it and return its value
-				value = jQuery.isFunction( value ) ? value() : value;
+				value = jVizzop.isFunction( value ) ? value() : value;
 				s[ s.length ] = encodeURIComponent( key ) + "=" + encodeURIComponent( value );
 			};
 
-		// Set traditional to true for jQuery <= 1.3.2 behavior.
+		// Set traditional to true for jVizzop <= 1.3.2 behavior.
 		if ( traditional === undefined ) {
-			traditional = jQuery.ajaxSettings.traditional;
+			traditional = jVizzop.ajaxSettings.traditional;
 		}
 
 		// If an array was passed in, assume that it is an array of form elements.
-		if ( jQuery.isArray( a ) || ( a.jquery && !jQuery.isPlainObject( a ) ) ) {
+		if ( jVizzop.isArray( a ) || ( a.jVizzop && !jVizzop.isPlainObject( a ) ) ) {
 			// Serialize the form elements
-			jQuery.each( a, function() {
+			jVizzop.each( a, function() {
 				add( this.name, this.value );
 			});
 
@@ -7767,9 +7767,9 @@ jQuery.extend({
 });
 
 function buildParams( prefix, obj, traditional, add ) {
-	if ( jQuery.isArray( obj ) ) {
+	if ( jVizzop.isArray( obj ) ) {
 		// Serialize array item.
-		jQuery.each( obj, function( i, v ) {
+		jVizzop.each( obj, function( i, v ) {
 			if ( traditional || rbracket.test( prefix ) ) {
 				// Treat each array item as a scalar.
 				add( prefix, v );
@@ -7786,7 +7786,7 @@ function buildParams( prefix, obj, traditional, add ) {
 			}
 		});
 
-	} else if ( !traditional && jQuery.type( obj ) === "object" ) {
+	} else if ( !traditional && jVizzop.type( obj ) === "object" ) {
 		// Serialize object item.
 		for ( var name in obj ) {
 			buildParams( prefix + "[" + name + "]", obj[ name ], traditional, add );
@@ -7798,9 +7798,9 @@ function buildParams( prefix, obj, traditional, add ) {
 	}
 }
 
-// This is still on the jQuery object... for now
-// Want to move this to jQuery.ajax some day
-jQuery.extend({
+// This is still on the jVizzop object... for now
+// Want to move this to jVizzop.ajax some day
+jVizzop.extend({
 
 	// Counter for holding the number of active queries
 	active: 0,
@@ -7953,7 +7953,7 @@ function ajaxConvert( s, response ) {
 			}
 			// If we found no converter, dispatch an error
 			if ( !( conv || conv2 ) ) {
-				jQuery.error( "No conversion from " + conversion.replace(" "," to ") );
+				jVizzop.error( "No conversion from " + conversion.replace(" "," to ") );
 			}
 			// If found converter is not an equivalence
 			if ( conv !== true ) {
@@ -7968,19 +7968,19 @@ function ajaxConvert( s, response ) {
 
 
 
-var jsc = jQuery.now(),
+var jsc = jVizzop.now(),
 	jsre = /(\=)\?(&|$)|\?\?/i;
 
 // Default jsonp settings
-jQuery.ajaxSetup({
+jVizzop.ajaxSetup({
 	jsonp: "callback",
 	jsonpCallback: function() {
-		return jQuery.expando + "_" + ( jsc++ );
+		return jVizzop.expando + "_" + ( jsc++ );
 	}
 });
 
 // Detect, normalize options and install callbacks for jsonp requests
-jQuery.ajaxPrefilter( "json jsonp", function( s, originalSettings, jqXHR ) {
+jVizzop.ajaxPrefilter( "json jsonp", function( s, originalSettings, jqXHR ) {
 
 	var inspectData = ( typeof s.data === "string" ) && /^application\/x\-www\-form\-urlencoded/.test( s.contentType );
 
@@ -7990,7 +7990,7 @@ jQuery.ajaxPrefilter( "json jsonp", function( s, originalSettings, jqXHR ) {
 
 		var responseContainer,
 			jsonpCallback = s.jsonpCallback =
-				jQuery.isFunction( s.jsonpCallback ) ? s.jsonpCallback() : s.jsonpCallback,
+				jVizzop.isFunction( s.jsonpCallback ) ? s.jsonpCallback() : s.jsonpCallback,
 			previous = window[ jsonpCallback ],
 			url = s.url,
 			data = s.data,
@@ -8022,7 +8022,7 @@ jQuery.ajaxPrefilter( "json jsonp", function( s, originalSettings, jqXHR ) {
 			// Set callback back to previous value
 			window[ jsonpCallback ] = previous;
 			// Call if it was a function and we have a response
-			if ( responseContainer && jQuery.isFunction( previous ) ) {
+			if ( responseContainer && jVizzop.isFunction( previous ) ) {
 				window[ jsonpCallback ]( responseContainer[ 0 ] );
 			}
 		});
@@ -8030,7 +8030,7 @@ jQuery.ajaxPrefilter( "json jsonp", function( s, originalSettings, jqXHR ) {
 		// Use data converter to retrieve json after script execution
 		s.converters["script json"] = function() {
 			if ( !responseContainer ) {
-				jQuery.error( jsonpCallback + " was not called" );
+				jVizzop.error( jsonpCallback + " was not called" );
 			}
 			return responseContainer[ 0 ];
 		};
@@ -8047,7 +8047,7 @@ jQuery.ajaxPrefilter( "json jsonp", function( s, originalSettings, jqXHR ) {
 
 
 // Install script dataType
-jQuery.ajaxSetup({
+jVizzop.ajaxSetup({
 	accepts: {
 		script: "text/javascript, application/javascript, application/ecmascript, application/x-ecmascript"
 	},
@@ -8056,14 +8056,14 @@ jQuery.ajaxSetup({
 	},
 	converters: {
 		"text script": function( text ) {
-			jQuery.globalEval( text );
+			jVizzop.globalEval( text );
 			return text;
 		}
 	}
 });
 
 // Handle cache's special case and global
-jQuery.ajaxPrefilter( "script", function( s ) {
+jVizzop.ajaxPrefilter( "script", function( s ) {
 	if ( s.cache === undefined ) {
 		s.cache = false;
 	}
@@ -8074,7 +8074,7 @@ jQuery.ajaxPrefilter( "script", function( s ) {
 });
 
 // Bind script tag hack transport
-jQuery.ajaxTransport( "script", function(s) {
+jVizzop.ajaxTransport( "script", function(s) {
 
 	// This transport only deals with cross domain requests
 	if ( s.crossDomain ) {
@@ -8160,7 +8160,7 @@ function createActiveXHR() {
 
 // Create the request object
 // (This is still attached to ajaxSettings for backward compatibility)
-jQuery.ajaxSettings.xhr = window.ActiveXObject ?
+jVizzop.ajaxSettings.xhr = window.ActiveXObject ?
 	/* Microsoft failed to properly
 	 * implement the XMLHttpRequest in IE7 (can't request local files),
 	 * so we use the ActiveXObject when it is available
@@ -8175,18 +8175,18 @@ jQuery.ajaxSettings.xhr = window.ActiveXObject ?
 
 // Determine support properties
 (function( xhr ) {
-	jQuery.extend( jQuery.support, {
+	jVizzop.extend( jVizzop.support, {
 		ajax: !!xhr,
 		cors: !!xhr && ( "withCredentials" in xhr )
 	});
-})( jQuery.ajaxSettings.xhr() );
+})( jVizzop.ajaxSettings.xhr() );
 
 // Create transport if the browser can provide an xhr
-if ( jQuery.support.ajax ) {
+if ( jVizzop.support.ajax ) {
 
-	jQuery.ajaxTransport(function( s ) {
+	jVizzop.ajaxTransport(function( s ) {
 		// Cross domain only allowed if supported through XMLHttpRequest
-		if ( !s.crossDomain || jQuery.support.cors ) {
+		if ( !s.crossDomain || jVizzop.support.cors ) {
 
 			var callback;
 
@@ -8236,7 +8236,7 @@ if ( jQuery.support.ajax ) {
 
 					// Do send the request
 					// This may raise an exception which is actually
-					// handled in jQuery.ajax (so no try/catch here)
+					// handled in jVizzop.ajax (so no try/catch here)
 					xhr.send( ( s.hasContent && s.data ) || null );
 
 					// Listener
@@ -8261,7 +8261,7 @@ if ( jQuery.support.ajax ) {
 
 								// Do not keep as active anymore
 								if ( handle ) {
-									xhr.onreadystatechange = jQuery.noop;
+									xhr.onreadystatechange = jVizzop.noop;
 									if ( xhrOnUnloadAbort ) {
 										delete xhrCallbacks[ handle ];
 									}
@@ -8337,7 +8337,7 @@ if ( jQuery.support.ajax ) {
 							// and attach the unload handler
 							if ( !xhrCallbacks ) {
 								xhrCallbacks = {};
-								jQuery( window ).unload( xhrOnUnloadAbort );
+								jVizzop( window ).unload( xhrOnUnloadAbort );
 							}
 							// Add to list of active xhrs callbacks
 							xhrCallbacks[ handle ] = callback;
@@ -8374,7 +8374,7 @@ var elemdisplay = {},
 	],
 	fxNow;
 
-jQuery.fn.extend({
+jVizzop.fn.extend({
 	show: function( speed, easing, callback ) {
 		var elem, display;
 
@@ -8390,16 +8390,16 @@ jQuery.fn.extend({
 
 					// Reset the inline display of this element to learn if it is
 					// being hidden by cascaded rules or not
-					if ( !jQuery._data(elem, "olddisplay") && display === "none" ) {
+					if ( !jVizzop._data(elem, "olddisplay") && display === "none" ) {
 						display = elem.style.display = "";
 					}
 
 					// Set elements which have been overridden with display: none
 					// in a stylesheet to whatever the default browser style is
 					// for such an element
-					if ( (display === "" && jQuery.css(elem, "display") === "none") ||
-						!jQuery.contains( elem.ownerDocument.documentElement, elem ) ) {
-						jQuery._data( elem, "olddisplay", defaultDisplay(elem.nodeName) );
+					if ( (display === "" && jVizzop.css(elem, "display") === "none") ||
+						!jVizzop.contains( elem.ownerDocument.documentElement, elem ) ) {
+						jVizzop._data( elem, "olddisplay", defaultDisplay(elem.nodeName) );
 					}
 				}
 			}
@@ -8413,7 +8413,7 @@ jQuery.fn.extend({
 					display = elem.style.display;
 
 					if ( display === "" || display === "none" ) {
-						elem.style.display = jQuery._data( elem, "olddisplay" ) || "";
+						elem.style.display = jVizzop._data( elem, "olddisplay" ) || "";
 					}
 				}
 			}
@@ -8434,10 +8434,10 @@ jQuery.fn.extend({
 			for ( ; i < j; i++ ) {
 				elem = this[i];
 				if ( elem.style ) {
-					display = jQuery.css( elem, "display" );
+					display = jVizzop.css( elem, "display" );
 
-					if ( display !== "none" && !jQuery._data( elem, "olddisplay" ) ) {
-						jQuery._data( elem, "olddisplay", display );
+					if ( display !== "none" && !jVizzop._data( elem, "olddisplay" ) ) {
+						jVizzop._data( elem, "olddisplay", display );
 					}
 				}
 			}
@@ -8455,18 +8455,18 @@ jQuery.fn.extend({
 	},
 
 	// Save the old toggle function
-	_toggle: jQuery.fn.toggle,
+	_toggle: jVizzop.fn.toggle,
 
 	toggle: function( fn, fn2, callback ) {
 		var bool = typeof fn === "boolean";
 
-		if ( jQuery.isFunction(fn) && jQuery.isFunction(fn2) ) {
+		if ( jVizzop.isFunction(fn) && jVizzop.isFunction(fn2) ) {
 			this._toggle.apply( this, arguments );
 
 		} else if ( fn == null || bool ) {
 			this.each(function() {
-				var state = bool ? fn : jQuery(this).is(":hidden");
-				jQuery(this)[ state ? "show" : "hide" ]();
+				var state = bool ? fn : jVizzop(this).is(":hidden");
+				jVizzop(this)[ state ? "show" : "hide" ]();
 			});
 
 		} else {
@@ -8482,26 +8482,26 @@ jQuery.fn.extend({
 	},
 
 	animate: function( prop, speed, easing, callback ) {
-		var optall = jQuery.speed( speed, easing, callback );
+		var optall = jVizzop.speed( speed, easing, callback );
 
-		if ( jQuery.isEmptyObject( prop ) ) {
+		if ( jVizzop.isEmptyObject( prop ) ) {
 			return this.each( optall.complete, [ false ] );
 		}
 
 		// Do not change referenced properties as per-property easing will be lost
-		prop = jQuery.extend( {}, prop );
+		prop = jVizzop.extend( {}, prop );
 
 		function doAnimation() {
 			// XXX 'this' does not always have a nodeName when running the
 			// test suite
 
 			if ( optall.queue === false ) {
-				jQuery._mark( this );
+				jVizzop._mark( this );
 			}
 
-			var opt = jQuery.extend( {}, optall ),
+			var opt = jVizzop.extend( {}, optall ),
 				isElement = this.nodeType === 1,
-				hidden = isElement && jQuery(this).is(":hidden"),
+				hidden = isElement && jVizzop(this).is(":hidden"),
 				name, val, p, e, hooks, replace,
 				parts, start, end, unit,
 				method;
@@ -8511,13 +8511,13 @@ jQuery.fn.extend({
 
 			// first pass over propertys to expand / normalize
 			for ( p in prop ) {
-				name = jQuery.camelCase( p );
+				name = jVizzop.camelCase( p );
 				if ( p !== name ) {
 					prop[ name ] = prop[ p ];
 					delete prop[ p ];
 				}
 
-				if ( ( hooks = jQuery.cssHooks[ name ] ) && "expand" in hooks ) {
+				if ( ( hooks = jVizzop.cssHooks[ name ] ) && "expand" in hooks ) {
 					replace = hooks.expand( prop[ name ] );
 					delete prop[ name ];
 
@@ -8534,7 +8534,7 @@ jQuery.fn.extend({
 			for ( name in prop ) {
 				val = prop[ name ];
 				// easing resolution: per property > opt.specialEasing > opt.easing > 'swing' (default)
-				if ( jQuery.isArray( val ) ) {
+				if ( jVizzop.isArray( val ) ) {
 					opt.animatedProperties[ name ] = val[ 1 ];
 					val = prop[ name ] = val[ 0 ];
 				} else {
@@ -8554,12 +8554,12 @@ jQuery.fn.extend({
 
 					// Set display property to inline-block for height/width
 					// animations on inline elements that are having width/height animated
-					if ( jQuery.css( this, "display" ) === "inline" &&
-							jQuery.css( this, "float" ) === "none" ) {
+					if ( jVizzop.css( this, "display" ) === "inline" &&
+							jVizzop.css( this, "float" ) === "none" ) {
 
 						// inline-level elements accept inline-block;
 						// block-level elements need to be inline with layout
-						if ( !jQuery.support.inlineBlockNeedsLayout || defaultDisplay( this.nodeName ) === "inline" ) {
+						if ( !jVizzop.support.inlineBlockNeedsLayout || defaultDisplay( this.nodeName ) === "inline" ) {
 							this.style.display = "inline-block";
 
 						} else {
@@ -8574,16 +8574,16 @@ jQuery.fn.extend({
 			}
 
 			for ( p in prop ) {
-				e = new jQuery.fx( this, opt, p );
+				e = new jVizzop.fx( this, opt, p );
 				val = prop[ p ];
 
 				if ( rfxtypes.test( val ) ) {
 
 					// Tracks whether to show or hide based on private
 					// data attached to the element
-					method = jQuery._data( this, "toggle" + p ) || ( val === "toggle" ? hidden ? "show" : "hide" : 0 );
+					method = jVizzop._data( this, "toggle" + p ) || ( val === "toggle" ? hidden ? "show" : "hide" : 0 );
 					if ( method ) {
-						jQuery._data( this, "toggle" + p, method === "show" ? "hide" : "show" );
+						jVizzop._data( this, "toggle" + p, method === "show" ? "hide" : "show" );
 						e[ method ]();
 					} else {
 						e[ val ]();
@@ -8595,13 +8595,13 @@ jQuery.fn.extend({
 
 					if ( parts ) {
 						end = parseFloat( parts[2] );
-						unit = parts[3] || ( jQuery.cssNumber[ p ] ? "" : "px" );
+						unit = parts[3] || ( jVizzop.cssNumber[ p ] ? "" : "px" );
 
 						// We need to compute starting value
 						if ( unit !== "px" ) {
-							jQuery.style( this, p, (end || 1) + unit);
+							jVizzop.style( this, p, (end || 1) + unit);
 							start = ( (end || 1) / e.cur() ) * start;
-							jQuery.style( this, p, start + unit);
+							jVizzop.style( this, p, start + unit);
 						}
 
 						// If a +=/-= token was provided, we're doing a relative animation
@@ -8639,17 +8639,17 @@ jQuery.fn.extend({
 		return this.each(function() {
 			var index,
 				hadTimers = false,
-				timers = jQuery.timers,
-				data = jQuery._data( this );
+				timers = jVizzop.timers,
+				data = jVizzop._data( this );
 
 			// clear marker counters if we know they won't be
 			if ( !gotoEnd ) {
-				jQuery._unmark( true, this );
+				jVizzop._unmark( true, this );
 			}
 
 			function stopQueue( elem, data, index ) {
 				var hooks = data[ index ];
-				jQuery.removeData( elem, index, true );
+				jVizzop.removeData( elem, index, true );
 				hooks.stop( gotoEnd );
 			}
 
@@ -8681,7 +8681,7 @@ jQuery.fn.extend({
 			// timers currently will call their complete callbacks, which will dequeue
 			// but only if they were gotoEnd
 			if ( !( gotoEnd && hadTimers ) ) {
-				jQuery.dequeue( this, type );
+				jVizzop.dequeue( this, type );
 			}
 		});
 	}
@@ -8691,7 +8691,7 @@ jQuery.fn.extend({
 // Animations created synchronously will run synchronously
 function createFxNow() {
 	setTimeout( clearFxNow, 0 );
-	return ( fxNow = jQuery.now() );
+	return ( fxNow = jVizzop.now() );
 }
 
 function clearFxNow() {
@@ -8702,7 +8702,7 @@ function clearFxNow() {
 function genFx( type, num ) {
 	var obj = {};
 
-	jQuery.each( fxAttrs.concat.apply([], fxAttrs.slice( 0, num )), function() {
+	jVizzop.each( fxAttrs.concat.apply([], fxAttrs.slice( 0, num )), function() {
 		obj[ this ] = type;
 	});
 
@@ -8710,7 +8710,7 @@ function genFx( type, num ) {
 }
 
 // Generate shortcuts for custom animations
-jQuery.each({
+jVizzop.each({
 	slideDown: genFx( "show", 1 ),
 	slideUp: genFx( "hide", 1 ),
 	slideToggle: genFx( "toggle", 1 ),
@@ -8718,22 +8718,22 @@ jQuery.each({
 	fadeOut: { opacity: "hide" },
 	fadeToggle: { opacity: "toggle" }
 }, function( name, props ) {
-	jQuery.fn[ name ] = function( speed, easing, callback ) {
+	jVizzop.fn[ name ] = function( speed, easing, callback ) {
 		return this.animate( props, speed, easing, callback );
 	};
 });
 
-jQuery.extend({
+jVizzop.extend({
 	speed: function( speed, easing, fn ) {
-		var opt = speed && typeof speed === "object" ? jQuery.extend( {}, speed ) : {
+		var opt = speed && typeof speed === "object" ? jVizzop.extend( {}, speed ) : {
 			complete: fn || !fn && easing ||
-				jQuery.isFunction( speed ) && speed,
+				jVizzop.isFunction( speed ) && speed,
 			duration: speed,
-			easing: fn && easing || easing && !jQuery.isFunction( easing ) && easing
+			easing: fn && easing || easing && !jVizzop.isFunction( easing ) && easing
 		};
 
-		opt.duration = jQuery.fx.off ? 0 : typeof opt.duration === "number" ? opt.duration :
-			opt.duration in jQuery.fx.speeds ? jQuery.fx.speeds[ opt.duration ] : jQuery.fx.speeds._default;
+		opt.duration = jVizzop.fx.off ? 0 : typeof opt.duration === "number" ? opt.duration :
+			opt.duration in jVizzop.fx.speeds ? jVizzop.fx.speeds[ opt.duration ] : jVizzop.fx.speeds._default;
 
 		// normalize opt.queue - true/undefined/null -> "fx"
 		if ( opt.queue == null || opt.queue === true ) {
@@ -8744,14 +8744,14 @@ jQuery.extend({
 		opt.old = opt.complete;
 
 		opt.complete = function( noUnmark ) {
-			if ( jQuery.isFunction( opt.old ) ) {
+			if ( jVizzop.isFunction( opt.old ) ) {
 				opt.old.call( this );
 			}
 
 			if ( opt.queue ) {
-				jQuery.dequeue( this, opt.queue );
+				jVizzop.dequeue( this, opt.queue );
 			} else if ( noUnmark !== false ) {
-				jQuery._unmark( this );
+				jVizzop._unmark( this );
 			}
 		};
 
@@ -8779,14 +8779,14 @@ jQuery.extend({
 
 });
 
-jQuery.fx.prototype = {
+jVizzop.fx.prototype = {
 	// Simple function for setting a style value
 	update: function() {
 		if ( this.options.step ) {
 			this.options.step.call( this.elem, this.now, this );
 		}
 
-		( jQuery.fx.step[ this.prop ] || jQuery.fx.step._default )( this );
+		( jVizzop.fx.step[ this.prop ] || jVizzop.fx.step._default )( this );
 	},
 
 	// Get the current size
@@ -8796,7 +8796,7 @@ jQuery.fx.prototype = {
 		}
 
 		var parsed,
-			r = jQuery.css( this.elem, this.prop );
+			r = jVizzop.css( this.elem, this.prop );
 		// Empty strings, null, undefined and "auto" are converted to 0,
 		// complex values such as "rotate(1rad)" are returned as is,
 		// simple values such as "10px" are parsed to Float.
@@ -8806,13 +8806,13 @@ jQuery.fx.prototype = {
 	// Start an animation from one number to another
 	custom: function( from, to, unit ) {
 		var self = this,
-			fx = jQuery.fx;
+			fx = jVizzop.fx;
 
 		this.startTime = fxNow || createFxNow();
 		this.end = to;
 		this.now = this.start = from;
 		this.pos = this.state = 0;
-		this.unit = unit || this.unit || ( jQuery.cssNumber[ this.prop ] ? "" : "px" );
+		this.unit = unit || this.unit || ( jVizzop.cssNumber[ this.prop ] ? "" : "px" );
 
 		function t( gotoEnd ) {
 			return self.step( gotoEnd );
@@ -8821,26 +8821,26 @@ jQuery.fx.prototype = {
 		t.queue = this.options.queue;
 		t.elem = this.elem;
 		t.saveState = function() {
-			if ( jQuery._data( self.elem, "fxshow" + self.prop ) === undefined ) {
+			if ( jVizzop._data( self.elem, "fxshow" + self.prop ) === undefined ) {
 				if ( self.options.hide ) {
-					jQuery._data( self.elem, "fxshow" + self.prop, self.start );
+					jVizzop._data( self.elem, "fxshow" + self.prop, self.start );
 				} else if ( self.options.show ) {
-					jQuery._data( self.elem, "fxshow" + self.prop, self.end );
+					jVizzop._data( self.elem, "fxshow" + self.prop, self.end );
 				}
 			}
 		};
 
-		if ( t() && jQuery.timers.push(t) && !timerId ) {
+		if ( t() && jVizzop.timers.push(t) && !timerId ) {
 			timerId = setInterval( fx.tick, fx.interval );
 		}
 	},
 
 	// Simple 'show' function
 	show: function() {
-		var dataShow = jQuery._data( this.elem, "fxshow" + this.prop );
+		var dataShow = jVizzop._data( this.elem, "fxshow" + this.prop );
 
 		// Remember where we started, so that we can go back to it later
-		this.options.orig[ this.prop ] = dataShow || jQuery.style( this.elem, this.prop );
+		this.options.orig[ this.prop ] = dataShow || jVizzop.style( this.elem, this.prop );
 		this.options.show = true;
 
 		// Begin the animation
@@ -8853,13 +8853,13 @@ jQuery.fx.prototype = {
 		}
 
 		// Start by showing the element
-		jQuery( this.elem ).show();
+		jVizzop( this.elem ).show();
 	},
 
 	// Simple 'hide' function
 	hide: function() {
 		// Remember where we started, so that we can go back to it later
-		this.options.orig[ this.prop ] = jQuery._data( this.elem, "fxshow" + this.prop ) || jQuery.style( this.elem, this.prop );
+		this.options.orig[ this.prop ] = jVizzop._data( this.elem, "fxshow" + this.prop ) || jVizzop.style( this.elem, this.prop );
 		this.options.hide = true;
 
 		// Begin the animation
@@ -8889,25 +8889,25 @@ jQuery.fx.prototype = {
 
 			if ( done ) {
 				// Reset the overflow
-				if ( options.overflow != null && !jQuery.support.shrinkWrapBlocks ) {
+				if ( options.overflow != null && !jVizzop.support.shrinkWrapBlocks ) {
 
-					jQuery.each( [ "", "X", "Y" ], function( index, value ) {
+					jVizzop.each( [ "", "X", "Y" ], function( index, value ) {
 						elem.style[ "overflow" + value ] = options.overflow[ index ];
 					});
 				}
 
 				// Hide the element if the "hide" operation was done
 				if ( options.hide ) {
-					jQuery( elem ).hide();
+					jVizzop( elem ).hide();
 				}
 
 				// Reset the properties, if the item has been hidden or shown
 				if ( options.hide || options.show ) {
 					for ( p in options.animatedProperties ) {
-						jQuery.style( elem, p, options.orig[ p ] );
-						jQuery.removeData( elem, "fxshow" + p, true );
+						jVizzop.style( elem, p, options.orig[ p ] );
+						jVizzop.removeData( elem, "fxshow" + p, true );
 						// Toggle data is no longer needed
-						jQuery.removeData( elem, "toggle" + p, true );
+						jVizzop.removeData( elem, "toggle" + p, true );
 					}
 				}
 
@@ -8934,7 +8934,7 @@ jQuery.fx.prototype = {
 				this.state = n / options.duration;
 
 				// Perform the easing function, defaults to swing
-				this.pos = jQuery.easing[ options.animatedProperties[this.prop] ]( this.state, n, 0, 1, options.duration );
+				this.pos = jVizzop.easing[ options.animatedProperties[this.prop] ]( this.state, n, 0, 1, options.duration );
 				this.now = this.start + ( (this.end - this.start) * this.pos );
 			}
 			// Perform the next step of the animation
@@ -8945,10 +8945,10 @@ jQuery.fx.prototype = {
 	}
 };
 
-jQuery.extend( jQuery.fx, {
+jVizzop.extend( jVizzop.fx, {
 	tick: function() {
 		var timer,
-			timers = jQuery.timers,
+			timers = jVizzop.timers,
 			i = 0;
 
 		for ( ; i < timers.length; i++ ) {
@@ -8960,7 +8960,7 @@ jQuery.extend( jQuery.fx, {
 		}
 
 		if ( !timers.length ) {
-			jQuery.fx.stop();
+			jVizzop.fx.stop();
 		}
 	},
 
@@ -8980,7 +8980,7 @@ jQuery.extend( jQuery.fx, {
 
 	step: {
 		opacity: function( fx ) {
-			jQuery.style( fx.elem, "opacity", fx.now );
+			jVizzop.style( fx.elem, "opacity", fx.now );
 		},
 
 		_default: function( fx ) {
@@ -8994,18 +8994,18 @@ jQuery.extend( jQuery.fx, {
 });
 
 // Ensure props that can't be negative don't go there on undershoot easing
-jQuery.each( fxAttrs.concat.apply( [], fxAttrs ), function( i, prop ) {
+jVizzop.each( fxAttrs.concat.apply( [], fxAttrs ), function( i, prop ) {
 	// exclude marginTop, marginLeft, marginBottom and marginRight from this list
 	if ( prop.indexOf( "margin" ) ) {
-		jQuery.fx.step[ prop ] = function( fx ) {
-			jQuery.style( fx.elem, prop, Math.max(0, fx.now) + fx.unit );
+		jVizzop.fx.step[ prop ] = function( fx ) {
+			jVizzop.style( fx.elem, prop, Math.max(0, fx.now) + fx.unit );
 		};
 	}
 });
 
-if ( jQuery.expr && jQuery.expr.filters ) {
-	jQuery.expr.filters.animated = function( elem ) {
-		return jQuery.grep(jQuery.timers, function( fn ) {
+if ( jVizzop.expr && jVizzop.expr.filters ) {
+	jVizzop.expr.filters.animated = function( elem ) {
+		return jVizzop.grep(jVizzop.timers, function( fn ) {
 			return elem === fn.elem;
 		}).length;
 	};
@@ -9017,7 +9017,7 @@ function defaultDisplay( nodeName ) {
 	if ( !elemdisplay[ nodeName ] ) {
 
 		var body = document.body,
-			elem = jQuery( "<" + nodeName + ">" ).appendTo( body ),
+			elem = jVizzop( "<" + nodeName + ">" ).appendTo( body ),
 			display = elem.css( "display" );
 		elem.remove();
 
@@ -9037,7 +9037,7 @@ function defaultDisplay( nodeName ) {
 			// document to it; WebKit & Firefox won't allow reusing the iframe document.
 			if ( !iframeDoc || !iframe.createElement ) {
 				iframeDoc = ( iframe.contentWindow || iframe.contentDocument ).document;
-				iframeDoc.write( ( jQuery.support.boxModel ? "<!doctype html>" : "" ) + "<html><body>" );
+				iframeDoc.write( ( jVizzop.support.boxModel ? "<!doctype html>" : "" ) + "<html><body>" );
 				iframeDoc.close();
 			}
 
@@ -9045,7 +9045,7 @@ function defaultDisplay( nodeName ) {
 
 			iframeDoc.body.appendChild( elem );
 
-			display = jQuery.css( elem, "display" );
+			display = jVizzop.css( elem, "display" );
 			body.removeChild( iframe );
 		}
 
@@ -9070,7 +9070,7 @@ if ( "getBoundingClientRect" in document.documentElement ) {
 		} catch(e) {}
 
 		// Make sure we're not dealing with a disconnected DOM node
-		if ( !box || !jQuery.contains( docElem, elem ) ) {
+		if ( !box || !jVizzop.contains( docElem, elem ) ) {
 			return box ? { top: box.top, left: box.left } : { top: 0, left: 0 };
 		}
 
@@ -9078,8 +9078,8 @@ if ( "getBoundingClientRect" in document.documentElement ) {
 			win = getWindow( doc ),
 			clientTop  = docElem.clientTop  || body.clientTop  || 0,
 			clientLeft = docElem.clientLeft || body.clientLeft || 0,
-			scrollTop  = win.pageYOffset || jQuery.support.boxModel && docElem.scrollTop  || body.scrollTop,
-			scrollLeft = win.pageXOffset || jQuery.support.boxModel && docElem.scrollLeft || body.scrollLeft,
+			scrollTop  = win.pageYOffset || jVizzop.support.boxModel && docElem.scrollTop  || body.scrollTop,
+			scrollLeft = win.pageXOffset || jVizzop.support.boxModel && docElem.scrollLeft || body.scrollLeft,
 			top  = box.top  + scrollTop  - clientTop,
 			left = box.left + scrollLeft - clientLeft;
 
@@ -9098,7 +9098,7 @@ if ( "getBoundingClientRect" in document.documentElement ) {
 			left = elem.offsetLeft;
 
 		while ( (elem = elem.parentNode) && elem !== body && elem !== docElem ) {
-			if ( jQuery.support.fixedPosition && prevComputedStyle.position === "fixed" ) {
+			if ( jVizzop.support.fixedPosition && prevComputedStyle.position === "fixed" ) {
 				break;
 			}
 
@@ -9110,7 +9110,7 @@ if ( "getBoundingClientRect" in document.documentElement ) {
 				top  += elem.offsetTop;
 				left += elem.offsetLeft;
 
-				if ( jQuery.support.doesNotAddBorder && !(jQuery.support.doesAddBorderForTableAndCells && rtable.test(elem.nodeName)) ) {
+				if ( jVizzop.support.doesNotAddBorder && !(jVizzop.support.doesAddBorderForTableAndCells && rtable.test(elem.nodeName)) ) {
 					top  += parseFloat( computedStyle.borderTopWidth  ) || 0;
 					left += parseFloat( computedStyle.borderLeftWidth ) || 0;
 				}
@@ -9119,7 +9119,7 @@ if ( "getBoundingClientRect" in document.documentElement ) {
 				offsetParent = elem.offsetParent;
 			}
 
-			if ( jQuery.support.subtractsBorderForOverflowNotVisible && computedStyle.overflow !== "visible" ) {
+			if ( jVizzop.support.subtractsBorderForOverflowNotVisible && computedStyle.overflow !== "visible" ) {
 				top  += parseFloat( computedStyle.borderTopWidth  ) || 0;
 				left += parseFloat( computedStyle.borderLeftWidth ) || 0;
 			}
@@ -9132,7 +9132,7 @@ if ( "getBoundingClientRect" in document.documentElement ) {
 			left += body.offsetLeft;
 		}
 
-		if ( jQuery.support.fixedPosition && prevComputedStyle.position === "fixed" ) {
+		if ( jVizzop.support.fixedPosition && prevComputedStyle.position === "fixed" ) {
 			top  += Math.max( docElem.scrollTop, body.scrollTop );
 			left += Math.max( docElem.scrollLeft, body.scrollLeft );
 		}
@@ -9141,12 +9141,12 @@ if ( "getBoundingClientRect" in document.documentElement ) {
 	};
 }
 
-jQuery.fn.offset = function( options ) {
+jVizzop.fn.offset = function( options ) {
 	if ( arguments.length ) {
 		return options === undefined ?
 			this :
 			this.each(function( i ) {
-				jQuery.offset.setOffset( this, options, i );
+				jVizzop.offset.setOffset( this, options, i );
 			});
 	}
 
@@ -9158,39 +9158,39 @@ jQuery.fn.offset = function( options ) {
 	}
 
 	if ( elem === doc.body ) {
-		return jQuery.offset.bodyOffset( elem );
+		return jVizzop.offset.bodyOffset( elem );
 	}
 
 	return getOffset( elem, doc, doc.documentElement );
 };
 
-jQuery.offset = {
+jVizzop.offset = {
 
 	bodyOffset: function( body ) {
 		var top = body.offsetTop,
 			left = body.offsetLeft;
 
-		if ( jQuery.support.doesNotIncludeMarginInBodyOffset ) {
-			top  += parseFloat( jQuery.css(body, "marginTop") ) || 0;
-			left += parseFloat( jQuery.css(body, "marginLeft") ) || 0;
+		if ( jVizzop.support.doesNotIncludeMarginInBodyOffset ) {
+			top  += parseFloat( jVizzop.css(body, "marginTop") ) || 0;
+			left += parseFloat( jVizzop.css(body, "marginLeft") ) || 0;
 		}
 
 		return { top: top, left: left };
 	},
 
 	setOffset: function( elem, options, i ) {
-		var position = jQuery.css( elem, "position" );
+		var position = jVizzop.css( elem, "position" );
 
 		// set position first, in-case top/left are set even on static elem
 		if ( position === "static" ) {
 			elem.style.position = "relative";
 		}
 
-		var curElem = jQuery( elem ),
+		var curElem = jVizzop( elem ),
 			curOffset = curElem.offset(),
-			curCSSTop = jQuery.css( elem, "top" ),
-			curCSSLeft = jQuery.css( elem, "left" ),
-			calculatePosition = ( position === "absolute" || position === "fixed" ) && jQuery.inArray("auto", [curCSSTop, curCSSLeft]) > -1,
+			curCSSTop = jVizzop.css( elem, "top" ),
+			curCSSLeft = jVizzop.css( elem, "left" ),
+			calculatePosition = ( position === "absolute" || position === "fixed" ) && jVizzop.inArray("auto", [curCSSTop, curCSSLeft]) > -1,
 			props = {}, curPosition = {}, curTop, curLeft;
 
 		// need to be able to calculate position if either top or left is auto and position is either absolute or fixed
@@ -9203,7 +9203,7 @@ jQuery.offset = {
 			curLeft = parseFloat( curCSSLeft ) || 0;
 		}
 
-		if ( jQuery.isFunction( options ) ) {
+		if ( jVizzop.isFunction( options ) ) {
 			options = options.call( elem, i, curOffset );
 		}
 
@@ -9223,7 +9223,7 @@ jQuery.offset = {
 };
 
 
-jQuery.fn.extend({
+jVizzop.fn.extend({
 
 	position: function() {
 		if ( !this[0] ) {
@@ -9242,12 +9242,12 @@ jQuery.fn.extend({
 		// Subtract element margins
 		// note: when an element has margin: auto the offsetLeft and marginLeft
 		// are the same in Safari causing offset.left to incorrectly be 0
-		offset.top  -= parseFloat( jQuery.css(elem, "marginTop") ) || 0;
-		offset.left -= parseFloat( jQuery.css(elem, "marginLeft") ) || 0;
+		offset.top  -= parseFloat( jVizzop.css(elem, "marginTop") ) || 0;
+		offset.left -= parseFloat( jVizzop.css(elem, "marginLeft") ) || 0;
 
 		// Add offsetParent borders
-		parentOffset.top  += parseFloat( jQuery.css(offsetParent[0], "borderTopWidth") ) || 0;
-		parentOffset.left += parseFloat( jQuery.css(offsetParent[0], "borderLeftWidth") ) || 0;
+		parentOffset.top  += parseFloat( jVizzop.css(offsetParent[0], "borderTopWidth") ) || 0;
+		parentOffset.left += parseFloat( jVizzop.css(offsetParent[0], "borderLeftWidth") ) || 0;
 
 		// Subtract the two offsets
 		return {
@@ -9259,7 +9259,7 @@ jQuery.fn.extend({
 	offsetParent: function() {
 		return this.map(function() {
 			var offsetParent = this.offsetParent || document.body;
-			while ( offsetParent && (!rroot.test(offsetParent.nodeName) && jQuery.css(offsetParent, "position") === "static") ) {
+			while ( offsetParent && (!rroot.test(offsetParent.nodeName) && jVizzop.css(offsetParent, "position") === "static") ) {
 				offsetParent = offsetParent.offsetParent;
 			}
 			return offsetParent;
@@ -9269,24 +9269,24 @@ jQuery.fn.extend({
 
 
 // Create scrollLeft and scrollTop methods
-jQuery.each( {scrollLeft: "pageXOffset", scrollTop: "pageYOffset"}, function( method, prop ) {
+jVizzop.each( {scrollLeft: "pageXOffset", scrollTop: "pageYOffset"}, function( method, prop ) {
 	var top = /Y/.test( prop );
 
-	jQuery.fn[ method ] = function( val ) {
-		return jQuery.access( this, function( elem, method, val ) {
+	jVizzop.fn[ method ] = function( val ) {
+		return jVizzop.access( this, function( elem, method, val ) {
 			var win = getWindow( elem );
 
 			if ( val === undefined ) {
 				return win ? (prop in win) ? win[ prop ] :
-					jQuery.support.boxModel && win.document.documentElement[ method ] ||
+					jVizzop.support.boxModel && win.document.documentElement[ method ] ||
 						win.document.body[ method ] :
 					elem[ method ];
 			}
 
 			if ( win ) {
 				win.scrollTo(
-					!top ? val : jQuery( win ).scrollLeft(),
-					 top ? val : jQuery( win ).scrollTop()
+					!top ? val : jVizzop( win ).scrollLeft(),
+					 top ? val : jVizzop( win ).scrollTop()
 				);
 
 			} else {
@@ -9297,7 +9297,7 @@ jQuery.each( {scrollLeft: "pageXOffset", scrollTop: "pageYOffset"}, function( me
 });
 
 function getWindow( elem ) {
-	return jQuery.isWindow( elem ) ?
+	return jVizzop.isWindow( elem ) ?
 		elem :
 		elem.nodeType === 9 ?
 			elem.defaultView || elem.parentWindow :
@@ -9308,40 +9308,40 @@ function getWindow( elem ) {
 
 
 // Create width, height, innerHeight, innerWidth, outerHeight and outerWidth methods
-jQuery.each( { Height: "height", Width: "width" }, function( name, type ) {
+jVizzop.each( { Height: "height", Width: "width" }, function( name, type ) {
 	var clientProp = "client" + name,
 		scrollProp = "scroll" + name,
 		offsetProp = "offset" + name;
 
 	// innerHeight and innerWidth
-	jQuery.fn[ "inner" + name ] = function() {
+	jVizzop.fn[ "inner" + name ] = function() {
 		var elem = this[0];
 		return elem ?
 			elem.style ?
-			parseFloat( jQuery.css( elem, type, "padding" ) ) :
+			parseFloat( jVizzop.css( elem, type, "padding" ) ) :
 			this[ type ]() :
 			null;
 	};
 
 	// outerHeight and outerWidth
-	jQuery.fn[ "outer" + name ] = function( margin ) {
+	jVizzop.fn[ "outer" + name ] = function( margin ) {
 		var elem = this[0];
 		return elem ?
 			elem.style ?
-			parseFloat( jQuery.css( elem, type, margin ? "margin" : "border" ) ) :
+			parseFloat( jVizzop.css( elem, type, margin ? "margin" : "border" ) ) :
 			this[ type ]() :
 			null;
 	};
 
-	jQuery.fn[ type ] = function( value ) {
-		return jQuery.access( this, function( elem, type, value ) {
+	jVizzop.fn[ type ] = function( value ) {
+		return jVizzop.access( this, function( elem, type, value ) {
 			var doc, docElemProp, orig, ret;
 
-			if ( jQuery.isWindow( elem ) ) {
+			if ( jVizzop.isWindow( elem ) ) {
 				// 3rd condition allows Nokia support, as it supports the docElem prop but not CSS1Compat
 				doc = elem.document;
 				docElemProp = doc.documentElement[ clientProp ];
-				return jQuery.support.boxModel && docElemProp ||
+				return jVizzop.support.boxModel && docElemProp ||
 					doc.body && doc.body[ clientProp ] || docElemProp;
 			}
 
@@ -9366,13 +9366,13 @@ jQuery.each( { Height: "height", Width: "width" }, function( name, type ) {
 
 			// Get width or height on the element
 			if ( value === undefined ) {
-				orig = jQuery.css( elem, type );
+				orig = jVizzop.css( elem, type );
 				ret = parseFloat( orig );
-				return jQuery.isNumeric( ret ) ? ret : orig;
+				return jVizzop.isNumeric( ret ) ? ret : orig;
 			}
 
 			// Set the width or height on the element
-			jQuery( elem ).css( type, value );
+			jVizzop( elem ).css( type, value );
 		}, type, value, arguments.length, null );
 	};
 });
@@ -9380,23 +9380,23 @@ jQuery.each( { Height: "height", Width: "width" }, function( name, type ) {
 
 
 
-// Expose jQuery to the global object
-window.jQuery = window.$ = jQuery;
+// Expose jVizzop to the global object
+window.jVizzop = window.$ = jVizzop;
 
-// Expose jQuery as an AMD module, but only for AMD loaders that
-// understand the issues with loading multiple versions of jQuery
+// Expose jVizzop as an AMD module, but only for AMD loaders that
+// understand the issues with loading multiple versions of jVizzop
 // in a page that all might call define(). The loader will indicate
-// they have special allowances for multiple jQuery versions by
-// specifying define.amd.jQuery = true. Register as a named module,
-// since jQuery can be concatenated with other files that may use define,
+// they have special allowances for multiple jVizzop versions by
+// specifying define.amd.jVizzop = true. Register as a named module,
+// since jVizzop can be concatenated with other files that may use define,
 // but not use a proper concatenation script that understands anonymous
 // AMD modules. A named AMD is safest and most robust way to register.
-// Lowercase jquery is used because AMD module names are derived from
-// file names, and jQuery is normally delivered in a lowercase file name.
+// Lowercase jVizzop is used because AMD module names are derived from
+// file names, and jVizzop is normally delivered in a lowercase file name.
 // Do this after creating the global so that if an AMD module wants to call
-// noConflict to hide this version of jQuery, it will work.
-if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
-	define( "jquery", [], function () { return jQuery; } );
+// noConflict to hide this version of jVizzop, it will work.
+if ( typeof define === "function" && define.amd && define.amd.jVizzop ) {
+	define( "jVizzop", [], function () { return jVizzop; } );
 }
 
 

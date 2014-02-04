@@ -4,7 +4,7 @@
 **/
 $(document).ready(function(){
 	
-	// === jQuery Peity === //
+	// === jVizzop Peity === //
 	$.fn.peity.defaults.line = {
 		strokeWidth: 1,
 		delimeter: ",",

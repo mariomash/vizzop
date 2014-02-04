@@ -1,11 +1,11 @@
 /*!
- * jQuery UI 1.8.21
+ * jVizzop UI 1.8.21
  *
- * Copyright 2012, AUTHORS.txt (http://jqueryui.com/about)
+ * Copyright 2012, AUTHORS.txt (http://jVizzopui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
- * http://jquery.org/license
+ * http://jVizzop.org/license
  *
- * http://docs.jquery.com/UI
+ * http://docs.jVizzop.com/UI
  */
 (function( $, undefined ) {
 
@@ -241,7 +241,7 @@ $(function() {
 	$.support.selectstart = "onselectstart" in div;
 
 	// set display to none to avoid a layout bug in IE
-	// http://dev.jquery.com/ticket/4014
+	// http://dev.jVizzop.com/ticket/4014
 	body.removeChild( div ).style.display = "none";
 });
 
@@ -274,7 +274,7 @@ $.extend( $.ui, {
 		}
 	},
 	
-	// will be deprecated when we switch to jQuery 1.4 - use jQuery.contains()
+	// will be deprecated when we switch to jVizzop 1.4 - use jVizzop.contains()
 	contains: function( a, b ) {
 		return document.compareDocumentPosition ?
 			a.compareDocumentPosition( b ) & 16 :
@@ -316,26 +316,26 @@ $.extend( $.ui, {
 	}
 });
 
-})( jQuery );
+})( jVizzop );
 /*!
- * jQuery UI Widget 1.8.21
+ * jVizzop UI Widget 1.8.21
  *
- * Copyright 2012, AUTHORS.txt (http://jqueryui.com/about)
+ * Copyright 2012, AUTHORS.txt (http://jVizzopui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
- * http://jquery.org/license
+ * http://jVizzop.org/license
  *
- * http://docs.jquery.com/UI/Widget
+ * http://docs.jVizzop.com/UI/Widget
  */
 (function( $, undefined ) {
 
-// jQuery 1.4+
+// jVizzop 1.4+
 if ( $.cleanData ) {
 	var _cleanData = $.cleanData;
 	$.cleanData = function( elems ) {
 		for ( var i = 0, elem; (elem = elems[i]) != null; i++ ) {
 			try {
 				$( elem ).triggerHandler( "remove" );
-			// http://bugs.jquery.com/ticket/8235
+			// http://bugs.jVizzop.com/ticket/8235
 			} catch( e ) {}
 		}
 		_cleanData( elems );
@@ -349,7 +349,7 @@ if ( $.cleanData ) {
 					$( "*", this ).add( [ this ] ).each(function() {
 						try {
 							$( this ).triggerHandler( "remove" );
-						// http://bugs.jquery.com/ticket/8235
+						// http://bugs.jVizzop.com/ticket/8235
 						} catch( e ) {}
 					});
 				}
@@ -588,18 +588,18 @@ $.Widget.prototype = {
 	}
 };
 
-})( jQuery );
+})( jVizzop );
 /*!
- * jQuery UI Mouse 1.8.21
+ * jVizzop UI Mouse 1.8.21
  *
- * Copyright 2012, AUTHORS.txt (http://jqueryui.com/about)
+ * Copyright 2012, AUTHORS.txt (http://jVizzopui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
- * http://jquery.org/license
+ * http://jVizzop.org/license
  *
- * http://docs.jquery.com/UI/Mouse
+ * http://docs.jVizzop.com/UI/Mouse
  *
  * Depends:
- *	jquery.ui.widget.js
+ *	jVizzop.ui.widget.js
  */
 (function( $, undefined ) {
 
@@ -753,15 +753,15 @@ $.widget("ui.mouse", {
 	_mouseCapture: function(event) { return true; }
 });
 
-})(jQuery);
+})(jVizzop);
 /*!
- * jQuery UI Position 1.8.21
+ * jVizzop UI Position 1.8.21
  *
- * Copyright 2012, AUTHORS.txt (http://jqueryui.com/about)
+ * Copyright 2012, AUTHORS.txt (http://jVizzopui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
- * http://jquery.org/license
+ * http://jVizzop.org/license
  *
- * http://docs.jquery.com/UI/Position
+ * http://docs.jVizzop.com/UI/Position
  */
 (function( $, undefined ) {
 
@@ -878,7 +878,7 @@ $.fn.position = function( options ) {
 			position.top -= elemHeight / 2;
 		}
 
-		// prevent fractions if jQuery version doesn't support them (see #5280)
+		// prevent fractions if jVizzop version doesn't support them (see #5280)
 		if ( !support.fractions ) {
 			position.left = Math.round( position.left );
 			position.top = Math.round( position.top );
@@ -973,7 +973,7 @@ $.ui.position = {
 	}
 };
 
-// offset setter from jQuery 1.4
+// offset setter from jVizzop 1.4
 if ( !$.offset.setOffset ) {
 	$.offset.setOffset = function( elem, options ) {
 		// set position first, in-case top/left are set even on static elem
@@ -1013,13 +1013,13 @@ if ( !$.offset.setOffset ) {
 	};
 }
 
-// fraction support test (older versions of jQuery don't support fractions)
+// fraction support test (older versions of jVizzop don't support fractions)
 (function () {
 	var body = document.getElementsByTagName( "body" )[ 0 ], 
 		div = document.createElement( "div" ),
 		testElement, testElementParent, testElementStyle, offset, offsetTotal;
 
-	//Create a "fake body" for testing based on method used in jQuery.support
+	//Create a "fake body" for testing based on method used in jVizzop.support
 	testElement = document.createElement( body ? "div" : "body" );
 	testElementStyle = {
 		visibility: "hidden",
@@ -1056,20 +1056,20 @@ if ( !$.offset.setOffset ) {
 	support.fractions = offsetTotal > 21 && offsetTotal < 22;
 })();
 
-}( jQuery ));
+}( jVizzop ));
 /*!
- * jQuery UI Draggable 1.8.21
+ * jVizzop UI Draggable 1.8.21
  *
- * Copyright 2012, AUTHORS.txt (http://jqueryui.com/about)
+ * Copyright 2012, AUTHORS.txt (http://jVizzopui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
- * http://jquery.org/license
+ * http://jVizzop.org/license
  *
- * http://docs.jquery.com/UI/Draggables
+ * http://docs.jVizzop.com/UI/Draggables
  *
  * Depends:
- *	jquery.ui.core.js
- *	jquery.ui.mouse.js
- *	jquery.ui.widget.js
+ *	jVizzop.ui.core.js
+ *	jVizzop.ui.mouse.js
+ *	jVizzop.ui.widget.js
  */
 (function( $, undefined ) {
 
@@ -1889,21 +1889,21 @@ $.ui.plugin.add("draggable", "zIndex", {
 	}
 });
 
-})(jQuery);
+})(jVizzop);
 /*!
- * jQuery UI Droppable 1.8.21
+ * jVizzop UI Droppable 1.8.21
  *
- * Copyright 2012, AUTHORS.txt (http://jqueryui.com/about)
+ * Copyright 2012, AUTHORS.txt (http://jVizzopui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
- * http://jquery.org/license
+ * http://jVizzop.org/license
  *
- * http://docs.jquery.com/UI/Droppables
+ * http://docs.jVizzop.com/UI/Droppables
  *
  * Depends:
- *	jquery.ui.core.js
- *	jquery.ui.widget.js
- *	jquery.ui.mouse.js
- *	jquery.ui.draggable.js
+ *	jVizzop.ui.core.js
+ *	jVizzop.ui.widget.js
+ *	jVizzop.ui.mouse.js
+ *	jVizzop.ui.draggable.js
  */
 (function( $, undefined ) {
 
@@ -2185,20 +2185,20 @@ $.ui.ddmanager = {
 	}
 };
 
-})(jQuery);
+})(jVizzop);
 /*!
- * jQuery UI Resizable 1.8.21
+ * jVizzop UI Resizable 1.8.21
  *
- * Copyright 2012, AUTHORS.txt (http://jqueryui.com/about)
+ * Copyright 2012, AUTHORS.txt (http://jVizzopui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
- * http://jquery.org/license
+ * http://jVizzop.org/license
  *
- * http://docs.jquery.com/UI/Resizables
+ * http://docs.jVizzop.com/UI/Resizables
  *
  * Depends:
- *	jquery.ui.core.js
- *	jquery.ui.mouse.js
- *	jquery.ui.widget.js
+ *	jVizzop.ui.core.js
+ *	jVizzop.ui.mouse.js
+ *	jVizzop.ui.widget.js
  */
 (function( $, undefined ) {
 
@@ -2425,7 +2425,7 @@ $.widget("ui.resizable", $.ui.mouse, {
 		this.resizing = true;
 		this.documentScroll = { top: $(document).scrollTop(), left: $(document).scrollLeft() };
 
-		// bugfix for http://dev.jquery.com/ticket/1749
+		// bugfix for http://dev.jVizzop.com/ticket/1749
 		if (el.is('.ui-draggable') || (/absolute/).test(el.css('position'))) {
 			el.css({ position: 'absolute', top: iniPos.top, left: iniPos.left });
 		}
@@ -2992,20 +2992,20 @@ var isNumber = function(value) {
 	return !isNaN(parseInt(value, 10));
 };
 
-})(jQuery);
+})(jVizzop);
 /*!
- * jQuery UI Selectable 1.8.21
+ * jVizzop UI Selectable 1.8.21
  *
- * Copyright 2012, AUTHORS.txt (http://jqueryui.com/about)
+ * Copyright 2012, AUTHORS.txt (http://jVizzopui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
- * http://jquery.org/license
+ * http://jVizzop.org/license
  *
- * http://docs.jquery.com/UI/Selectables
+ * http://docs.jVizzop.com/UI/Selectables
  *
  * Depends:
- *	jquery.ui.core.js
- *	jquery.ui.mouse.js
- *	jquery.ui.widget.js
+ *	jVizzop.ui.core.js
+ *	jVizzop.ui.mouse.js
+ *	jVizzop.ui.widget.js
  */
 (function( $, undefined ) {
 
@@ -3259,20 +3259,20 @@ $.extend($.ui.selectable, {
 	version: "1.8.21"
 });
 
-})(jQuery);
+})(jVizzop);
 /*!
- * jQuery UI Sortable 1.8.21
+ * jVizzop UI Sortable 1.8.21
  *
- * Copyright 2012, AUTHORS.txt (http://jqueryui.com/about)
+ * Copyright 2012, AUTHORS.txt (http://jVizzopui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
- * http://jquery.org/license
+ * http://jVizzop.org/license
  *
- * http://docs.jquery.com/UI/Sortables
+ * http://docs.jVizzop.com/UI/Sortables
  *
  * Depends:
- *	jquery.ui.core.js
- *	jquery.ui.mouse.js
- *	jquery.ui.widget.js
+ *	jVizzop.ui.core.js
+ *	jVizzop.ui.mouse.js
+ *	jVizzop.ui.widget.js
  */
 (function( $, undefined ) {
 
@@ -3645,7 +3645,7 @@ $.widget("ui.sortable", $.ui.mouse, {
 		}
 
 		if (this.placeholder) {
-			//$(this.placeholder[0]).remove(); would have been the jQuery way - unfortunately, it unbinds ALL events from the original node!
+			//$(this.placeholder[0]).remove(); would have been the jVizzop way - unfortunately, it unbinds ALL events from the original node!
 			if(this.placeholder[0].parentNode) this.placeholder[0].parentNode.removeChild(this.placeholder[0]);
 			if(this.options.helper != "original" && this.helper && this.helper[0].parentNode) this.helper.remove();
 
@@ -3669,7 +3669,7 @@ $.widget("ui.sortable", $.ui.mouse, {
 
 	serialize: function(o) {
 
-		var items = this._getItemsAsjQuery(o && o.connected);
+		var items = this._getItemsAsjVizzop(o && o.connected);
 		var str = []; o = o || {};
 
 		$(items).each(function() {
@@ -3687,7 +3687,7 @@ $.widget("ui.sortable", $.ui.mouse, {
 
 	toArray: function(o) {
 
-		var items = this._getItemsAsjQuery(o && o.connected);
+		var items = this._getItemsAsjVizzop(o && o.connected);
 		var ret = []; o = o || {};
 
 		items.each(function() { ret.push($(o.item || this).attr(o.attribute || 'id') || ''); });
@@ -3783,7 +3783,7 @@ $.widget("ui.sortable", $.ui.mouse, {
 			: options.connectWith;
 	},
 	
-	_getItemsAsjQuery: function(connected) {
+	_getItemsAsjVizzop: function(connected) {
 
 		var self = this;
 		var items = [];
@@ -4301,7 +4301,7 @@ $.widget("ui.sortable", $.ui.mouse, {
 
 		if(!noPropagation) this._trigger("beforeStop", event, this._uiHash());
 
-		//$(this.placeholder[0]).remove(); would have been the jQuery way - unfortunately, it unbinds ALL events from the original node!
+		//$(this.placeholder[0]).remove(); would have been the jVizzop way - unfortunately, it unbinds ALL events from the original node!
 		this.placeholder[0].parentNode.removeChild(this.placeholder[0]);
 
 		if(this.helper[0] != this.currentItem[0]) this.helper.remove(); this.helper = null;
@@ -4341,20 +4341,20 @@ $.extend($.ui.sortable, {
 	version: "1.8.21"
 });
 
-})(jQuery);
+})(jVizzop);
 /*!
- * jQuery UI Autocomplete 1.8.21
+ * jVizzop UI Autocomplete 1.8.21
  *
- * Copyright 2012, AUTHORS.txt (http://jqueryui.com/about)
+ * Copyright 2012, AUTHORS.txt (http://jVizzopui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
- * http://jquery.org/license
+ * http://jVizzop.org/license
  *
- * http://docs.jquery.com/UI/Autocomplete
+ * http://docs.jVizzop.com/UI/Autocomplete
  *
  * Depends:
- *	jquery.ui.core.js
- *	jquery.ui.widget.js
- *	jquery.ui.position.js
+ *	jVizzop.ui.core.js
+ *	jVizzop.ui.widget.js
+ *	jVizzop.ui.position.js
  */
 (function( $, undefined ) {
 
@@ -4546,7 +4546,7 @@ $.widget( "ui.autocomplete", {
 				}
 			})
 			.zIndex( this.element.zIndex() + 1 )
-			// workaround for jQuery bug #5781 http://dev.jquery.com/ticket/5781
+			// workaround for jVizzop bug #5781 http://dev.jVizzop.com/ticket/5781
 			.css({ top: 0, left: 0 })
 			.hide()
 			.data( "menu" );
@@ -4788,24 +4788,24 @@ $.extend( $.ui.autocomplete, {
 	}
 });
 
-}( jQuery ));
+}( jVizzop ));
 
 /*
- * jQuery UI Menu (not officially released)
+ * jVizzop UI Menu (not officially released)
  * 
  * This widget isn't yet finished and the API is subject to change. We plan to finish
  * it for the next release. You're welcome to give it a try anyway and give us feedback,
  * as long as you're okay with migrating your code later on. We can help with that, too.
  *
- * Copyright 2010, AUTHORS.txt (http://jqueryui.com/about)
+ * Copyright 2010, AUTHORS.txt (http://jVizzopui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
- * http://jquery.org/license
+ * http://jVizzop.org/license
  *
- * http://docs.jquery.com/UI/Menu
+ * http://docs.jVizzop.com/UI/Menu
  *
  * Depends:
- *	jquery.ui.core.js
- *  jquery.ui.widget.js
+ *	jVizzop.ui.core.js
+ *  jVizzop.ui.widget.js
  */
 (function($) {
 
@@ -4972,19 +4972,19 @@ $.widget("ui.menu", {
 	}
 });
 
-}(jQuery));
+}(jVizzop));
 /*!
- * jQuery UI Button 1.8.21
+ * jVizzop UI Button 1.8.21
  *
- * Copyright 2012, AUTHORS.txt (http://jqueryui.com/about)
+ * Copyright 2012, AUTHORS.txt (http://jVizzopui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
- * http://jquery.org/license
+ * http://jVizzop.org/license
  *
- * http://docs.jquery.com/UI/Button
+ * http://docs.jVizzop.com/UI/Button
  *
  * Depends:
- *	jquery.ui.core.js
- *	jquery.ui.widget.js
+ *	jVizzop.ui.core.js
+ *	jVizzop.ui.widget.js
  */
 (function( $, undefined ) {
 
@@ -5386,20 +5386,20 @@ $.widget( "ui.buttonset", {
 	}
 });
 
-}( jQuery ) );
+}( jVizzop ) );
 /*!
- * jQuery UI Slider 1.8.21
+ * jVizzop UI Slider 1.8.21
  *
- * Copyright 2012, AUTHORS.txt (http://jqueryui.com/about)
+ * Copyright 2012, AUTHORS.txt (http://jVizzopui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
- * http://jquery.org/license
+ * http://jVizzop.org/license
  *
- * http://docs.jquery.com/UI/Slider
+ * http://docs.jVizzop.com/UI/Slider
  *
  * Depends:
- *	jquery.ui.core.js
- *	jquery.ui.mouse.js
- *	jquery.ui.widget.js
+ *	jVizzop.ui.core.js
+ *	jVizzop.ui.mouse.js
+ *	jVizzop.ui.widget.js
  */
 (function( $, undefined ) {
 
@@ -6048,19 +6048,19 @@ $.extend( $.ui.slider, {
 	version: "1.8.21"
 });
 
-}(jQuery));
+}(jVizzop));
 /*!
- * jQuery UI Progressbar 1.8.21
+ * jVizzop UI Progressbar 1.8.21
  *
- * Copyright 2012, AUTHORS.txt (http://jqueryui.com/about)
+ * Copyright 2012, AUTHORS.txt (http://jVizzopui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
- * http://jquery.org/license
+ * http://jVizzop.org/license
  *
- * http://docs.jquery.com/UI/Progressbar
+ * http://docs.jVizzop.com/UI/Progressbar
  *
  * Depends:
- *   jquery.ui.core.js
- *   jquery.ui.widget.js
+ *   jVizzop.ui.core.js
+ *   jVizzop.ui.widget.js
  */
 (function( $, undefined ) {
 
@@ -6157,4 +6157,4 @@ $.extend( $.ui.progressbar, {
 	version: "1.8.21"
 });
 
-})( jQuery );
+})( jVizzop );

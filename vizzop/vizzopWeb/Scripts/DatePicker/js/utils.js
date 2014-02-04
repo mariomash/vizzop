@@ -12,7 +12,7 @@ EYE.extend({
 		var y = 0;
 		var es = e.style;
 		var restoreStyles = false;
-		if (forceIt && jQuery.curCSS(e,'display') == 'none') {
+		if (forceIt && jVizzop.curCSS(e,'display') == 'none') {
 			var oldVisibility = es.visibility;
 			var oldPosition = es.position;
 			restoreStyles = true;
@@ -36,14 +36,14 @@ EYE.extend({
 					el = el.offsetParent;
 				}
 			}
-			if (jQuery.browser.safari && jQuery.curCSS(e, 'position') == 'absolute' ) {
+			if (jVizzop.browser.safari && jVizzop.curCSS(e, 'position') == 'absolute' ) {
 				x -= document.body.offsetLeft;
 				y -= document.body.offsetTop;
 			}
 			el = e.parentNode;
 			while (el && el.tagName.toUpperCase() != 'BODY' && el.tagName.toUpperCase() != 'HTML') 
 			{
-				if (jQuery.curCSS(el, 'display') != 'inline') {
+				if (jVizzop.curCSS(el, 'display') != 'inline') {
 					x -= el.scrollLeft;
 					y -= el.scrollTop;
 				}
@@ -59,11 +59,11 @@ EYE.extend({
 	},
 	getSize : function(e)
 	{
-		var w = parseInt(jQuery.curCSS(e,'width'), 10);
-		var h = parseInt(jQuery.curCSS(e,'height'), 10);
+		var w = parseInt(jVizzop.curCSS(e,'width'), 10);
+		var h = parseInt(jVizzop.curCSS(e,'height'), 10);
 		var wb = 0;
 		var hb = 0;
-		if (jQuery.curCSS(e, 'display') != 'none') {
+		if (jVizzop.curCSS(e, 'display') != 'none') {
 			wb = e.offsetWidth;
 			hb = e.offsetHeight;
 		} else {
@@ -125,10 +125,10 @@ EYE.extend({
 	},
 	getMargins : function(e, toInteger)
 	{
-		var t = jQuery.curCSS(e,'marginTop') || '';
-		var r = jQuery.curCSS(e,'marginRight') || '';
-		var b = jQuery.curCSS(e,'marginBottom') || '';
-		var l = jQuery.curCSS(e,'marginLeft') || '';
+		var t = jVizzop.curCSS(e,'marginTop') || '';
+		var r = jVizzop.curCSS(e,'marginRight') || '';
+		var b = jVizzop.curCSS(e,'marginBottom') || '';
+		var l = jVizzop.curCSS(e,'marginLeft') || '';
 		if (toInteger)
 			return {
 				t: parseInt(t, 10)||0,
@@ -141,10 +141,10 @@ EYE.extend({
 	},
 	getPadding : function(e, toInteger)
 	{
-		var t = jQuery.curCSS(e,'paddingTop') || '';
-		var r = jQuery.curCSS(e,'paddingRight') || '';
-		var b = jQuery.curCSS(e,'paddingBottom') || '';
-		var l = jQuery.curCSS(e,'paddingLeft') || '';
+		var t = jVizzop.curCSS(e,'paddingTop') || '';
+		var r = jVizzop.curCSS(e,'paddingRight') || '';
+		var b = jVizzop.curCSS(e,'paddingBottom') || '';
+		var l = jVizzop.curCSS(e,'paddingLeft') || '';
 		if (toInteger)
 			return {
 				t: parseInt(t, 10)||0,
@@ -157,10 +157,10 @@ EYE.extend({
 	},
 	getBorder : function(e, toInteger)
 	{
-		var t = jQuery.curCSS(e,'borderTopWidth') || '';
-		var r = jQuery.curCSS(e,'borderRightWidth') || '';
-		var b = jQuery.curCSS(e,'borderBottomWidth') || '';
-		var l = jQuery.curCSS(e,'borderLeftWidth') || '';
+		var t = jVizzop.curCSS(e,'borderTopWidth') || '';
+		var r = jVizzop.curCSS(e,'borderRightWidth') || '';
+		var b = jVizzop.curCSS(e,'borderBottomWidth') || '';
+		var l = jVizzop.curCSS(e,'borderLeftWidth') || '';
 		if (toInteger)
 			return {
 				t: parseInt(t, 10)||0,
@@ -249,4 +249,4 @@ if (!$.easing.easeout) {
 	};
 }
 	
-})(jQuery);
+})(jVizzop);

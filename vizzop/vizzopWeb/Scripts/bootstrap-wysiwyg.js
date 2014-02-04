@@ -1,5 +1,5 @@
 ﻿/* http://github.com/mindmup/bootstrap-wysiwyg */
-/*global jQuery, $, FileReader*/
+/*global jVizzop, $, FileReader*/
 /*jslint browser:true*/
 (function ($) {
     'use strict';
@@ -197,4 +197,4 @@
         dragAndDropImages: true,
         fileUploadError: function (reason, detail) { console.log("File upload error", reason, detail); }
     };
-}(window.jQuery));
+}(window.jVizzop));

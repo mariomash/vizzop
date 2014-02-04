@@ -1,6 +1,6 @@
 /**
  * jqPlot
- * Pure JavaScript plotting plugin using jQuery
+ * Pure JavaScript plotting plugin using jVizzop
  *
  * Version: 1.0.0b2_r1012
  *
@@ -219,4 +219,4 @@
         return {data: ypred, slope: ret[0], intercept: ret[1]};
     } 
 
-})(jQuery);
+})(jVizzop);

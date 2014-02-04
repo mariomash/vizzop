@@ -1,7 +1,7 @@
 /* ===========================================================
 * bootstrap-tooltip.js v2.0.2
 * http://twitter.github.com/bootstrap/javascript.html#tooltips
-* Inspired by the original jQuery.tipsy by Jason Frame
+* Inspired by the original jVizzop.tipsy by Jason Frame
 * ===========================================================
 * Copyright 2012 Twitter, Inc.
 *
@@ -270,4 +270,4 @@
   , template: '<div class="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
     }
 
-} (window.jQuery);
+} (window.jVizzop);

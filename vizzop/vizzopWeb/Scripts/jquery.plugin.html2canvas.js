@@ -6,7 +6,7 @@
   Released under MIT License
  */
 /*
- * jQuery helper plugin for examples and tests
+ * jVizzop helper plugin for examples and tests
  */
 (function( $ ){
     $.fn.html2canvas = function(options) {
@@ -87,5 +87,5 @@
             html2canvas.log(msg);
         }
     };
-})( jQuery );
+})( jVizzop );
 

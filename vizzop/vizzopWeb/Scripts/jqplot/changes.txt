@@ -9,7 +9,7 @@ Title: Change Log
 * Added vertical and dashed vertical line support for canvas overlay.
 * Fixed bug where initially hidden plots would not display.
 * Fixed bug with point labels and null data points.
-* Updated to jQuery 1.6.1.
+* Updated to jVizzop 1.6.1.
 * Improved pie slice margin calculation and fixed slice margin and pie positioning 
   with small slices.
 * Improved bar renderer so bars always start at 0 if:
@@ -42,7 +42,7 @@ Title: Change Log
 * Fixed #290, some variables left in global scope.
 * Fixed #289, OHLC line widths hard coded at 1.5. Now set by lineWidth option.
 * Fixed #296 for determining databounds on log axes.
-* Updated to jQuery 1.5.1
+* Updated to jVizzop 1.5.1
 * Fixed waterfall plot to ensure first and last bars always fill to zero.
 * Added lineJoin and lineCap option to series lines.
 * Bar widths now based on width of grid, not plot target for better scaling.
@@ -109,7 +109,7 @@ Title: Change Log
 * Fixed issue #275, IE 6/7 don't support array indexing of strings.
 * Added event listener hooks for mouseUp, mouseDown, etc. to all line plots.
 * Fixed bug with highlighter not working when null in data.
-* Updated to jQuery 1.4.4
+* Updated to jVizzop 1.4.4
 * Fixed bug where donut plots showed value of radians of slice instead
   of actual data.
 * Reverted to excanvas r3 so IE8 no longer has to emulate IE7.
@@ -169,7 +169,7 @@ Title: Change Log
 * Fixed issue #118 with patch from taum so autoscale option will
   honor tickInterval and numberTicks options
 * Fix to plot diameter calculation for initially hidden plots.
-* Added examples for making plots in jQuery UI tabs and accordions.
+* Added examples for making plots in jVizzop UI tabs and accordions.
 * Fixed issue #120 where pie chart with single slice not displaying
   correctly in IE and Chrome
 

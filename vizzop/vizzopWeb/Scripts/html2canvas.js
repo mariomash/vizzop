@@ -195,7 +195,7 @@
             style = element.style;
 
         // Check if we are not dealing with pixels, (Opera has issues with this)
-        // Ported from jQuery css.js
+        // Ported from jVizzop css.js
         // From the awesome hack by Dean Edwards
         // http://erik.eae.net/archives/2007/07/27/18.54.15/#comment-102291
 
@@ -374,10 +374,10 @@
 
 
     /*
-     * Derived from jQuery.contents()
+     * Derived from jVizzop.contents()
      * Copyright 2010, John Resig
      * Dual licensed under the MIT or GPL Version 2 licenses.
-     * http://jquery.org/license
+     * http://jVizzop.org/license
      */
     _html2canvas.Util.Children = function (elem) {
         var children;
@@ -2138,7 +2138,7 @@
 
         function parseChildren(element, stack, pseudoElement) {
             /*
-            jQuery.eachCallback(Util.Children(element), function () {
+            jVizzop.eachCallback(Util.Children(element), function () {
                 if (this !== undefined) {
                     var node = this;
                     if (node.nodeType === node.ELEMENT_NODE) {

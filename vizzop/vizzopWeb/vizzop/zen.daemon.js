@@ -685,9 +685,9 @@ var Daemon = jVizzop.zs_Class.create({
                         //Y si no... lo añadimos
                         var link_id = "chatWith_" + v.UserName;
 
-                        var icon_img = 'icon-user icon-green';
+                        var icon_img = 'vizzop-icon-user vizzop-icon-green';
                         if (v.Active + '' == 'false') {
-                            icon_img = 'icon-remove-sign icon-red';
+                            icon_img = 'vizzop-icon-remove-sign vizzop-icon-red';
                         }
 
                         var link = jVizzop(self.chatlistBox._boxList).find('#' + link_id);
@@ -752,7 +752,7 @@ var Daemon = jVizzop.zs_Class.create({
                         jVizzop.each(vizzop.Boxes, function (_index, __foundbox) {
                             if (__foundbox._interlocutor) {
                                 if (__foundbox._interlocutor.UserName == v.UserName) {
-                                    icon_img = 'icon-comment icon-green';
+                                    icon_img = 'vizzop-icon-comment vizzop-icon-green';
                                 }
                             }
                         });
@@ -782,7 +782,7 @@ var Daemon = jVizzop.zs_Class.create({
                             var dropstatusopts = jVizzop('<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel"></ul>')
                                 .appendTo(dropstatusgroup);
 
-                            var setvisible = jVizzop('<li><i class="icon-user icon-green"></i>Connected</li>')
+                            var setvisible = jVizzop('<li><i class="vizzop-icon-user vizzop-icon-green"></i>Connected</li>')
                                 .attr('data-option', 'set-visible')
                                 .appendTo(dropstatusopts)
                                 .click(function (event) {
@@ -791,7 +791,7 @@ var Daemon = jVizzop.zs_Class.create({
                                         setinvisible.show();
                                         setvisible.hide();
                                         icon.removeClass();
-                                        icon.addClass('icon-user icon-green');
+                                        icon.addClass('vizzop-icon-user vizzop-icon-green');
                                         link.attr('data-active', true);
                                         self.setConverserStatus(true);
                                         return false;
@@ -801,7 +801,7 @@ var Daemon = jVizzop.zs_Class.create({
                                 })
                                 .hide();
 
-                            var setinvisible = jVizzop('<li><i class="icon-remove-sign icon-red"></i>Invisible</li>')
+                            var setinvisible = jVizzop('<li><i class="vizzop-icon-remove-sign vizzop-icon-red"></i>Invisible</li>')
                                 .attr('data-option', 'set-invisible')
                                 .appendTo(dropstatusopts)
                                 .click(function (event) {
@@ -810,7 +810,7 @@ var Daemon = jVizzop.zs_Class.create({
                                         setinvisible.hide();
                                         setvisible.show();
                                         icon.removeClass();
-                                        icon.addClass('icon-remove-sign icon-red');
+                                        icon.addClass('vizzop-icon-remove-sign vizzop-icon-red');
                                         link.attr('data-active', false);
                                         self.setConverserStatus(false);
                                         return false;
@@ -874,14 +874,14 @@ var Daemon = jVizzop.zs_Class.create({
                 var id = jVizzop(_foundbox._box).attr('id');
                 var link_id = "linkTo_" + jVizzop(_foundbox._box).attr('id');
                 var but = jVizzop('#' + link_id);
-                var icon_img = 'icon-list-alt';
+                var icon_img = 'vizzop-icon-list-alt';
                 var title = _foundbox._title;
                 switch (_foundbox._status) {
                     case 'start_TextChat':
                     case 'start_VideoChat':
                     case 'start_Screenshare':
                         //title = LLang('chat_with', [title]);
-                        icon_img = 'icon-user';
+                        icon_img = 'vizzop-icon-user';
                         break;
                     default:
                         break;

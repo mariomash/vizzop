@@ -81,7 +81,7 @@
             var msg = {
             };
             var url = '../RealTime/GetWebLocationsJson';
-            rt_Reloading_InCourse = jQuery.ajax({
+            rt_Reloading_InCourse = jVizzop.ajax({
                 url: url,
                 type: "POST",
                 data: msg,
@@ -514,7 +514,7 @@
                 };
                 rt_imagereqs.push(reqdata);
                 //(rt_imagereqs);
-                reqdata.req = jQuery.ajax({
+                reqdata.req = jVizzop.ajax({
                     url: url,
                     type: "POST",
                     data: msg,
@@ -724,7 +724,7 @@
             if (vizzop.Daemon != null) {
 
                 var found = false;
-                jQuery.each(vizzop.Boxes, function (index, foundbox) {
+                jVizzop.each(vizzop.Boxes, function (index, foundbox) {
                     //(foundbox._interlocutor);
                     if (foundbox._interlocutor != null) {
                         if (foundbox._interlocutor.UserName + foundbox._interlocutor.Business.Domain == username + domain) {
@@ -748,7 +748,7 @@
                     agentmessagebox.bringtofrontBox();
                 }
                 /*
-                jQuery.each(vizzop.Boxes, function (index, foundbox) {
+                jVizzop.each(vizzop.Boxes, function (index, foundbox) {
                     (foundbox._interlocutor);
                 });
                 */

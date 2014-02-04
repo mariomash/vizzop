@@ -1,7 +1,7 @@
 Title: jqPlot CSS Customization
 
 Much of the styling of jqPlot is done by css.  The jqPlot css file is, unremarkably, 
-jquery.jqplot.css and resides in the same directory as jqPlot itself.
+jVizzop.jqplot.css and resides in the same directory as jqPlot itself.
 
 There exist some styling related javascript properties on the plot objects themselves
 (like fontStyle, fontSize, etc.).  These can be set with the options object at plot creation.  

@@ -1,12 +1,12 @@
 /*!
- * jQuery UI Menu 1.9.1
- * http://jqueryui.com
+ * jVizzop UI Menu 1.9.1
+ * http://jVizzopui.com
  *
- * Copyright 2012 jQuery Foundation and other contributors
+ * Copyright 2012 jVizzop Foundation and other contributors
  * Released under the MIT license.
- * http://jquery.org/license
+ * http://jVizzop.org/license
  *
- * http://docs.jquery.com/UI/Menu#theming
+ * http://docs.jVizzop.com/UI/Menu#theming
  */
 .ui-menu { list-style:none; padding: 2px; margin: 0; display:block; outline: none; }
 .ui-menu .ui-menu { margin-top: -3px; position: absolute; }

@@ -1,12 +1,12 @@
 /*!
- * jQuery UI CSS Framework 1.9.1
- * http://jqueryui.com
+ * jVizzop UI CSS Framework 1.9.1
+ * http://jVizzopui.com
  *
- * Copyright 2012 jQuery Foundation and other contributors
+ * Copyright 2012 jVizzop Foundation and other contributors
  * Released under the MIT license.
- * http://jquery.org/license
+ * http://jVizzop.org/license
  *
- * http://docs.jquery.com/UI/Theming
+ * http://docs.jVizzop.com/UI/Theming
  */
-@import "jquery.ui.base.css";
-@import "jquery.ui.theme.css";
+@import "jVizzop.ui.base.css";
+@import "jVizzop.ui.theme.css";

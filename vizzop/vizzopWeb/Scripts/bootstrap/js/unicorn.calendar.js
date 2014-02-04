@@ -88,7 +88,7 @@ unicorn = {
 			// store the Event Object in the DOM element so we can get to it later
 			$(this).data('eventObject', eventObject);
 				
-			// make the event draggable using jQuery UI
+			// make the event draggable using jVizzop UI
 			$(this).draggable({
 				zIndex: 999,
 				revert: true,      // will cause the event to go back to its

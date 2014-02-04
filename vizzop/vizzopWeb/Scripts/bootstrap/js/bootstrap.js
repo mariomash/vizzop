@@ -57,7 +57,7 @@
 
   })
 
-}(window.jQuery);/* ==========================================================
+}(window.jVizzop);/* ==========================================================
  * bootstrap-alert.js v2.1.1
  * http://twitter.github.com/bootstrap/javascript.html#alerts
  * ==========================================================
@@ -146,7 +146,7 @@
     $('body').on('click.alert.data-api', dismiss, Alert.prototype.close)
   })
 
-}(window.jQuery);/* ============================================================
+}(window.jVizzop);/* ============================================================
  * bootstrap-button.js v2.1.1
  * http://twitter.github.com/bootstrap/javascript.html#buttons
  * ============================================================
@@ -241,7 +241,7 @@
     })
   })
 
-}(window.jQuery);/* ==========================================================
+}(window.jVizzop);/* ==========================================================
  * bootstrap-carousel.js v2.1.1
  * http://twitter.github.com/bootstrap/javascript.html#carousel
  * ==========================================================
@@ -416,7 +416,7 @@
     })
   })
 
-}(window.jQuery);/* =============================================================
+}(window.jVizzop);/* =============================================================
  * bootstrap-collapse.js v2.1.1
  * http://twitter.github.com/bootstrap/javascript.html#collapse
  * =============================================================
@@ -573,7 +573,7 @@
     })
   })
 
-}(window.jQuery);/* ============================================================
+}(window.jVizzop);/* ============================================================
  * bootstrap-dropdown.js v2.1.1
  * http://twitter.github.com/bootstrap/javascript.html#dropdowns
  * ============================================================
@@ -722,7 +722,7 @@
       .on('keydown.dropdown.data-api touchstart.dropdown.data-api', toggle + ', [role=menu]' , Dropdown.prototype.keydown)
   })
 
-}(window.jQuery);/* =========================================================
+}(window.jVizzop);/* =========================================================
  * bootstrap-modal.js v2.1.1
  * http://twitter.github.com/bootstrap/javascript.html#modals
  * =========================================================
@@ -960,10 +960,10 @@
     })
   })
 
-}(window.jQuery);/* ===========================================================
+}(window.jVizzop);/* ===========================================================
  * bootstrap-tooltip.js v2.1.1
  * http://twitter.github.com/bootstrap/javascript.html#tooltips
- * Inspired by the original jQuery.tipsy by Jason Frame
+ * Inspired by the original jVizzop.tipsy by Jason Frame
  * ===========================================================
  * Copyright 2012 Twitter, Inc.
  *
@@ -1234,7 +1234,7 @@
   , html: true
   }
 
-}(window.jQuery);
+}(window.jVizzop);
 /* ===========================================================
  * bootstrap-popover.js v2.1.1
  * http://twitter.github.com/bootstrap/javascript.html#popovers
@@ -1337,7 +1337,7 @@
   , template: '<div class="popover"><div class="arrow"></div><div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content"><p></p></div></div></div>'
   })
 
-}(window.jQuery);/* =============================================================
+}(window.jVizzop);/* =============================================================
  * bootstrap-scrollspy.js v2.1.1
  * http://twitter.github.com/bootstrap/javascript.html#scrollspy
  * =============================================================
@@ -1487,7 +1487,7 @@
     })
   })
 
-}(window.jQuery);/* ========================================================
+}(window.jVizzop);/* ========================================================
  * bootstrap-tab.js v2.1.1
  * http://twitter.github.com/bootstrap/javascript.html#tabs
  * ========================================================
@@ -1621,7 +1621,7 @@
     })
   })
 
-}(window.jQuery);/* =============================================================
+}(window.jVizzop);/* =============================================================
  * bootstrap-typeahead.js v2.1.1
  * http://twitter.github.com/bootstrap/javascript.html#typeahead
  * =============================================================
@@ -1920,7 +1920,7 @@
     })
   })
 
-}(window.jQuery);
+}(window.jVizzop);
 /* ==========================================================
  * bootstrap-affix.js v2.1.1
  * http://twitter.github.com/bootstrap/javascript.html#affix
@@ -2024,4 +2024,4 @@
   })
 
 
-}(window.jQuery);
+}(window.jVizzop);
