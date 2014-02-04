@@ -42,7 +42,7 @@ var DisclaimerBox = jVizzop.zs_Class.create(Box, {
                     .appendTo(msgbox);
 
             var text = jVizzop('<a></a>')
-                    .addClass('btn btn-primary btn-large')
+                    .addClass('vizzop-btn vizzop-btn-primary vizzop-btn-large')
                     .attr('data-dismiss', 'alert')
                     .text('OK')
                     .appendTo(msgbox);

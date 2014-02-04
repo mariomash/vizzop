@@ -10,10 +10,10 @@
         { 
     <span style="vertical-align: middle; margin: 0 5px; display: inline-block;">@Html.ActionLink("Control Panel", "Index", "Panel")</span>
         }
-    <span style="vertical-align: middle; display: inline-block; margin: 0 5px;" class="btn btn-danger">
+    <span style="vertical-align: middle; display: inline-block; margin: 0 5px;" class="vizzop-btn vizzop-btn-danger">
         <span><a id="previewbut" href="#" class="">Report an Issue</a></span>
     </span>
-    <span style="vertical-align: middle; margin: 0 10px 0 5px; display: inline-block;" class="btn btn-inverse">
+    <span style="vertical-align: middle; margin: 0 10px 0 5px; display: inline-block;" class="vizzop-btn vizzop-btn-inverse">
         @Html.ActionLink("Log Off", "LogOff", "Account", null, new { })
     </span>
     }
@@ -26,7 +26,7 @@
     @Html.Hidden("returnUrl", Request.Url.ToString())
     <input id="Email" class="input-large" type="text" name="Email" placeholder="john@doe.com" style="vertical-align: middle; display: inline-block;" />
     <input id="Password" class="input-small" type="password" name="Password" placeholder="password" style="vertical-align: middle; display: inline-block;" />
-    <input type="submit" value="Log in" class="btn btn-success" style="vertical-align: middle; display: inline-block;" />
+    <input type="submit" value="Log in" class="vizzop-btn vizzop-btn-success" style="vertical-align: middle; display: inline-block;" />
                 if (ViewBag.LayoutWhiteLabelMode != true)
                 {
     @Html.ActionLink("I can't log in", "Reminder", "Account", null, null, null, null, new { @style = "text-decoration: none; margin: 4px 10px; vertical-align: middle; display: inline-block; height: 13px;" })

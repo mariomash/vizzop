@@ -3,7 +3,8 @@
   <PropertyGroup>
     <ActivePublishProfile>zentralizedStaging</ActivePublishProfile>
     <RemoteDesktopMoreOptions>True</RemoteDesktopMoreOptions>
-    <WebRoleHttpsSkipLaunchInBrowser>vizzopWeb</WebRoleHttpsSkipLaunchInBrowser>
+    <WebRoleHttpsSkipLaunchInBrowser>
+    </WebRoleHttpsSkipLaunchInBrowser>
     <UseIISExpress>True</UseIISExpress>
   </PropertyGroup>
 </Project>

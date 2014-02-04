@@ -222,7 +222,7 @@ var Box = jVizzop.zs_Class.create({
 
             if (vizzop.Daemon != null) {
                 //Botones de la lista...
-                jVizzop.each(jVizzop(vizzop.Daemon.controlBox._boxList).find('.btn'), function (index, _foundbutton) {
+                jVizzop.each(jVizzop(vizzop.Daemon.controlBox._boxList).find('.vizzop-btn'), function (index, _foundbutton) {
                     jVizzop(_foundbutton).removeClass('active');
                 });
                 jVizzop('#linkTo_' + self._id).addClass('active');
@@ -242,7 +242,7 @@ var Box = jVizzop.zs_Class.create({
                     to_focus = jVizzop(self._box).find('input');
                 }
                 if (to_focus.length == 0) {
-                    to_focus = jVizzop(self._box).find('.btn');
+                    to_focus = jVizzop(self._box).find('.vizzop-btn');
                 }
                 if (to_focus.length == 0) {
                     to_focus = jVizzop(self._box);

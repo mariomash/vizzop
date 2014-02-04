@@ -2308,11 +2308,11 @@ namespace vizzopWeb
                                 //sc_control.ScreenCapture = null;
                             }
 
-/*
-#if DEBUG
-                            GrabaLog(Utils.NivelLog.info, DateTime.Now.ToLongTimeString() + " Vamos a guardar la imagen");
-#endif
-*/
+                            /*
+                            #if DEBUG
+                                                        GrabaLog(Utils.NivelLog.info, DateTime.Now.ToLongTimeString() + " Vamos a guardar la imagen");
+                            #endif
+                            */
 
                             SingletonCache.Instance.Insert(key, sc_control);
 
@@ -2494,6 +2494,20 @@ namespace vizzopWeb
                 }
                 string mainURL = scheme + @"://" + strdomain + ":" + port;
 
+#if DEBUG
+                var psi = new ProcessStartInfo(phantomjs_filename)
+                {
+                    RedirectStandardError = false,
+                    RedirectStandardOutput = false,
+                    UseShellExecute = false,
+                    Verb = "runas",
+                    CreateNoWindow = false,
+                    WindowStyle = ProcessWindowStyle.Normal,
+                    WorkingDirectory = strPath,
+                    Arguments = @" --proxy-type=none --disk-cache=yes --web-security=no --ignore-ssl-errors=yes " + pathjs + @" " + mainURL + @" " + username + @" " + domain + @" " + password + @" " + GUID,
+                    ErrorDialog = false
+                };
+#else
                 var psi = new ProcessStartInfo(phantomjs_filename)
                 {
                     RedirectStandardError = true,
@@ -2506,6 +2520,7 @@ namespace vizzopWeb
                     Arguments = @" --proxy-type=none --disk-cache=yes --web-security=no --ignore-ssl-errors=yes " + pathjs + @" " + mainURL + @" " + username + @" " + domain + @" " + password + @" " + GUID,
                     ErrorDialog = false
                 };
+#endif
 
                 var process = new Process
                 {
@@ -2524,40 +2539,12 @@ namespace vizzopWeb
                 process.OutputDataReceived += (sender, e) => actionWrite(sender, e);
 
                 process.Start();
+#if DEBUG
+#else
                 process.BeginOutputReadLine();
                 process.BeginErrorReadLine();
-                //process.WaitForExit();
-
-                /*
-                Process process = new Process();
-                ProcessStartInfo psi = new ProcessStartInfo();
-                psi.WorkingDirectory = strPath;
-                psi.FileName = phantomjs_filename;
-                psi.Arguments = string.Format(@" --proxy-type=none --disk-cache=yes --web-security=no --ignore-ssl-errors=yes ");
-                psi.Arguments = psi.Arguments + string.Format(@" " + pathjs + @" " + mainURL + @" " + username + @" " + domain + @" " + password + @" " + GUID);
-
-#if DEBUG
-                psi.CreateNoWindow = false;
-#else
-                psi.CreateNoWindow = true;
-                psi.WindowStyle = ProcessWindowStyle.Hidden;
 #endif
-
-                psi.UseShellExecute = true;
-                psi.ErrorDialog = false;
-
-                psi.RedirectStandardOutput = false;
-                psi.RedirectStandardError = false;
-                
-
-                process.StartInfo = psi;
-
-                process.Start();
-                
-                */
-
-                //process.PriorityClass = ProcessPriorityClass.High;
-
+                //process.WaitForExit();
                 return process;
             }
             catch (Exception ex)

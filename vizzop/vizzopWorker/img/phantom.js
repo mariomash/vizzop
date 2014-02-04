@@ -13,45 +13,14 @@ if (args.length === 1) {
 var page = require('webpage').create();
 var wrapper = 'wrapper.html';
 
+//console.log(new Date());
+
 page.onCallback = function (param) {
     var date = new Date();
-    //console.log(date + ' ' + param.command);
+    console.log(date + ' ' + param.command);
     if (param.command == 'exit') {
         phantom.exit();
     } else if (param.command == 'iframeloaded') {
-
-        /*
-        var bb = page.evaluate(function () {
-            return document.getElementById("WrapperIframe");
-        });
-        */
-        //console.log(param.Height);
-
-        /*
-                page.viewportSize = {
-                    width: param.Width,
-                    height: param.Height
-                };
-                */
-        /*
-        page.clipRect = {
-            top: param.ScrollTop,
-            left: param.ScrollLeft,
-            width: param.Width,
-            height: param.Width
-        };
-        */
-        /*
-        page.evaluate(function (param) {
-
-
-            window.callPhantom({
-                'command': 'render',
-                'filename': "captures/" + param.filename
-            });
-
-        }, param);
-        */
 
         param.filename = "captures/" + param.filename;
 

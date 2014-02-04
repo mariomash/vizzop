@@ -277,21 +277,21 @@ a:hover {
         position: absolute;
     }
 
-    .content-header .btn-group {
+    .content-header .vizzop-btn-group {
         float: right;
         right: 20px;
         position: absolute;
     }
 
-    .content-header h1, .content-header .btn-group {
+    .content-header h1, .content-header .vizzop-btn-group {
         margin-top: 20px;
     }
 
-        .content-header .btn-group .btn {
+        .content-header .vizzop-btn-group .vizzop-btn {
             padding: 11px 14px 9px;
         }
 
-            .content-header .btn-group .btn .label {
+            .content-header .vizzop-btn-group .vizzop-btn .label {
                 position: absolute;
                 top: -7px;
             }
@@ -1624,7 +1624,7 @@ form {
         text-align: center;
     }
 
-        .content-header h1, .content-header .btn-group {
+        .content-header h1, .content-header .vizzop-btn-group {
             float: none;
         }
 
@@ -1637,7 +1637,7 @@ form {
             width: 100%;
         }
 
-        .content-header .btn-group {
+        .content-header .vizzop-btn-group {
             margin-top: 70px;
             margin-bottom: 0;
             margin-right: 0;
@@ -1679,7 +1679,7 @@ form {
                 display: inline !important;
             }
 
-    .widget-title .buttons > .btn {
+    .widget-title .buttons > .vizzop-btn {
         width: 11px;
         white-space: nowrap;
         overflow: hidden;

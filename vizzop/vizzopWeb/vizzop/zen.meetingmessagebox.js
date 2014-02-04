@@ -93,7 +93,7 @@ var MeetingMessageBox = jVizzop.zs_Class.create(MessageBox, {
 
 			var buttoninputHelp = jVizzop('<button></button>')
 				.text(LLang('ok', null))
-				.addClass('btn btn-primary')
+				.addClass('vizzop-btn vizzop-btn-primary')
 				.click(function (event) {
 					try {
 						if (jVizzop(inputHelp).val() != "") {

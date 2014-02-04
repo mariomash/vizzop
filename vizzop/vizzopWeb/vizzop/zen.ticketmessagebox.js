@@ -65,7 +65,7 @@
 
             self._steallock = jVizzop('<span></span>')
                 .addClass(
-                'btn btn-warning'
+                'vizzop-btn vizzop-btn-warning'
                 )
                 .css({ 'vertical-align': 'middle' })
                 .text(LLang('steal_lock', null))
@@ -133,12 +133,9 @@
 
             self.commentandclose = jVizzop('<button></button>')
                 .text("comment & close ticket")
-                .css({
-                    'display': 'block',
-                    'width': '100%'
-                })
+                .attr('style', 'display: block; margin-top: 5px; width: 100% !important;')
                 .addClass(
-                'btn btn-primary'
+                'vizzop-btn vizzop-btn-primary'
                 )
                 .click(function (e) {
                     e.preventDefault();
@@ -177,13 +174,9 @@
 
             self.justcomment = jVizzop('<button></button>')
                 .text("just comment")
-                .css({
-                    'display': 'block',
-                    'margin-top': '5px',
-                    'width': '100%'
-                })
+                .attr('style', 'display: block; margin-top: 5px; width: 100% !important;')
                 .addClass(
-                'btn'
+                'vizzop-btn'
                 )
                 .css({})
                 .click(function (e) {
@@ -223,13 +216,9 @@
             self.justclose = jVizzop('<button></button>')
                 .text("just close")
                 .addClass(
-                'btn'
+                'vizzop-btn'
                 )
-                .css({
-                    'display': 'block',
-                    'margin-top': '5px',
-                    'width': '100%'
-                })
+                .attr('style', 'display: block; margin-top: 5px; width: 100% !important;')
                 .click(function (e) {
                     e.preventDefault();
                     jVizzop(self._loading).show();
@@ -265,7 +254,7 @@
             });
 
             self._reopenbutton = jVizzop('<div></div>')
-                .addClass('btn btn-warning')
+                .addClass('vizzop-btn vizzop-btn-warning')
                 .text(LLang('reopen_ticket', null))
                 .click(function (e) {
                     e.preventDefault();

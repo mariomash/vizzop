@@ -760,9 +760,9 @@ var Daemon = jVizzop.zs_Class.create({
                         var title = jVizzop('<span></span>');
 
                         if (v.UserName == vizzop.me.UserName) {
-                            var dropstatusgroup = jVizzop('<div class="btn-group"></div>')
+                            var dropstatusgroup = jVizzop('<div class="vizzop-btn-group"></div>')
                                 .appendTo(title);
-                            var dropstatus = jVizzop('<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"></a>')
+                            var dropstatus = jVizzop('<a class="vizzop-btn dropdown-toggle" data-toggle="dropdown" href="#"></a>')
                                 .appendTo(dropstatusgroup)
                                 .dropdown();
 
@@ -890,7 +890,7 @@ var Daemon = jVizzop.zs_Class.create({
                 if (but.length == 0) {
                     var link = jVizzop('<span></span>')
                         .attr('id', link_id)
-                        .addClass('btn')
+                        .addClass('vizzop-btn')
                         .attr('data-linked', id)
                         .appendTo(jVizzop(self.controlBox._boxList))
                         .click(function (event) {
@@ -1429,7 +1429,7 @@ var Daemon = jVizzop.zs_Class.create({
                                     msgbox._boxtitletext.attr({
                                         'rel': 'popover',
                                         'title': 'Information',
-                                        'data-content': '<div>' + LLang('interlocutor_ended_video', [msgbox._interlocutor.FullName]) + '</div><div class=actions id=popover_action><button class="btn" id=popover_action_ok>Ok</button></div>'
+                                        'data-content': '<div>' + LLang('interlocutor_ended_video', [msgbox._interlocutor.FullName]) + '</div><div class=actions id=popover_action><button class="vizzop-btn" id=popover_action_ok>Ok</button></div>'
                                     });
                                     msgbox._boxtitletext.popover({
                                         placement: 'bottom',

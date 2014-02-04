@@ -26,7 +26,7 @@ body {
 	color: #B57373;
 }
 
-#user-nav .btn-inverse {
+#user-nav .vizzop-btn-inverse {
     background-color: #6A2E2E;
 	background-image: -webkit-gradient(linear, 0 0%, 0 100%, from(#6A2E2E), to(#532424));
     background-image: -webkit-linear-gradient(top, #6A2E2E 0%, #532424 100%);

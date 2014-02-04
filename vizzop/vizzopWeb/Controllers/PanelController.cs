@@ -27,7 +27,7 @@ namespace vizzopWeb.Controllers
             }
             try
             {
-                converser = utils.GetLoggedConverser(HttpContext.Session);
+                converser = utils.GetLoggedConverser(HttpContext.Session, db);
                 if (converser == null)
                 {
                     return RedirectToAction("LogOn", "Account");
@@ -138,7 +138,7 @@ namespace vizzopWeb.Controllers
                 }
                 try
                 {
-                    converser = utils.GetLoggedConverser(HttpContext.Session);
+                    converser = utils.GetLoggedConverser(HttpContext.Session, db);
                     if (converser == null)
                     {
                         return RedirectToAction("LogOn", "Account");
@@ -204,7 +204,7 @@ namespace vizzopWeb.Controllers
             }
             try
             {
-                Converser converser = utils.GetLoggedConverser(HttpContext.Session);
+                Converser converser = utils.GetLoggedConverser(HttpContext.Session, db);
                 if (converser == null)
                 {
                     return RedirectToAction("LogOn", "Account");
@@ -320,7 +320,7 @@ namespace vizzopWeb.Controllers
             }
             try
             {
-                Converser converser = utils.GetLoggedConverser(HttpContext.Session);
+                Converser converser = utils.GetLoggedConverser(HttpContext.Session, db);
                 if (converser == null)
                 {
                     return RedirectToAction("LogOn", "Account");

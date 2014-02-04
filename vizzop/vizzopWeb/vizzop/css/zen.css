@@ -39,7 +39,7 @@
     color: inherit;
     counter-increment: none;
     counter-reset: none;
-    cursor: auto;
+    /*cursor: auto;*/
     direction: inherit;
     float: none;
     font-family: inherit; /* As with other inherit values, this needs to be set on the root container element */
@@ -2332,7 +2332,7 @@
             cursor: pointer !important;
         }
 
-    .zs_dialog .btn {
+    .zs_dialog .vizzop-btn {
         display: inline-block;
         padding: 4px 10px 4px !important;
         font-size: 13px !important;
@@ -2355,11 +2355,11 @@
         behavior: url(ie-css3.htc) !important; /* This lets IE know to call the script on all elements which get the 'box' class */
     }
 
-        .zs_dialog .btn:first-child {
+        .zs_dialog .vizzop-btn:first-child {
             *margin-left: 0 !important;
         }
 
-        .zs_dialog .btn:hover {
+        .zs_dialog .vizzop-btn:hover {
             color: #333333 !important;
             text-decoration: none !important;
             background-color: #e6e6e6 !important;
@@ -2371,13 +2371,13 @@
             transition: background-position 0.1s linear !important;
         }
 
-        .zs_dialog .btn:focus {
+        .zs_dialog .vizzop-btn:focus {
             outline: thin dotted !important;
             outline: 5px auto -webkit-focus-ring-color !important;
             outline-offset: -2px !important;
         }
 
-        .zs_dialog .btn.active, .zs_dialog .btn:active {
+        .zs_dialog .vizzop-btn.active, .zs_dialog .vizzop-btn:active {
             background-image: none !important;
             -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05) !important;
             -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05) !important;
@@ -2387,7 +2387,7 @@
             outline: 0 !important;
         }
 
-        .zs_dialog .btn.disabled, .zs_dialog .btn[disabled] {
+        .zs_dialog .vizzop-btn.disabled, .zs_dialog .vizzop-btn[disabled] {
             cursor: default !important;
             background-image: none !important;
             background-color: #e6e6e6 !important;
@@ -2398,9 +2398,9 @@
             box-shadow: none !important;
         }
 
-    .zs_dialog .btn-large {
+    .zs_dialog .vizzop-btn-large {
         padding: 9px 14px !important;
-        font-size: 15px !important;
+        font-size: 12px !important;
         line-height: normal !important;
         -webkit-border-radius: 5px !important;
         -moz-border-radius: 5px !important;
@@ -2408,43 +2408,43 @@
         font-weight: bold !important;
     }
 
-        .zs_dialog .btn-large .icon {
+        .zs_dialog .vizzop-btn-large .icon {
             margin-top: 1px !important;
         }
 
-    .zs_dialog .btn-small {
+    .zs_dialog .vizzop-btn-small {
         padding: 5px 9px !important;
         font-size: 11px !important;
         line-height: 16px !important;
     }
 
-        .zs_dialog .btn-small .icon {
+        .zs_dialog .vizzop-btn-small .icon {
             margin-top: -1px !important;
         }
 
-    .zs_dialog .btn-primary,
-    .zs_dialog .btn-primary:hover,
-    .zs_dialog .btn-warning,
-    .zs_dialog .btn-warning:hover,
-    .zs_dialog .btn-danger,
-    .zs_dialog .btn-danger:hover,
-    .zs_dialog .btn-success,
-    .zs_dialog .btn-success:hover,
-    .zs_dialog .btn-info,
-    .zs_dialog .btn-info:hover {
+    .zs_dialog .vizzop-btn-primary,
+    .zs_dialog .vizzop-btn-primary:hover,
+    .zs_dialog .vizzop-btn-warning,
+    .zs_dialog .vizzop-btn-warning:hover,
+    .zs_dialog .vizzop-btn-danger,
+    .zs_dialog .vizzop-btn-danger:hover,
+    .zs_dialog .vizzop-btn-success,
+    .zs_dialog .vizzop-btn-success:hover,
+    .zs_dialog .vizzop-btn-info,
+    .zs_dialog .vizzop-btn-info:hover {
         text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25) !important;
         color: #ffffff !important;
     }
 
-        .zs_dialog .btn-primary.active,
-        .zs_dialog .btn-warning.active,
-        .zs_dialog .btn-danger.active,
-        .zs_dialog .btn-success.active,
-        .zs_dialog .btn-info.active {
+        .zs_dialog .vizzop-btn-primary.active,
+        .zs_dialog .vizzop-btn-warning.active,
+        .zs_dialog .vizzop-btn-danger.active,
+        .zs_dialog .vizzop-btn-success.active,
+        .zs_dialog .vizzop-btn-info.active {
             color: rgba(255, 255, 255, 0.75) !important;
         }
 
-    .zs_dialog .btn-primary {
+    .zs_dialog .vizzop-btn-primary {
         /*
         background: none !important;
             */
@@ -2462,19 +2462,19 @@
         filter: progid:DXImageTransform.Microsoft.gradient(enabled = false) !important;
     }
 
-        .zs_dialog .btn-primary:hover,
-        .zs_dialog .btn-primary:active,
-        .zs_dialog .btn-primary.active,
-        .zs_dialog .btn-primary.disabled,
-        .zs_dialog .btn-primary[disabled] {
+        .zs_dialog .vizzop-btn-primary:hover,
+        .zs_dialog .vizzop-btn-primary:active,
+        .zs_dialog .vizzop-btn-primary.active,
+        .zs_dialog .vizzop-btn-primary.disabled,
+        .zs_dialog .vizzop-btn-primary[disabled] {
             background-color: #0044cc !important;
         }
 
-        .zs_dialog .btn-primary:active, .zs_dialog .btn-primary.active {
+        .zs_dialog .vizzop-btn-primary:active, .zs_dialog .vizzop-btn-primary.active {
             background-color: #003399 \9 !important;
         }
 
-    .zs_dialog .btn-warning {
+    .zs_dialog .vizzop-btn-warning {
         /*
         background: none !important;*/
         background-color: #faa732 !important;
@@ -2491,19 +2491,19 @@
         filter: progid:DXImageTransform.Microsoft.gradient(enabled = false) !important;
     }
 
-        .zs_dialog .btn-warning:hover,
-        .zs_dialog .btn-warning:active,
-        .zs_dialog .btn-warning.active,
-        .zs_dialog .btn-warning.disabled,
-        .zs_dialog .btn-warning[disabled] {
+        .zs_dialog .vizzop-btn-warning:hover,
+        .zs_dialog .vizzop-btn-warning:active,
+        .zs_dialog .vizzop-btn-warning.active,
+        .zs_dialog .vizzop-btn-warning.disabled,
+        .zs_dialog .vizzop-btn-warning[disabled] {
             background-color: #f89406 !important;
         }
 
-        .zs_dialog .btn-warning:active, .zs_dialog .btn-warning.active {
+        .zs_dialog .vizzop-btn-warning:active, .zs_dialog .vizzop-btn-warning.active {
             background-color: #c67605 \9 !important;
         }
 
-    .zs_dialog .btn-danger {
+    .zs_dialog .vizzop-btn-danger {
         /*
         background: none !important;
             */
@@ -2521,19 +2521,19 @@
         filter: progid:DXImageTransform.Microsoft.gradient(enabled = false) !important;
     }
 
-        .zs_dialog .btn-danger:hover,
-        .zs_dialog .btn-danger:active,
-        .zs_dialog .btn-danger.active,
-        .zs_dialog .btn-danger.disabled,
-        .zs_dialog .btn-danger[disabled] {
+        .zs_dialog .vizzop-btn-danger:hover,
+        .zs_dialog .vizzop-btn-danger:active,
+        .zs_dialog .vizzop-btn-danger.active,
+        .zs_dialog .vizzop-btn-danger.disabled,
+        .zs_dialog .vizzop-btn-danger[disabled] {
             background-color: #bd362f !important;
         }
 
-        .zs_dialog .btn-danger:active, .zs_dialog .btn-danger.active {
+        .zs_dialog .vizzop-btn-danger:active, .zs_dialog .vizzop-btn-danger.active {
             background-color: #942a25 \9 !important;
         }
 
-    .zs_dialog .btn-success {
+    .zs_dialog .vizzop-btn-success {
         /*
         background: none !important;
             */
@@ -2551,19 +2551,19 @@
         filter: progid:DXImageTransform.Microsoft.gradient(enabled = false) !important;
     }
 
-        .zs_dialog .btn-success:hover,
-        .zs_dialog .btn-success:active,
-        .zs_dialog .btn-success.active,
-        .zs_dialog .btn-success.disabled,
-        .zs_dialog .btn-success[disabled] {
+        .zs_dialog .vizzop-btn-success:hover,
+        .zs_dialog .vizzop-btn-success:active,
+        .zs_dialog .vizzop-btn-success.active,
+        .zs_dialog .vizzop-btn-success.disabled,
+        .zs_dialog .vizzop-btn-success[disabled] {
             background-color: #51a351 !important;
         }
 
-        .zs_dialog .btn-success:active, .zs_dialog .btn-success.active {
+        .zs_dialog .vizzop-btn-success:active, .zs_dialog .vizzop-btn-success.active {
             background-color: #408140 \9 !important;
         }
 
-    .zs_dialog .btn-info {
+    .zs_dialog .vizzop-btn-info {
         /*
         background: none !important;
             */
@@ -2581,76 +2581,76 @@
         filter: progid:DXImageTransform.Microsoft.gradient(enabled = false) !important;
     }
 
-        .zs_dialog .btn-info:hover,
-        .zs_dialog .btn-info:active,
-        .zs_dialog .btn-info.active,
-        .zs_dialog .btn-info.disabled,
-        .zs_dialog .btn-info[disabled] {
+        .zs_dialog .vizzop-btn-info:hover,
+        .zs_dialog .vizzop-btn-info:active,
+        .zs_dialog .vizzop-btn-info.active,
+        .zs_dialog .vizzop-btn-info.disabled,
+        .zs_dialog .vizzop-btn-info[disabled] {
             background-color: #2f96b4 !important;
         }
 
-        .zs_dialog .btn-info:active, .zs_dialog .btn-info.active {
+        .zs_dialog .vizzop-btn-info:active, .zs_dialog .vizzop-btn-info.active {
             background-color: #24748c \9 !important;
         }
 
-    .zs_dialog button.btn, .zs_dialog input[type="submit"].btn {
+    .zs_dialog button.vizzop-btn, .zs_dialog input[type="submit"].vizzop-btn {
         *padding-top: 2px !important;
         *padding-bottom: 2px !important;
     }
 
-        .zs_dialog button.btn::-moz-focus-inner, .zs_dialog input[type="submit"].btn::-moz-focus-inner {
+        .zs_dialog button.vizzop-btn::-moz-focus-inner, .zs_dialog input[type="submit"].vizzop-btn::-moz-focus-inner {
             padding: 0 !important;
             border: 0 !important;
         }
 
-        .zs_dialog button.btn.large, .zs_dialog input[type="submit"].btn.large {
+        .zs_dialog button.vizzop-btn.large, .zs_dialog input[type="submit"].vizzop-btn.large {
             *padding-top: 7px !important;
             *padding-bottom: 7px !important;
         }
 
-        .zs_dialog button.btn.small, .zs_dialog input[type="submit"].btn.small {
+        .zs_dialog button.vizzop-btn.small, .zs_dialog input[type="submit"].vizzop-btn.small {
             *padding-top: 3px !important;
             *padding-bottom: 3px !important;
             font-size: 11px !important;
             padding: 2px 5px !important;
         }
 
-    .zs_dialog .btn-group {
+    .zs_dialog .vizzop-btn-group {
         position: relative !important;
         *zoom: 1 !important;
         *margin-left: .3em !important;
     }
 
-        .zs_dialog .btn-group:before, .zs_dialog .btn-group:after {
+        .zs_dialog .vizzop-btn-group:before, .zs_dialog .vizzop-btn-group:after {
             display: table !important;
             content: "" !important;
         }
 
-        .zs_dialog .btn-group:after {
+        .zs_dialog .vizzop-btn-group:after {
             clear: both !important;
         }
 
-        .zs_dialog .btn-group:first-child {
+        .zs_dialog .vizzop-btn-group:first-child {
             *margin-left: 0 !important;
         }
 
-        .zs_dialog .btn-group + .btn-group {
+        .zs_dialog .vizzop-btn-group + .vizzop-btn-group {
             margin-left: 5px !important;
         }
 
-    .zs_dialog .btn-toolbar {
+    .zs_dialog .vizzop-btn-toolbar {
         margin-top: 9px !important;
         margin-bottom: 9px !important;
     }
 
-        .zs_dialog .btn-toolbar .btn-group {
+        .zs_dialog .vizzop-btn-toolbar .vizzop-btn-group {
             display: inline-block;
             *display: inline !important;
             /* IE7 inline-block hack */
             *zoom: 1 !important;
         }
 
-    .zs_dialog .btn-group .btn {
+    .zs_dialog .vizzop-btn-group .vizzop-btn {
         position: relative !important;
         float: left !important;
         margin-left: -1px !important;
@@ -2659,7 +2659,7 @@
         border-radius: 0 !important;
     }
 
-        .zs_dialog .btn-group .btn:first-child {
+        .zs_dialog .vizzop-btn-group .vizzop-btn:first-child {
             margin-left: 0 !important;
             -webkit-border-top-left-radius: 4px !important;
             -moz-border-radius-topleft: 4px !important;
@@ -2669,7 +2669,7 @@
             border-bottom-left-radius: 4px !important;
         }
 
-        .zs_dialog .btn-group .btn:last-child, .zs_dialog .btn-group .dropdown-toggle {
+        .zs_dialog .vizzop-btn-group .vizzop-btn:last-child, .zs_dialog .vizzop-btn-group .dropdown-toggle {
             -webkit-border-top-right-radius: 4px !important;
             -moz-border-radius-topright: 4px !important;
             border-top-right-radius: 4px !important;
@@ -2678,7 +2678,7 @@
             border-bottom-right-radius: 4px !important;
         }
 
-        .zs_dialog .btn-group .btn.large:first-child {
+        .zs_dialog .vizzop-btn-group .vizzop-btn.large:first-child {
             margin-left: 0 !important;
             -webkit-border-top-left-radius: 6px !important;
             -moz-border-radius-topleft: 6px !important;
@@ -2688,7 +2688,7 @@
             border-bottom-left-radius: 6px !important;
         }
 
-        .zs_dialog .btn-group .btn.large:last-child, .zs_dialog .btn-group .large.dropdown-toggle {
+        .zs_dialog .vizzop-btn-group .vizzop-btn.large:last-child, .zs_dialog .vizzop-btn-group .large.dropdown-toggle {
             -webkit-border-top-right-radius: 6px !important;
             -moz-border-radius-topright: 6px !important;
             border-top-right-radius: 6px !important;
@@ -2697,18 +2697,18 @@
             border-bottom-right-radius: 6px !important;
         }
 
-        .zs_dialog .btn-group .btn:hover,
-        .zs_dialog .btn-group .btn:focus,
-        .zs_dialog .btn-group .btn:active,
-        .zs_dialog .btn-group .btn.active {
+        .zs_dialog .vizzop-btn-group .vizzop-btn:hover,
+        .zs_dialog .vizzop-btn-group .vizzop-btn:focus,
+        .zs_dialog .vizzop-btn-group .vizzop-btn:active,
+        .zs_dialog .vizzop-btn-group .vizzop-btn.active {
             z-index: 2 !important;
         }
 
-    .zs_dialog .btn-group .dropdown-toggle:active, .zs_dialog .btn-group.open .dropdown-toggle {
+    .zs_dialog .vizzop-btn-group .dropdown-toggle:active, .zs_dialog .vizzop-btn-group.open .dropdown-toggle {
         outline: 0 !important;
     }
 
-    .zs_dialog .btn-group .dropdown-toggle {
+    .zs_dialog .vizzop-btn-group .dropdown-toggle {
         padding-left: 8px !important;
         padding-right: 8px !important;
         -webkit-box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.125), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05) !important;
@@ -2718,11 +2718,11 @@
         *padding-bottom: 5px !important;
     }
 
-    .zs_dialog .btn-group.open {
+    .zs_dialog .vizzop-btn-group.open {
         *z-index: 1000 !important;
     }
 
-        .zs_dialog .btn-group.open .dropdown-menu {
+        .zs_dialog .vizzop-btn-group.open .dropdown-menu {
             display: block;
             margin-top: 1px !important;
             -webkit-border-radius: 5px !important;
@@ -2730,33 +2730,33 @@
             border-radius: 5px !important;
         }
 
-        .zs_dialog .btn-group.open .dropdown-toggle {
+        .zs_dialog .vizzop-btn-group.open .dropdown-toggle {
             background-image: none !important;
             -webkit-box-shadow: inset 0 1px 6px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05) !important;
             -moz-box-shadow: inset 0 1px 6px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05) !important;
             box-shadow: inset 0 1px 6px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05) !important;
         }
 
-    .zs_dialog .btn .caret {
+    .zs_dialog .vizzop-btn .caret {
         margin-top: 7px !important;
         margin-left: 0 !important;
     }
 
-    .zs_dialog .btn:hover .caret, .zs_dialog .open.btn-group .caret {
+    .zs_dialog .vizzop-btn:hover .caret, .zs_dialog .open.vizzop-btn-group .caret {
         opacity: 1 !important;
         filter: alpha(opacity=100) !important;
     }
 
-    .zs_dialog .btn-primary .caret,
-    .zs_dialog .btn-danger .caret,
-    .zs_dialog .btn-info .caret,
-    .zs_dialog .btn-success .caret {
+    .zs_dialog .vizzop-btn-primary .caret,
+    .zs_dialog .vizzop-btn-danger .caret,
+    .zs_dialog .vizzop-btn-info .caret,
+    .zs_dialog .vizzop-btn-success .caret {
         border-top-color: #ffffff !important;
         opacity: 0.75 !important;
         filter: alpha(opacity=75) !important;
     }
 
-    .zs_dialog .btn-small .caret {
+    .zs_dialog .vizzop-btn-small .caret {
         margin-top: 4px !important;
     }
 
@@ -3163,7 +3163,7 @@
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.1) !important;
     }
 
-inse .zs_dialog .btn-navbar {
+inse .zs_dialog .vizzop-btn-navbar {
     display: none;
     float: right !important;
     padding: 7px 10px !important;
@@ -3186,19 +3186,19 @@ inse .zs_dialog .btn-navbar {
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.075) !important;
 }
 
-.zs_dialog .btn-navbar:hover,
-.zs_dialog .btn-navbar:active,
-.zs_dialog .btn-navbar.active,
-.zs_dialog .btn-navbar.disabled,
-.zs_dialog .btn-navbar[disabled] {
+.zs_dialog .vizzop-btn-navbar:hover,
+.zs_dialog .vizzop-btn-navbar:active,
+.zs_dialog .vizzop-btn-navbar.active,
+.zs_dialog .vizzop-btn-navbar.disabled,
+.zs_dialog .vizzop-btn-navbar[disabled] {
     background-color: #222222 !important;
 }
 
-.zs_dialog .btn-navbar:active, .btn-navbar.active {
+.zs_dialog .vizzop-btn-navbar:active, .vizzop-btn-navbar.active {
     background-color: #080808 \9 !important;
 }
 
-.zs_dialog .btn-navbar .icon-bar {
+.zs_dialog .vizzop-btn-navbar .icon-bar {
     display: block;
     width: 18px !important;
     height: 2px !important;
@@ -3211,7 +3211,7 @@ inse .zs_dialog .btn-navbar {
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.25) !important;
 }
 
-    .zs_dialog .btn-navbar .icon-bar + .icon-bar {
+    .zs_dialog .vizzop-btn-navbar .icon-bar + .icon-bar {
         margin-top: 3px !important;
     }
 
@@ -3245,11 +3245,11 @@ inse .zs_dialog .btn-navbar {
         background-color: transparent !important;
     }
 
-.zs_dialog .navbar .btn, .zs_dialog .navbar .btn-group {
+.zs_dialog .navbar .vizzop-btn, .zs_dialog .navbar .vizzop-btn-group {
     margin-top: 5px !important;
 }
 
-    .zs_dialog .navbar .btn-group .btn {
+    .zs_dialog .navbar .vizzop-btn-group .vizzop-btn {
         margin-top: 0 !important;
     }
 
@@ -3622,7 +3622,7 @@ inse .zs_dialog .btn-navbar {
     *z-index: 2050 !important;
 }
 
-.zs_dialog .modal-open .popover {
+.zs_dialog .modal-open .vizzop-popover {
     z-index: 2060 !important;
 }
 
@@ -3723,7 +3723,7 @@ inse .zs_dialog .btn-navbar {
         clear: both !important;
     }
 
-    .zs_dialog .modal-footer .btn {
+    .zs_dialog .modal-footer .vizzop-btn {
         float: right !important;
         margin-left: 5px !important;
         margin-bottom: 0 !important;
@@ -3815,7 +3815,7 @@ inse .zs_dialog .btn-navbar {
     height: 0 !important;
 }
 
-.zs_dialog .popover {
+.zs_dialog .vizzop-popover {
     position: absolute !important;
     top: 0;
     left: 0;
@@ -3827,23 +3827,23 @@ inse .zs_dialog .btn-navbar {
     border: none !important;
 }
 
-    .zs_dialog .popover.top {
+    .zs_dialog .vizzop-popover.top {
         margin-top: -35px !important;
     }
 
-    .zs_dialog .popover.right {
+    .zs_dialog .vizzop-popover.right {
         margin-left: 5px !important;
     }
 
-    .zs_dialog .popover.bottom {
+    .zs_dialog .vizzop-popover.bottom {
         margin-top: 5px !important;
     }
 
-    .zs_dialog .popover.left {
+    .zs_dialog .vizzop-popover.left {
         margin-left: -5px !important;
     }
 
-    .zs_dialog .popover.top .arrow {
+    .zs_dialog .vizzop-popover.top .vizzop-arrow {
         bottom: 0 !important;
         left: 50% !important;
         margin-left: -5px !important;
@@ -3854,7 +3854,7 @@ inse .zs_dialog .btn-navbar {
         border-top: 5px solid #FFF !important;
     }
 
-    .zs_dialog .popover.right .arrow {
+    .zs_dialog .vizzop-popover.right .vizzop-arrow {
         top: 50% !important;
         left: 0 !important;
         margin-top: -5px !important;
@@ -3863,7 +3863,7 @@ inse .zs_dialog .btn-navbar {
         border-right: 5px solid #000000 !important;
     }
 
-    .zs_dialog .popover.bottom .arrow {
+    .zs_dialog .vizzop-popover.bottom .vizzop-arrow {
         top: 0 !important;
         left: 50% !important;
         margin-left: -5px !important;
@@ -3872,7 +3872,7 @@ inse .zs_dialog .btn-navbar {
         border-bottom: 5px solid #000000 !important;
     }
 
-    .zs_dialog .popover.left .arrow {
+    .zs_dialog .vizzop-popover.left .vizzop-arrow {
         top: 50% !important;
         right: 0 !important;
         margin-top: -5px !important;
@@ -3881,13 +3881,13 @@ inse .zs_dialog .btn-navbar {
         border-left: 5px solid #000000 !important;
     }
 
-    .zs_dialog .popover .arrow {
+    .zs_dialog .vizzop-popover .vizzop-arrow {
         position: absolute !important;
         width: 0 !important;
         height: 0 !important;
     }
 
-.zs_dialog .popover-inner {
+.zs_dialog .vizzop-popover-inner {
     padding: 1px !important;
     max-width: 300px !important;
     overflow: visible !important;
@@ -3907,7 +3907,7 @@ inse .zs_dialog .btn-navbar {
     color: black !important;
 }
 
-.zs_dialog .popover-title {
+.zs_dialog .vizzop-popover-title {
     padding: 9px 15px !important;
     line-height: 1 !important;
     background-color: #000000 !important;
@@ -3919,8 +3919,8 @@ inse .zs_dialog .btn-navbar {
     display: none !important;
 }
 
-.zs_dialog .popover-content {
-    padding: 8px !important;
+.zs_dialog .vizzop-popover-content {
+    padding: 8px 2px !important;
     /*
     background-color: #ffffaa !important;
     */
@@ -3939,7 +3939,7 @@ inse .zs_dialog .btn-navbar {
     color: #666;
 }
 
-    .zs_dialog .popover-content p, .zs_dialog .popover-content ul, .zs_dialog .popover-content ol {
+    .zs_dialog .vizzop-popover-content p, .zs_dialog .vizzop-popover-content ul, .zs_dialog .vizzop-popover-content ol {
         margin-bottom: 0 !important;
     }
 
@@ -5640,12 +5640,12 @@ inse .zs_dialog .btn-navbar {
     border: 2px solid #ddf !important;
 }
 
-.zs_dialog .popover {
+.zs_dialog .vizzop-popover {
     z-index: 99993 !important;
     cursor: default !important;
 }
 
-    .zs_dialog .popover .inner {
+    .zs_dialog .vizzop-popover .inner {
         background-color: #F5F599 !important;
         background: #F5F599 !important;
         filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFAA', endColorstr='#FFFF66') !important;
@@ -5653,7 +5653,7 @@ inse .zs_dialog .btn-navbar {
         background: -moz-linear-gradient(top, #FFFFAA, #FFFF66) !important;
     }
 
-    .zs_dialog .popover .title {
+    .zs_dialog .vizzop-popover .title {
         background: transparent !important;
         color: #A7A777 !important;
         border-bottom: none !important;
@@ -5661,16 +5661,16 @@ inse .zs_dialog .btn-navbar {
         text-align: center !important;
     }
 
-    .zs_dialog .popover .content {
+    .zs_dialog .vizzop-popover .content {
         background: transparent !important;
         padding: 5px 15px !important;
     }
 
-    .zs_dialog .popover.left {
+    .zs_dialog .vizzop-popover.left {
         margin-left: -10px !important;
     }
 
-    .zs_dialog .popover.above .arrow {
+    .zs_dialog .vizzop-popover.above .vizzop-arrow {
         border-left: 15px solid transparent !important;
         border-right: 15px solid transparent !important;
         border-top: 15px solid #FFFF8A !important;
@@ -5679,7 +5679,7 @@ inse .zs_dialog .btn-navbar {
         margin-left: -10px !important;
     }
 
-    .zs_dialog .popover.right .arrow {
+    .zs_dialog .vizzop-popover.right .vizzop-arrow {
         border-bottom: 15px solid transparent !important;
         border-right: 15px solid #FFFF8A !important;
         border-top: 15px solid transparent !important;
@@ -5688,7 +5688,7 @@ inse .zs_dialog .btn-navbar {
         top: 50% !important;
     }
 
-    .zs_dialog .popover.below .arrow {
+    .zs_dialog .vizzop-popover.below .vizzop-arrow {
         border-bottom: 15px solid #FFFF8A !important;
         border-left: 15px solid transparent !important;
         border-right: 15px solid transparent !important;
@@ -5697,7 +5697,7 @@ inse .zs_dialog .btn-navbar {
         top: -9px !important;
     }
 
-    .zs_dialog .popover.left .arrow {
+    .zs_dialog .vizzop-popover.left .vizzop-arrow {
         border-bottom: 15px solid transparent !important;
         /*
 	border-left: 15px solid #FFFF8A !important;
@@ -5709,7 +5709,7 @@ inse .zs_dialog .btn-navbar {
         top: 50% !important;
     }
 
-    .zs_dialog .popover .actions {
+    .zs_dialog .vizzop-popover .actions {
         padding: 10px !important;
         margin: 10px 0 0 0 !important; /*     background: #FFFF8A !important;     background-color: #FFFF8A !important;     border-top: 2px solid #ee0 !important;     */
         background: none !important;
@@ -5794,7 +5794,9 @@ inse .zs_dialog .btn-navbar {
     cursor: pointer !important;
     overflow: visible !important;
 }
-
+.zs_dialoghandle {
+    min-width: 150px !important;
+}
 .zs_dialog .zs_dialoghandlepubli {
     clear: both !important;
     margin-bottom: 0 !important;
@@ -6075,13 +6077,19 @@ inse .zs_dialog .btn-navbar {
     text-align: center !important;
 }
 
-.zs_dialog .btn, .popover .btn {
+.zs_dialog .vizzop-btn, .vizzop-popover .vizzop-btn {
     margin: 1px !important;
     display: inline-block;
     cursor: pointer !important;
+    width: auto !important;
+    /*
+    padding: 8px 6px !important;
+    */
+    float: none !important;
+    white-space: nowrap !important;
 }
 
-.zs_dialog.controlBox .btn {
+.zs_dialog.controlBox .vizzop-btn {
     text-align: left !important;
     max-width: 500px !important;
     overflow: hidden !important;
@@ -6095,7 +6103,7 @@ inse .zs_dialog .btn-navbar {
     border: 1px solid #DDDDDD !important;
 }
 
-    .zs_dialog.controlBox .btn.active {
+    .zs_dialog.controlBox .vizzop-btn.active {
         background-color: #ccc !important;
         color: black !important;
         text-shadow: none !important;
@@ -6199,7 +6207,7 @@ inse .zs_dialog .btn-navbar {
               */
 }
 
-    .zs_dialog .boxheader .btn, .zs_dialog .boxtextticket .boxheader .btn {
+    .zs_dialog .boxheader .vizzop-btn, .zs_dialog .boxtextticket .boxheader .vizzop-btn {
         margin: 4px !important;
     }
 
@@ -6890,6 +6898,8 @@ inse .zs_dialog .btn-navbar {
     margin: 10px 0 0 !important;
     padding: 10px 0 !important;
     text-align: left !important;
+    overflow: auto !important;
+    height: auto !important;
 }
 
 .zs_dialog .ui-state-error {

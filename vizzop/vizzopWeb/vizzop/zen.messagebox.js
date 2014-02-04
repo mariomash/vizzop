@@ -127,7 +127,7 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
             self._boxtitletext.attr({
                 'rel': 'popover',
                 'title': 'Information',
-                'data-content': '<div>' + LLang('share_question', [self._interlocutor.FullName]) + '</div><div class=actions id=popover_action><button class="btn btn-primary" id=popover_action_ok>' + LLang('ok', null) + '</button><button class="btn" id=popover_action_no>' + LLang('no', null) + '</button></div>'
+                'data-content': '<div>' + LLang('share_question', [self._interlocutor.FullName]) + '</div><div class=actions id=popover_action><button class="vizzop-btn vizzop-btn-primary" id=popover_action_ok>' + LLang('ok', null) + '</button><button class="vizzop-btn" id=popover_action_no>' + LLang('no', null) + '</button></div>'
             });
             self._boxtitletext.popover({
                 placement: 'bottom',
@@ -445,7 +445,7 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
             self._boxtitletext.attr({
                 'rel': 'popover',
                 'title': 'Information',
-                'data-content': '<div>' + LLang('video_question', [self._interlocutor.FullName]) + '</div><div class=actions id=popover_action><button class="btn btn-primary" id=popover_action_ok>' + LLang('ok', null) + '</button><button class="btn" id=popover_action_no>' + LLang('no', null) + '</button></div>'
+                'data-content': '<div>' + LLang('video_question', [self._interlocutor.FullName]) + '</div><div class=actions id=popover_action><button class="vizzop-btn vizzop-btn-primary" id=popover_action_ok>' + LLang('ok', null) + '</button><button class="vizzop-btn" id=popover_action_no>' + LLang('no', null) + '</button></div>'
             });
             self._boxtitletext.popover({
                 placement: 'bottom',
@@ -874,7 +874,7 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                     if (playerVersion.major >= 10) {
                         self.button_AddVideo = jVizzop('<button></button>')
                             .html('<i class="vizzop-icon-facetime-video"></i>&nbsp;' + LLang('add_video', null))
-                            .addClass('btn small')
+                            .addClass('vizzop-btn small')
                             .css({ display: 'inline-block' })
                             .click(function (event) {
                                 self.start_VideoChat();
@@ -884,7 +884,7 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                             .appendTo(self._boxheader);
                         self.button_CancelVideo = jVizzop('<button></button>')
                             .text(LLang('cancel_video', null))
-                            .addClass('btn small')
+                            .addClass('vizzop-btn small')
                             .click(function (event) {
                                 self.cancel_VideoChat();
                                 return false;
@@ -899,7 +899,7 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                 if (vizzop.mode == 'agent') {
                     self.button_AddScreenSharing = jVizzop('<button></button>')
                         .html('<i class="vizzop-icon-eye-open"></i>&nbsp;' + LLang('screen_view', null))
-                        .addClass('btn small')
+                        .addClass('vizzop-btn small')
                         .css({ display: 'inline-block' })
                         .click(function (event) {
                             self.start_Screenshare();
@@ -909,7 +909,7 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
 
                     self.button_CancelScreenSharing = jVizzop('<button></button>')
                         .text(LLang('cancel_screen_share', null))
-                        .addClass('btn small')
+                        .addClass('vizzop-btn small')
                         .css({ display: 'inline-block' })
                         .click(function (event) {
                             self.cancel_Screenshare();
@@ -1354,7 +1354,7 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
             self._boxtitletext.attr({
                 'rel': 'popover',
                 'title': 'Information',
-                'data-content': '<div>' + LLang('end_session', null) + '</div><div class=actions id=popover_action><button class="btn btn-primary" id=popover_action_ok>' + LLang('ok', null) + '</button><button class="btn" id=popover_action_no>' + LLang('no', null) + '</button></div>'
+                'data-content': '<div>' + LLang('end_session', null) + '</div><div class=actions id=popover_action><button class="vizzop-btn vizzop-btn-primary" id=popover_action_ok>' + LLang('ok', null) + '</button><button class="vizzop-btn" id=popover_action_no>' + LLang('no', null) + '</button></div>'
             });
             self._boxtitletext.popover({
                 placement: 'bottom',
@@ -1733,7 +1733,7 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                     .attr('id', 'login')
                     .attr('name', 'login')
                     .text(LLang('login', null))
-                    .addClass('btn btn-primary')
+                    .addClass('vizzop-btn vizzop-btn-primary')
                     .click(function (event) {
                         try {
                             if ((jVizzop(self.inputUser).val() != "") && (jVizzop(self.inputPassword).val() != "")) {

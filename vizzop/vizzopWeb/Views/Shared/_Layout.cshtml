@@ -47,7 +47,7 @@
     <link href="@Url.Content("~/Scripts/farbtastic/farbtastic.css")" rel="stylesheet" type="text/css" />
     <script type="text/javascript">
         $(function () {
-            $('.btn-delete').click(function () {
+            $('.vizzop-btn-delete').click(function () {
                 return confirm('Are you sure you wish to remove it?');
             });
         });
@@ -147,7 +147,7 @@
                     formContents += '</div>';
                     formContents += '<br/>';
                     formContents += '<div class=actions id=popover_action>';
-                    formContents += '<button class="btn btn-primary btn-large" id=popover_action_send onclick="javascript:SendReview();return false;">Send</button>';
+                    formContents += '<button class="vizzop-btn vizzop-btn-primary vizzop-btn-large" id=popover_action_send onclick="javascript:SendReview();return false;">Send</button>';
                     formContents += '<span id=popover_action_loading style="display:none;"><img src="@Url.Content("~/Content/images/loading.gif")"/></span>';
                     formContents += '<span id=popover_action_result style="display:none;"></span>';
                     formContents += '</div></div>';

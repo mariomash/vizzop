@@ -471,7 +471,7 @@ body.plain .header {
         */
 }
 
-.btn {
+.vizzop-btn {
     vertical-align: middle;
 }
 
@@ -1008,7 +1008,7 @@ code, pre {
     -webkit-box-shadow: none;
 }
 
-.btn-large {
+.vizzop-btn-large {
     font-weight: bold;
 }
 

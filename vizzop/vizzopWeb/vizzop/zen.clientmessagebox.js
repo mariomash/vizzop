@@ -90,7 +90,7 @@ var ClientMessageBox = jVizzop.zs_Class.create(MessageBox, {
 
             var buttoninputHelp = jVizzop('<button></button>')
                 .text(LLang('ok', null))
-                .addClass('btn btn-primary')
+                .addClass('vizzop-btn vizzop-btn-primary')
                 .click(function (event) {
                     try {
                         if (jVizzop(inputHelp).val() != "") {
@@ -185,7 +185,7 @@ var ClientMessageBox = jVizzop.zs_Class.create(MessageBox, {
 
             var buttonYes = jVizzop('<button></button>')
                 .text(LLang('yes', null))
-                .addClass('btn btn-primary')
+                .addClass('vizzop-btn vizzop-btn-primary')
                 .click(function (event) {
                     var box = self._box;
                     var pwidth = box.width();
@@ -208,7 +208,7 @@ var ClientMessageBox = jVizzop.zs_Class.create(MessageBox, {
 
             var buttonNo = jVizzop('<button></button>')
                 .text(LLang('no', null))
-                .addClass('btn')
+                .addClass('vizzop-btn')
                 .click(function (event) {
                     self.fillBox_helpStandby();
                     return false;
@@ -268,15 +268,15 @@ var ClientMessageBox = jVizzop.zs_Class.create(MessageBox, {
                 .addClass('zs_bubble')
                 */
             self._bubble = jVizzop('<div></div>')
-                .addClass('popover top in zs_bubble')
-                .html('<div class="arrow"></div>')
+                .addClass('vizzop-popover top in zs_bubble')
+                .html('<div class="vizzop-arrow"></div>')
                 .appendTo(self._handle)
                 .hide();
             self._bubbleinner = jVizzop('<div></div>')
-                .addClass('popover-inner')
+                .addClass('vizzop-popover-inner')
                 .appendTo(self._bubble)
             self._bubbletext = jVizzop('<div></div>')
-                .addClass('popover-content')
+                .addClass('vizzop-popover-content')
                 .appendTo(self._bubbleinner);
             self.checkBubble();
             /*<img src="' + vizzop.mainURL + '/Content/images/help_25.png"/>')*/
@@ -500,7 +500,7 @@ var ClientMessageBox = jVizzop.zs_Class.create(MessageBox, {
 
             var buttoninputHelp = jVizzop('<button></button>')
                 .text(LLang('send', null))
-                .addClass('btn btn-primary btn-large')
+                .addClass('vizzop-btn vizzop-btn-primary vizzop-btn-large')
                 .attr('type', 'submit')
                 .click(function (event) {
                     try {
@@ -584,7 +584,7 @@ var ClientMessageBox = jVizzop.zs_Class.create(MessageBox, {
 
             var _okbutton = jVizzop('<button></button>')
                 .text(LLang('ok', null))
-                .addClass('btn btn-primary')
+                .addClass('vizzop-btn vizzop-btn-primary')
                 .click(function (event) {
                     self.fillBox_helpStandby();
                     //self.destroyBox();
@@ -592,6 +592,11 @@ var ClientMessageBox = jVizzop.zs_Class.create(MessageBox, {
                 })
                 .appendTo(msgbox)
                 .hide();
+
+            var clear = jVizzop('<div></div>')
+                .text('')
+                .css('clear', 'both')
+                .appendTo(msgbox);
 
             form.h5Validate();
 
@@ -656,7 +661,7 @@ var ClientMessageBox = jVizzop.zs_Class.create(MessageBox, {
 
             var buttonChat = jVizzop('<button></button>')
                 .text(LLang('start_chat', null))
-                .addClass('btn btn-primary btn-large')
+                .addClass('vizzop-btn vizzop-btn-primary vizzop-btn-large')
                 .click(function (event) {
                     if (vizzop.me.FullName == null) {
                         self.fillBox_FindingSupport_WithoutName();
@@ -680,7 +685,7 @@ var ClientMessageBox = jVizzop.zs_Class.create(MessageBox, {
 
             var buttoninputHelp = jVizzop('<button></button>')
                 .text(LLang('send_message', null))
-                .addClass('btn btn-primary btn-large')
+                .addClass('vizzop-btn vizzop-btn-primary vizzop-btn-large')
                 .css({ 'margin-top': '5px' })
                 .click(function (event) {
                     self.fillBox_LeaveMessage();

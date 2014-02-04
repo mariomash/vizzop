@@ -97,7 +97,7 @@
 
                 self._topstatuscreate = jVizzop('<span></span>')
                     .addClass(
-                    'btn btn-primary pull-right'
+                    'vizzop-btn vizzop-btn-primary pull-right'
                     )
                     .css({ 'vertical-align': 'middle' })
                     .html("<i class='vizzop-icon-white vizzop-icon-plus'></i> add language")
@@ -250,7 +250,7 @@
                     .text("save changes")
                     .attr('disabled', 'disabled')
                     .addClass(
-                    'btn btn-primary'
+                    'vizzop-btn vizzop-btn-primary'
                     )
                     .click(function (e) {
                         e.preventDefault();
@@ -265,7 +265,7 @@
                 self._deletebutton = jVizzop('<span></span>')
                     .html("<i class='vizzop-icon-white vizzop-icon-trash'></i> delete this language")
                     .addClass(
-                    'btn btn-danger'
+                    'vizzop-btn vizzop-btn-danger'
                     )
                     .click(function (e) {
                         e.preventDefault();

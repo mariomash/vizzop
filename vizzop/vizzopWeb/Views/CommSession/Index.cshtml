@@ -33,11 +33,11 @@ new { onchange = "Comm_updatetable();", @class = "input-large" })</span>
                     </span>
                     <!--
 		<span style="float: left;">
-			<a href="Url.Action("Create")" class='btn'><i class="icon-plus"></i>&nbsp;Create New Ticket</a>
+			<a href="Url.Action("Create")" class='vizzop-btn'><i class="icon-plus"></i>&nbsp;Create New Ticket</a>
 		</span>
 		-->
                     <span style="display: inline-block; vertical-align: top; margin-left: 2px; padding-bottom: 2px;">
-                        <span style="vertical-align: middle" class="btn btn-primary" onclick="javascript:Comm_updatetable();">reload data</span>
+                        <span style="vertical-align: middle" class="vizzop-btn vizzop-btn-primary" onclick="javascript:Comm_updatetable();">reload data</span>
                     </span>
                 </div>
                 <div id="CommSessionReportResults" style="display: none;">
@@ -279,7 +279,7 @@ that.oApi._fnGetObjectDataFn(oSettings.sAjaxDataProp)(json) : json;
                     "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
                         /*
                         //if (oData[1].toString().toUpperCase() == "TICKET") {
-                        var a = $('<a class="btn session-edit btn-primary" data-id="' + oData[0] + '" style="white-space:nowrap;"><i class="icon-list-alt icon-white"></i>&nbsp;<span style="vertical-align: middle;">details</span></a>');
+                        var a = $('<a class="vizzop-btn session-edit vizzop-btn-primary" data-id="' + oData[0] + '" style="white-space:nowrap;"><i class="icon-list-alt icon-white"></i>&nbsp;<span style="vertical-align: middle;">details</span></a>');
                         a.on('click', function () {
                             if (vizzop.Daemon != null) {
                                 vizzop.Daemon.loadTicketBox(oData[0]);

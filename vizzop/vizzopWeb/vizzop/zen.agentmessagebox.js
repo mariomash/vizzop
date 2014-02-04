@@ -35,7 +35,7 @@
 
 			self.buttonYes = jVizzop('<button></button>')
 				.text(LLang('yes', null))
-				.addClass('btn btn-primary')
+				.addClass('vizzop-btn vizzop-btn-primary')
 				.click(function (event) {
 					vizzop.Daemon.audioRinging.Stop();
 					self.buttonYes.hide();
@@ -48,7 +48,7 @@
 
 			self.buttonNo = jVizzop('<button></button>')
 				.text(LLang('no', null))
-				.addClass('btn')
+				.addClass('vizzop-btn')
 				.click(function (event) {
 					vizzop.Daemon.audioRinging.Stop();
 					self.buttonYes.hide();

@@ -965,7 +965,7 @@
        -moz-border-radius: 3px;
             border-radius: 3px;
   }
-  .nav-collapse .btn {
+  .nav-collapse .vizzop-btn {
     padding: 4px 10px 4px;
     font-weight: normal;
     -webkit-border-radius: 4px;
@@ -983,7 +983,7 @@
   .navbar-inverse .nav-collapse .dropdown-menu a:hover {
     background-color: #111111;
   }
-  .nav-collapse.in .btn-group {
+  .nav-collapse.in .vizzop-btn-group {
     padding: 0;
     margin-top: 5px;
   }
@@ -1041,7 +1041,7 @@
     height: 0;
     overflow: hidden;
   }
-  .navbar .btn-navbar {
+  .navbar .vizzop-btn-navbar {
     display: block;
   }
   .navbar-static .navbar-inner {

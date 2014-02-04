@@ -29,11 +29,11 @@
                         @if (agents_list.Count() >= Model.Business.MaxAgents)
                         {
                             <span>You have reached your maximun number of agents.
-                                <a href="@Url.Action("BuyAgent")" class='btn btn-primary'><i class="icon-shopping-cart icon-white"></i>&nbsp;<span style="vertical-align: middle">Buy another agent</span></a></span>
+                                <a href="@Url.Action("BuyAgent")" class='vizzop-btn vizzop-btn-primary'><i class="icon-shopping-cart icon-white"></i>&nbsp;<span style="vertical-align: middle">Buy another agent</span></a></span>
                         }
                         else
                         {
-                            <a href="@Url.Action("Create")" class='btn'><i class="icon-plus"></i>&nbsp;<span style="vertical-align: middle">add new agent</span></a>
+                            <a href="@Url.Action("Create")" class='vizzop-btn'><i class="icon-plus"></i>&nbsp;<span style="vertical-align: middle">add new agent</span></a>
                         }
                         <br />
                         <br />
@@ -71,10 +71,10 @@
                                                 @Html.DisplayFor(m => item.Converser.LastActive)
                                             </td>
                                             <td style="">
-                                                <a href="@Url.Action("Edit", new { id = item.ID })" class="btn"><i class="icon-list-alt"></i>&nbsp;<span style="vertical-align: middle">edit</span></a>
+                                                <a href="@Url.Action("Edit", new { id = item.ID })" class="vizzop-btn"><i class="icon-list-alt"></i>&nbsp;<span style="vertical-align: middle">edit</span></a>
                                                 @if (item.Converser.ID != Model.ID)
                                                 {
-                                                    <a href="@Url.Action("DeleteConfirmed", new { id = item.ID })" class="btn btn-delete"><i class="icon-remove"></i>&nbsp;<span style="vertical-align: middle">delete</span></a>
+                                                    <a href="@Url.Action("DeleteConfirmed", new { id = item.ID })" class="vizzop-btn vizzop-btn-delete"><i class="icon-remove"></i>&nbsp;<span style="vertical-align: middle">delete</span></a>
                                                 }
                                             </td>
                                         </tr>

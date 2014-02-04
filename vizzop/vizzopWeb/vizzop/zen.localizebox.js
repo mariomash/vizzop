@@ -125,7 +125,7 @@
                 self._savebutton = jVizzop('<span></span>')
                     .text("save changes")
                     .addClass(
-                    'btn btn-primary'
+                    'vizzop-btn vizzop-btn-primary'
                     )
                     .click(function (e) {
                         e.preventDefault();
@@ -140,7 +140,7 @@
                 self._deletebutton = jVizzop('<span></span>')
                     .html("delete")
                     .addClass(
-                    'btn btn-danger'
+                    'vizzop-btn vizzop-btn-danger'
                     )
                     .hide()
                     .click(function (e) {
