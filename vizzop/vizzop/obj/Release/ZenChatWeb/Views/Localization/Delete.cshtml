@@ -1,0 +1,33 @@
+﻿@model Zentralized.Models.TextString
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<fieldset>
+    <legend>TextString</legend>
+
+    <div class="display-label">Ref</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Ref)
+    </div>
+
+    <div class="display-label">IsoCode</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.IsoCode)
+    </div>
+
+    <div class="display-label">Text</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Text)
+    </div>
+</fieldset>
+@using (Html.BeginForm()) {
+    <p>
+        <input type="submit" value="Delete" /> |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+}

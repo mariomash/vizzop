@@ -1,0 +1,166 @@
+<html style="margin: 0; padding: 0;">
+<head>
+    <title></title>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript">
+        var data = null;
+        var StartDate = new Date();
+        var OrdersRequest_InCourse = null;
+
+        function CheckIfFrameLoaded() {
+            try {
+                var iframe = document.getElementById('WrapperIframe');
+                if (iframe.contentDocument) {
+                    iframeDoc = iframe.contentDocument;
+                } else {
+                    iframeDoc = iframe.contentWindow.document;
+                }
+
+                /*
+                var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                */
+
+                // Check if loading is complete
+                if (iframeDoc.readyState == 'complete') {
+
+                    var iframe = document.getElementById('WrapperIframe');
+                    iframe.contentWindow.scrollTo(data.ScrollLeft, data.ScrollTop);
+
+                    var filename = data.UserName + '_' + data.Domain + '_' + data.GUID + '_.png';
+
+                    /*
+                    window.callPhantom({
+                        'log': iframe.contentWindow.document.documentElement.innerHTML
+                    });
+                    */
+
+                    window.callPhantom({
+                        'command': 'iframeloaded',
+                        'filename': filename,
+                        'ScrollLeft': data.ScrollLeft,
+                        'ScrollTop': data.ScrollTop,
+                        'Width': data.Width,
+                        'Height': data.Height
+                    });
+
+                } else {
+                    setTimeout(function () { CheckIfFrameLoaded(); }, 1);
+                }
+            } catch (err) {
+                window.callPhantom({
+                    'log': err
+                });
+                setTimeout(function () { CheckIfFrameLoaded(); }, 1);
+            }
+        }
+
+        function CreateAndAddIframe() {
+            $('#WrapperIframe').remove();
+            iFrame = document.createElement('iframe');
+            iFrame.id = 'WrapperIframe';
+            iFrame.src = "javascript:;";
+            iFrame.frameborder = 0;
+            iFrame.noresize = true;
+            iFrame.scrolling = "no";
+            document.getElementById('WrapperDiv').appendChild(iFrame);
+            $('#WrapperIframe').css({ 'border': 'none' });
+            return iFrame;
+        }
+
+        function GetOrders(page, mainURL, UserName, Domain) {
+            try {
+                var dateToCompare = new Date();
+                dateToCompare.setTime(StartDate.getTime() + (4 * 60 * 1000)); // 4 minutes in milliseconds
+
+                var dateNow = new Date();
+
+                if (dateNow > dateToCompare) {
+                    //Esto se autodestruye tras unos minutos sin recibir ordenes...
+                    window.callPhantom({ 'command': 'exit' });
+                }
+
+                if (OrdersRequest_InCourse != null) {
+                    return;
+                }
+
+                var GUID = '';
+                if (data != null) {
+                    GUID = data.GUID;
+                }
+
+                var msg = {
+                    'UserName': UserName,
+                    'Domain': Domain,
+                    'GUID': GUID
+                };
+                var url = mainURL + "/Messages/CheckCaptureControl";
+
+                OrdersRequest_InCourse = $.ajax({
+                    url: url,
+                    type: "POST",
+                    data: msg,
+                    dataType: "jsonp",
+                    success: function (d) {
+                        if ((d == null) || (d == false)) {
+                            OrdersRequest_InCourse = null;
+                            return;
+                        }
+
+                        data = d;
+                        StartDate = new Date();
+                        var iFrame = null
+                        if ((data.Blob.length == 1) && (data.Blob[0][0] == 0)) {
+                            iFrame = document.getElementById("WrapperIframe");
+                            if (iFrame == null) {
+                                iFrame = CreateAndAddIframe();
+                                var win = iFrame.contentWindow;
+                                win.document.open('text/html', 'replace');
+                                win.document.write(data.Html);
+                                win.document.close();
+                            }
+                        } else {
+                            iFrame = document.getElementById("WrapperIframe");
+                            if (iFrame == null) {
+                                iFrame = CreateAndAddIframe();
+                            }
+                            var win = iFrame.contentWindow;
+                            win.document.open('text/html', 'replace');
+                            win.document.write(data.Html);
+                            win.document.close();
+                        }
+
+                        $('#WrapperIframe')
+                            .attr('width', data.Width)
+                            .attr('height', data.Height)
+                            .css({
+                                'height': data.Height,
+                                'width': data.Width
+                            });
+
+                        $('#WrapperDiv')
+                            .attr('width', data.Width)
+                            .attr('height', data.Height)
+                            .css({
+                                'height': data.Height,
+                                'width': data.Width
+                            });
+
+                        setTimeout(function () { CheckIfFrameLoaded(); }, 1);
+
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        OrdersRequest_InCourse = null;
+                    }
+                });
+            } catch (err) {
+                OrdersRequest_InCourse = null;
+            }
+
+        }
+    </script>
+</head>
+<body style="margin: 0; padding: 0">
+    <div id="WrapperDiv" style="margin: 0; padding: 0; overflow: hidden;">
+    </div>
+</body>
+</html>

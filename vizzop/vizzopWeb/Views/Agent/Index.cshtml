@@ -1,0 +1,95 @@
+﻿@model vizzopWeb.Models.Converser
+@{
+    vizzopWeb.Models.vizzopContext db = new vizzopWeb.Models.vizzopContext();
+    vizzopWeb.Utils utils = new vizzopWeb.Utils();
+    List<vizzopWeb.Models.Agent> agents_list = (from m in db.Agents
+                                                  where m.Converser.Business.ID == Model.Business.ID
+                                                  select m).ToList<vizzopWeb.Models.Agent>();
+}
+<div id="content" class="content">
+    <div class="tab-content">
+        <div class="content-header">
+            <h1>Support agents
+            </h1>
+        </div>
+        <div id="breadcrumb">
+            <a class="tip-bottom"><i class="icon-home"></i>
+                <span style="vertical-align: middle;">Control Panel</span></a><a style="vertical-align: middle;" class="current">Support agents</a>
+        </div>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="widget-box">
+                    <div class="widget-title">
+                        <span class="icon">
+                            <i class="icon-th"></i>
+                        </span>
+                        <h5>Support agents</h5>
+                    </div>
+                    <div class="widget-content">
+                        @if (agents_list.Count() >= Model.Business.MaxAgents)
+                        {
+                            <span>You have reached your maximun number of agents.
+                                <a href="@Url.Action("BuyAgent")" class='btn btn-primary'><i class="icon-shopping-cart icon-white"></i>&nbsp;<span style="vertical-align: middle">Buy another agent</span></a></span>
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("Create")" class='btn'><i class="icon-plus"></i>&nbsp;<span style="vertical-align: middle">add new agent</span></a>
+                        }
+                        <br />
+                        <br />
+                        @if (agents_list.Count() > 0)
+                        { 
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Name
+                                        </th>
+                                        <th>E-mail
+                                        </th>
+                                        <th>Last Active
+                                        </th>
+                                        <th>&nbsp;
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in agents_list)
+                                    {
+                                        <tr>
+                                            <td style="">
+                                                @Html.DisplayFor(m => item.Converser.FullName)
+                                                @if (item.Converser.ID == Model.ID)
+                                                {
+                                                    <span class="dimmed"> - YOU
+                                                    </span>
+                                                }
+                                            </td>
+                                            <td style="">
+                                                @Html.DisplayFor(m => item.Converser.Email)
+                                            </td>
+                                            <td style="">
+                                                @Html.DisplayFor(m => item.Converser.LastActive)
+                                            </td>
+                                            <td style="">
+                                                <a href="@Url.Action("Edit", new { id = item.ID })" class="btn"><i class="icon-list-alt"></i>&nbsp;<span style="vertical-align: middle">edit</span></a>
+                                                @if (item.Converser.ID != Model.ID)
+                                                {
+                                                    <a href="@Url.Action("DeleteConfirmed", new { id = item.ID })" class="btn btn-delete"><i class="icon-remove"></i>&nbsp;<span style="vertical-align: middle">delete</span></a>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                        else
+                        { 
+                            <h5>No support agents assigned to your account
+                            </h5>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

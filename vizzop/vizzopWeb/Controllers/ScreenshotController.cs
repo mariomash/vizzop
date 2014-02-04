@@ -1,0 +1,234 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using vizzopWeb.Models;
+
+namespace vizzopWeb
+{
+    [SessionState(System.Web.SessionState.SessionStateBehavior.ReadOnly)]
+    public class ScreenshotController : Controller
+    {
+        // GET: /Screenshot/
+
+        private vizzopContext db = new vizzopContext();
+        private Utils utils = new Utils();
+
+#if DEBUG
+#else
+        [RequireHttps]
+#endif
+        public ActionResult Index()
+        {
+            if (HttpContext.Session == null)
+            {
+                return RedirectToAction("LogOn", "Account");
+            }
+            try
+            {
+                Converser converser = utils.GetLoggedConverser(HttpContext.Session);
+                if (converser == null)
+                {
+                    return RedirectToAction("LogOn", "Account");
+                }
+                converser.Business.Conversers = new List<Converser>();
+                ViewBag.converser = converser;
+                return View();
+            }
+            catch (Exception ex)
+            {
+                utils.GrabaLogExcepcion(ex);
+                return View();
+            }
+        }
+
+        private class ScreenMovieDTO
+        {
+            public int ID { get; set; }
+            public Converser Converser { get; set; }
+            public int Height { get; set; }
+            public int Width { get; set; }
+            public DateTime FirstScreenCapture { get; set; }
+            public DateTime LastScreenCapture { get; set; }
+        }
+
+
+        [JsonpFilter]
+#if DEBUG
+#else
+        [RequireHttps]
+#endif
+        public ActionResult GetScreenshotJsonByConverser(string username, string domain)
+        {
+            Converser converser = new Converser();
+            try
+            {
+                if (HttpContext.Session == null)
+                {
+                    return RedirectToAction("LogOn", "Account");
+                }
+                try
+                {
+                    converser = utils.GetLoggedConverser(HttpContext.Session);
+                    if (converser == null)
+                    {
+                        return RedirectToAction("LogOn", "Account");
+                    }
+                    converser.Business.Conversers = new List<Converser>();
+                    ViewBag.converser = converser;
+                }
+                catch (Exception ex)
+                {
+                    utils.GrabaLogExcepcion(ex);
+                    return Json(null);
+                }
+
+                var ScreenList = (from w in db.ScreenCaptures.Include("converser")
+                                  where (w.converser.UserName == username) && (w.converser.Business.Domain == domain)
+                                  orderby (w.CreatedOn)
+                                  select w).ToList<ScreenCapture>();
+                if (ScreenList.Count() > 0)
+                {
+                    var obj = ScreenList.Select((x, index) => new
+                    {
+                        GUID = x.GUID,
+                        CreatedOn = x.CreatedOn.ToLocalTime().ToString("G"),
+                        Url = x.Url
+                    });
+                    return Json(obj, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json(false, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                utils.GrabaLogExcepcion(ex);
+                return Json(null);
+            }
+        }
+
+        [JsonpFilter]
+#if DEBUG
+#else
+        [RequireHttps]
+#endif
+        public ActionResult GetScreenshotJson(string dimension1, string dimension2, string from, string to)
+        {
+            Converser converser = new Converser();
+            try
+            {
+                if (HttpContext.Session == null)
+                {
+                    return RedirectToAction("LogOn", "Account");
+                }
+                try
+                {
+                    converser = utils.GetLoggedConverser(HttpContext.Session);
+                    if (converser == null)
+                    {
+                        return RedirectToAction("LogOn", "Account");
+                    }
+                    converser.Business.Conversers = new List<Converser>();
+                    ViewBag.converser = converser;
+                }
+                catch (Exception ex)
+                {
+                    utils.GrabaLogExcepcion(ex);
+                    return Json(null);
+                }
+
+                /*
+                var movies = from p in List
+                             group p by p.converser.ID into g
+                             select new ScreenMovieDTO
+                             {
+                                 ID = g.FirstOrDefault().ID,
+                                 Converser = g.FirstOrDefault().converser,
+                                 Width = g.FirstOrDefault().LastFrameWidth,
+                                 Height = g.FirstOrDefault().LastFrameHeight,
+                                 FirstScreenCapture = (DateTime)g.Min(x => x.CreatedOn),
+                                 LastScreenCapture = (DateTime)g.Max(x => x.CreatedOn)
+                             };
+                */
+
+                List<ScreenMovie> MovieList = GetListOfMovies(from, to, converser);
+
+                if (MovieList.Count() > 0)
+                {
+                    return Json(new
+                    {
+                        aaData = MovieList.Select((x, index) => new Object[] {
+                                    x.ID,
+                                    x.converser.ID,
+                                    x.LastFrameUrl,
+                                    x.converser.LangISO,
+                                    utils.GetUbicationFromIP(x.converser.IP),
+                                    x.LastFrameWidth,
+                                    x.LastFrameHeight,
+                                    x.ModifiedOn.ToString("o"),
+                                    utils.GetPrettyDate(x.ModifiedOn),
+                                    @"https://vizzop.blob.core.windows.net/videos/" + x.converser.ID + @".mp4"
+                                })
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json(null, JsonRequestBehavior.AllowGet);
+                }
+                //return Json(ScreenList);
+            }
+            catch (Exception ex)
+            {
+                //utils.GrabaLogExcepcion(ex);
+                return Json(null, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        private List<ScreenMovie> GetListOfMovies(string from, string to, Converser converser)
+        {
+            try
+            {
+                DateTime dtFrom = DateTime.Parse(from);
+                DateTime dtTo = DateTime.Parse(to);
+                dtTo = dtTo.AddHours(23).AddMinutes(59).AddSeconds(59).AddMilliseconds(999);
+
+                var List = (from w in db.ScreenMovies.Include("converser")
+                            where (w.CreatedOn >= dtFrom && w.CreatedOn <= dtTo)
+                            select w);
+
+                //&& (w.Headers.Contains("'DNT':'1'") == false)
+
+                if (converser.Business.Domain.ToLowerInvariant() != "vizzop")
+                {
+                    List = (from w in List
+                            where w.converser.Business.ID == converser.Business.ID
+                            select w);
+                }
+
+                /*
+                var movies = from p in List
+                             group p by p.converser.ID into g
+                             select new ScreenMovieDTO
+                             {
+                                 ID = g.FirstOrDefault().ID,
+                                 Converser = g.FirstOrDefault().converser,
+                                 Width = g.FirstOrDefault().LastFrameWidth,
+                                 Height = g.FirstOrDefault().LastFrameHeight,
+                                 FirstScreenCapture = (DateTime)g.Min(x => x.CreatedOn),
+                                 LastScreenCapture = (DateTime)g.Max(x => x.CreatedOn)
+                             };
+                */
+
+                return List.ToList();
+            }
+            catch (Exception ex)
+            {
+                utils.GrabaLogExcepcion(ex);
+                return new List<ScreenMovie>();
+            }
+        }
+    }
+}

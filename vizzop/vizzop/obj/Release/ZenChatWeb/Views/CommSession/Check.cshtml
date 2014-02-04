@@ -1,0 +1,71 @@
+﻿@model Zentralized.Models.CommSession
+@using Zentralized.Models;
+@{
+    //Layout = null;
+
+    ViewBag.LayoutWhiteLabelMode = true;
+    ViewBag.Title = "Message Viewer";
+}
+<script type="text/javascript" src="/ZenTools/jsapi.ashx?mode=client&apikey=@Html.Raw(ViewBag.ApiKey)&showhelpbutton=false"></script>
+<div class="zs_dialog focused" style="width: 605px; margin: 0 auto 60px auto;">
+    <div class="zs_dialog_inner">
+        <div class="zs_dialog_title">
+            <span class="title">
+                Message History Viewer</span>
+        </div>
+        <div class="boxinfo">
+            <div class="boxheader" style="font-weight: bold; font-size: 13px; text-align: center; background-color: #F89406; color: White; background: #F89406;">
+                Conversation thread between you and @ViewBag.BusinessName
+            </div>
+            <div class="boxtextticket">
+                <div class="chat_msgZone" style="max-height: none;">
+                    @foreach (Message message in Model.Messages)
+                    {
+                        if ((message.Content != null) && (message.Content != "null"))
+                        {
+                        <div class="message">
+                            <span class="timestamp">
+                                @message.TimeStamp.ToString()
+                            </span>
+                            <span class="from" style="width: auto;">
+                                @message.From.FullName
+                                @if (message.From.Agent != null)
+                                {
+                                    <i>(from @Model.Business.BusinessName)</i> 
+                                }
+                                else
+                                { 
+                                    <i>(this is you)</i>
+                                }
+                            </span>
+                            <div class="contents">
+                                @message.Content
+                            </div>
+                        </div>
+                        }
+                    }
+                </div>
+                @using (Html.BeginForm("ClientComment", "CommSession", FormMethod.Post, new { @style = "margin: 0;" }))
+                {
+                    @Html.Hidden("id", Model.ID)
+                    @Html.Hidden("from_username", Model.Client.UserName)
+                    @Html.Hidden("from_domain", Model.Client.Business.Domain)
+                    @Html.ValidationSummary(true)
+                    if (ViewBag.errors != null)
+                    {
+                    <div class="alert">
+                        <a class="close" data-dismiss="alert">×</a>
+                        @Html.Raw(ViewBag.errors)
+                    </div>
+                    }
+                    <div class="ticket_inputZone">
+                        @Html.TextArea("content", new { @class = "ticket_inputTextArea", @style = "display: inline-block; vertical-align: top;" })
+                        <span style="display: inline-block; vertical-align: top; margin-left: 10px; width: 150px;">
+                            <input type="submit" value="Comment" class="btn btn-primary btn-large" style="display: block; width: 100%;" />
+                        </span>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<ServiceConfiguration serviceName="vizzop" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="3" osVersion="*" schemaVersion="2013-10.2.2">
+  <Role name="vizzopWeb">
+    <Instances count="1" />
+    <ConfigurationSettings>
+      <Setting name="Domain" value="vizzop.com" />
+      <Setting name="Port" value="443" />
+      <Setting name="Scheme" value="https" />
+      <Setting name="WsScheme" value="wss" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteAccess.Enabled" value="true" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteAccess.AccountUsername" value="mariomash" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteAccess.AccountEncryptedPassword" value="MIIBnQYJKoZIhvcNAQcDoIIBjjCCAYoCAQAxggFOMIIBSgIBADAyMB4xHDAaBgNVBAMME1dpbmRvd3MgQXp1cmUgVG9vbHMCEBvFM4VhiuWlRH2S3CZSEgwwDQYJKoZIhvcNAQEBBQAEggEAF9oEm73G5H89ParIyR+N6yU7b+drZ5ebTKpVIyWzNisaxS2XY8/0qgyMp9Vo/vdWkU3WPkxsmtmw1utVWamm0fSqMpT5nO5N8+k41CK0BZwwgfJlyt6sTuzvjVwstdNrEyyOAHAwYQUpTwhNo/+iORs0l5yDrFryFkHPQAl/mE8GjCG8YJmc3r7aACf0/pvw4UiheTyuq0V5oxPkerPON4EbIh2QUqojD8nhHYMzHLF0yP0ejIaKG0JQJkDRQ+ehlqoyU3My7114g23u9ERECeeQPn7+h4KEH6GLw9Bsx/r9ufMu4GH6G/IAkC0Pgku1K64G+DR5eMqtXTxV6p/JJzAzBgkqhkiG9w0BBwEwFAYIKoZIhvcNAwcECH+RPHveAjDfgBB+D0VzqlfinTTNawzM9/te" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteAccess.AccountExpiration" value="2014-09-18T23:59:59.0000000+02:00" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteForwarder.Enabled" value="true" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=vizzop;AccountKey=t+HUSi6EdcIqkCgeyJY2yesdp+Ti+rgLYpOPDlwFpp49uNI/2sGeI5Fx1A+syOfZCe2C6rYPqIWb/83Zbo9nTQ==" />
+      <Setting name="StorageConnectionString" value="DefaultEndpointsProtocol=https;AccountName=vizzop;AccountKey=t+HUSi6EdcIqkCgeyJY2yesdp+Ti+rgLYpOPDlwFpp49uNI/2sGeI5Fx1A+syOfZCe2C6rYPqIWb/83Zbo9nTQ==" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Caching.ClientDiagnosticLevel" value="1" />
+    </ConfigurationSettings>
+    <Certificates>
+      <Certificate name="vizzop.com" thumbprint="C2B2F4A2ADFD60296E8B35C55A0E5ED4594C595D" thumbprintAlgorithm="sha1" />
+      <Certificate name="Microsoft.WindowsAzure.Plugins.RemoteAccess.PasswordEncryption" thumbprint="D12DF87F7946FE34AE70EAB59CD4EAC7020302C6" thumbprintAlgorithm="sha1" />
+    </Certificates>
+  </Role>
+  <Role name="vizzopWorker">
+    <Instances count="1" />
+    <ConfigurationSettings>
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=vizzop;AccountKey=t+HUSi6EdcIqkCgeyJY2yesdp+Ti+rgLYpOPDlwFpp49uNI/2sGeI5Fx1A+syOfZCe2C6rYPqIWb/83Zbo9nTQ==" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteAccess.Enabled" value="true" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteAccess.AccountUsername" value="mariomash" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteAccess.AccountEncryptedPassword" value="MIIBnQYJKoZIhvcNAQcDoIIBjjCCAYoCAQAxggFOMIIBSgIBADAyMB4xHDAaBgNVBAMME1dpbmRvd3MgQXp1cmUgVG9vbHMCEBvFM4VhiuWlRH2S3CZSEgwwDQYJKoZIhvcNAQEBBQAEggEAF9oEm73G5H89ParIyR+N6yU7b+drZ5ebTKpVIyWzNisaxS2XY8/0qgyMp9Vo/vdWkU3WPkxsmtmw1utVWamm0fSqMpT5nO5N8+k41CK0BZwwgfJlyt6sTuzvjVwstdNrEyyOAHAwYQUpTwhNo/+iORs0l5yDrFryFkHPQAl/mE8GjCG8YJmc3r7aACf0/pvw4UiheTyuq0V5oxPkerPON4EbIh2QUqojD8nhHYMzHLF0yP0ejIaKG0JQJkDRQ+ehlqoyU3My7114g23u9ERECeeQPn7+h4KEH6GLw9Bsx/r9ufMu4GH6G/IAkC0Pgku1K64G+DR5eMqtXTxV6p/JJzAzBgkqhkiG9w0BBwEwFAYIKoZIhvcNAwcECH+RPHveAjDfgBB+D0VzqlfinTTNawzM9/te" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteAccess.AccountExpiration" value="2014-09-18T23:59:59.0000000+02:00" />
+      <Setting name="StorageConnectionString" value="DefaultEndpointsProtocol=https;AccountName=vizzop;AccountKey=t+HUSi6EdcIqkCgeyJY2yesdp+Ti+rgLYpOPDlwFpp49uNI/2sGeI5Fx1A+syOfZCe2C6rYPqIWb/83Zbo9nTQ==" />
+      <Setting name="Domain" value="vizzop.com" />
+      <Setting name="Port" value="443" />
+      <Setting name="Scheme" value="https" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Caching.ClientDiagnosticLevel" value="1" />
+      <Setting name="CaptureProcessNumber" value="8" />
+    </ConfigurationSettings>
+    <Certificates>
+      <Certificate name="Microsoft.WindowsAzure.Plugins.RemoteAccess.PasswordEncryption" thumbprint="D12DF87F7946FE34AE70EAB59CD4EAC7020302C6" thumbprintAlgorithm="sha1" />
+    </Certificates>
+  </Role>
+  <Role name="vizzopCache">
+    <Instances count="1" />
+    <ConfigurationSettings>
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=vizzop;AccountKey=t+HUSi6EdcIqkCgeyJY2yesdp+Ti+rgLYpOPDlwFpp49uNI/2sGeI5Fx1A+syOfZCe2C6rYPqIWb/83Zbo9nTQ==" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteAccess.Enabled" value="true" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteAccess.AccountUsername" value="mariomash" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteAccess.AccountEncryptedPassword" value="MIIBnQYJKoZIhvcNAQcDoIIBjjCCAYoCAQAxggFOMIIBSgIBADAyMB4xHDAaBgNVBAMME1dpbmRvd3MgQXp1cmUgVG9vbHMCEBvFM4VhiuWlRH2S3CZSEgwwDQYJKoZIhvcNAQEBBQAEggEAF9oEm73G5H89ParIyR+N6yU7b+drZ5ebTKpVIyWzNisaxS2XY8/0qgyMp9Vo/vdWkU3WPkxsmtmw1utVWamm0fSqMpT5nO5N8+k41CK0BZwwgfJlyt6sTuzvjVwstdNrEyyOAHAwYQUpTwhNo/+iORs0l5yDrFryFkHPQAl/mE8GjCG8YJmc3r7aACf0/pvw4UiheTyuq0V5oxPkerPON4EbIh2QUqojD8nhHYMzHLF0yP0ejIaKG0JQJkDRQ+ehlqoyU3My7114g23u9ERECeeQPn7+h4KEH6GLw9Bsx/r9ufMu4GH6G/IAkC0Pgku1K64G+DR5eMqtXTxV6p/JJzAzBgkqhkiG9w0BBwEwFAYIKoZIhvcNAwcECH+RPHveAjDfgBB+D0VzqlfinTTNawzM9/te" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteAccess.AccountExpiration" value="2014-09-18T23:59:59.0000000+02:00" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Caching.NamedCaches" value="{&quot;caches&quot;:[{&quot;name&quot;:&quot;default&quot;,&quot;policy&quot;:{&quot;eviction&quot;:{&quot;type&quot;:0},&quot;expiration&quot;:{&quot;defaultTTL&quot;:10,&quot;isExpirable&quot;:true,&quot;type&quot;:2},&quot;serverNotification&quot;:{&quot;isEnabled&quot;:false}},&quot;secondaries&quot;:0}]}" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Caching.DiagnosticLevel" value="1" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Caching.CacheSizePercentage" value="" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Caching.ConfigStoreConnectionString" value="DefaultEndpointsProtocol=https;AccountName=vizzop;AccountKey=t+HUSi6EdcIqkCgeyJY2yesdp+Ti+rgLYpOPDlwFpp49uNI/2sGeI5Fx1A+syOfZCe2C6rYPqIWb/83Zbo9nTQ==" />
+    </ConfigurationSettings>
+    <Certificates>
+      <Certificate name="Microsoft.WindowsAzure.Plugins.RemoteAccess.PasswordEncryption" thumbprint="D12DF87F7946FE34AE70EAB59CD4EAC7020302C6" thumbprintAlgorithm="sha1" />
+    </Certificates>
+  </Role>
+</ServiceConfiguration>

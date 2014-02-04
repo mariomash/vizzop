@@ -1,0 +1,213 @@
+﻿@model vizzopWeb.Models.Business
+@{
+    Layout = null;
+    vizzopWeb.Utils utils = new vizzopWeb.Utils();
+}
+<div class="content-header">
+    <h1>Widget Settings
+    </h1>
+</div>
+<div id="breadcrumb">
+    <a class="tip-bottom"><i class="icon-home"></i>
+        <span style="vertical-align: middle;">Control Panel</span></a><a style="vertical-align: middle;" class="current">Widget Settings</a>
+</div>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="widget-box">
+            <div class="widget-title">
+                <span class="icon">
+                    <i class="icon-th"></i>
+                </span>
+                <h5>Widget Settings</h5>
+            </div>
+            <h4>Widget Settings</h4>
+            <br />
+            <div id="WidgetSettings">
+                <form class="widget-content form-vertical">
+                    <div style="width: 420px; vertical-align: top; display: inline-block; border-right: solid 1px #ddd; padding-right: 20px;">
+                        <div style="width: 210px; display: inline-block; vertical-align: top;">
+                            <div class="control-group">
+                                @Html.LabelFor(model => model.WidgetBackgroundColor, new { @class = "control-label" })
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.WidgetBackgroundColor, new { @class = "colorwell input-small" })
+                                    @Html.ValidationMessageFor(model => model.WidgetBackgroundColor, null, new { @class = "help-inline" })
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                @Html.LabelFor(model => model.WidgetForegroundColor, new { @class = "control-label" })
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.WidgetForegroundColor, new { @class = "colorwell input-small" })
+                                    @Html.ValidationMessageFor(model => model.WidgetForegroundColor, null, new { @class = "help-inline" })
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                @Html.LabelFor(model => model.WidgetBorderColor, new { @class = "control-label" })
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.WidgetBorderColor, new { @class = "colorwell input-small" })
+                                    @Html.ValidationMessageFor(model => model.WidgetBorderColor, null, new { @class = "help-inline" })
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="control-group">
+                                @Html.LabelFor(model => model.WidgetText, new { @class = "control-label" })
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.WidgetText, new { @class = "input-large", @placeholder = "Automatic if none", @onkeyup = "javascript:updatewidget();", @maxlength = "35" })
+                                    @Html.ValidationMessageFor(model => model.WidgetText, null, new { @class = "help-inline" })
+                                </div>
+                            </div>
+                            <div class="control-group" style="display: none;">
+                                @Html.LabelFor(model => model.BusinessHours, new { @class = "control-label" })
+                                <div class="controls">
+                                    @Html.TextAreaFor(model => model.BusinessHours, new { @class = "input-medium", @placeholder = "Business Hours" })
+                                    @Html.ValidationMessageFor(model => model.BusinessHours, null, new { @class = "help-inline" })
+                                </div>
+                            </div>
+                        </div>
+                        <div style="width: 200px; display: inline-block; vertical-align: top;">
+                            <div id="picker"></div>
+                        </div>
+                    </div>
+                    <div style="width: 300px; vertical-align: top; display: inline-block; padding-left: 20px;">
+                        <div class="control-group-">
+                            <h5>Preview</h5>
+                        </div>
+                        <div style="width: 500px; height: 250px; background-color: #fafafa; position: relative; overflow: hidden; border: 1px solid #CCCCCC;">
+                            <div style="width: 500px; position: absolute; bottom: 30px; left: 30px; top: auto; right: auto; text-align: justify; color: #bbbbbb;">
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer volutpat fringilla ipsum. Curabitur facilisis nulla quis vulputate tincidunt. Aenean auctor libero libero, id interdum ipsum blandit non. Suspendisse mi tellus, suscipit et felis id, pulvinar feugiat mauris. Pellentesque scelerisque urna bibendum nisl feugiat pretium id non metus. Vestibulum laoreet justo id semper commodo. Nullam cursus convallis felis in tristique. Sed id lorem erat. Phasellus elementum risus at turpis suscipit, non accumsan nunc faucibus.
+                                </p>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer volutpat fringilla ipsum. Curabitur facilisis nulla quis vulputate tincidunt. Aenean auctor libero libero, id interdum ipsum blandit non. Suspendisse mi tellus, suscipit et felis id, pulvinar feugiat mauris. Pellentesque scelerisque urna bibendum nisl feugiat pretium id non metus. Vestibulum laoreet justo id semper commodo. Nullam cursus convallis felis in tristique. Sed id lorem erat. Phasellus elementum risus at turpis suscipit, non accumsan nunc faucibus.
+                                </p>
+                            </div>
+                            <div class="zs_dialog ui-draggable focused" id="box_8721741" style="position: absolute; display: block; margin-left: 0px; margin-top: 0px; bottom: 0; left: 50px; z-index: 990002; width: auto; height: auto; right: auto; top: auto;">
+                                <div class="zs_dialog_inner" style="display: none;">
+                                    <div class="zs_dialog_title"><span class="title">Zentralized Ltd. - Live Support</span><span class="zs_dialogclosebutton"><i class="icon-remove"></i></span></div>
+                                    <div class="zs_boxinfo"></div>
+                                    <div class="boxstatus"></div>
+                                </div>
+                                <span id="dialoghandle" class="zs_dialoghandle" style="background-color: @Model.WidgetBackgroundColor !important; color: @Model.WidgetForegroundColor !important; border: solid 1px @Model.WidgetBorderColor"><i class="icon-comment icon-white zs_hoverbarimg"></i><span class="zs_hoverbartext" id="dialogtext"></span>
+                                    <div style="clear: both; text-align: right; padding: 4px 15px; background-color: #333333 !important; color: white !important;">Chat Powered by vizzop</div>
+                                </span>
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <div class="control-group-">
+                            <a class="btn btn-primary" onclick="javascript:save_changes();">Save Changes</a>
+                            <a class="btn" onclick="javascript:set_defaults();">Reset to Defaults</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div id="WidgetLoading" style="display: none;">
+                <div class="loading" style="margin-top: 100px;">
+                    <div style="text-align: center;">
+                        saving...
+                    </div>
+                    <div style="text-align: center; margin-top: 5px;">
+                        <img src="@Url.Content("~/Content/images/loading.gif")" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var default_bg = '@Model.WidgetBackgroundColor';
+    var default_fb = '@Model.WidgetForegroundColor';
+    var default_border = '@Model.WidgetBorderColor';
+    @if ((Model.WidgetText != null) && (Model.WidgetText != ""))
+    {
+        <text>var default_text = '@Model.WidgetText';</text>
+    }
+    else
+    {
+        <text>var default_text = '@utils.LocalizeLang("click_support", utils.GetLang(HttpContext.Current), null)';</text>
+    }
+
+    var default_businesshours = '@Model.BusinessHours';
+
+    $(document).ready(function () {
+        $('#dialogtext').text(default_text);
+        var f = $.farbtastic('#picker');
+        var p = $('#picker').css('opacity', 0.25);
+        var selected;
+        $('.colorwell')
+          .each(function () { f.linkTo(this); $(this).css('opacity', 0.75); })
+          .focus(function () {
+              if (selected) {
+                  $(selected).css('opacity', 0.75).removeClass('colorwell-selected');
+              }
+              $(selected = this).css('opacity', 1).addClass('colorwell-selected');
+              f.linkTo(function callback(color) {
+                  $(selected)
+                      .val(color);
+                  updatewidget();
+              });
+              p.css('opacity', 1);
+          });
+    });
+    function updatewidget() {
+        var w_text = default_text;
+        var new_text = $('#WidgetText').val();
+        if (new_text) {
+            w_text = new_text;
+        }
+        $('#dialogtext').text(w_text);
+        $('.colorwell').each(function () {
+            $(this).attr('style', 'background-color: ' + $(this).val() + ';');
+        });
+        $('#dialoghandle').attr('style', 'background-color: ' + $('#WidgetBackgroundColor').css('background-color') + ' !important; color: ' + $('#WidgetForegroundColor').css('background-color') + ' !important; border: solid 1px ' + $('#WidgetBorderColor').css('background-color') + ' !important; border-bottom: none !important;');
+    }
+    function set_defaults() {
+        $('#WidgetText').val('');
+        $('#BusinessHours').val('');
+        $('#dialogtext').val(default_text);
+        $('#WidgetBackgroundColor').val(default_bg);
+        $('#WidgetForegroundColor').val(default_fb);
+        $('#WidgetBorderColor').val(default_border);
+        updatewidget();
+    }
+    function save_changes() {
+        try {
+            $("WidgetSettings").hide();
+            $("WidgetLoading").show();
+            //vizzoplib.log(interlocutor);
+            var msg = {
+                'WidgetBackgroundColor': $('#WidgetBackgroundColor').val(),
+                'WidgetForegroundColor': $('#WidgetForegroundColor').val(),
+                'WidgetBorderColor': $('#WidgetBorderColor').val(),
+                'WidgetText': $('#WidgetText').val(),
+                'BusinessHours': $('#BusinessHours').val(),
+            };
+            var url = "../Panel/SaveWidgetSettings";
+            var post = jQuery.ajax({
+                url: url,
+                type: "POST",
+                data: msg,
+                dataType: "json",
+                beforeSend: function (xhr) {
+                },
+                success: function (data) {
+                    $("WidgetSettings").show();
+                    $("WidgetLoading").hide();
+                    if (data == true) {
+                        alert("changes saved");
+                    } else {
+                        alert("error saving changes");
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    $("WidgetSettings").show();
+                    $("WidgetLoading").hide();
+                    vizzoplib.logAjax(url, msg, jqXHR);
+                }
+            });
+        } catch (err) {
+            vizzoplib.log("Error Saving Changes" + "/" + err);
+        }
+    }
+</script>

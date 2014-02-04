@@ -1,0 +1,10 @@
+
+/*
+delete from supportsessions;
+delete from conversers;
+delete from businessclients;
+delete from websites; 
+delete from supportoperators;
+delete from messages;  
+*/
+select * from textstrings; 

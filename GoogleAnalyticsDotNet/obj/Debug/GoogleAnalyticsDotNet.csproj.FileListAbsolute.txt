@@ -1,0 +1,10 @@
+C:\desarrollo\google-analytics-dot-net\GoogleAnalyticsDotNet\bin\Debug\GoogleAnalyticsDotNet.dll
+C:\desarrollo\google-analytics-dot-net\GoogleAnalyticsDotNet\bin\Debug\GoogleAnalyticsDotNet.pdb
+C:\desarrollo\google-analytics-dot-net\GoogleAnalyticsDotNet\obj\Debug\GoogleAnalyticsDotNet.csprojResolveAssemblyReference.cache
+C:\desarrollo\google-analytics-dot-net\GoogleAnalyticsDotNet\obj\Debug\GoogleAnalyticsDotNet.dll
+C:\desarrollo\google-analytics-dot-net\GoogleAnalyticsDotNet\obj\Debug\GoogleAnalyticsDotNet.pdb
+C:\Users\Mario\Documents\GitHub\Zentralized\GoogleAnalyticsDotNet\bin\Debug\GoogleAnalyticsDotNet.dll
+C:\Users\Mario\Documents\GitHub\Zentralized\GoogleAnalyticsDotNet\bin\Debug\GoogleAnalyticsDotNet.pdb
+C:\Users\Mario\Documents\GitHub\Zentralized\GoogleAnalyticsDotNet\obj\Debug\GoogleAnalyticsDotNet.csprojResolveAssemblyReference.cache
+C:\Users\Mario\Documents\GitHub\Zentralized\GoogleAnalyticsDotNet\obj\Debug\GoogleAnalyticsDotNet.dll
+C:\Users\Mario\Documents\GitHub\Zentralized\GoogleAnalyticsDotNet\obj\Debug\GoogleAnalyticsDotNet.pdb

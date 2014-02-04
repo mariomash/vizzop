@@ -1,0 +1,84 @@
+﻿@{
+    ViewBag.Title = "vizzop - SAAS Soporte Online & Analytics";
+}
+<style>
+    body, html {
+        background-color: #fff;
+    }
+</style>
+<div style="position: relative; padding: 15px 0;">
+    <div style="text-align: center; white-space: nowrap;">
+        <img src="@Url.Content("~/Content/images/logo.png")" style="width: 300px; margin: 10px 50px 0 0; display: inline-block; vertical-align: middle;" alt="vizzop"/>
+        <!---->
+        <div style="display: inline-block; vertical-align: middle; margin: 20px 30px 0 90px; text-align: center;">
+            <a  href="@Url.Action("Versions", "vizzop")" class="btn btn-primary btn-large" style="box-shadow: 0 0 9px orange; text-shadow: none;">
+                <div style="font-size: 24px;">Crear cuenta</div>
+                <div style="font-weight: normal; font-size: 12px; margin-top: 5px;">beta abierta</div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div style="background-image: url(@Url.Content("~/Content/images/bg_base.jpg")); background-position: center center; background-repeat: no-repeat; background-size: cover; padding: 15px; box-shadow: inset 0px 0px 5px 0px #232323;">
+    <div style="background-color: rgb(51, 51, 51); padding: 15px; border-radius: 10px; width: 700px; margin: 20px auto 40px; color: white; opacity: 0.9; box-shadow: 0px 0px 5px rgb(238, 238, 238);">
+        <h2 style="text-align: center; width: 700px; margin: 0 auto;">Soporte online con co-browsing y chat</h2>
+        <h3 style="text-align: center; width: 700px; margin: 0 auto;">Vea lo que su cliente ve en tiempo real y aumente sus ventas</h3>
+    </div>
+    <img src="@Url.Content("~/Content/images/feature1.png")" style="width: 810px; margin: 0 auto 20px; display: block;" alt="vizzop"/>
+</div>
+<div style="padding: 20px 0 20px; background-color: #fafafa;">
+    <div style="width: 960px; margin: 0 auto;">
+        <div class="span4" style="margin-left: 40px;">
+            <h3>¿Qué es vizzop?</h3>
+            <p><strong>¡Es la manera definitiva de ver a sus clientes en su web y de contactar con ellos!</strong></p>
+            <p><strong>Vizzop</strong> Es un plugin muy facil de instalar en su web, que le permitirá ver lo que sus clientes ven y hacen en su página en tiempo real, y además le permite chatear con ellos.</p>
+            <p>Además puede ver los vídeos de sus visitantes posteriormente, y dispone de un sistema de mensajes vía e-mail para atender a sus clientes, un sistema de FAQs y las estadísticas de acceso a su web más comunes.</p>
+        </div>
+        <div class="span7" style="margin-left: 80px;">
+            <iframe width="480" height="360" src="//www.youtube.com/embed/Tz3Rlra5qgQ" frameborder="0" allowfullscreen style="border: solid 5px #000; box-shadow: 0px 0px 5px #333; display: block; margin: 20px auto;"></iframe>
+        </div>
+        <div style="clear: both;"></div>
+    </div>
+</div>
+<!---webkit-box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.075) !important; -moz-box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.075) !important; box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.075) !important;-->
+<div style="padding: 20px 0 20px; background-color: #fff; border-top: dotted #aaa 1px;">
+    <div style="width: 960px; margin: 0 auto;">
+        <div class="span4" style="margin-left: 40px;">
+            <img src="@Url.Content("~/Content/images/lock.png")" alt="vizzop"/>
+        </div>
+        <div class="span7" style="margin-left: 80px; margin-top: 40px;">
+            <h2>Privacidad y Seguridad</h2>
+            <p>La tecnología que usa Vizzop sigue los estándares de seguridad que permiten la exclusiva privacidad de usted y de su cliente, conforme a las leyes de protección de datos, todo el tráfico viaja encriptado con SSL.</p>
+            <p>Nos interesa mucho la seguridad de usted y de su cliente.</p>
+        </div>
+        <div style="clear: both;"></div>
+    </div>
+</div>
+
+<div style="padding: 20px 0 20px; background-color: #fafafa; border-top: dotted #aaa 1px;">
+    <div style="width: 960px; margin: 0 auto;">
+        <div class="span7" style="margin-left: 40px; margin-top: 40px;">
+            <h2>Cloud Computing</h2>
+            <p>Basado en una tecnología completamente escalable, tanto si tiene 1 cliente como un millón Vizzop se adapta a las necesidades de su página web, proporcionando además la seguridad de que nunca perderá sus datos</p>
+            <p>Desde grandes empresas a pequeñas webs puede beneficiarse de nuestro sistema de soporte.</p>
+        </div>
+        <div class="span4" style="margin-left: 80px;">
+            <img src="@Url.Content("~/Content/images/cloud.png")" alt="vizzop"/>
+        </div>
+        <div style="clear: both;"></div>
+    </div>
+</div>
+
+<div style="padding: 20px 0 20px; background-color: #fff; border-top: dotted #aaa 1px; border-bottom: dotted #aaa 1px;">
+    <div style="width: 960px; margin: 0 auto;">
+        <div class="span4" style="margin-left: 40px;">
+            <img src="@Url.Content("~/Content/images/multiplatform.png")" alt="vizzop"/>
+        </div>
+        <div class="span7" style="margin-left: 80px; margin-top: 40px;">
+            <h2>Compatible con todos los dispositivos</h2>
+            <p>Da igual si su cliente se conecta a su web a través de un ordenador de sobremesa o un dispositivo móvil, su pantalla será accesible gracias al uso de las últimas tecnologías</p>
+            <p>Nos encontramos en fase beta para poder proporcionarle el SDK para IOS.</p>
+        </div>
+        <div style="clear: both;"></div>
+    </div>
+</div>

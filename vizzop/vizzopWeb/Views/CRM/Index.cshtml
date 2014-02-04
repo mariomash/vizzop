@@ -1,0 +1,201 @@
+﻿@model IEnumerable<vizzopWeb.Models.Business>
+
+@{
+    Layout = null;
+    vizzopWeb.Utils utils = new vizzopWeb.Utils();
+}
+
+<div class="content-header">
+    <h1>CRM
+    </h1>
+</div>
+<div id="breadcrumb">
+    <a class="tip-bottom"><i class="icon-home"></i>
+        <span style="vertical-align: middle;">Control Panel</span></a><a style="vertical-align: middle;" class="current">CRM</a>
+</div>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="widget-box">
+            <div class="widget-title">
+                <span class="icon">
+                    <i class="icon-th"></i>
+                </span>
+                <h5>Report Table</h5>
+            </div>
+            <div class="widget-content">
+                <div class="reportOptions" id="CRMReportOptions">
+                    <span style="display: inline-bCRMk; vertical-align: top; margin-left: 2px; padding-bottom: 2px;">
+                        <span style="vertical-align: middle" class="btn btn-primary" onclick="javascript:CRM_updatetable();">reload data</span>
+                    </span>
+                </div>
+                <div id="CRMReportResults" style="display: none;">
+                    <h3 style="text-align: center; text-transform: capitalize;" id="CRM_title">Businesses</h3>
+                    <div style="clear: both;">
+                        <table class="table table-striped" id="CRM_table">
+                            <thead>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="CRMReportLoading" style="margin-top: 150px;">
+                    <div class="loading">
+                        <div style="text-align: center;">
+                            loading...
+                        </div>
+                        <div style="text-align: center; margin-top: 5px;">
+                            <img src="@Url.Content("~/Content/images/loading.gif")" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    var CRM_oTable = null;
+    var CRM_Reloading_InCourse = null;
+
+    function CRM_updatetable() {
+        if (CRM_Reloading_InCourse == null) {
+            $("#CRMReportResults").hide();
+            $("#CRMReportLoading").show();
+            CRM_oTable.CRM_fnReloadAjax(getCRMURL(), function () { });
+        }
+    }
+
+    function getCRMURL() {
+        return '../CRM/GetCRMJson?';
+    }
+
+    $.fn.dataTableExt.oApi.CRM_fnReloadAjax = function (oSettings, sNewSource, fnCallback, bStandingRedraw) {
+        if (typeof sNewSource != 'undefined' && sNewSource != null) {
+            oSettings.sAjaxSource = sNewSource;
+        }
+        this.oApi._fnProcessingDisplay(oSettings, true);
+        var that = this;
+        var iStart = oSettings._iDisplayStart;
+        var aData = [];
+
+        this.oApi._fnServerParams(oSettings, aData);
+
+        oSettings.fnServerData(oSettings.sAjaxSource, aData, function (json) {
+            //(json);
+            //alert(json);
+            //that.fnSort([[4, 'desc']]);
+
+            //Clear the old information from the table
+            that.oApi._fnClearTable(oSettings);
+            $('#CRM_table_wrapper').hide();
+            $('#CRM_title').hide();
+            $('#CRM_no_visits').hide();
+
+            $("#CRMReportLoading").hide();
+            $("#CRMReportResults").show();
+
+            if (json == false) {
+                $('#CRM_no_visits').show();
+            } else {
+                //Got the data - add it to the table
+                var aData = (oSettings.sAjaxDataProp !== "") ?
+                that.oApi._fnGetObjectDataFn(oSettings.sAjaxDataProp)(json) : json;
+
+                if (aData != null) {
+
+                    if (aData.length > 0) {
+                        $('#CRM_table_wrapper').show();
+                        $('#CRM_title').show();
+                        $('#CRM_no_visits').hide();
+                    }
+
+                    for (var i = 0; i < aData.length; i++) {
+                        that.oApi._fnAddData(oSettings, aData[i]);
+                    }
+
+                    oSettings.aiDisplay = oSettings.aiDisplayMaster.slice();
+                    that.fnDraw();
+
+                    if (typeof bStandingRedraw != 'undefined' && bStandingRedraw === true) {
+                        oSettings._iDisplayStart = iStart;
+                        that.fnDraw(false);
+                    }
+
+                    that.oApi._fnProcessingDisplay(oSettings, false);
+
+                    //Callback user function - for event handlers etc
+                    if (typeof fnCallback == 'function' && fnCallback != null) {
+                        fnCallback(oSettings);
+                    }
+
+                }
+
+            }
+
+            CRM_Reloading_InCourse = null;
+
+        }, oSettings);
+    }
+
+
+    $(document).ready(function () {
+
+        CRM_oTable = $('#CRM_table').dataTable({
+            "aLengthMenu": [
+            [25, 50, 100, 200, -1],
+            [25, 50, 100, 200, "All"]
+            ],
+            "iDisplayLength": -1,
+            "bProcessing": false,
+            "fnServerData": function (sSource, aoData, fnCallback) {
+                CRM_Reloading_InCourse = $.ajax({
+                    "dataType": 'json',
+                    "type": "POST",
+                    "url": sSource,
+                    "data": aoData,
+                    "error": function () {
+                        CRM_Reloading_InCourse = null;
+                    },
+                    "success": fnCallback
+                });
+            },
+            "bAutoWidth": false,
+            /*"sAjaxSource": getAnalyticsURL(),*/
+            "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                $('td', nRow).addClass("clickable");
+            },
+            "fnInitComplete": function (oSettings, json) {
+            },
+            "aoColumns": [
+                {
+                    "bSearchable": true, "bVisible": true, "sTitle": "ID", "sWidth": "30px"
+                },
+                {
+                    "bSearchable": true, "bVisible": true, "sTitle": "Name", "sWidth": "100px"
+                },
+                {
+                    "bSearchable": true, "bVisible": true, "sTitle": "ApiKey", "sWidth": "100px"
+                },
+                {
+                    "bSearchable": true, "bVisible": true, "sTitle": "E-Mail", "sWidth": "100px"
+                },
+                {
+                    "bSearchable": true, "bVisible": true, "sTitle": "Phone", "sWidth": "100px"
+                }
+            ]
+        });
+        CRM_updatetable();
+        $("#CRM_table tbody tr").live("click", function (event) {
+
+            var id = CRM_oTable.fnGetData(this)[0];
+
+            if (vizzop.Daemon != null) {
+                //vizzop.Daemon.loadBusinessBox(id);
+            }
+
+        });
+    });
+</script>

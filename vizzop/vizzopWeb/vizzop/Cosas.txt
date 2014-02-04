@@ -1,0 +1,13 @@
+﻿Client -> empresa
+ |
+ |
+Website1
+ |
+ |
+Message
+ |
+ |
+Sender:Converser / Recipient:Converser
+ |						|
+ |						|
+Agent, User, webpage, etc...

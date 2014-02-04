@@ -1,0 +1,877 @@
+﻿.zs_dialog .bordered {
+    border: 2px solid #ddf;
+}
+
+.zs_dialog .popover {
+    z-index: 99993;
+    cursor: default;
+}
+
+    .zs_dialog .popover .inner {
+        background-color: #F5F599;
+        background: #F5F599;
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFAA', endColorstr='#FFFF66');
+        background: -webkit-gradient(linear, left top, left bottom, from(#FFFFAA), to(#FFFF66));
+        background: -moz-linear-gradient(top, #FFFFAA, #FFFF66);
+    }
+
+    .zs_dialog .popover .title {
+        background: transparent;
+        color: #A7A777;
+        border-bottom: none;
+        font-size: 14px;
+        text-align: center;
+    }
+
+    .zs_dialog .popover .content {
+        background: transparent;
+        padding: 5px 15px;
+    }
+
+    .zs_dialog .popover.left {
+        margin-left: -10px;
+    }
+
+    .zs_dialog .popover.above .arrow {
+        border-left: 15px solid transparent;
+        border-right: 15px solid transparent;
+        border-top: 15px solid #FFFF8A;
+        bottom: -9px;
+        left: 50%;
+        margin-left: -10px;
+    }
+
+    .zs_dialog .popover.right .arrow {
+        border-bottom: 15px solid transparent;
+        border-right: 15px solid #FFFF8A;
+        border-top: 15px solid transparent;
+        left: -9px;
+        margin-top: -10px;
+        top: 50%;
+    }
+
+    .zs_dialog .popover.below .arrow {
+        border-bottom: 15px solid #FFFF8A;
+        border-left: 15px solid transparent;
+        border-right: 15px solid transparent;
+        left: 50%;
+        margin-left: -10px;
+        top: -9px;
+    }
+
+    .zs_dialog .popover.left .arrow {
+        border-bottom: 15px solid transparent;
+        /*
+	border-left: 15px solid #FFFF8A;
+	*/
+        border-left: 15px solid #000000;
+        border-top: 15px solid transparent;
+        margin-top: -10px;
+        right: -9px;
+        top: 50%;
+    }
+
+    .zs_dialog .popover .actions {
+        padding: 10px;
+        margin: 10px 0 0 0; /*     background: #FFFF8A;     background-color: #FFFF8A;     border-top: 2px solid #ee0;     */
+        background: none;
+        border: none;
+        text-align: center;
+    }
+
+.zs_dialog {
+    z-index: 99991; /*    border: 4px solid #fff;*/
+    -moz-box-shadow: 0 0 3px #bbb;
+    -webkit-box-shadow: 0 0 3px #bbb;
+    box-shadow: 0 0 3px #bbb;
+    cursor: default; /*cursor: move;*/
+    padding: 0;
+    display: block;
+    overflow: visible;
+    /*
+	border-radius: 10px;
+	-ms-border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	-khtml-border-radius: 10px;
+	*/
+    -webkit-border-top-left-radius: 10px;
+    -webkit-border-top-right-radius: 10px;
+    -moz-border-radius-topleft: 10px;
+    -moz-border-radius-topright: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    background-color: white;
+    font-size: 12px;
+    /*opacity: .97;*/
+    *border: 1px solid #cccccc !important; /* IE 7 (IE6 also uses this, so put it first) */
+    _border: 1px solid #cccccc !important; /* IE 6 */
+    border: 1px solid #cccccc\0/ !important; /* IE 8-9 */
+}
+
+    .zs_dialog.focused {
+        box-shadow: 0 0 12px #777;
+        -moz-box-shadow: 0 0 12px #777;
+        -webkit-box-shadow: 0 0 12px #777;
+        /*opacity: 1;*/
+    }
+
+    .zs_dialog.controlBox {
+        border-radius: 0;
+        -ms-border-radius: 0;
+        -moz-border-radius: 0;
+        -webkit-border-radius: 0;
+        -khtml-border-radius: 0;
+        background-color: #FAFAFA;
+        background-color: #FFFFFF;
+        /*
+	border-top: 2px solid blue;
+	border-top: 1px solid blue;
+	*/
+        border-top: 1px solid #FAFAFF;
+        height: 35px;
+        z-index: 9999999;
+    }
+
+    .zs_dialog.stacked {
+        border-radius: 0;
+        -ms-border-radius: 0;
+        -moz-border-radius: 0;
+        -webkit-border-radius: 0;
+        -khtml-border-radius: 0;
+        background-color: Transparent;
+        box-shadow: none;
+        -moz-box-shadow: none;
+        -webkit-box-shadow: none;
+        z-index: 10;
+    }
+
+.zs_dialog_inner {
+    border-radius: 6px;
+    -ms-border-radius: 6px;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    -khtml-border-radius: 6px;
+}
+
+.zs_dialog.videochat {
+}
+
+.zs_dialog.chat {
+}
+
+.zs_dialoghandle {
+    background-color: #555555;
+    /*
+	-webkit-border-top-left-radius: 10px;
+	-webkit-border-top-right-radius: 10px;
+	-moz-border-radius-topleft: 10px;
+	-moz-border-radius-topright: 10px;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	*/
+    display: block;
+    text-align: center;
+    border: 1px solid white;
+    border-bottom: none;
+    cursor: pointer;
+}
+
+.zs_dialogclosebutton {
+    border-radius: 11px;
+    -ms-border-radius: 11px;
+    -moz-border-radius: 11px;
+    -webkit-border-radius: 11px;
+    -khtml-border-radius: 11px;
+    /*
+	background-color: #c9c9c9;
+	*/
+    border: 1px solid #ffffff;
+    color: #fff;
+    cursor: pointer;
+    display: block;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1em;
+    margin: 3px;
+    padding: 4px;
+    position: absolute;
+    right: 0;
+    text-transform: uppercase;
+    top: 0;
+    -moz-transition: border 0.2s linear 0s, box-shadow 0.2s linear 0s;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) inset; /*text-shadow: #444444 0px 0px 2px;*/
+    background-color: #FAFAFA;
+}
+
+    .zs_dialogclosebutton:hover {
+        -moz-transition: border 0.2s linear 0s, box-shadow 0.2s linear 0s;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) inset;
+        background-color: #0044cc;
+        border: 1px solid #0022aa;
+        color: White;
+    }
+
+.zs_dialogtogglebarbutton {
+    border-radius: 11px;
+    -ms-border-radius: 11px;
+    -moz-border-radius: 11px;
+    -webkit-border-radius: 11px;
+    -khtml-border-radius: 11px;
+    /*
+	background-color: #c9c9c9;
+	*/
+    border: 1px solid #ffffff;
+    color: #000;
+    cursor: pointer;
+    /*
+	display: block;
+	*/
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1em;
+    margin: 3px;
+    padding: 4px;
+    position: absolute;
+    left: 0;
+    text-transform: uppercase;
+    top: 0;
+    -moz-transition: border 0.2s linear 0s, box-shadow 0.2s linear 0s;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) inset; /*text-shadow: #444444 0px 0px 2px;*/
+    background-color: #FAFAFA;
+    font-weight: bold;
+    /*display: none;*/
+}
+
+    .zs_dialogtogglebarbutton:hover {
+        -moz-transition: border 0.2s linear 0s, box-shadow 0.2s linear 0s;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) inset;
+        background-color: #0044cc;
+        border: 1px solid #0022aa;
+        color: White;
+    }
+
+.zs_dialog .boxstatus {
+    display: none;
+    background-color: #DDDDFF;
+    border: none;
+    border-top: 1px solid #DDDDFF;
+    color: #666699;
+    font-size: 11px;
+    height: 20px;
+    overflow: hidden;
+    padding: 2px 8px;
+    text-align: left;
+}
+
+    .zs_dialog .boxstatus a {
+        color: #000;
+        text-decoration: underline;
+        font-weight: bold;
+    }
+
+.zs_dialog.chat .boxstatus {
+    display: block;
+    width: 244px;
+}
+
+.zs_dialog.screenshare .boxstatus {
+    width: auto;
+    clear: both;
+}
+
+.zs_dialog .title {
+    /*padding: 0.2em 0.4em;*/
+    display: block;
+    padding: 6px 15px 5px 15px;
+    text-align: center;
+    font-weight: bold; /*     margin-bottom: 15px;     */ /*     color: #77A; */
+    color: #999999;
+    font-size: 13px;
+    background-color: #FCFCFC;
+    border-bottom: 1px solid #EEEEEE;
+    /*filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#FCFCFC');*/
+    background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#FCFCFC));
+    background: -moz-linear-gradient(top, #ffffff, #FCFCFC);
+    border-top-left-radius: 8px;
+    -ms-border-top-left-radius: 8px;
+    -moz-border-top-left-radius: 8px;
+    -moz-border-radius-topleft: 8px;
+    -webkit-border-top-left-radius: 8px;
+    -khtml-border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    -ms-border-top-right-radius: 8px;
+    -moz-border-top-right-radius: 8px;
+    -moz-border-radius-topright: 8px;
+    -webkit-border-top-right-radius: 8px;
+    -khtml-border-top-right-radius: 8px;
+    cursor: move;
+}
+
+.zs_dialog.focused .title {
+    border-bottom: 1px solid #ccc;
+    color: #333;
+    background-color: #eaeaea;
+    background: -webkit-gradient(linear, left top, left bottom, from(#F9F9F9), to(#E9E9E9));
+    background: -moz-linear-gradient(top, #F9F9F9, #E9E9E9);
+}
+
+.zs_dialog.stacked .title {
+    background-color: #d0d0d0;
+    background: #d0d0d0;
+    border-radius: 0px;
+    -moz-border-radius: 0px;
+    -webkit-border-radius: 0px;
+    -khtml-border-radius: 0px;
+    text-align: left;
+    color: #444;
+    cursor: default;
+    padding: 5px 8px;
+    background-color: #efefef;
+    background-image: -webkit-gradient(linear, 0 0%, 0 100%, from(#fdfdfd), to(#eaeaea));
+    background-image: -webkit-linear-gradient(top, #fdfdfd 0%, #eaeaea 100%);
+    background-image: -moz-linear-gradient(top, #fdfdfd 0%, #eaeaea 100%);
+    background-image: -ms-linear-gradient(top, #fdfdfd 0%, #eaeaea 100%);
+    background-image: -o-linear-gradient(top, #fdfdfd 0%, #eaeaea 100%);
+    background-image: -linear-gradient(top, #fdfdfd 0%, #eaeaea 100%);
+    border-bottom: 1px solid #CDCDCD;
+}
+
+.zs_dialog.stacked .zs_dialogtogglebarbutton {
+    display: none;
+}
+
+.zs_dialog.controlBox .title {
+    border-radius: 0px;
+    -moz-border-radius: 0px;
+    -webkit-border-radius: 0px;
+    -khtml-border-radius: 0px;
+    border: none;
+    filter: none;
+    background: none;
+    cursor: default;
+}
+
+.zs_dialog_title {
+    /*
+	border-bottom: solid 1px #ffffff;
+*/
+    position: relative;
+    border-radius: 6px;
+    -ms-border-radius: 6px;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    -khtml-border-radius: 6px;
+}
+
+.zs_dialog.focused .zs_dialog_title {
+}
+
+.zs_dialog.controlBox .zs_dialog_title {
+    width: 250px; /*     display: inline-block;     */
+    vertical-align: top;
+    border: none;
+    display: none;
+}
+
+.zs_dialog.chat .title {
+    margin-bottom: 0px;
+    /*padding-right: 35px;*/
+    text-align: center;
+}
+
+.zs_dialog h3 {
+    text-align: center;
+}
+
+.zs_dialog .btn, .popover .btn {
+    margin: 1px;
+    display: inline-block;
+}
+
+.zs_dialog.controlBox .btn {
+    text-align: left;
+    max-width: 300px;
+    min-width: 150px;
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+    border-radius: 0;
+}
+
+.zs_dialog.stacked .item {
+    text-align: left;
+    display: block;
+    cursor: pointer;
+    padding: 5px; /*
+	margin: 5px 0 5px 0;
+*/
+    /*background-color: White;*/
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    /*
+	background-color: #333;
+	color: #eee;
+	*/
+}
+
+    .zs_dialog.stacked .item:hover {
+        /*
+	background-color: #ddf;
+	*/
+        cursor: pointer;
+    }
+
+.zs_dialog.stacked .item_text {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 5px;
+    line-height: 23px;
+}
+
+[class^="icon-"] {
+    vertical-align: middle;
+}
+
+.zs_dialog.controlBox .button_text {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 5px;
+    line-height: 23px;
+}
+
+.zs_dialog .option {
+    color: #AAAAAA;
+    display: inline-block;
+    font-size: 13px;
+    margin: 0 30px;
+    text-align: right;
+    vertical-align: middle;
+    width: 60px;
+}
+
+.zs_dialog .optioncontents {
+    display: inline-block;
+    vertical-align: middle;
+    width: 200px;
+    text-align: left;
+}
+
+.zs_dialog .boxheader {
+    background-color: #FAFAFA;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FAFAFA', endColorstr='#FFFFFF');
+    background: -webkit-gradient(linear, left top, left bottom, from(#FAFAFA), to(#FFFFFF));
+    background: -moz-linear-gradient(top, #FAFAFA, #FFFFFF);
+    display: block; /*     height: 33px;     padding: 4px;     */
+    text-align: left;
+}
+
+.zs_dialog .boxheader, .zs_dialog .boxtextticket .boxheader {
+    border-bottom: 1px solid #DDDDDD;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F0F0FF', endColorstr='#F0F0FF');
+    background: -webkit-gradient(linear, left top, left bottom, from(#F0F0FF), to(#F0F0FF));
+    background: -moz-linear-gradient(top, #F0F0FF, #F0F0FF);
+    background: #F0F0FF;
+}
+
+    .zs_dialog .boxheader .btn, .zs_dialog .boxtextticket .boxheader .btn {
+        margin: 4px;
+    }
+
+.zs_dialog .boxinfo {
+    /*
+		border-top: solid 1px #eee;
+*/
+    display: block; /*     vertical-align: top;     text-align: center;     padding: 20px;     */
+    position: relative;
+}
+
+.zs_dialog.controlBox .boxinfo {
+    display: inline-block;
+    vertical-align: middle; /*     vertical-align: top;     text-align: center;     padding: 20px;     */
+}
+
+.zs_dialog .boxinfocontents {
+    display: block;
+    vertical-align: top;
+    text-align: center;
+    padding: 20px;
+}
+
+.zs_dialog.controlBox .boxinfocontents, .zs_dialog.chatlistBox .boxinfocontents {
+    padding: 0;
+    text-align: left;
+    overflow: hidden;
+}
+
+.zs_dialog .col0 {
+    display: block;
+    margin-right: 260px;
+    border-right: 1px solid #eee;
+    height: 509px;
+    width: 1054px;
+    position: relative;
+}
+
+.zs_dialog .col1 {
+    display: block;
+    width: 260px;
+    float: right;
+}
+
+.zs_dialog .boxscreenshare {
+    display: block;
+    height: 534px;
+    width: 739px;
+    overflow: scroll;
+}
+
+.zs_dialog .interlocutor_iframe {
+    display: block;
+    border: 0;
+    /*
+	height: 100%;
+	width: 100%;
+	*/
+}
+
+.zs_dialog .infoscreenshare {
+    display: block;
+    color: #000000;
+    background-color: Yellow;
+    text-align: center;
+    position: relative;
+    left: 0;
+    font-size: 11px;
+    font-weight: bold;
+    opacity: 0.90;
+    padding: 3px;
+    height: 18px;
+    overflow: hidden;
+    text-align: center;
+    margin-right: 260px;
+    z-index: 200;
+    /*
+	-webkit-border-bottom-left-radius: 10px;
+	-webkit-border-bottom-right-radius: 10px;
+	-moz-border-radius-bottomleft: 10px;
+	-moz-border-radius-bottomright: 10px;
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+	*/
+    border-bottom: solid 1px #eeeeee;
+}
+
+.zs_dialog .boxvideochat {
+    display: block;
+}
+
+.zs_dialog .boxtextchat {
+    display: block;
+}
+
+.zs_dialog .boxtextticket {
+    display: block;
+    padding: 0;
+    background-color: #fcfcfc;
+}
+
+.zs_dialog .chat_msgZone {
+    display: block;
+    height: 170px;
+    padding: 5px;
+    text-align: left;
+    overflow: hidden;
+    overflow-y: auto;
+    margin: 0;
+}
+
+.zs_dialog.screenshare .chat_msgZone {
+    height: 430px;
+}
+
+.zs_dialog .boxtextticket .chat_msgZone {
+    /*
+	margin: 10px;
+	*/
+    max-height: 320px;
+    min-height: 200px;
+    height: auto;
+    padding: 10px;
+}
+
+.zs_dialog .chat_infoZone {
+    color: #AAAAAA;
+    display: block;
+    font-size: 13px;
+    height: 16px;
+    overflow: hidden;
+    text-align: left;
+    padding: 5px 12px;
+}
+
+.zs_dialog.videochat .chat_msgZone {
+    height: 200px;
+}
+
+.zs_dialog .chat_videoZone {
+    display: block;
+    height: 200px;
+    overflow: hidden;
+    text-align: center;
+    position: relative;
+    background-color: #fafafa;
+    /*box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) inset;*/
+    border-bottom: solid 1px #dddddd;
+}
+
+.zs_dialog .videochat_me {
+    background-color: Black;
+    display: block;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    /*
+	width: 80px;
+	height: 60px;
+	*/
+    z-index: 99997;
+    border-left: solid 1px #999;
+    border-top: solid 1px #999;
+}
+
+.zs_dialog .videochat_interlocutor {
+    background-color: Black;
+    display: block;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 260px;
+    height: 200px;
+    z-index: 99996;
+}
+
+.zs_dialog .videochat_beforeallow {
+    background-color: Black;
+    display: block;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 260px;
+    height: 200px;
+    z-index: 99998;
+}
+
+.zs_dialog .chat_msgZone .message {
+    display: block;
+    clear: both;
+}
+
+.zs_dialog .dimmed {
+    color: #777777;
+}
+
+.zs_dialog .boxtextticket .chat_msgZone .message {
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    -moz-box-shadow: 0 0 2px #ddd;
+    -webkit-box-shadow: 0 0 2px #ddd;
+    box-shadow: 0 0 2px #ddd;
+    border: 1px solid #ddd;
+    display: block;
+    padding: 10px;
+    background-color: #ffffff;
+    margin-bottom: 10px;
+}
+
+.zs_dialog .chat_msgZone .message .contents {
+    display: block;
+    margin-left: 35px;
+    margin-right: 5px;
+}
+
+.zs_dialog .boxtextticket .chat_msgZone .message .contents {
+    border-top: 1px solid #EEEEEE;
+    font-size: 15px;
+    margin: 10px 0;
+    padding: 15px 0 0;
+}
+
+.zs_dialog .chat_msgZone .message .resend {
+    margin-left: 5px;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.zs_dialog .chat_msgZone .message .timestamp {
+    color: #a0a0a0;
+    display: inline-block;
+    font-size: 0.9em;
+    margin-right: 5px;
+    width: 30px;
+    float: left;
+    line-height: 20px;
+}
+
+.zs_dialog .boxtextticket .chat_msgZone .message .timestamp {
+    width: auto;
+}
+
+.zs_dialog .chat_msgZone .message .from {
+    display: block;
+    font-weight: bold;
+    border-bottom: 1px solid #F0f0f0;
+}
+
+.zs_dialog .boxtextticket .chat_msgZone .message .from {
+    border: none;
+}
+
+.zs_dialog .chat_inputZone {
+    display: block;
+    text-align: center;
+    background-color: #F0F0FF;
+    padding: 10px;
+    position: relative;
+    border-top: 1px solid #DDDDDD;
+}
+
+.zs_dialog .ticket_inputZone {
+    display: block;
+    text-align: left;
+    background-color: #F0F0FF;
+    padding: 10px;
+    position: relative;
+    border-top: 1px solid #eee;
+}
+
+.zs_dialog .hr {
+    margin: 0;
+}
+
+.zs_dialog .chat_inputTextArea {
+    width: 230px;
+    height: 35px;
+    padding: 5px;
+    margin: 0 auto;
+    resize: none;
+    text-align: left;
+}
+
+.zs_dialog .ticket_inputTextArea {
+    width: 405px;
+    height: 100px;
+    padding: 5px;
+    margin: 0 auto;
+    resize: none;
+    text-align: left;
+}
+
+.zs_dialog .zs_hoverbartext {
+    display: inline-block;
+    vertical-align: middle;
+    font-weight: bold;
+    /*
+	font-size: 13px;
+	*/
+    margin: 5px 15px 5px 10px;
+    font-size: 14px;
+    color: #eeeeee;
+}
+
+.zs_dialog .zs_hoverbarimg {
+    margin: 5px 0 5px 10px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.zs_dialog ul, .zs_dialog ol {
+    margin: 0;
+}
+
+.zs_dialog h1 {
+    line-height: normal;
+    margin: 0;
+    padding: 0;
+}
+
+.zs_dialog hr {
+    margin: 20px 30px;
+}
+
+.zs_dialog.chatlistBox hr {
+    margin: 0;
+}
+
+.zs_dialog input, .zs_dialog textarea {
+    vertical-align: middle;
+}
+
+    .zs_dialog input[disabled], .zs_dialog select[disabled], .zs_dialog textarea[disabled], .zs_dialog input[readonly], .zs_dialog select[readonly], .zs_dialog textarea[readonly] {
+        background-color: whiteSmoke;
+        border-color: #DDD;
+        cursor: not-allowed;
+    }
+
+.zs_dialog h3, .zs_dialog h4, .zs_dialog h5, .zs_dialog h6 {
+    line-height: 1.2em;
+}
+
+.zs_dialog .clearfix {
+    text-align: left;
+}
+
+.zs_dialog .alert {
+    padding: 10px;
+}
+
+.zs_dialog input, .zs_dialog textarea, .zs_dialog select, .zs_dialog .uneditable-input {
+    margin: 0;
+}
+
+.zs_dialog .form-horizontal label {
+    float: left;
+    width: 120px;
+    text-align: right;
+    margin: 10px 10px 0 0;
+    color: #111111;
+}
+
+.zs_dialog .form-horizontal .actions {
+    background-color: #FAFAFA;
+    border-top: 1px solid #EEEEEE;
+    margin: 10px 0 0;
+    padding: 10px 0;
+    text-align: left;
+}
+
+.zs_dialog .ui-state-error {
+    background-color: #FFEEEE;
+    border: 1px solid red;
+    -moz-box-shadow: 0 0 6px #ddd;
+    -webkit-box-shadow: 0 0 6px #ddd;
+    box-shadow: 0 0 6px #ddd;
+}
+
+.zs_dialog .warning {
+    color: Red;
+}
+
+.zs_dialog .eee {
+    /* supply height to ensure consistent positioning for every browser */
+    height: 15px;
+    background-color: #FFFE36;
+    border: 1px solid #E1E16D;
+    font-size: 11px;
+    color: #000;
+    padding: 3px 10px;
+    margin-left: -2px; /* CSS3 spicing for mozilla and webkit */
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius-bottomleft: 0;
+    -moz-border-radius-topleft: 0;
+    -webkit-border-bottom-left-radius: 0;
+    -webkit-border-top-left-radius: 0;
+    -moz-box-shadow: 0 0 6px #ddd;
+    -webkit-box-shadow: 0 0 6px #ddd;
+}

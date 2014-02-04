@@ -1,0 +1,47 @@
+﻿@model IEnumerable<Zentralized.Models.Log>
+@{
+    Layout = null;
+}
+<script type="text/javascript">
+/*
+    $(document).ready(function () {
+        $('#Logs_table').dataTable({
+            "aoColumns": [
+      null,
+      null,
+      { "bSortable": false },
+    ]
+        });
+    });
+*/
+</script>
+<table class="table table-striped" id="Logs_table">
+    <thead>
+        <tr>
+            <th>
+                Text
+            </th>
+            <th>
+                TimeStamp
+            </th>
+            <th>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Text)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TimeStamp)
+                </td>
+                <td>
+                    <a href="@Url.Action("Details", new { id = item.ID })" class="btn"><i class="icon-list-alt"></i>&nbsp;Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

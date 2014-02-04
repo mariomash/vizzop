@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "vizzop", "vizzop\vizzop.ccproj", "{31E43049-5625-40BF-8004-46C9E6D1C344}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vizzopWeb", "vizzopWeb\vizzopWeb.csproj", "{EF5DA396-C318-4C16-8D35-30619C1B67EA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vizzopWorker", "vizzopWorker\vizzopWorker.csproj", "{39630F95-8F2D-4E4A-B190-6CE13BEBEFB9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vizzopCache", "vizzopCache\vizzopCache.csproj", "{58DE907C-C2CE-4777-8AAB-067AA8EFEB91}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{31E43049-5625-40BF-8004-46C9E6D1C344}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31E43049-5625-40BF-8004-46C9E6D1C344}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31E43049-5625-40BF-8004-46C9E6D1C344}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31E43049-5625-40BF-8004-46C9E6D1C344}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF5DA396-C318-4C16-8D35-30619C1B67EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF5DA396-C318-4C16-8D35-30619C1B67EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF5DA396-C318-4C16-8D35-30619C1B67EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF5DA396-C318-4C16-8D35-30619C1B67EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39630F95-8F2D-4E4A-B190-6CE13BEBEFB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39630F95-8F2D-4E4A-B190-6CE13BEBEFB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39630F95-8F2D-4E4A-B190-6CE13BEBEFB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39630F95-8F2D-4E4A-B190-6CE13BEBEFB9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58DE907C-C2CE-4777-8AAB-067AA8EFEB91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58DE907C-C2CE-4777-8AAB-067AA8EFEB91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58DE907C-C2CE-4777-8AAB-067AA8EFEB91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58DE907C-C2CE-4777-8AAB-067AA8EFEB91}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

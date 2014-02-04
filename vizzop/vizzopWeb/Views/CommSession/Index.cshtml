@@ -1,0 +1,329 @@
+﻿@model IEnumerable<vizzopWeb.Models.CommSession>
+@{
+
+    Layout = null;
+    vizzopWeb.Utils utils = new vizzopWeb.Utils();
+}
+<div class="content-header">
+    <h1>Client Support
+    </h1>
+</div>
+<div id="breadcrumb">
+    <a class="tip-bottom"><i class="icon-home"></i>
+        <span style="vertical-align: middle;">Control Panel</span><a style="vertical-align: middle;" class="current">Customer Support</a></a>
+</div>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="widget-box">
+            <div class="widget-title">
+                <span class="icon">
+                    <i class="icon-th"></i>
+                </span>
+                <h5>Client Support Report</h5>
+            </div>
+            <div class="widget-content">
+                <div class="reportOptions" id="CommSessionReportOptions">
+                    <span style="color: #888;">
+                        <label for="commsession_filter" style="display: inline-block; vertical-align: middle; margin: 0;">
+                            Show
+                        </label>
+                        <span style="vertical-align: middle; display: inline-block; margin: 0;">@Html.DropDownList("commsession_filter", (List<SelectListItem>)ViewBag.filter_items,
+new { onchange = "Comm_updatetable();", @class = "input-large" })</span>
+                        <span style="vertical-align: middle; display: inline-block; margin: 0;" id="commsession_text_updating"></span>
+                    </span>
+                    <!--
+		<span style="float: left;">
+			<a href="Url.Action("Create")" class='btn'><i class="icon-plus"></i>&nbsp;Create New Ticket</a>
+		</span>
+		-->
+                    <span style="display: inline-block; vertical-align: top; margin-left: 2px; padding-bottom: 2px;">
+                        <span style="vertical-align: middle" class="btn btn-primary" onclick="javascript:Comm_updatetable();">reload data</span>
+                    </span>
+                </div>
+                <div id="CommSessionReportResults" style="display: none;">
+                    <h3 style="text-align: center;" id="customer_support_title"></h3>
+                    <table class="table table-striped" id="CommSession_table">
+                        <thead>
+                            <tr>
+                                <th>ID
+                                </th>
+                                <th>Type
+                                </th>
+                                <th>Status
+                                </th>
+                                <th>Client
+                                </th>
+                                <th>Agent
+                                </th>
+                                <th>Blocked by
+                                </th>
+                                <th>Date
+                                </th>
+                                <th>Date
+                                </th>
+                                <th>Messages
+                                </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+
+                    <div id="no_tickets" class="" style="margin-top: 150px; text-align: center; display: none; width: 400px; margin: 100px auto 0;">
+                        <h4>No chats or tickets found</h4>
+                        <hr />
+                        <p>Did you installed the vizzop script?</p>
+                        <p>Go to <a href="#quickstart" onclick="javascript:showQuickStart();">Widget Installation</a> to find out how to install the script.</p>
+                    </div>
+                </div>
+                <div id="CommSessionReportLoading" style="margin-top: 150px;">
+                    <div class="loading">
+                        <div style="text-align: center;">
+                            loading...
+                        </div>
+                        <div style="text-align: center; margin-top: 5px;">
+                            <img src="@Url.Content("~/Content/images/loading.gif")" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    var Comm_Reloading_InCourse = null;
+    var Comm_oTable = null;
+
+    function Comm_updatetable() {
+        if (Comm_Reloading_InCourse == null) {
+            $('#commsession_filter').attr("disabled", "disabled");
+            $("#CommSessionReportResults").hide();
+            $("#CommSessionReportLoading").show();
+            Comm_oTable.Comm_fnReloadAjax(getCommSessionsURL(), function () { });
+        }
+    }
+
+    function getCommSessionsURL() {
+        return '../CommSession/GetCommSessionsJson?commsession_filter=' + $("#commsession_filter").val();
+    }
+
+    $.fn.dataTableExt.oApi.Comm_fnReloadAjax = function (oSettings, sNewSource, fnCallback, bStandingRedraw) {
+        if (typeof sNewSource != 'undefined' && sNewSource != null) {
+            oSettings.sAjaxSource = sNewSource;
+        }
+        this.oApi._fnProcessingDisplay(oSettings, true);
+        var that = this;
+        var iStart = oSettings._iDisplayStart;
+        var aData = [];
+
+        this.oApi._fnServerParams(oSettings, aData);
+
+        oSettings.fnServerData(oSettings.sAjaxSource, aData, function (json) {
+
+            $('#commsession_filter').removeAttr("disabled");
+            $("#CommSessionReportResults").show();
+            $("#CommSessionReportLoading").hide();
+
+            //Clear the old information from the table
+            that.oApi._fnClearTable(oSettings);
+            $('#CommSession_table_wrapper').hide();
+            $('#customer_support_title').hide();
+            $('#no_tickets').hide();
+
+            //Got the data - add it to the table
+            var aData = (oSettings.sAjaxDataProp !== "") ?
+that.oApi._fnGetObjectDataFn(oSettings.sAjaxDataProp)(json) : json;
+
+            if (aData != null) {
+
+                if (aData.length > 0) {
+                    $('#CommSession_table_wrapper').show();
+                    $('#customer_support_title').show();
+                } else {
+                    $('#no_tickets').show();
+                }
+
+
+                for (var i = 0; i < aData.length; i++) {
+                    that.oApi._fnAddData(oSettings, aData[i]);
+                }
+
+                oSettings.aiDisplay = oSettings.aiDisplayMaster.slice();
+                that.fnDraw();
+
+                if (typeof bStandingRedraw != 'undefined' && bStandingRedraw === true) {
+                    oSettings._iDisplayStart = iStart;
+                    that.fnDraw(false);
+                }
+
+                that.oApi._fnProcessingDisplay(oSettings, false);
+
+                $('#CommSession_table tbody tr').each(function () {
+                    $(this).find('td:eq(2)').attr('nowrap', 'nowrap');
+                });
+
+                //Callback user function - for event handlers etc
+                if (typeof fnCallback == 'function' && fnCallback != null) {
+                    fnCallback(oSettings);
+                }
+
+            }
+
+            Comm_Reloading_InCourse = null;
+
+        }, oSettings);
+
+    }
+
+    $(document).ready(function () {
+
+        Comm_oTable = $('#CommSession_table').dataTable({
+            "aLengthMenu": [
+            [25, 50, 100, 200, -1],
+            [25, 50, 100, 200, "All"]
+            ],
+            "iDisplayLength": -1,
+            "bProcessing": false,
+            "fnServerData": function (sSource, aoData, fnCallback) {
+                Comm_Reloading_InCourse = $.ajax({
+                    "dataType": 'json',
+                    "type": "POST",
+                    "url": sSource,
+                    "data": aoData,
+                    "error": function () {
+                        Comm_Reloading_InCourse = null;
+                    },
+                    "success": fnCallback
+                });
+            },
+            "bAutoWidth": false,
+            /*"sAjaxSource": getCommSessionsURL(),*/
+            'fnRowCallback': function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                $('td', nRow).addClass("clickable");
+                if (aData[9] == true) {
+                    //.addClass("text-error")
+                    $('td', nRow).css({ 'font-weight': 'bold' });
+                } else {
+                    $('td', nRow).css({ 'font-weight': 'normal' });
+                }
+                if (aData[10] > 1) {
+                    if ($('td .badge', nRow).length == 0) {
+                        //.addClass("text-error")
+                        var badge = $('<span></span>')
+                            .text(aData[10])
+                            .addClass('badge badge-inverse')
+                            .css({ 'margin-right': '5px' });
+                        $('td:eq(4)', nRow).prepend(badge);
+                    }
+                }
+            },
+            "fnInitComplete": function (oSettings, json) {
+            },
+            "aoColumns": [
+                {
+                    /* ID */
+                    "sWidth": "50px",
+                    "bVisible": false
+                },
+                {
+                    /* SESSIONTYPE */
+                    "bSearchable": false,
+                    "bVisible": false
+                },
+                {
+                    /* STATUS */
+                    "bSearchable": false,
+                    "sWidth": "110px"
+                },
+                {
+                    /* NAME */
+                    "bSearchable": true,
+                    "bVisible": true,
+                    "sWidth": "110px"
+                },
+                {
+                    /* AGENTS */
+                    "bSearchable": false,
+                    "bVisible": true,
+                    "sWidth": "110px"
+                },
+                {
+                    /* BLOCKED BY */
+                    "bSearchable": false,
+                    "bVisible": true,
+                    "sWidth": "110px"
+                },
+                {
+                    /* WAITING FROM (FORMATO DATETIME) */
+                    "bSearchable": false,
+                    "bVisible": false,
+                    "sType": "date"
+                },
+                {
+                    /* WAITING FROM (FORMATO HUMANO) */
+                    "bSearchable": false,
+                    "bVisible": true,
+                    "iDataSort": 6,
+                    "sWidth": "110px"
+                },
+                {
+                    /* LAST MESSAGE */
+                    "iDataSort": 6
+                },
+                {
+                    /* ACTIONS */
+                    "sWidth": "80px",
+                    "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+                        /*
+                        //if (oData[1].toString().toUpperCase() == "TICKET") {
+                        var a = $('<a class="btn session-edit btn-primary" data-id="' + oData[0] + '" style="white-space:nowrap;"><i class="icon-list-alt icon-white"></i>&nbsp;<span style="vertical-align: middle;">details</span></a>');
+                        a.on('click', function () {
+                            if (vizzop.Daemon != null) {
+                                vizzop.Daemon.loadTicketBox(oData[0]);
+                            }
+                            return false;
+                        });
+                        $(nTd).empty();
+                        $(nTd).prepend(a);
+                        //}
+                        */
+                    },
+                    "fnRender": function (oObj) {
+                        $('#commsession_text_updating').text('');
+                        $("#commsession_filter").css({ 'disabled': false });
+                        $('#customer_support_title').text($("#commsession_filter option:selected").text());
+                        return '';
+                    },
+                    "sTitle": "",
+                    "sName": "id",
+                    "aTargets": [0],
+                    "bSortable": false,
+                    "bSearchable": false
+                },
+                {
+                    /* IS CLIENT MESSAGE */
+                    "bSearchable": false,
+                    "bVisible": false
+                },
+                {
+                    /* NUMBER OF MESSAGES */
+                    "bSearchable": false,
+                    "bVisible": false
+                }
+            ]
+        });
+        Comm_updatetable();
+        $("#CommSession_table tbody tr").live("click", function (event) {
+
+            var id = Comm_oTable.fnGetData(this)[0];
+
+            if (vizzop.Daemon != null) {
+                vizzop.Daemon.loadTicketBox(id);
+            }
+
+        });
+    });
+</script>

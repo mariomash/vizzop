@@ -1,0 +1,5 @@
+C:\desarrollo\google-analytics-dot-net\GoogleAnalyticsDotNet\bin\Release\GoogleAnalyticsDotNet.dll
+C:\desarrollo\google-analytics-dot-net\GoogleAnalyticsDotNet\bin\Release\GoogleAnalyticsDotNet.pdb
+C:\desarrollo\google-analytics-dot-net\GoogleAnalyticsDotNet\obj\Release\GoogleAnalyticsDotNet.csprojResolveAssemblyReference.cache
+C:\desarrollo\google-analytics-dot-net\GoogleAnalyticsDotNet\obj\Release\GoogleAnalyticsDotNet.dll
+C:\desarrollo\google-analytics-dot-net\GoogleAnalyticsDotNet\obj\Release\GoogleAnalyticsDotNet.pdb

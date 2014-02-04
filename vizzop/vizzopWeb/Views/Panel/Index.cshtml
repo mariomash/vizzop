@@ -1,0 +1,191 @@
+﻿@{
+    vizzopWeb.Models.Converser converser = (vizzopWeb.Models.Converser)Session["converser"];
+    ViewBag.Title = "vizzop Panel - " + converser.FullName;
+}
+<script type="text/javascript">
+    $(function () {
+        prettyPrint();
+    });
+</script>
+<div class="content">
+    <div class="tab-content">
+        <div class="tab-pane" id="home">
+            <div class="content-header">
+                <h1>Start</h1>
+            </div>
+            <div id="breadcrumb">
+                <a class="tip-bottom"><i class="icon-home"></i>
+                    <span style="vertical-align: middle;">Control Panel</span></a><a style="vertical-align: middle;" class="current">Home</a>
+            </div>
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <div class="widget-box">
+                        <div class="widget-title">
+                            <span class="icon">
+                                <i class="icon-question-sign"></i>
+                            </span>
+                            <h5>Welcome to vizzop Control Panel</h5>
+                        </div>
+                        <div class="widget-content">
+                            <h3 style="margin: 0; padding: 5px;">Hi @converser.FullName, welcome to vizzop</h3>
+                            <span style="display: inline-block; vertical-align: top; width: 30%;">
+                                <div style="padding: 20px;">
+                                    <h5 class="hovertab"><i class="icon-eye-open icon-blue" style="margin: 5px;"></i><span style="vertical-align: middle;">Realtime</span></h5>
+                                    <p>Here you can see your visitors in realtime, and start a chat with them, even see their browser contents when they are at your site.</p>
+
+                                    <h5 class="hovertab"><i class="icon-signal icon-blue" style="margin: 5px;"></i><span style="vertical-align: middle;">Analytics</span></h5>
+                                    <p>See your Site Analitics for a given date range with all possible information.</p>
+
+                                    <h5 class="hovertab"><i class="icon-comment icon-blue" style="margin: 5px;"></i><span style="vertical-align: middle;">Customer Support</span></h5>
+                                    <p>Here you can see your current opened tickets and chats, as well as your full support history.</p>
+
+                                    <h5 class="hovertab"><i class="icon-question-sign icon-blue" style="margin: 5px;"></i><span style="vertical-align: middle;">Help</span></h5>
+                                    <p>You can find here all the manuals, documentation & FAQs</p>
+
+                                </div>
+                            </span>
+                            <span style="display: inline-block; vertical-align: top; width: 30%; border-left: solid 1px #eee">
+                                <div style="padding: 20px;">
+                                    <h4>Your Account Statistics</h4>
+                                    <ul>
+                                        <li>
+                                            <a href="#" onclick="javascript:ShowTab('#tickets');">
+                                                <strong>@ViewBag.OpenedTickets tickets</strong> awaiting response.
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#" onclick="javascript:ShowTab('#tickets');">
+                                                <strong>@ViewBag.TicketsInterval new tickets</strong> created during last 7 days.
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#" onclick="javascript:ShowTab('#tickets');">
+                                                <strong>@ViewBag.Chats1Week chats</strong> during last 7 days.
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#" onclick="javascript:ShowTab('#analytics');">
+                                                <strong>@ViewBag.VisitsYesterday visits</strong> during last 24 hours.
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#" onclick="javascript:ShowTab('#analytics');">
+                                                <strong>@ViewBag.UniqueVisitsInterval unique visitors</strong> during last 7 days.
+                                            </a>
+                                        </li>
+                                        <li><a href="@Url.Action("Index", "Agent")">Your account has a maximum of @converser.Business.MaxAgents agents.
+                                        </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </span>
+                            <span style="display: inline-block; vertical-align: top; width: 35%; border-left: solid 1px #eee;">
+                                <div style="padding: 20px;">
+                                    <h4>Last vizzop Updates</h4>
+                                    <ul>
+                                        @foreach (vizzopWeb.Models.ChangeLog changelog in ViewBag.ChangeLogs)
+                                        {
+                                            <li>
+                                                <h6>@changelog.TimeStamp.ToLongDateString()</h6>
+                                                <h5>@Html.Raw(changelog.title)</h5>
+                                                <div>@Html.Raw(changelog.Description)</div>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                                <div style="border-top: solid 1px #eee; padding: 20px;">
+                                    <address>
+                                        <strong>Zentralized Ltd.</strong>
+                                        <br />
+                                        145-157 St John Street
+                                        <br />
+                                        London, EC1V 4PW
+                                        <br />
+                                        <a href="mailto:customer.service@vizzop.com">customer.service@vizzop.com</a>
+                                        <br />
+                                        <br />
+                                        <span style="font-size: .8em;">
+                                            <strong>Copyright 2011 Zentralized, Ltd.</strong> All Rights Reserved. Zentralized and the Zentralized logo are trademarks of Zentralized, Ltd. in the United States and other countries.All other trademarks used are the property of their respective owners.</span>
+                                    </address>
+                                </div>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @if (converser.Agent.IsAdmin == true)
+        {
+            <div class="tab-pane" id="quickstart">
+                <div class="content-header">
+                    <h1>Widget Installation
+                    </h1>
+                </div>
+                <div id="breadcrumb">
+                    <a class="tip-bottom"><i class="icon-home"></i>
+                        <span style="vertical-align: middle;">Control Panel</span></a><a style="vertical-align: middle;" class="current">Widget Installation</a>
+                </div>
+                <div class="container-fluid">
+                    <div class="row-fluid">
+                        <!--
+                        <div class="span6">
+                            </div>
+                            -->
+                        <div class="widget-box">
+                            <div class="widget-title">
+                                <span class="icon">
+                                    <i class="icon-question-sign"></i>
+                                </span>
+                                <h5>Quick Installation Info</h5>
+                            </div>
+                            <div class="widget-content">
+                                <h4>How to install vizzop script in your Web Site.</h4>
+                                <br />
+                                <ol>
+                                    <li>Just add this script into the <strong>Head</strong> tag to every page of your WebSite, like this:
+                                        <br />
+                                        <br />
+                                        <pre class="prettyprint linenums lang-html">@ViewBag.Code</pre>
+                                    </li>
+                                    <li>That's it! You're up and running. From this Panel you can configure everything related to your account, and chat with your users and agents.</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="tab-pane" id="analytics">
+            @{Html.RenderAction("Index", "Analytics");}
+        </div>
+        <div class="tab-pane" id="screenshots">
+            @{Html.RenderAction("Index", "Screenshot");}
+        </div>
+        <div class="tab-pane" id="realtime">
+            @{Html.RenderAction("Index", "RealTime");}
+        </div>
+        <div class="tab-pane" id="tickets">
+            @{Html.RenderAction("Index", "CommSession", new { CommSession_filter = ViewBag.CommSession_filter });}
+        </div>
+        @if (converser.Agent.IsAdmin == true)
+        {
+            <div class="tab-pane" id="widget">
+                @{Html.RenderAction("Widget", "Panel");}
+            </div>
+        }
+
+        @if (converser.Business.Domain.ToLowerInvariant() == "vizzop")
+        {
+            <div class="tab-pane" id="crm">
+                @{Html.RenderAction("Index", "CRM");}
+            </div>
+            <div class="tab-pane" id="localization">
+                @{Html.RenderAction("Index", "Localization");}
+            </div>
+            <div class="tab-pane" id="mailing">
+                @{Html.RenderAction("Index", "Mailing");}
+            </div>
+        }
+
+    </div>
+</div>

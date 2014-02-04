@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<ServiceDefinition name="vizzop" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2013-10.2.2">
+  <WebRole name="vizzopWeb" vmsize="Small">
+    <Sites>
+      <Site name="Web">
+        <Bindings>
+          <Binding name="Endpoint1" endpointName="Endpoint1" />
+          <Binding name="Endpoint2" endpointName="Endpoint2" />
+        </Bindings>
+      </Site>
+    </Sites>
+    <Endpoints>
+      <InputEndpoint name="Endpoint1" protocol="http" port="80" />
+      <InputEndpoint name="Endpoint2" protocol="https" port="443" certificate="vizzop.com" />
+    </Endpoints>
+    <ConfigurationSettings>
+      <Setting name="Domain" />
+      <Setting name="Port" />
+      <Setting name="Scheme" />
+      <Setting name="WsScheme" />
+      <Setting name="StorageConnectionString" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Caching.ClientDiagnosticLevel" />
+    </ConfigurationSettings>
+    <Imports>
+      <Import moduleName="RemoteAccess" />
+      <Import moduleName="RemoteForwarder" />
+      <Import moduleName="Diagnostics" />
+    </Imports>
+    <Certificates>
+      <Certificate name="vizzop.com" storeLocation="LocalMachine" storeName="My" />
+    </Certificates>
+    <LocalResources>
+      <LocalStorage name="DiagnosticStore" sizeInMB="20000" cleanOnRoleRecycle="true" />
+    </LocalResources>
+    <Startup priority="-2">
+      <Task commandLine="Microsoft.WindowsAzure.Caching\ClientPerfCountersInstaller.exe install" executionContext="elevated" taskType="simple" />
+      <Task commandLine="Microsoft.WindowsAzure.Caching\ClientPerfCountersInstaller.exe install" executionContext="elevated" taskType="simple" />
+    </Startup>
+  </WebRole>
+  <WorkerRole name="vizzopWorker" vmsize="Medium">
+    <Runtime executionContext="elevated" />
+    <Imports>
+      <Import moduleName="Diagnostics" />
+      <Import moduleName="RemoteAccess" />
+    </Imports>
+    <LocalResources>
+      <LocalStorage name="DiagnosticStore" cleanOnRoleRecycle="false" sizeInMB="20000" />
+      <LocalStorage name="LocalImageProcessingTemp" cleanOnRoleRecycle="false" sizeInMB="20000" />
+    </LocalResources>
+    <ConfigurationSettings>
+      <Setting name="StorageConnectionString" />
+      <Setting name="Domain" />
+      <Setting name="Port" />
+      <Setting name="Scheme" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Caching.ClientDiagnosticLevel" />
+      <Setting name="CaptureProcessNumber" />
+    </ConfigurationSettings>
+    <Startup priority="-2">
+      <Task commandLine="Microsoft.WindowsAzure.Caching\ClientPerfCountersInstaller.exe install" executionContext="elevated" taskType="simple" />
+    </Startup>
+  </WorkerRole>
+  <WorkerRole name="vizzopCache" vmsize="Small">
+    <Imports>
+      <Import moduleName="Diagnostics" />
+      <Import moduleName="RemoteAccess" />
+      <Import moduleName="Caching" />
+    </Imports>
+    <LocalResources>
+      <LocalStorage name="DiagnosticStore" sizeInMB="20000" cleanOnRoleRecycle="false" />
+    </LocalResources>
+  </WorkerRole>
+</ServiceDefinition>

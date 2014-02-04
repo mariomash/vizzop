@@ -1,0 +1,760 @@
+@{
+    Layout = null;
+    vizzopWeb.Utils utils = new vizzopWeb.Utils();
+}
+<div class="content-header">
+    <h1>Realtime
+    </h1>
+</div>
+<div id="breadcrumb">
+    <a class="tip-bottom"><i class="icon-home"></i>
+        <span style="vertical-align: middle;">Control Panel</span><a style="vertical-align: middle;" class="current">Realtime</a></a>
+</div>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div id="RealtimeReportResults" style="display: none;">
+            <h3 id="people_count_div" style="text-align: center; text-transform: capitalize; margin: 0;" class="alert alert-success">Right now there are
+            <span id="people_count">0</span>
+                users at your Web Site
+            </h3>
+            <style type="text/css">
+                #realtime_table th {
+                    white-space: nowrap;
+                }
+            </style>
+            <div id="no_people" class="" style="margin-top: 150px; text-align: center; display: none; width: 400px; margin: 100px auto 0;">
+                <h4>We cannot detect visitors at your WebSite</h4>
+                <hr />
+                <p>Did you installed the vizzop script?</p>
+                <p>Go to <a href="#quickstart" onclick="javascript:showQuickStart();">Widget Installation</a> to find out how to install the script.</p>
+            </div>
+            <!--
+            <div id="realtime_graph" style="height: auto; margin: 30px auto 20px; clear: both;">
+                <div id="bubbles_holder" style="height: 225px; display: block; width: 38%; display: block; float: right; margin-right: 1%;">
+                </div>
+                <div id="chart_holder" style="height: auto; display: block; width: 60%; display: block; float: left;">
+                </div>
+            </div>
+            -->
+            <table class="table table-striped" id="realtime_table">
+                <thead>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <div id="RealtimeReportLoading" style="margin-top: 150px;">
+            <div class="loading">
+                <div style="text-align: center;">
+                    loading...
+                </div>
+                <div style="text-align: center; margin-top: 5px;">
+                    <img src="@Url.Content("~/Content/images/loading.gif")" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    function showQuickStart() {
+        $('#sidebar a[href="#quickstart"]').tab('show');
+    }
+    var rt_update_time = new Number(1);
+    var rt_Reloading_InCourse = null;
+    var rt_timeout = null;
+    var rt_oTable = null;
+    var rt_historydata = [];
+    var rt_tabledata = [];
+    var rt_imagereqs = [];
+    var rt_screenshots = [];
+    var realtime_plot = null;
+    var bubbles_plot = null;
+
+    function rt_loadExtData() {
+        var self = this;
+        try {
+            if (rt_Reloading_InCourse != null) {
+                return false;
+            }
+            var msg = {
+            };
+            var url = '../RealTime/GetWebLocationsJson';
+            rt_Reloading_InCourse = jQuery.ajax({
+                url: url,
+                type: "POST",
+                data: msg,
+                dataType: "json",
+                success: function (data) {
+                    if (data != null) {
+                        rt_tabledata = data.aaData;
+                    } else {
+                        rt_tabledata = [];
+                    }
+                    rt_Reloading_InCourse = null;
+                    $('#RealtimeReportLoading').hide();
+                    $('#RealtimeReportResults').show();
+                    rt_updatetable();
+                    //rt_drawchart();
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    vizzoplib.logAjax(url, msg, jqXHR);
+                    rt_Reloading_InCourse = null;
+                }
+            });
+        } catch (err) {
+            vizzoplib.log(err);
+            rt_Reloading_InCourse = null;
+        }
+    }
+    /*
+    function rt_drawchart() {
+        try {
+            var count = 0;
+            var number_of_points = new Number(61);
+
+            if (rt_historydata != null) {
+                //Recoloco indices de los que hayan quedado
+                for (var i = 0; i < rt_historydata.length; i++) {
+                    //meto uno primero siempre al principio
+                    rt_historydata[i][1].unshift([0, 0]);
+                    //Me aseguro de que nunca tienen mas de number_of_points
+                    while (rt_historydata[i][1].length > number_of_points) {
+                        rt_historydata[i][1].pop();
+                    }
+                    //Y pongo los indices como corresponden
+                    for (var j = 0; j < rt_historydata[i][1].length; j++) {
+                        rt_historydata[i][1][j][0] = j;
+                    }
+                }
+
+            }
+
+
+            if (rt_tabledata != null) {
+                if (rt_tabledata.length > 0) {
+                    count = rt_tabledata.length;
+
+                    for (var i = 0; i < count; i++) {
+                        try {
+                            var found_in_rt_historydata = false;
+                            var table_url = rt_tabledata[i][3];
+                            //rt_tabledata     -> [..., ..., ..., url, ...], [..., ..., ..., url, ...]
+                            //rt_historydata   -> [url, [0, 0, 1, 3, 1, 2, ...]], [url, [0, 0, 1, 3, 1, 2, ...]]
+                            
+                            for (var j = 0; j < rt_historydata.length; j++) {
+                                var history_url = rt_historydata[j][0];
+                                if (table_url == history_url) {
+                                    found_in_rt_historydata = true;
+
+                                    rt_historydata[j][1][0][1] = new Number(rt_historydata[j][1][0][1]) + new Number(1);
+
+                                    //(rt_historydata[j][1]);
+                                }
+                            }
+                            if (found_in_rt_historydata == false) {
+                                var elem_ = [];
+                                elem_.push([
+                                    0, 1
+                                ]);
+                                for (j = 1; j < number_of_points; j++) {
+                                    elem_.push([
+                                        j, 0
+                                    ]);
+                                }
+                                var elem = [table_url, elem_];
+                                rt_historydata.push(elem);
+                            }
+                        } catch (ex_) {
+                            //(ex_);
+                        }
+                    }
+                }
+            }
+
+            if (rt_historydata.length == 0) {
+                return false;
+            }
+            //(rt_historydata + '');
+            var points = [];
+            var legend_labels = [];
+            var max_value = 0;
+            for (var i = 0; i < rt_historydata.length; i++) {
+                var show = false;
+                for (var j = 0; j < rt_historydata[i][1].length; j++) {
+                    if (rt_historydata[i][1][j][1] > max_value) {
+                        max_value = rt_historydata[i][1][j][1];
+                    }
+                    if (rt_historydata[i][1][j][1] != 0) {
+                        show = true;
+                    }
+                }
+                if (show == true) {
+                    points.unshift(rt_historydata[i][1]);
+                    legend_labels.unshift(rt_historydata[i][0]);
+                }
+            }
+
+
+            var ytickInterval = 1;
+            var ynewTick = max_value / 4;
+            if (ynewTick > 1) {
+                ytickInterval = ynewTick.toFixed();
+            }
+
+            var xdateEnd = new Date();
+            var xdateStart = new Date(xdateEnd - 1 * 60000);
+            var xtickInterval = '1 second';
+
+            
+            //var bubble_points = [[x, y, size, "Name"], ....];
+            
+            var bubble_points = [];
+
+            var bubble_max = 0;
+            var posx = 1;
+            for (var i = 0; i < rt_historydata.length; i++) {
+                var show = false;
+                for (var j = 0; j < rt_historydata[i][1].length; j++) {
+                    if (rt_historydata[i][1][j][1] > bubble_max) {
+                        bubble_max = rt_historydata[i][1][j][1];
+                    }
+                    if (rt_historydata[i][1][j][1] != 0) {
+                        show = true;
+                    }
+                }
+                var factor = 50 * rt_historydata.length;
+                var size = (rt_historydata[i][1][0][1] * factor);
+                posx += size / 2;
+                if (show == true) {
+                    bubble_points.push([posx, 0, size, '' + size / factor]);
+                }
+                posx += size / 2;
+            }
+
+            if (bubbles_plot != null) {
+                bubbles_plot.destroy();
+            }
+
+
+            bubbles_plot = $.jqplot('bubbles_holder', [bubble_points], {
+                //title: 'Bubble Chart with Gradient Fills',
+                seriesDefaults: {
+                    renderer: $.jqplot.BubbleRenderer,
+                    rendererOptions: {
+                        bubbleGradients: false,
+                        showLabels: true,
+                        varyBubbleColors: true,
+                        autoscalePointsFactor: 0.1,
+                        autoscaleBubbles: true,
+                        autoscaleMultiplier: 1.5
+                    },
+                    shadow: false
+                },
+                grid: {
+                    drawGridLines: false,        // wether to draw lines across the grid or not.
+                    gridLineColor: '#f0f0f0',    // *Color of the grid lines.
+                    background: 'transparent',      // CSS color spec for background color of grid.
+                    borderColor: 'transparent',     // CSS color spec for border around grid.
+                    borderWidth: 2.0,           // pixel width of border around grid.
+                    shadow: false,               // draw a shadow for grid.
+                    shadowAngle: 45,            // angle of the shadow.  Clockwise from x axis.
+                    shadowOffset: 1.5,          // offset from the line of the shadow.
+                    shadowWidth: 3,             // width of the stroke for the shadow.
+                    shadowDepth: 3,             // Number of strokes to make when drawing shadow.
+                    // Each stroke offset by shadowOffset from the last.
+                    shadowAlpha: 0.07,           // Opacity of the shadow
+                    renderer: $.jqplot.CanvasGridRenderer,  // renderer to use to draw the grid.
+                    rendererOptions: {}         // options to pass to the renderer.  Note, the default
+                    // CanvasGridRenderer takes no additional options.
+                },
+                axes: {
+                    xaxis: {
+                        showTicks: false,
+                        min: 0,
+                        max: posx + 1
+                    },
+                    yaxis: {
+                        showTicks: false,
+                        min: 0 - bubble_max - 1,
+                        max: bubble_max + 1
+                    }
+                }
+            });
+
+            if (realtime_plot != null) {
+                realtime_plot.destroy();
+            }
+
+            realtime_plot = $.jqplot('chart_holder', points,
+              {
+                  highlighter: {
+                      show: true,
+                      tooltipAxes: 'y'
+                  },
+                  seriesDefaults: {
+                      lineWidth: 3,
+                      shadow: false,
+                      showMarker: false,
+                      markerOptions: {
+                          shadow: false,
+                          style: "circle",
+                          size: 3
+                      },
+                      pointLabels: {
+                          show: false,
+                          location: 'ne'
+                      }
+                  },
+                  axes: {
+                      xaxis: {
+                          //tickRenderer: $.jqplot.CanvasAxisTickRenderer,
+                          tickOptions: {
+
+                              formatter: function (format, value) {
+                                  if (value != '') {
+                                      if (value == 0) {
+                                          return "Now";
+                                      } else if (value == 60) {
+                                          return "";
+                                      } else {
+                                          return value + " seconds ago";
+                                      }
+                                  } else {
+                                      return "";
+                                  }
+                              },//fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",fontSize: "8pt"
+                              showGridline: true
+                          },
+                          ticks: ['60', '', '', '', '', '', '', '', '', '', '', '', '', '', '45', '', '', '', '', '', '', '', '', '', '', '', '', '', '30', '', '', '', '', '', '', '', '', '', '', '', '', '', '15', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '0'],
+                          min: 30,
+                          max: 0,
+                          pad: 0
+                      },
+                      yaxis: {
+                          //tickRenderer: $.jqplot.CanvasAxisTickRenderer,
+                          tickOptions: {
+                                //fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",fontSize: "8pt",
+                              showGridline: true,
+                              formatString: '%d',
+                              showGridline: true
+                          },
+                          showTicks: true,
+                          min: 0,
+                          max: max_value + 1,
+                          tickInterval: ytickInterval,
+                          pad: 0
+                      }
+                  },
+                  cursor: {
+                      show: false
+                  },
+                  legend: {
+                      show: true,
+                      placement: 'outsideGrid',
+                      labels: legend_labels,
+                      border: 'none',
+                      location: 's'
+                  },
+                  grid: {
+                      drawGridLines: true,        // wether to draw lines across the grid or not.
+                      gridLineColor: '#f0f0f0',    // *Color of the grid lines.
+                      background: 'transparent',      // CSS color spec for background color of grid.
+                      borderColor: 'transparent',     // CSS color spec for border around grid.
+                      borderWidth: 2.0,           // pixel width of border around grid.
+                      shadow: false,               // draw a shadow for grid.
+                      shadowAngle: 45,            // angle of the shadow.  Clockwise from x axis.
+                      shadowOffset: 1.5,          // offset from the line of the shadow.
+                      shadowWidth: 3,             // width of the stroke for the shadow.
+                      shadowDepth: 3,             // Number of strokes to make when drawing shadow.
+                      // Each stroke offset by shadowOffset from the last.
+                      shadowAlpha: 0.07,           // Opacity of the shadow
+                      renderer: $.jqplot.CanvasGridRenderer,  // renderer to use to draw the grid.
+                      rendererOptions: {}         // options to pass to the renderer.  Note, the default
+                      // CanvasGridRenderer takes no additional options.
+                  }
+              }
+            );
+        } catch (ex) {
+
+        }
+    }
+    */
+    function rt_Countdown() {
+        rt_timeout = setTimeout(rt_Countdown, 1000);
+        rt_loadExtData();
+        //rt_drawchart();
+    }
+
+    function clone(obj) {
+        if (null == obj || "object" != typeof obj) return obj;
+        var copy = obj.constructor();
+        for (var attr in obj) {
+            if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+        }
+        return copy;
+    }
+
+    function rt_updatetable() {
+
+        var count = 0;
+        var temp_tabledata = clone(rt_tabledata);
+        if (temp_tabledata != null) {
+            if (temp_tabledata.length > 0) {
+                count = temp_tabledata.length;
+            }
+        }
+
+        $('#people_count').text(count);
+        if (count == 0) {
+            $('#realtime_table_wrapper').hide();
+            $('#chart_holder').hide();
+            $('#realtime_graph').hide();
+            $('#no_people').show();
+            //$('#people_count_div').hide();
+        } else {
+            $('#no_people').hide();
+            //$('#people_count_div').show();
+            $('#realtime_table_wrapper').show();
+            $('#chart_holder').show();
+            $('#realtime_graph').show();
+        }
+
+        //Vamos a poner la Tabla a 0 y repintarla
+        //rt_oTable.fnClearTable(0);
+        var orig_tabledata = rt_oTable.fnGetData();
+        //Y a pasar
+        for (var i = orig_tabledata.length - 1; i > -1; i--) {
+            var found = false;
+            for (var j = temp_tabledata.length - 1; j > -1; j--) {
+                /*
+                * Si lo encontramos lo actualizamos.... lo eliminamos de temp_tabledata
+                * Y lo marcamos como encontrado
+                */
+                var orig_userdomain = orig_tabledata[i][10] + orig_tabledata[i][11];
+                var new_userdomain = temp_tabledata[j][10] + temp_tabledata[j][11];
+                if (new_userdomain == orig_userdomain) {
+                    /*rt_oTable.fnUpdate(temp_tabledata[j], i);*/
+                    //Solo actualizamos esa celda si es diferente
+                    var table = $(rt_oTable).find("tbody")[0];
+                    if (table.rows[j] != null) {
+                        var cell = table.rows[j].cells[0]; // This is a DOM "TD" element
+                        var $cell = $(cell);
+                        var $div_to_update = $cell.find('div');
+                        var cel_userdomain = $div_to_update.attr('data-username') + $div_to_update.attr('data-domain');
+                        if (cel_userdomain != (new_userdomain)) {
+                            rt_oTable.fnUpdate(temp_tabledata[j][2], i, 2);
+                        }
+                    }
+                    //El resto si.. siempre
+                    rt_oTable.fnUpdate(temp_tabledata[j][0], i, 0);
+                    rt_oTable.fnUpdate(temp_tabledata[j][2], i, 2);
+                    rt_oTable.fnUpdate(temp_tabledata[j][3], i, 3);
+                    rt_oTable.fnUpdate(temp_tabledata[j][4], i, 4);
+                    rt_oTable.fnUpdate(temp_tabledata[j][5], i, 5);
+                    rt_oTable.fnUpdate(temp_tabledata[j][6], i, 6);
+                    rt_oTable.fnUpdate(temp_tabledata[j][7], i, 7);
+                    rt_oTable.fnUpdate(temp_tabledata[j][8], i, 8);
+                    rt_oTable.fnUpdate(temp_tabledata[j][9], i, 9);
+                    rt_oTable.fnUpdate(temp_tabledata[j][10], i, 10);
+                    temp_tabledata.splice(j, 1);
+                    found = true;
+                    break;
+                }
+            }
+            if (found == false) {
+                rt_oTable.fnDeleteRow(i);
+            }
+        }
+
+        //Y en otra pasada agregamos el resto
+        for (var j = temp_tabledata.length - 1; j > -1; j--) {
+            rt_oTable.fnAddData(temp_tabledata[j]);
+        };
+
+        //Y en otra pasada actualizamos las imagenes...
+        /*
+        orig_tabledata = rt_oTable.fnGetData();
+        for (var i = orig_tabledata.length - 1; i > -1; i--) {
+            try {
+                var username = orig_tabledata[i][11];
+                var domain = orig_tabledata[i][12];
+
+                var found = false;
+                for (var j = rt_imagereqs.length - 1; j > -1; j--) {
+                    if (rt_imagereqs[j].name == username + domain) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (found == true) {
+                    break;
+                }
+
+                var lastguid = '';
+                for (var j = rt_screenshots.length - 1; j > -1; j--) {
+                    if (rt_screenshots[j].attr('data-username') + rt_screenshots[j].attr('data-domain') == username + domain) {
+                        lastguid = rt_screenshots[j].attr('data-guid');
+                        break;
+                    }
+                }
+                var msg = {
+                    'username': username,
+                    'domain': domain,
+                    'height': 90,
+                    'width': 90,
+                    'guid': lastguid
+                };
+                //(msg);
+                var url = "../RealTime/GetScreen";
+                var reqdata = {
+                    name: username + domain,
+                    req: null
+                };
+                rt_imagereqs.push(reqdata);
+                //(rt_imagereqs);
+                reqdata.req = jQuery.ajax({
+                    url: url,
+                    type: "POST",
+                    data: msg,
+                    dataType: "json",
+                    beforeSend: function (xhr) {
+                    },
+                    success: function (data) {
+
+                        //("reqs " + rt_imagereqs.length);
+                        //(data);
+                        if (data != null) {
+                            if (data != false) {
+                                //("reqs " + rt_imagereqs.length);
+                                for (var j = rt_imagereqs.length - 1; j > -1; j--) {
+                                    if (rt_imagereqs[j].name == data.UserName + data.Domain) {
+                                        rt_imagereqs.splice(j, 1);
+                                    }
+                                }
+
+                                var orig_tabledata = rt_oTable.fnGetData();
+                                var $div_to_update = null;
+                                //(orig_tabledata);
+                                for (var j = orig_tabledata.length - 1; j > -1; j--) {
+                                    try {
+                                        //(data.UserName + data.Domain + "==" + orig_tabledata[j][11] + orig_tabledata[j][12]);
+                                        if (data.UserName + data.Domain == orig_tabledata[j][11] + orig_tabledata[j][12]) {
+                                            var table = $(rt_oTable).find("tbody")[0];
+                                            var cell = table.rows[j].cells[0]; // This is a DOM "TD" element
+                                            //(cell);
+                                            $div_to_update = $(cell).find('div');
+                                        }
+                                    } catch (err) { }
+                                }
+                                //($div_to_update);
+                                if ($div_to_update != null) {
+                                    var img = $('<img src="' + data.Data + '"/>')
+                                        .addClass('realtime_screenshot')
+                                        .attr('data-guid', data.GUID)
+                                        .attr('data-username', data.UserName)
+                                        .attr('data-domain', data.Domain)
+                                        .load(function (event) {
+                                            var orig_tabledata = rt_oTable.fnGetData();
+                                            var $div_to_update = null;
+                                            for (var j = orig_tabledata.length - 1; j > -1; j--) {
+                                                try {
+                                                    if (data.UserName + data.Domain == orig_tabledata[j][11] + orig_tabledata[j][12]) {
+                                                        var table = $(rt_oTable).find("tbody")[0];
+                                                        var cell = table.rows[j].cells[0]; // This is a DOM "TD" element
+                                                        $div_to_update = $(cell).find('div');
+                                                        break;
+                                                    }
+                                                } catch (err) { }
+                                            }
+                                            if ($div_to_update != null) {
+                                                $div_to_update.append(this);
+                                                for (var j = rt_screenshots.length - 1; j > -1; j--) {
+                                                    var elem = $(rt_screenshots[j]);
+                                                    //(elem.attr('data-username') + elem.attr('data-domain') + "____" + $(this).attr('data-username') + $(this).attr('data-domain'));
+                                                    if (elem.attr('data-username') + elem.attr('data-domain') == $(this).attr('data-username') + $(this).attr('data-domain')) {
+                                                        //(elem.attr('data-guid') + "___" + $(this).attr('data-guid'));
+                                                        if (elem.attr('data-guid') != $(this).attr('data-guid')) {
+                                                            //("borrando");
+                                                            elem.remove();
+                                                            rt_screenshots.splice(j, 1);
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        });
+
+                                    var found = false;
+                                    for (var j = rt_screenshots.length - 1; j > -1; j--) {
+                                        if (rt_screenshots[j].attr('data-username') + rt_screenshots[j].attr('data-domain') == username + domain) {
+                                            rt_screenshots[j] = img;
+                                            found = true;
+                                            break;
+                                        }
+                                    }
+                                    if (found == false) {
+                                        rt_screenshots.push(img);
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        vizzoplib.log(url, msg, jqXHR);
+                        for (var j = rt_imagereqs.length - 1; j > -1; j--) {
+                            if (rt_imagereqs[j].name == username + domain) {
+                                rt_imagereqs.splice(j, 1);
+                            }
+                        }
+                    }
+                });
+            } catch (err) {
+                //(err);
+            }
+        }
+        */
+
+        //La cosa es... tras devolver la imagen y cargar la misma en la celda anterior, dentro del div que hay vamos metiendo lo que cargo y quitando el resto de imagenes.. para que no haya flicker
+        //En esta chorrada he perdido mas de 10 horas... ¿como? no se
+        /*
+        var onloadString = "var url = $(this).attr('src'); var style= $(this).attr('style');"
+        onloadString += "$(this).attr('onload', null).appendTo($(this).parent().prev().find('div')).show();";
+        onloadString += "$(this).parent().find('img').each(function (index, item) { if(item != this){ $(item).remove();} });";
+
+        var styleString = "display: none; position: absolute; top: 0; left: 0; height: 90px; width: 90px; -webkit-box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.275); -moz-box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.275); box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.275); background-position: cover;";
+
+        var newimg = '<img src="' + newURL + '" onload="' + onloadString + '" style="' + styleString + '"/>';;
+        */
+        //rt_oTable.fnDraw();
+    }
+
+    $(document).ready(function () {
+
+        rt_oTable = $('#realtime_table').dataTable({
+            "aLengthMenu": [
+            [25, 50, 100, 200, -1],
+            [25, 50, 100, 200, "All"]
+            ],
+            "iDisplayLength": -1,
+            "aaData": rt_tabledata,
+            "bProcessing": false,
+            "bAutoWidth": false,
+            'fnRowCallback': function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                $('td', nRow).addClass("clickable");
+            },
+            "fnInitComplete": function (oSettings, json) { },
+            "aoColumns": [
+                { "sTitle": "ID", "bSearchable": false, "bVisible": false, "bSortable": false },
+                {
+                    "sTitle": "Screenshot", "bSortable": false, "bSearchable": false, "sWidth": "100px", "bVisible": false,
+                    "fnRender": function (oObj) {
+                        return '<div style="position: relative; width: 90px; height: 90px;"/>';
+                    }
+                },
+                {
+                    "sTitle": "IP",
+                    "fnRender": function (oObj) {
+                        try {
+                            if (oObj == null) { return ''; }
+                            if (oObj.aData == null) { return ''; }
+                            return oObj.aData[2];
+                        } catch (_err) {
+                            rt_Reloading_InCourse = null;
+                        }
+                    },
+                    "bVisible": false,
+                },
+                { "sTitle": "URL" },
+                { "sTitle": "Language", "sWidth": "60px" },
+                { "sTitle": "Ubication", "sWidth": "100px" },
+                {
+                    "sTitle": "User Agent", "sWidth": "150px",
+                    "fnRender": function (oObj) {
+                        var useragent_toCompare = oObj.aData[6].toLowerCase();
+                        var useragent = "";
+
+                        if (useragent_toCompare.indexOf("windows") > -1) {
+                            useragent += " Windows ";
+                        } else if (useragent_toCompare.indexOf("os x") > -1) {
+                            useragent += " OSX ";
+                        }
+
+
+                        if (useragent_toCompare.indexOf("firefox") > -1) {
+                            useragent += " Firefox ";
+                        } else if (useragent_toCompare.indexOf("chrome") > -1) {
+                            useragent += " Chrome ";
+                        } else if (useragent_toCompare.indexOf("trident") > -1) {
+                            useragent += " Internet Explorer ";
+                        }
+
+                        if (useragent == "") {
+                            useragent = oObj.aData[6];
+                        }
+
+                        return useragent;
+                    }
+                },
+                { "sTitle": "Referrer", "sWidth": "200px" },
+                { "sTitle": "TimeStamp", "bSearchable": false, "bVisible": false, "bSortable": false },
+                { "sTitle": "Last Active", "bSearchable": false, "bSortable": false, "sWidth": "100px" },
+                { "sTitle": "Name", "bSearchable": false, "bVisible": false, "bSortable": false },
+                { "sTitle": "UserName", "bSearchable": false, "bVisible": false, "bSortable": false },
+                { "sTitle": "Domain", "bSearchable": false, "bVisible": false, "bSortable": false },
+                { "sTitle": "Password", "bSearchable": false, "bVisible": false, "bSortable": false },
+                {
+                    "bSortable": false,
+                    "bSearchable": false,
+                    "bVisible": false
+                }
+            ]
+        });
+        //rt_updatetable();
+        $("#realtime_table tbody tr").live("click", function (event) {
+            var id = rt_oTable.fnGetData(this)[0];
+            var fullname = rt_oTable.fnGetData(this)[10];
+            if (fullname == "-") {
+                fullname = '@utils.LocalizeLang("anon_client", utils.GetLang(Context), null)';
+        }
+            var username = rt_oTable.fnGetData(this)[11];
+            var password = rt_oTable.fnGetData(this)[13];
+            var domain = rt_oTable.fnGetData(this)[12];
+            if (vizzop.Daemon != null) {
+
+                var found = false;
+                jQuery.each(vizzop.Boxes, function (index, foundbox) {
+                    //(foundbox._interlocutor);
+                    if (foundbox._interlocutor != null) {
+                        if (foundbox._interlocutor.UserName + foundbox._interlocutor.Business.Domain == username + domain) {
+                            foundbox.bringtofrontBox();
+                            found = true;
+                            return false;
+                        }
+                    }
+                });
+                if (found == false) {
+                    var agentmessagebox = new AgentMessageBox();
+                    var client = {
+                        "UserName": username,
+                        "FullName": fullname,
+                        "Password": password,
+                        "Business": { "Domain": domain },
+                    };
+                    agentmessagebox._interlocutor = client;
+                    agentmessagebox._apikey = vizzop.ApiKey;
+                    agentmessagebox.fillBox_RequestScreenView();
+                    agentmessagebox.bringtofrontBox();
+                }
+                /*
+                jQuery.each(vizzop.Boxes, function (index, foundbox) {
+                    (foundbox._interlocutor);
+                });
+                */
+            }
+
+        });
+        rt_Countdown();
+    });
+</script>

@@ -1,0 +1,51 @@
+﻿@{
+    Zentralized.Models.ZentralizedContext db = new Zentralized.Models.ZentralizedContext();
+    Zentralized.Utils utils = new Zentralized.Utils();
+    var converser = utils.GetLoggedConverser(Session);
+
+    if (converser != null)
+    {
+    <span style="font-weight: bold; font-size: 13px; vertical-align: middle;">Logged In as @converser.FullName &nbsp;&nbsp; @Html.ActionLink("Control Panel", "Index", "Panel")
+        &nbsp;&nbsp; <span id="previewbut"><a href="#">Beta Comments & Help</a></span>&nbsp;&nbsp;
+        @Html.ActionLink("Log Off", "LogOff", "Account")
+    </span>
+    }
+    else
+    {
+        if (ViewBag.nologinbox != true)
+        {
+            using (Html.BeginForm("LogOn", "Account", FormMethod.Post, new { @class = "form-stacked", @style = "margin-top: 5px; margin-bottom: 5px" }))
+            {
+    @Html.Hidden("returnUrl", Request.Url.ToString())
+    <fieldset>
+        <div class="control-group">
+            <label class="control-label" for="UserNameAtDomain">user@domain</label>
+            <div class="controls">
+                <div class="input-append">
+                    <input id="UserNameAtDomain" class="input-medium" type="text" name="UserNameAtDomain" />
+                    <!--
+                        <span class="add-on">@Html.Raw("@zentralized")</span>
+                        -->
+                </div>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="Password">Password</label>
+            <div class="controls">
+                <input id="Password" class="input-medium" type="password" name="Password" />
+            </div>
+        </div>
+        <div class="form-actions" style="vertical-align: bottom;">
+            <input type="submit" value="Login" class="btn btn-success" />
+        </div>
+        @if (ViewBag.LayoutWhiteLabelMode != true)
+        {
+            <div class="controls" style="margin-top: 5px;">
+                @Html.ActionLink("I don't remember my UserName or Password", "Reminder", "Account")
+            </div>
+        }
+    </fieldset>
+            }
+        }
+    }
+}

@@ -1,0 +1,5 @@
+C:\Users\mariomash\Documents\GitHub\Zentralized\AviFile\bin\Debug\AviFile.dll
+C:\Users\mariomash\Documents\GitHub\Zentralized\AviFile\bin\Debug\AviFile.pdb
+C:\Users\mariomash\Documents\GitHub\Zentralized\AviFile\obj\Debug\AviFile.csprojResolveAssemblyReference.cache
+C:\Users\mariomash\Documents\GitHub\Zentralized\AviFile\obj\Debug\AviFile.dll
+C:\Users\mariomash\Documents\GitHub\Zentralized\AviFile\obj\Debug\AviFile.pdb

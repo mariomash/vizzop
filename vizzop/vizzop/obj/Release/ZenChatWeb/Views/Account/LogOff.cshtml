@@ -1,0 +1,40 @@
+﻿@{
+    ViewBag.Title = "Log Off";
+}
+<script type="text/javascript">
+    var seconds = new Number(3);
+    $("#seconds").text(seconds);
+    function ChangeRedir() {
+        if (seconds > 0) {
+            $("#seconds").text(seconds);
+            seconds--;
+            setTimeout(ChangeRedir, 1000);
+            return;
+        }
+        window.location = '@Url.Action("Index", "Home")'; //  + '#quickstart';
+    }
+    $(function () {
+        setTimeout(ChangeRedir, 1000);
+    });
+</script>
+<center>
+    <br />
+    <br />
+    <br />
+    <br />
+    <div style="width: 400px; text-align: center;" class="well">
+        <h2>
+            You are logged off from Zentralized</h2>
+        <br />
+        <h4>
+            Redirecting to the home page in
+            <span id="seconds">3</span>
+            seconds
+        </h4>
+        <br />
+        <p>
+            @Html.ActionLink("Take me to the Home Page", "Index", "Home", null, null, null, null, new { @class = "btn btn-large btn-success" })
+        </p>
+        <br />
+    </div>
+</center>

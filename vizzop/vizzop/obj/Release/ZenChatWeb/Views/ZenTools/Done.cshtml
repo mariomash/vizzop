@@ -1,0 +1,64 @@
+﻿@model Zentralized.Models.Business
+@{
+    ViewBag.Title = "Account Created";
+}
+<!-- Google Code for Sign Up Conversion Page -->
+<script type="text/javascript">
+/* <![CDATA[ */
+var google_conversion_id = 1006879207;
+var google_conversion_language = "en";
+var google_conversion_format = "2";
+var google_conversion_color = "ffffff";
+var google_conversion_label = "CFbhCNm-kgMQ54OP4AM";
+var google_conversion_value = 1;
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://www.googleadservices.com/pagead/conversion.js">
+</script>
+<noscript>
+    <div style="display: inline;">
+        <img height="1" width="1" style="border-style: none;" alt="" src="https://www.googleadservices.com/pagead/conversion/1006879207/?value=1&amp;label=CFbhCNm-kgMQ54OP4AM&amp;guid=ON&amp;script=0" />
+    </div>
+</noscript>
+<!-- begin adBrite, Sign-ups tracking -->
+<img border="0" hspace="0" vspace="0" width="1" height="1" src="http://stats.adbrite.com/stats/stats.gif?_uid=1218335&_pid=1" /><!-- end adBrite, Sign-ups tracking -->
+<script type="text/javascript">
+    var seconds = new Number(5);
+    $("#seconds").text(seconds);
+    function ChangeRedir() {
+        if (seconds > 0) {
+            $("#seconds").text(seconds);
+            seconds--;
+            setTimeout(ChangeRedir, 1000);
+            return;
+        }
+        window.location = '@Url.Action("Index", "Panel")'; //  + '#quickstart';
+    }
+    $(function () {
+        setTimeout(ChangeRedir, 1000);
+    });
+</script>
+<center>
+    <br />
+    <h3>
+        Your new Account at Zentralized</h3>
+    <br />
+    <div style="width: 400px; text-align: center;" class="well">
+        <h2>
+            Congratulations! Your new account has been successfully created!</h2>
+        <br />
+        <p>
+            Now you can install ZenTools on your own WebSite! You will find the instructions at the control panel.
+        </p>
+        <h4>
+            Redirecting to your control panel in
+            <span id="seconds">5</span>
+            seconds
+        </h4>
+        <br />
+        <p>
+            @Html.ActionLink("Control Panel", "Index", "Panel", null, null, "quickstart", null, new { @class = "btn btn-large btn-success" })
+        </p>
+        <br />
+    </div>
+</center>

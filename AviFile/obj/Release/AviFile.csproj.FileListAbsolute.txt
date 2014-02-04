@@ -1,0 +1,6 @@
+C:\Users\Mario\Documents\GitHub\Zentralized\AviFile\bin\Release\AviFile.dll
+C:\Users\Mario\Documents\GitHub\Zentralized\AviFile\obj\Release\AviFile.csprojResolveAssemblyReference.cache
+C:\Users\Mario\Documents\GitHub\Zentralized\AviFile\obj\Release\AviFile.dll
+C:\Users\mariomash\Documents\GitHub\Zentralized\AviFile\bin\Release\AviFile.dll
+C:\Users\mariomash\Documents\GitHub\Zentralized\AviFile\obj\Release\AviFile.csprojResolveAssemblyReference.cache
+C:\Users\mariomash\Documents\GitHub\Zentralized\AviFile\obj\Release\AviFile.dll

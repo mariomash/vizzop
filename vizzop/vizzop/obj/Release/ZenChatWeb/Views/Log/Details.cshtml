@@ -1,0 +1,27 @@
+﻿@model Zentralized.Models.Log
+@{
+    ViewBag.Title = "Details";
+}
+<span class="plaintitle">
+    <h3>
+        Business Panel
+    </h3>
+</span>
+<center>
+    <h3>
+        Log Control
+    </h3>
+    <br />
+<fieldset>
+    <legend>Log Details</legend>
+    <div class="display-label">TimeStamp</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.TimeStamp)
+    </div>
+    <div class="display-label">Text</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Text)
+    </div>
+
+</fieldset>
+</center>

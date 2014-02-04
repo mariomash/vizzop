@@ -1,0 +1,93 @@
+﻿@model vizzopWeb.Models.CommSession
+@using vizzopWeb.Models;
+@{
+    //Layout = null;
+
+    ViewBag.LayoutWhiteLabelMode = true;
+    ViewBag.Title = "Conversation with " + ViewBag.BusinessName;
+}
+<script type="text/javascript" src="/vizzop/jsapi.ashx?mode=client&apikey=@Html.Raw(ViewBag.ApiKey)&showhelpbutton=false"></script>
+<br />
+<div class="zs_dialog" style="width: 555px !important; margin: 0 auto 60px auto !important;">
+    <div class="zs_dialog_inner">
+        <!--
+        <div class="zs_dialog_title">
+            <span class="title">
+                Message History Viewer</span>
+        </div>
+            -->
+        <div class="zs_boxinfo">
+            <div class="boxheader" style="padding: 6px !important; min-height: 0 !important; font-weight: bold !important; font-size: 13px !important; text-align: center !important; background-color: #F89406 !important; color: White !important; background: #F89406 !important;">
+                Conversation thread between you and @ViewBag.BusinessName
+            </div>
+            <div class="boxtextticket">
+                <div class="chat_msgZone" style="max-height: none !important; overflow: visible !important;">
+                    @foreach (Message message in Model.Messages)
+                    {
+                        if ((message.Content != null) && (message.Content != "null"))
+                        {
+                        <div class="message @if (message.From.Agent == null)
+                                            {@Html.Raw("mine")}
+                                            else
+                                            {@Html.Raw("interlocutor")}">
+                            <span class="timestamp">
+                                @message.TimeStamp.ToString()
+                            </span>
+                            <span class="from" style="width: auto;">
+                                @message.From.FullName
+                                @if (message.From.Agent != null)
+                                {
+                                    <i>(from @Model.Business.BusinessName)</i> 
+                                }
+                                else
+                                { 
+                                    <i>(this is you)</i>
+                                }
+                            </span>
+                            <div class="contents">
+                                @message.Content
+                            </div>
+                        </div>
+                        }
+                    }
+                </div>
+                @using (Html.BeginForm("ClientComment", "CommSession", FormMethod.Post, new { @style = "margin: 0;" }))
+                {
+                    @Html.Hidden("id", Model.ID)
+                    @Html.Hidden("from_username", Model.Client.UserName)
+                    @Html.Hidden("from_domain", Model.Client.Business.Domain)
+                    @Html.ValidationSummary(true)
+                    if (ViewBag.errors != null)
+                    {
+                    <div class="alert error">
+                        <a class="close" data-dismiss="alert">×</a>
+                        @Html.Raw(ViewBag.errors)
+                    </div>
+                    }
+                    <div class="ticket_inputZone">
+                        @Html.TextArea("content", new { @class = "ticket_inputTextArea", @style = "display: inline-block; vertical-align: top;" })
+                        <span style="display: inline-block; vertical-align: top; margin-left: 10px;">
+                            <input type="submit" value="Comment" class="btn btn-primary btn-large" style="display: block; width: 100%;" />
+                        </span>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div style="border-top: solid 1px #eee; padding: 20px; background-color: white; text-align: center;">
+    <address>
+        <strong>Zentralized Ltd.</strong>
+        <br />
+        145-157 St John Street
+                                        <br />
+        London, EC1V 4PW
+                                        <br />
+        <a href="mailto:customer.service@vizzop.com">customer.service@vizzop.com</a>
+        <br />
+        <br />
+        <span style="font-size: .8em;">
+            <strong>Copyright 2011 Zentralized, Ltd.</strong> All Rights Reserved. Zentralized and the Zentralized logo are trademarks of Zentralized, Ltd. in the United States and other countries.All other trademarks used are the property of their respective owners.</span>
+    </address>
+</div>

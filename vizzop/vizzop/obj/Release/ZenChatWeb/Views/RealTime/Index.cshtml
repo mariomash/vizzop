@@ -1,0 +1,525 @@
+﻿@{
+    Layout = null;
+    Zentralized.Utils utils = new Zentralized.Utils();
+}
+<script type="text/javascript">
+
+    var rt_update_seconds = new Number(1);
+    var rt_Reloading_InCourse = null;
+    var rt_timeout = null;
+    function rt_Countdown()
+    {
+        if (rt_update_seconds > -1)
+        {
+            rt_update_seconds--;
+            rt_timeout = setTimeout(rt_Countdown, 1000);
+            return;
+        }
+        rt_updatetable();
+        rt_update_seconds = new Number(1);
+    }
+
+    var rt_oTable;
+    function rt_updatetable()
+    {
+        if (rt_Reloading_InCourse == null)
+        {
+            try
+            {
+                rt_oTable.rt_fnReloadAjax('@Url.Action("GetWebLocationsJson", "RealTime")');
+        } catch (err)
+        {
+        }
+    }
+}
+
+var rhistory_table = [];
+var plot = null;
+function rhistory_drawchart()
+{
+    var points = [];
+    var series = [];
+    var legend_labels = [];
+    var max_value = 0;
+    var yaxis_ticks = [];
+    for (var i = 0; i < rhistory_table.length; i++)
+    {
+        var show = false;
+        for (var j = 0; j < rhistory_table[i][1].length; j++)
+        {
+            if (rhistory_table[i][1][j] > max_value)
+            {
+                max_value = rhistory_table[i][1][j];
+            }
+            if (rhistory_table[i][1][j] != 0)
+            {
+                show = true;
+            }
+        }
+        if (show == true)
+        {
+            points.push(rhistory_table[i][1]);
+            series.push({
+                lineWidth: 3,
+                shadow: false,
+                showMarker: false,
+                markerOptions: {
+                    shadow: false,
+                    style: "circle",
+                    size: 5
+                }
+            });
+            legend_labels.push(rhistory_table[i][0]);
+        }
+    }
+    for (var i = 0; i <= max_value + 1; i++)
+    {
+        yaxis_ticks.push(i);
+    }
+    //console.log(points);
+    if (plot != null)
+    {
+        plot.destroy();
+    }
+    plot = $.jqplot('chart_holder', points,
+      {
+          series: series,
+          axesDefaults: {
+              showTickMarks: false,
+              showTicks: true,
+              tickOptions: {
+                  showGridline: true
+              }
+          },
+          axes: {
+              xaxis: {
+                  showTickMarks: false,
+                  showTicks: false,
+                  tickOptions: {
+                      showGridline: false
+                  }
+              },
+              yaxis: {
+                  ticks: yaxis_ticks,
+                  tickOptions: {
+                      formatString: '%d',
+                      showGridline: true
+                  }
+              }
+          },
+          highlighter: {
+              show: true,
+              tooltipAxes: 'y'
+          },
+          cursor: {
+              show: false
+          },
+          legend: {
+              show: true,
+              placement: 'outsideGrid',
+              labels: legend_labels,
+              border: 'noborder',
+              location: 's'
+          },
+          grid: {
+              drawGridLines: true,        // wether to draw lines across the grid or not.
+              gridLineColor: '#e0e0e0',    // *Color of the grid lines.
+              background: 'transparent',      // CSS color spec for background color of grid.
+              borderColor: 'transparent',     // CSS color spec for border around grid.
+              borderWidth: 2.0,           // pixel width of border around grid.
+              shadow: false,               // draw a shadow for grid.
+              shadowAngle: 45,            // angle of the shadow.  Clockwise from x axis.
+              shadowOffset: 1.5,          // offset from the line of the shadow.
+              shadowWidth: 3,             // width of the stroke for the shadow.
+              shadowDepth: 3,             // Number of strokes to make when drawing shadow.
+              // Each stroke offset by shadowOffset from the last.
+              shadowAlpha: 0.07,           // Opacity of the shadow
+              renderer: $.jqplot.CanvasGridRenderer,  // renderer to use to draw the grid.
+              rendererOptions: {}         // options to pass to the renderer.  Note, the default
+              // CanvasGridRenderer takes no additional options.
+          }
+      }
+    );
+}
+
+var rtrack_json = null;
+function BtnWebLocationsInit(json)
+{
+    //alert(json.aaData);
+    try
+    {
+        if (rhistory_table != null)
+        {
+            for (var i = 0; i < rhistory_table.length; i++)
+            {
+                rhistory_table[i][1].push(new Number(0));
+            }
+        }
+
+        if (json != null)
+        {
+            if (json.aaData != null)
+            {
+                if (json.aaData.length > 0)
+                {
+                    for (var i = 0; i < json.aaData.length; i++)
+                    {
+                        try
+                        {
+                            var found_in_rhistory_table = false;
+                            var access_url = json.aaData[i][2];
+                            for (var j = 0; j < rhistory_table.length; j++)
+                            {
+                                var table_access = rhistory_table[j];
+                                if (table_access[0] == access_url)
+                                {
+                                    var pos = new Number(table_access[1].length) - new Number(1);
+                                    found_in_rhistory_table = true;
+                                    table_access[1][pos] = new Number(new Number(table_access[1][pos]) + new Number(1));
+                                }
+                            }
+                            if (found_in_rhistory_table == false)
+                            {
+                                var elem_ = [];
+                                for (j = 0; j < 23; j++) { elem_.push(new Number(0)); }
+                                elem_.push(new Number(1));
+                                var elem = [access_url, elem_];
+                                rhistory_table.push(elem);
+                            }
+                        } catch (ex_)
+                        {
+                            //console.log(ex_);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (rhistory_table != null)
+        {
+            for (var i = 0; i < rhistory_table.length; i++)
+            {
+                rhistory_table[i][1].shift();
+                rhistory_table[i][1].length = 23;
+            }
+        }
+
+        var count = 0;
+        if (json != null)
+        {
+            if (json.aaData != null)
+            {
+                if (json.aaData.length > 0)
+                {
+                    $('#chart_holder').show();
+                    rhistory_drawchart();
+                    count = json.aaData.length;
+                } else
+                {
+                    $('#chart_holder').hide();
+                }
+            }
+        }
+
+        rt_Reloading_InCourse = null;
+
+        $('#people_count').text(count);
+        if (count == 0)
+        {
+            $('#no_people').show();
+            $('#people_count_div').hide();
+            $('#realtime_graph').hide();
+            $('#realtime_table').hide();
+        } else
+        {
+            $('#no_people').hide();
+            $('#people_count_div').show();
+            $('#realtime_graph').show();
+            $('#realtime_table').show();
+        }
+        $('#WebLocation_table .start-chat').each(function (index, element)
+        {
+            $(element).unbind('click');
+            $(element).click(function (event)
+            {
+                var username = $(element).attr('data-username');
+                var password = $(element).attr('data-password');
+                var domain = $(element).attr('data-domain');
+                var fullname = $(element).attr('data-fullname');
+                if (zentools.Daemon != null)
+                {
+                    var agentmessagebox = new AgentMessageBox();
+                    var client = {
+                        "UserName": username,
+                        "FullName": fullname,
+                        "Business": { "Domain": domain },
+                        "Password": password
+                    };
+                    agentmessagebox._interlocutor = client;
+                    agentmessagebox._apikey = zentools.ApiKey;
+                    agentmessagebox._statustext = $(element).attr('data-status');
+                    agentmessagebox.fillBox_RequestStartChat();
+
+                }
+            });
+        });
+        $('#WebLocation_table .screen-view').each(function (index, element)
+        {
+            $(element).unbind('click');
+            $(element).click(function (event)
+            {
+                var username = $(element).attr('data-username');
+                var password = $(element).attr('data-password');
+                var domain = $(element).attr('data-domain');
+                var fullname = $(element).attr('data-fullname');
+                if (zentools.Daemon != null)
+                {
+                    var agentmessagebox = new AgentMessageBox();
+                    var client = {
+                        "UserName": username,
+                        "FullName": fullname,
+                        "Business": { "Domain": domain },
+                        "Password": password
+                    };
+                    agentmessagebox._interlocutor = client;
+                    agentmessagebox._apikey = zentools.ApiKey;
+                    agentmessagebox._statustext = $(element).attr('data-status');
+                    agentmessagebox.fillBox_RequestScreenView();
+                }
+            });
+        });
+    } catch (ex)
+    {
+        log(ex);
+        rt_Reloading_InCourse = null;
+    }
+    rt_timeout = setTimeout(rt_Countdown, 1000);
+}
+
+$(document).ready(function ()
+{
+
+    $.fn.dataTableExt.oApi.rt_fnReloadAjax = function (oSettings, sNewSource, fnCallback, bStandingRedraw)
+    {
+        if (typeof sNewSource != 'undefined' && sNewSource != null)
+        {
+            oSettings.sAjaxSource = sNewSource;
+        }
+        this.oApi._fnProcessingDisplay(oSettings, true);
+        var that = this;
+        var iStart = oSettings._iDisplayStart;
+        var aData = [];
+
+        this.oApi._fnServerParams(oSettings, aData);
+
+        oSettings.fnServerData(oSettings.sAjaxSource, aData, function (json)
+        {
+            if (rtrack_json == json)
+            {
+                return false;
+            } else
+            {
+                rtrack_json = json;
+            }
+            //Clear the old information from the table
+            that.oApi._fnClearTable(oSettings);
+
+            //Got the data - add it to the table
+            var aData = (oSettings.sAjaxDataProp !== "") ?
+    that.oApi._fnGetObjectDataFn(oSettings.sAjaxDataProp)(json) : json;
+
+            if (aData != null)
+            {
+                for (var i = 0; i < aData.length; i++)
+                {
+                    that.oApi._fnAddData(oSettings, aData[i]);
+                }
+            }
+
+            oSettings.aiDisplay = oSettings.aiDisplayMaster.slice();
+            that.fnDraw();
+
+            if (typeof bStandingRedraw != 'undefined' && bStandingRedraw === true)
+            {
+                oSettings._iDisplayStart = iStart;
+                that.fnDraw(false);
+            }
+
+            that.oApi._fnProcessingDisplay(oSettings, false);
+
+            BtnWebLocationsInit(json);
+            //Callback user function - for event handlers etc
+            if (typeof fnCallback == 'function' && fnCallback != null)
+            {
+                fnCallback(oSettings);
+            }
+        }, oSettings);
+    }
+
+    rt_oTable = $('#WebLocation_table').dataTable({
+        "bProcessing": false,
+        "fnServerData": function (sSource, aoData, fnCallback)
+        {
+            rt_Reloading_InCourse = $.ajax({
+                "dataType": 'json',
+                "type": "POST",
+                "url": sSource,
+                "data": aoData,
+                "error": function ()
+                {
+                    rt_Reloading_InCourse = null;
+                },
+                "success": fnCallback
+            });
+        },
+        "bAutoWidth": false,
+        "sAjaxSource": '@Url.Action("GetWebLocationsJson", "RealTime")',
+        "fnInitComplete": function (oSettings, json)
+        {
+            if (json != null)
+            {
+                BtnWebLocationsInit(json);
+            }
+            rt_Reloading_InCourse = null;
+            /*
+            $('#WebLocation_table tbody tr').each(function () {
+            $(this).find('th').css({ 'white-space': 'nowrap' });
+            $(this).find('td:eq(0)').css({'white-space': 'nowrap'});
+            $(this).find('td:eq(0)').css({'white-space': 'nowrap'});
+            $(this).find('td:eq(1)').css({'white-space': 'nowrap'});
+            $(this).find('td:eq(3)').css({'white-space': 'nowrap'});
+            $(this).find('td:eq(4)').css({'white-space': 'nowrap'});
+            $(this).find('td:eq(5)').css({'white-space': 'nowrap'});
+            });
+            */
+
+        }, /* "sWidth": "50%", "bSearchable": false, "bVisible": false, "bSortable": false */
+        "aoColumns": [
+        { "sTitle": "ID", "bSearchable": false, "bVisible": false, "bSortable": false },
+        { "sTitle": "IP" },
+        { "sTitle": "URL", "sWidth": "200px" },
+        { "sTitle": "Language" },
+        { "sTitle": "User Agent", "sWidth": "200px" },
+        { "sTitle": "Referrer", "sWidth": "200px" },
+        { "sTitle": "TimeStamp", "bSearchable": false, "bVisible": false, "bSortable": false },
+        { "sTitle": "Last Active", "bSearchable": false, "bSortable": false },
+        { "sTitle": "Name", "bSearchable": false, "bVisible": false, "bSortable": false },
+        { "sTitle": "UserName", "bSearchable": false, "bVisible": false, "bSortable": false },
+        { "sTitle": "Domain", "bSearchable": false, "bVisible": false, "bSortable": false },
+        { "sTitle": "Password", "bSearchable": false, "bVisible": false, "bSortable": false },
+        {
+            /* ACTIONS */
+            "fnRender": function (oObj)
+            {
+                try
+                {
+                    if (oObj == null)
+                    {
+                        return '';
+                    }
+                    if (oObj.aData == null)
+                    {
+                        return '';
+                    }
+                    var fullname = oObj.aData[8];
+                    if (fullname == "-")
+                    {
+                        fullname = "@utils.LocalizeLang("anon_client", utils.GetLang(Context), null)";
+                    }
+                    var found = false;
+                    try
+                    {
+                        $.each(zentools.Boxes, function (index, _foundbox)
+                        {
+                            if (typeof _foundbox._interlocutor !== "undefined")
+                            {
+                                if (_foundbox._interlocutor.UserName == oObj.aData[9].toString())
+                                {
+                                    found = true;
+                                    return;
+                                }
+                            }
+                        });
+                    } catch (err)
+                    {
+                        found = false;
+                    }
+                    if (found == false)
+                    {
+                        return '<a class="btn start-chat" data-status="' + oObj.aData[3] + ', ' + oObj.aData[1] + ', ' + oObj.aData[4] + '" data-username="' + oObj.aData[9] + '" data-domain="' + oObj.aData[10] + '" data-password="' + oObj.aData[11] + '" data-fullname="' + fullname + '" style="white-space: nowrap; min-width: 110px; margin: 2px;"><i class="icon-list-alt"></i>&nbsp;@utils.LocalizeLang("start_chat", utils.GetLang(Context), null)</a><a class="btn screen-view" data-username="' + oObj.aData[9] + '"  data-domain="' + oObj.aData[10] + '" data-password="' + oObj.aData[11] + '" data-fullname="' + fullname + '" style="white-space: nowrap; min-width: 110px; margin: 2px;"><i class="icon-list-alt"></i>&nbsp;@utils.LocalizeLang("screen_view", utils.GetLang(Context), null)</a>'
+                    } else
+                    {
+                        return '';
+                    };
+                } catch (_err)
+                {
+                    rt_Reloading_InCourse = null;
+                }
+            },
+            "sTitle": "",
+            "sName": "id",
+            "aTargets": [0],
+            "bSortable": false,
+            "bSearchable": false,
+            "sWidth": "100px"
+        }
+        ]
+    });
+});
+</script>
+<div class="content-header">
+    <h1>Realtime Analytics
+    </h1>
+</div>
+<div id="breadcrumb">
+    <a class="tip-bottom"><i class="icon-home"></i>
+        <span style="vertical-align: middle;">Control Panel</span><a style="vertical-align: middle;" class="current">Realtime Analytics</a></a>
+</div>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <!--
+                        <div class="span6">
+                            </div>
+                            -->
+        <div id="no_people" style="margin-top: 150px; text-align: center; display: block; width: 400px; margin: 100px auto 0;">
+            <h5>We cannot detect visitors at your WebSite, or maybe the ZenTools script is not installed yet. Go to the "Help" section to find out how to install the script.</h5>
+        </div>
+        <h2 id="people_count_div" style="text-align: center; display: none;">Right now there are
+            <span id="people_count">0</span>
+            users at your Web Site
+        </h2>
+        <style type="text/css">
+            #WebLocation_table th {
+                white-space: nowrap;
+            }
+        </style>
+        <div class="widget-box" id="realtime_graph" style="display: none;">
+            <div class="widget-title">
+                <span class="icon">
+                    <i class="icon-signal"></i>
+                </span>
+                <h5>Realtime Graph</h5>
+            </div>
+            <div class="widget-content">
+                <div id="chart_holder" style="height: 260px; display: block; width: 100%;">
+                </div>
+            </div>
+        </div>
+        <div class="widget-box" id="realtime_table" style="display: none;">
+            <div class="widget-title">
+                <span class="icon">
+                    <i class="icon-th"></i>
+                </span>
+                <h5>Realtime Table</h5>
+            </div>
+            <div class="widget-content">
+                <table class="table table-striped" id="WebLocation_table">
+                    <thead>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

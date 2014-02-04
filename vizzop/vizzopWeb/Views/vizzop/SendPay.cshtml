@@ -1,0 +1,54 @@
+﻿@{
+    ViewBag.Title = "Redirect to Payment Gateway";
+    vizzopWeb.Models.Sale sale = (vizzopWeb.Models.Sale)ViewBag.Sale;
+    vizzopWeb.Utils utils = new vizzopWeb.Utils();
+    ViewBag.Lang = utils.GetLang(Context);
+}
+<script type="text/javascript">
+    var seconds = new Number(5);
+    $("#seconds").text(seconds);
+    function ChangeRedir() {
+        if (seconds > 0) {
+            $("#seconds").text(seconds);
+            seconds--;
+            setTimeout(ChangeRedir, 1000);
+            return;
+        }
+        $("#payment").submit();
+    }
+    $(function () {
+        setTimeout(ChangeRedir, 1000);
+    });
+</script>
+<center>
+    <br />
+    <h2>
+        Redirecting to Payment Gateway</h2>
+    <br />
+    <div style="width: 500px; text-align: center; margin: 0 auto;" class=" @if (ViewBag.LayoutSubPanelMode != true)
+                                                                           { @Html.Raw("well")}">
+        <br />
+        <p>
+            Now you will be redirected to Payment Gateway.<br />
+            <br />
+            2CheckOut.com Inc. (Ohio, USA) is an authorized retailer for goods and services provided by Zentralized Ltd.
+        </p>
+        <h4>
+            Redirecting to Payment Gateway in
+            <span id="seconds">7</span>
+            seconds
+        </h4>
+        <br />
+        <form action='https://www.2checkout.com/checkout/purchase' method='post' id="payment" name="payment">
+        <input type='hidden' name='sid' value='@utils.vendornumber'>
+        <input type='hidden' name='quantity' value='1'>
+        <input type='hidden' name='product_id' value='@sale.servicetype'>
+        <input name='btnSubmit' type='submit' value='Take me to 2CheckOut Payment Gateway now' class="btn btn-large btn-success">
+        <input type="hidden" name="fixed" value="Y" />
+        <input type="hidden" name="lang" value="@ViewBag.Lang" />
+        <!--<input type="hidden" name="skip_landing" value="1" />-->
+        <input type="hidden" name="merchant_order_id" value="@sale.ID" />
+        </form>
+        <br />
+    </div>
+</center>

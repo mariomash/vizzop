@@ -1,0 +1,197 @@
+﻿@model vizzopWeb.Models.NewvizzopAccount
+@{
+    ViewBag.Title = "Create your account - Zentralized";
+    vizzopWeb.Models.vizzopContext db = new vizzopWeb.Models.vizzopContext();
+    /*
+    var ServiceTypes = from m in db.ServiceTypes
+                       select m;
+    ServiceTypes = ServiceTypes.OrderBy(m => m.ZIndex);
+    ViewBag.ServiceTypes = ServiceTypes;
+    */
+}
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+<br />
+<div style="width: 300px; margin: 0 auto 0;">
+    <img src="~/Content/images/logo.png" />
+</div>
+<br />
+<center>
+    @using (Html.BeginForm("Create", "vizzop", FormMethod.Post, new { @class = "well form-horizontal", @style = "width: 700px;" }))
+    {
+        @Html.ValidationSummary(true)
+        if (ViewBag.errors != null)
+        {
+        <div class="alert error">
+            <a class="close" data-dismiss="alert">×</a>
+            @Html.Raw(ViewBag.errors)
+        </div>
+        }
+        <!-- style=" background-image: url(@Url.Content("~/Content/images/details.png")); background-position: right top; background-repeat: no-repeat;" -->
+        <fieldset>
+            <legend>
+                Create your account</legend>
+            <div class="control-group">
+                @Html.LabelFor(model => model.ServiceType, new { @class = "control-label" })
+                <div class="controls">
+                    @Html.DropDownListFor(model => model.ServiceType, new SelectList(ViewBag.ServiceTypes, "CartName", "Name", Model.ServiceType), new { @style = "width: 400px;" })
+                    @Html.ValidationMessageFor(model => model.ServiceType, null, new { @class = "help-inline" })
+                </div>
+            </div>
+            <div class="control-group">
+                @Html.LabelFor(model => model.BusinessName, new { @class = "control-label" })
+                <div class="controls">
+                    @Html.TextBoxFor(model => model.BusinessName, new { @class = "input-medium" })
+                    @Html.ValidationMessageFor(model => model.BusinessName, null, new { @class = "help-inline" })
+                </div>
+            </div>
+            <h5>Administrator details</h5>
+            <div class="control-group">
+                @Html.LabelFor(model => model.FullName, new { @class = "control-label" })
+                <div class="controls">
+                    @Html.TextBoxFor(model => model.FullName, new { @class = "input-medium" })
+                    @Html.ValidationMessageFor(model => model.FullName, null, new { @class = "help-inline" })
+                </div>
+            </div>
+            <div class="control-group">
+                @Html.LabelFor(model => model.Email, new { @class = "control-label" })
+                <div class="controls">
+                    @Html.TextBoxFor(model => model.Email, new { @class = "input-large" })
+                    @Html.ValidationMessageFor(model => model.Email, null, new { @class = "help-inline" })
+                </div>
+            </div>
+            <div class="control-group">
+                @Html.LabelFor(model => model.Phone, new { @class = "control-label" })
+                <div class="controls">
+                    @Html.TextBoxFor(model => model.Phone, new { @class = "input-large" })
+                    @Html.ValidationMessageFor(model => model.Phone, null, new { @class = "help-inline" })
+                </div>
+            </div>
+            <div class="control-group">
+                @Html.LabelFor(model => model.Password, new { @class = "control-label" })
+                <div class="controls">
+                    @Html.EditorFor(model => model.Password, new { @class = "input-small" })
+                    @Html.ValidationMessageFor(model => model.Password, null, new { @class = "help-inline" })
+                </div>
+            </div>
+            <div class="control-group">
+                @Html.LabelFor(model => model.ConfirmPassword, new { @class = "control-label" })
+                <div class="controls">
+                    @Html.EditorFor(model => model.ConfirmPassword, new { @class = "input-small" })
+                    @Html.ValidationMessageFor(model => model.ConfirmPassword, null, new { @class = "help-inline" })
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    @Html.EditorFor(model => model.AcceptTerms)
+                    <label for="AcceptTerms" class="nostyle" style="width: auto; display: inline; vertical-align: middle;">
+                        I accept the </label>
+                    <a id="show-terms" class="nostyle" style="width: auto; display: inline; cursor: pointer; vertical-align: middle;">Terms & Conditions</a>
+                    @Html.ValidationMessageFor(model => model.AcceptTerms, null, new { @class = "help-inline" })
+                </div>
+            </div>
+            <div id="dialog"></div>
+            <div class="form-actions" style="margin-bottom: 0;">
+                <input type="submit" value="Create Account" class="btn btn-success btn-large" />
+            </div>
+        </fieldset>
+    }
+</center>
+
+<script type="text/javascript">
+    $(function () {
+        jQuery('#dialog').dialog({
+            autoOpen: false,
+            width: 800,
+            height: 450,
+            resizable: false,
+            title: 'Terms & Conditions',
+            modal: false,
+            open: function (event, ui) {
+                $(this).load('@Url.Action("Conditions")');
+            },
+            buttons: {
+                "OK": function () {
+                    jQuery(this).dialog("close");
+                }
+            }
+        });
+
+        $('#show-terms').click(function () {
+            jQuery('#dialog').dialog('open');
+            /*
+            try {
+                vizzop.Tracking.TrackPageView(document.URL + '/click_show-terms', document.referrer);
+            } catch (err) {
+                //(err);
+            }
+            */
+        });
+
+        /*
+        $('#BusinessName').focus(function () {
+            try {
+                vizzop.Tracking.TrackPageView(document.URL + '/focus_BusinessName', document.referrer);
+            } catch (err) {
+                //(err);
+            }
+        });
+        $('#ServiceType').focus(function () {
+            try {
+                vizzop.Tracking.TrackPageView(document.URL + '/focus_ServiceType', document.referrer);
+            } catch (err) {
+                //(err);
+            }
+        });
+        $('#ServiceType').change(function () {
+            try {
+                vizzop.Tracking.TrackPageView(document.URL + '/change_ServiceType', document.referrer);
+            } catch (err) {
+                //(err);
+            }
+        });
+        $('#Domain').focus(function () {
+            try {
+                vizzop.Tracking.TrackPageView(document.URL + '/focus_Domain', document.referrer);
+            } catch (err) {
+                //(err);
+            }
+        });
+        $('#AcceptTerms').focus(function () {
+            try {
+                vizzop.Tracking.TrackPageView(document.URL + '/focus_AcceptTerms', document.referrer);
+            } catch (err) {
+                //(err);
+            }
+        });
+        $('#FullName').focus(function () {
+            try {
+                vizzop.Tracking.TrackPageView(document.URL + '/focus_FullName', document.referrer);
+            } catch (err) {
+                //(err);
+            }
+        });
+        $('#Email').focus(function () {
+            try {
+                vizzop.Tracking.TrackPageView(document.URL + '/focus_Email', document.referrer);
+            } catch (err) {
+                //(err);
+            }
+        });
+        $('#UserName').focus(function () {
+            try {
+                vizzop.Tracking.TrackPageView(document.URL + '/focus_UserName', document.referrer);
+            } catch (err) {
+                //(err);
+            }
+        });
+        $('#ConfirmPassword').focus(function () {
+            try {
+                vizzop.Tracking.TrackPageView(document.URL + '/focus_ConfirmPassword', document.referrer);
+            } catch (err) {
+                //(err);
+            }
+        });
+        */
+    });
+</script>

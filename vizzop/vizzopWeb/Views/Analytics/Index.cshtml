@@ -1,0 +1,527 @@
+﻿@model IEnumerable<vizzopWeb.Models.AnalyticsDatatables>
+@{
+    Layout = null;
+    vizzopWeb.Utils utils = new vizzopWeb.Utils();
+}
+<div class="content-header">
+    <h1>Analytics
+    </h1>
+</div>
+<div id="breadcrumb">
+    <a class="tip-bottom"><i class="icon-home"></i>
+        <span style="vertical-align: middle;">Control Panel</span></a><a style="vertical-align: middle;" class="current">Analytics</a>
+</div>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="widget-box">
+            <div class="widget-title">
+                <span class="icon">
+                    <i class="icon-th"></i>
+                </span>
+                <h5>Report Table</h5>
+            </div>
+            <div class="widget-content">
+                <div class="reportOptions" id="AnalyticsReportOptions">
+                    <span style="display: inline-block; vertical-align: top;">
+                        <label style="display: inline-block; vertical-align: middle; margin: 0;" onclick="javascript:$('#containerdivrangeDate').toggle();return false;">
+                            Date Range</label>
+                        <span style="display: inline-block; vertical-align: middle; margin: 0;" class="input-append">
+                            <input class="input-large" id="rangeDate" type="text" onclick="javascript: $('#containerdivrangeDate').toggle(); return false;">
+                            <span class="btn add-on" onclick="javascript:$('#containerdivrangeDate').toggle();return false;">
+                                <i class="icon-calendar"></i>
+                            </span>
+                        </span>
+                        <div style="background-color: #FFFFFF; padding: 5px; display: none; position: absolute; z-index: 1000; box-shadow: 0 0 3px #999999; border: 1px solid #ccc;" id="containerdivrangeDate">
+                            <div style="height: 160px; width: 520px;">
+                                <span id="divrangeDate"></span>
+                            </div>
+                            <div class="form-actions" style="margin: 0; padding: 4px;">
+                                <span class="btn" onclick="javascript:$('#containerdivrangeDate').toggle();analytics_updatetable();return false;" style="vertical-align: middle">apply</span>
+                                &nbsp;
+                            <span onclick="javascript:$('#containerdivrangeDate').toggle();return false;" style="color: #66f; text-decoration: underline; cursor: pointer;">cancel</span>
+                            </div>
+                        </div>
+                    </span>
+                    <span style="display: inline-block; vertical-align: top; margin-left: 2px;">
+                        <label style="display: inline-block; vertical-align: middle; margin: 0;" for="dimension1">
+                            Report type</label>
+                        <span style="display: inline-block; vertical-align: middle; margin: 0;">
+                            <select class="input-medium" id="dimension1">
+                                <option value="URL">URL</option>
+                                <option value="Day">Day</option>
+                                <option value="Referrer">Referrer</option>
+                                <option value="Language">Language</option>
+                                <option value="Ubication">Ubication</option>
+                                <option value="Browser">Browser</option>
+                                <option value="Visit duration">Visit Duration</option>
+                                <option value="Visitor">Visitor</option>
+                            </select>
+                        </span>
+                    </span>
+                    <span style="display: inline-block; vertical-align: top; margin-left: 2px;">
+                        <label style="display: inline-block; vertical-align: middle; margin: 0;" for="dimension2">
+                            Group by</label>
+                        <span style="display: inline-block; vertical-align: middle; margin: 0;">
+                            <select class="input-medium" id="dimension2">
+                                <option value="">No grouping</option>
+                                <option value="Day">Day</option>
+                                <option value="URL">URL</option>
+                                <option value="Referrer">Referrer</option>
+                                <option value="Language">Language</option>
+                                <option value="Ubication">Ubication</option>
+                                <option value="Browser">Browser</option>
+                                <option value="Visit duration">Visit Duration</option>
+                                <option value="Visitor">Visitor</option>
+                            </select>
+                        </span>
+                    </span>
+                    <!--
+                    <span style="display: inline-block; vertical-align: top; margin-left: 20px;">
+                        <label style="display: inline-block; vertical-align: middle; margin: 0;" for="dimension2">
+                            Group by</label>
+                        <span style="display: inline-block; vertical-align: middle; margin: 0;">
+                            <select class="input-medium" id="dimension3">
+                                <option value="">No grouping</option>
+                                <option value="Day">Day</option>
+                                <option value="URL">URL</option>
+                                <option value="Referrer">Referrer</option>
+                                <option value="Language">Language</option>
+                                <option value="Ubication">Ubication</option>
+                                <option value="Browser">Browser</option>
+                                <option value="Visit duration">Visit Duration</option>
+                                <option value="Visitor">Visitor</option>
+                            </select>
+                        </span>
+                    </span>
+                        -->
+                    <span style="display: inline-block; vertical-align: top; margin-left: 2px; padding-bottom: 2px;">
+                        <span style="vertical-align: middle" class="btn btn-primary" onclick="javascript:analytics_updatetable();">reload data</span>
+                    </span>
+                </div>
+                <div id="AnalyticsReportResults" style="display: none;">
+                    <h3 style="text-align: center; text-transform: capitalize;" id="analytics_title">
+                        <span id="title_dimension1"></span>
+                        <span>report </span>
+                        <span id="title_dimension2"></span>
+                        <span id="title_dimension3"></span>
+                        from
+                    <span id="title_from"></span>
+                        to
+                    <span id="title_to"></span>
+                    </h3>
+                    <div id="analytics_chart_holder" style="margin-bottom: 20px; height: 260px; display: block; width: 100%;">
+                    </div>
+                    <div style="clear: both;">
+                        <table class="table table-striped" id="analytics_table">
+                            <thead>
+                                <tr>
+                                    <th>ID1</th>
+                                    <th id="th_dimension1"></th>
+                                    <th>ID2</th>
+                                    <th id="th_dimension2"></th>
+                                    <!--
+                                    <th>ID3</th>
+                                    <th id="th_dimension3"></th>
+                                        -->
+                                    <th>Page Views</th>
+                                    <th>Different IPs</th>
+                                    <th>Average MilliSeconds</th>
+                                    <th>Average Time</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="no_visits" class="" style="margin-top: 150px; text-align: center; display: none; width: 400px; margin: 100px auto 0;">
+                        <h4>No data found in the selected date range</h4>
+                        <hr />
+                        <p>Did you installed the vizzop script?</p>
+                        <p>Go to <a href="#quickstart" onclick="javascript:showQuickStart();">Widget Installation</a> to find out how to install the script in your own web.</p>
+                    </div>
+                </div>
+                <div id="AnalyticsReportLoading" style="margin-top: 150px;">
+                    <div class="loading">
+                        <div style="text-align: center;">
+                            loading...
+                        </div>
+                        <div style="text-align: center; margin-top: 5px;">
+                            <img src="@Url.Content("~/Content/images/loading.gif")" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    var analytics_oTable = null;
+    var anal_Reloading_InCourse = null;
+    var analytics_plot = null;
+
+    function analytics_updatetable() {
+        if (anal_Reloading_InCourse == null) {
+            $('#rangeDate').attr("disabled", "disabled");
+            $('#dimension1').attr("disabled", "disabled");
+            $('#dimension2').attr("disabled", "disabled");
+            //$('#dimension3').attr("disabled", "disabled");
+            $("#AnalyticsReportResults").hide();
+            $("#AnalyticsReportLoading").show();
+            analytics_oTable.ses_fnReloadAjax(getAnalyticsURL(), function () { });
+        }
+    }
+
+    var analoneDayAgo = new Date();
+    analoneDayAgo.setDate(analoneDayAgo.getDate() - 4);
+
+    $('#divrangeDate').DatePicker({
+        flat: true,
+        date: [analoneDayAgo, new Date()],
+        current: new Date(),
+        calendars: 3,
+        mode: 'range',
+        starts: 1,
+        onRender: function (date) {
+            return {
+                disabled: (date.valueOf() > (new Date()).valueOf())
+            }
+        },
+        onChange: function (formated, dates) {
+        }
+    });
+
+    $('#dimension1').change(function () {
+        /*
+        $('#dimension2')
+            .find('option')
+            .remove()
+            .end()
+            .append('<option value="">No Grouping</option>')
+            .val('');*/
+        //var dimension1 = $('#dimension1').val();
+        /*
+        switch (dimension1) {
+            case "URL":
+                $('#dimension2')
+                   .append($('<option value="Browser">Browser</option>'))
+                   .append($('<option value="Visitor">Visitor</option>'))
+                   .append($('<option value="Referrer">Referrer</option>'))
+                   .append($('<option value="language">Language</option>'))
+                   .append($('<option value="Ubication">Ubication</option>'));
+                break;
+        }*/
+    });
+
+    function getAnalyticsURL() {
+        var range = $('#divrangeDate').DatePickerGetDate(true);
+        var dimension1 = $('#dimension1').val();
+        var dimension2 = $('#dimension2').val();
+        //var dimension3 = $('#dimension3').val();
+        var from = range[0];
+        var to = range[1];
+        $('#title_dimension1').text(dimension1);
+        $('#th_dimension1').text(dimension1);
+        $('#th_dimension2').text(dimension2);
+        //$('#th_dimension3').text(dimension3);
+        if (analytics_oTable != null) {
+            /*
+            if (dimension1 == 'Visit duration') {
+                analytics_oTable.fnSetColumnVis(6, false);
+            } else {
+                analytics_oTable.fnSetColumnVis(6, true);
+            }
+            */
+            if (dimension2 == "") {
+                analytics_oTable.fnSetColumnVis(3, false);
+            } else {
+                analytics_oTable.fnSetColumnVis(3, true);
+            }
+            /*
+            if (dimension3 == "") {
+                analytics_oTable.fnSetColumnVis(5, false);
+            } else {
+                analytics_oTable.fnSetColumnVis(5, true);
+            }
+            */
+        }
+        if (dimension2 == "") {
+            $('#title_dimension2').text('');
+        } else {
+            $('#title_dimension2').text(' grouped by ' + dimension2);
+        }
+        /*
+        if (dimension3 == "") {
+            $('#title_dimension3').text('');
+        } else {
+            $('#title_dimension3').text(' - ' + dimension3);
+        }*/
+        $('#title_from').text(from);
+        $('#label_from').text(from);
+        $('#title_to').text(to);
+        $('#label_to').text(to);
+        $('#rangeDate').val(from + ' to ' + to);
+        return '../Analytics/GetAnalyticsJson?dimension1=' + dimension1 + '&dimension2=' + dimension2 + '&from=' + from + '&to=' + to;
+    }
+
+    function getAnalyticsGraphURL() {
+        var range = $('#divrangeDate').DatePickerGetDate(true);
+        var dimension1 = $('#dimension1').val();
+        var dimension2 = $('#dimension2').val();
+        //var dimension3 = $('#dimension3').val();
+        var from = range[0];
+        var to = range[1];
+        return '../Analytics/GetAnalyticsGraphJson?dimension1=' + dimension1 + '&dimension2=' + dimension2 + '&from=' + from + '&to=' + to;
+    }
+
+    function PlotAnalyticsChart() {
+        try {
+            if (analytics_plot != null) {
+                analytics_plot.destroy();
+            }
+
+            var ajaxDataRenderer = function (url, plot, options) {
+                var ret = null;
+                $.ajax({
+                    async: false,
+                    url: url,
+                    dataType: "json",
+                    success: function (data) {
+                        ret = data;
+                        $('#rangeDate').removeAttr("disabled");
+                        $('#dimension1').removeAttr("disabled");
+                        $('#dimension2').removeAttr("disabled");
+                        //$('#dimension3').removeAttr("disabled");
+                        $("#AnalyticsReportLoading").hide();
+                        $("#AnalyticsReportResults").show();
+                    }
+                });
+                return ret;
+            };
+
+            var plotData = ajaxDataRenderer(getAnalyticsGraphURL());
+
+            var range = $('#divrangeDate').DatePickerGetDate(false);
+            var dateStart = range[0];
+            var dateEnd = range[1];
+            var days = (dateEnd - dateStart) / 1000 / 60 / 60 / 24;
+
+            var tickInterval = '1 day';
+            var limit = 10
+            if (days > limit) {
+                tickInterval = Math.ceil(days / limit) + ' days';
+            }
+
+            analytics_plot = $.jqplot('analytics_chart_holder', plotData.data, {
+                highlighter: {
+                    show: true,
+                    tooltipAxes: 'y'
+                },
+                seriesDefaults: {
+                    lineWidth: 3,
+                    shadow: false,
+                    showMarker: true,
+                    markerOptions: {
+                        shadow: false,
+                        style: "circle",
+                        size: 5
+                    },
+                    pointLabels: {
+                        show: false,
+                        location: 'ne'
+                    }
+                },
+                axes: {
+                    xaxis: {
+                        renderer: $.jqplot.DateAxisRenderer,
+                        tickOptions: { formatString: '%b %#d %Y' },
+                        tickInterval: tickInterval,
+                        min: dateStart,
+                        max: dateEnd,
+                        pad: 0,
+                        syncTicks: true
+                    },
+                    yaxis: {
+                        min: 0,
+                        tickOptions: {
+                            formatString: '%d'
+                        },
+                        pad: 0,
+                        syncTicks: true
+                    }
+                },
+                cursor: {
+                    show: false
+                },
+                legend: {
+                    show: true,
+                    labels: plotData.labels,
+                    placement: 'outsideGrid',
+                    border: 'noborder',
+                    location: 'e'
+                },
+                grid: {
+                    drawGridLines: true,        // wether to draw lines across the grid or not.
+                    gridLineColor: '#e0e0e0',    // *Color of the grid lines.
+                    background: 'transparent',      // CSS color spec for background color of grid.
+                    borderColor: 'transparent',     // CSS color spec for border around grid.
+                    borderWidth: 2.0,           // pixel width of border around grid.
+                    shadow: false,               // draw a shadow for grid.
+                    shadowAngle: 45,            // angle of the shadow.  Clockwise from x axis.
+                    shadowOffset: 1.5,          // offset from the line of the shadow.
+                    shadowWidth: 3,             // width of the stroke for the shadow.
+                    shadowDepth: 3,             // Number of strokes to make when drawing shadow.
+                    // Each stroke offset by shadowOffset from the last.
+                    shadowAlpha: 0.07,           // Opacity of the shadow
+                    renderer: $.jqplot.CanvasGridRenderer,  // renderer to use to draw the grid.
+                    rendererOptions: {}         // options to pass to the renderer.  Note, the default
+                    // CanvasGridRenderer takes no additional options.
+                }
+            });
+        } catch (err) {
+            /*
+            if (console.log != null) {
+                console.log(err);
+            }
+            */
+        }
+    }
+
+    $.fn.dataTableExt.oApi.ses_fnReloadAjax = function (oSettings, sNewSource, fnCallback, bStandingRedraw) {
+        if (typeof sNewSource != 'undefined' && sNewSource != null) {
+            oSettings.sAjaxSource = sNewSource;
+        }
+        this.oApi._fnProcessingDisplay(oSettings, true);
+        var that = this;
+        var iStart = oSettings._iDisplayStart;
+        var aData = [];
+
+        this.oApi._fnServerParams(oSettings, aData);
+
+        oSettings.fnServerData(oSettings.sAjaxSource, aData, function (json) {
+
+            that.fnSort([[4, 'desc']]);
+
+            //Clear the old information from the table
+            that.oApi._fnClearTable(oSettings);
+            $('#analytics_table_wrapper').hide();
+            $('#analytics_title').hide();
+            $('#no_visits').hide();
+            $('#analytics_chart_holder').hide();
+
+            //Got the data - add it to the table
+            var aData = (oSettings.sAjaxDataProp !== "") ?
+            that.oApi._fnGetObjectDataFn(oSettings.sAjaxDataProp)(json) : json;
+
+            if (aData != null) {
+
+                if (aData.length > 0) {
+                    $('#analytics_table_wrapper').show();
+                    $('#analytics_title').show();
+                    $('#analytics_chart_holder').show();
+                } else {
+                    $('#no_visits').show();
+                }
+
+                for (var i = 0; i < aData.length; i++) {
+                    that.oApi._fnAddData(oSettings, aData[i]);
+                }
+
+                oSettings.aiDisplay = oSettings.aiDisplayMaster.slice();
+                that.fnDraw();
+
+                if (typeof bStandingRedraw != 'undefined' && bStandingRedraw === true) {
+                    oSettings._iDisplayStart = iStart;
+                    that.fnDraw(false);
+                }
+
+                that.oApi._fnProcessingDisplay(oSettings, false);
+
+                //Callback user function - for event handlers etc
+                if (typeof fnCallback == 'function' && fnCallback != null) {
+                    fnCallback(oSettings);
+                }
+
+            }
+
+            PlotAnalyticsChart();
+
+            anal_Reloading_InCourse = null;
+
+        }, oSettings);
+    }
+
+
+    $(document).ready(function () {
+
+        analytics_oTable = $('#analytics_table').dataTable({
+            "aLengthMenu": [
+            [25, 50, 100, 200, -1],
+            [25, 50, 100, 200, "All"]
+            ],
+            "iDisplayLength": -1,
+            "bProcessing": false,
+            "fnServerData": function (sSource, aoData, fnCallback) {
+                anal_Reloading_InCourse = $.ajax({
+                    "dataType": 'json',
+                    "type": "POST",
+                    "url": sSource,
+                    "data": aoData,
+                    "error": function () {
+                        anal_Reloading_InCourse = null;
+                    },
+                    "success": fnCallback
+                });
+            },
+            "bAutoWidth": false,
+            /*"sAjaxSource": getAnalyticsURL(),*/
+            "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+            },
+            "fnInitComplete": function (oSettings, json) {
+            },
+            "aoColumns": [
+                {
+                    "bSearchable": false,
+                    "bVisible": false
+                },
+                {
+                    "iDataSort": 0,
+                    "bSearchable": true,
+                    "bVisible": true,
+                },
+                {
+                    "bSearchable": false,
+                    "bVisible": false
+                },
+                {
+                    "iDataSort": 2,
+                    "bSearchable": true,
+                    "bSortable": true
+                },
+                {
+                    "bSearchable": false,
+                    "bSortable": true
+                },
+                {
+                    "sWidth": "100px",
+                    "bSearchable": false,
+                    "bSortable": true
+                },
+                {
+                    "sWidth": "100px",
+                    "bSearchable": false,
+                    "bSortable": false,
+                    "bVisible": false
+                },
+                {
+                    "iDataSort": 6,
+                    "sWidth": "100px",
+                    "bSearchable": false,
+                    "bSortable": true
+                }
+            ]
+        });
+        analytics_updatetable();
+    });
+</script>

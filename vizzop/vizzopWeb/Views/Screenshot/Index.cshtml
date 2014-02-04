@@ -1,0 +1,314 @@
+﻿@model vizzopWeb.Models.ScreenCapture
+
+@{
+    Layout = null;
+    vizzopWeb.Utils utils = new vizzopWeb.Utils();
+}
+
+<div class="content-header">
+    <h1>Videos
+    </h1>
+</div>
+<div id="breadcrumb">
+    <a class="tip-bottom"><i class="icon-home"></i>
+        <span style="vertical-align: middle;">Control Panel</span></a><a style="vertical-align: middle;" class="current">Videos</a>
+</div>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="widget-box">
+            <div class="widget-title">
+                <span class="icon">
+                    <i class="icon-th"></i>
+                </span>
+                <h5>Report Table</h5>
+            </div>
+            <div class="widget-content">
+                <div class="reportOptions" id="ScreenshotReportOptions">
+                    <span style="display: inline-block; vertical-align: top;">
+                        <label style="display: inline-block; vertical-align: middle; margin: 0;" onclick="javascript:$('#screenshotcontainerdivrangeDate').toggle();return false;">
+                            Date Range</label>
+                        <span style="display: inline-block; vertical-align: middle; margin: 0;" class="input-append">
+                            <input class="input-large" id="screenshotrangeDate" type="text" onclick="javascript: $('#screenshotcontainerdivrangeDate').toggle(); return false;">
+                            <span class="btn add-on" onclick="javascript:$('#screenshotcontainerdivrangeDate').toggle();return false;">
+                                <i class="icon-calendar"></i>
+                            </span>
+                        </span>
+                        <div style="background-color: #FFFFFF; padding: 5px; display: none; position: absolute; z-index: 1000; box-shadow: 0 0 3px #999999; border: 1px solid #ccc;" id="screenshotcontainerdivrangeDate">
+                            <div style="height: 160px; width: 520px;">
+                                <span id="screenshotdivrangeDate"></span>
+                            </div>
+                            <div class="form-actions" style="margin: 0; padding: 4px;">
+                                <span class="btn" onclick="javascript:$('#screenshotcontainerdivrangeDate').toggle();screenshot_updatetable();return false;" style="vertical-align: middle">apply</span>
+                                &nbsp;
+                            <span onclick="javascript:$('#screenshotcontainerdivrangeDate').toggle();return false;" style="color: #66f; text-decoration: underline; cursor: pointer;">cancel</span>
+                            </div>
+                        </div>
+                    </span>
+
+                    <span style="display: inline-block; vertical-align: top; margin-left: 2px; padding-bottom: 2px;">
+                        <span style="vertical-align: middle" class="btn btn-primary" onclick="javascript:screenshot_updatetable();">reload data</span>
+                    </span>
+                </div>
+                <div id="ScreenshotReportResults" style="display: none;">
+                    <h3 style="text-align: center; text-transform: capitalize;" id="screenshot_title">
+                        <span id="screenshot_title_from"></span>
+                        to
+                    <span id="screenshot_title_to"></span>
+                    </h3>
+                    <div style="clear: both;">
+                        <table class="table table-striped" id="screenshot_table">
+                            <thead>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="screenshot_no_visits" class="" style="margin-top: 150px; text-align: center; display: none; width: 400px; margin: 100px auto 0;">
+                        <h4>No videos found in the selected date range</h4>
+                        <hr />
+                        <p>Did you installed the vizzop script?</p>
+                        <p>Go to <a href="#quickstart" onclick="javascript:showQuickStart();">Widget Installation</a> to find out how to install the script in your own web.</p>
+                    </div>
+                </div>
+                <div id="ScreenshotReportLoading" style="margin-top: 150px;">
+                    <div class="loading">
+                        <div style="text-align: center;">
+                            loading...
+                        </div>
+                        <div style="text-align: center; margin-top: 5px;">
+                            <img src="@Url.Content("~/Content/images/loading.gif")" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    var screenshot_oTable = null;
+    var screenshot_Reloading_InCourse = null;
+
+    function screenshot_updatetable() {
+        if (screenshot_Reloading_InCourse == null) {
+            $('#screenshotrangeDate').attr("disabled", "disabled");
+            $("#ScreenshotReportResults").hide();
+            $("#ScreenshotReportLoading").show();
+            screenshot_oTable.screenshot_fnReloadAjax(getScreenshotURL(), function () { });
+        }
+    }
+
+    var ScreenoneDayAgo = new Date();
+    ScreenoneDayAgo.setDate(ScreenoneDayAgo.getDate() - 1);
+
+    $('#screenshotdivrangeDate').DatePicker({
+        flat: true,
+        date: [ScreenoneDayAgo, new Date()],
+        current: new Date(),
+        calendars: 3,
+        mode: 'range',
+        starts: 1,
+        onRender: function (date) {
+            return {
+                disabled: (date.valueOf() > (new Date()).valueOf())
+            }
+        },
+        onChange: function (formated, dates) {
+        }
+    });
+
+    function getScreenshotURL() {
+        var range = $('#screenshotdivrangeDate').DatePickerGetDate(true);
+        var from = range[0];
+        var to = range[1];
+        $('#screenshot_title_from').text(from);
+        $('#screenshot_title_to').text(to);
+        $('#screenshotrangeDate').val(from + ' to ' + to);
+        return '../Screenshot/GetScreenshotJson?from=' + from + '&to=' + to;
+    }
+
+    $.fn.dataTableExt.oApi.screenshot_fnReloadAjax = function (oSettings, sNewSource, fnCallback, bStandingRedraw) {
+        if (typeof sNewSource != 'undefined' && sNewSource != null) {
+            oSettings.sAjaxSource = sNewSource;
+        }
+        this.oApi._fnProcessingDisplay(oSettings, true);
+        var that = this;
+        var iStart = oSettings._iDisplayStart;
+        var aData = [];
+
+        this.oApi._fnServerParams(oSettings, aData);
+
+        oSettings.fnServerData(oSettings.sAjaxSource, aData, function (json) {
+            //(json);
+            //alert(json);
+            //that.fnSort([[4, 'desc']]);
+
+            //Clear the old information from the table
+            that.oApi._fnClearTable(oSettings);
+            $('#screenshot_table_wrapper').hide();
+            $('#screenshot_title').hide();
+            $('#screenshot_no_visits').hide();
+
+            $("#ScreenshotReportLoading").hide();
+            $("#ScreenshotReportResults").show();
+            $('#screenshotrangeDate').removeAttr("disabled");
+
+            if (json == false) {
+                $('#screenshot_no_visits').show();
+            } else {
+                //Got the data - add it to the table
+                var aData = (oSettings.sAjaxDataProp !== "") ?
+                that.oApi._fnGetObjectDataFn(oSettings.sAjaxDataProp)(json) : json;
+
+                if (aData == null) {
+                    $('#screenshot_no_visits').show();
+                } else {
+
+                    if (aData.length > 0) {
+                        $('#screenshot_table_wrapper').show();
+                        $('#screenshot_title').show();
+                        $('#screenshot_no_visits').hide();
+                    } else {
+                        $('#screenshot_no_visits').show();
+                    }
+
+                    for (var i = 0; i < aData.length; i++) {
+                        that.oApi._fnAddData(oSettings, aData[i]);
+                    }
+
+                    oSettings.aiDisplay = oSettings.aiDisplayMaster.slice();
+                    that.fnDraw();
+
+                    if (typeof bStandingRedraw != 'undefined' && bStandingRedraw === true) {
+                        oSettings._iDisplayStart = iStart;
+                        that.fnDraw(false);
+                    }
+
+                    that.oApi._fnProcessingDisplay(oSettings, false);
+
+                    //Callback user function - for event handlers etc
+                    if (typeof fnCallback == 'function' && fnCallback != null) {
+                        fnCallback(oSettings);
+                    }
+
+                }
+
+            }
+
+            screenshot_Reloading_InCourse = null;
+
+        }, oSettings);
+    }
+
+
+    $(document).ready(function () {
+
+        screenshot_oTable = $('#screenshot_table').dataTable({
+            "aLengthMenu": [
+            [25, 50, 100, 200, -1],
+            [25, 50, 100, 200, "All"]
+            ],
+            "iDisplayLength": -1,
+            "bProcessing": false,
+            "fnServerData": function (sSource, aoData, fnCallback) {
+                screenshot_Reloading_InCourse = $.ajax({
+                    "dataType": 'json',
+                    "type": "POST",
+                    "url": sSource,
+                    "data": aoData,
+                    "error": function () {
+                        screenshot_Reloading_InCourse = null;
+                    },
+                    "success": fnCallback
+                });
+            },
+            "bAutoWidth": false,
+            /*"sAjaxSource": getAnalyticsURL(),*/
+            "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                //$('td', nRow).addClass("clickable");
+            },
+            "fnInitComplete": function (oSettings, json) {
+            },
+            "aoColumns": [
+                {
+                    "bSearchable": false, "bVisible": false, "sTitle": "ID"
+                },
+                {
+                    "bSearchable": false, "bVisible": true, "sTitle": "Converser ID", "sWidth": "60px"
+                },
+                {
+                    "bSearchable": true, "bVisible": true, "sTitle": "Last URL"
+                },
+                {
+                    "bSearchable": true, "bVisible": true, "sTitle": "Language", "sWidth": "60px"
+                },
+                {
+                    "bSearchable": true, "bVisible": true, "sTitle": "Ubication", "sWidth": "100px"
+                },
+                {
+                    "bSearchable": true, "bVisible": true, "sTitle": "Width", "sWidth": "40px"
+                },
+                {
+                    "bSearchable": true, "bVisible": true, "sTitle": "Height", "sWidth": "40px"
+                },
+                {
+                    "bSearchable": false, "bVisible": false, "sTitle": "Last Capture Machine", "sType": "date"
+                },
+                {
+                    "bSearchable": false, "bVisible": true, "sTitle": "Last Capture", "sType": "date", "iDataSort": 7, "sWidth": "100px"
+                },
+                {
+                    "bSearchable": false, "bVisible": true, "sTitle": "URL", "sWidth": "320px",
+                    "fnRender": function (oObj) {
+                        try {
+                            if (oObj == null) { return ''; }
+                            if (oObj.aData == null) { return ''; }
+                            return "<video width='320' height='240' controls><source src='" + oObj.aData[9] + "' type='video/mp4'></video>";
+                        } catch (_err) {
+                        }
+                    }
+                }
+            ]
+        });
+        screenshot_updatetable();
+        $("#screenshot_table tbody tr").live("click", function (event) {
+            /*
+            var id = screenshot_oTable.fnGetData(this)[1];
+            var username = screenshot_oTable.fnGetData(this)[2];
+            var domain = screenshot_oTable.fnGetData(this)[3];
+            var password = screenshot_oTable.fnGetData(this)[4];
+            var commsessionid = screenshot_oTable.fnGetData(this)[5];
+            if (vizzop.Daemon != null) {
+                var found = false;
+                jQuery.each(vizzop.Boxes, function (index, foundbox) {
+                    //(foundbox._interlocutor);
+                    if (foundbox._interlocutor != null) {
+                        if (foundbox._interlocutor.UserName + foundbox._interlocutor.Business.Domain == username + domain) {
+                            foundbox.bringtofrontBox();
+                            found = true;
+                            return false;
+                        }
+                    }
+                });
+                if (found == false) {
+                    var agentmessagebox = new AgentMessageBox();
+                    var client = {
+                        "UserName": username,
+                        "FullName": "",
+                        "Password": password,
+                        "Business": { "Domain": domain },
+                    };
+                    agentmessagebox._interlocutor = client;
+                    agentmessagebox._apikey = vizzop.ApiKey;
+                    agentmessagebox._commsessionid = commsessionid;
+                    agentmessagebox._deferred = true;
+                    agentmessagebox.fillBox_RequestScreenView();
+                    agentmessagebox.bringtofrontBox();
+                }
+            }
+            */
+        });
+    });
+</script>

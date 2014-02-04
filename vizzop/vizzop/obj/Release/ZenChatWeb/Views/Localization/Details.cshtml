@@ -1,0 +1,30 @@
+﻿@model Zentralized.Models.TextString
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<fieldset>
+    <legend>TextString</legend>
+
+    <div class="display-label">Ref</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Ref)
+    </div>
+
+    <div class="display-label">IsoCode</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.IsoCode)
+    </div>
+
+    <div class="display-label">Text</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Text)
+    </div>
+</fieldset>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id=Model.ID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

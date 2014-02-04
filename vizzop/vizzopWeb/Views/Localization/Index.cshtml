@@ -1,0 +1,209 @@
+﻿@model IEnumerable<vizzopWeb.Models.TextString>
+
+@{
+    Layout = null;
+    vizzopWeb.Utils utils = new vizzopWeb.Utils();
+}
+
+<div class="content-header">
+    <h1>Localizacion
+    </h1>
+</div>
+<div id="breadcrumb">
+    <a class="tip-bottom"><i class="icon-home"></i>
+        <span style="vertical-align: middle;">Control Panel</span></a><a style="vertical-align: middle;" class="current">Localization</a>
+</div>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="widget-box">
+            <div class="widget-title">
+                <span class="icon">
+                    <i class="icon-th"></i>
+                </span>
+                <h5>Report Table</h5>
+            </div>
+            <div class="widget-content">
+                <div class="reportOptions" id="LocalizationReportOptions">
+                    <span style="display: inline-block; vertical-align: top; margin-left: 2px; padding-bottom: 2px;">
+                        <span style="vertical-align: middle" class="btn btn-primary" onclick="javascript:loc_updatetable();">reload data</span>
+                    </span>
+                    <span style="display: inline-block; vertical-align: top; margin-left: 2px; padding-bottom: 2px;">
+                        <span style="vertical-align: middle" class="btn" onclick="javascript:var box = new LocalizeBox(null);">create new TextString</span>
+                    </span>
+                </div>
+                <div id="LocalizationReportResults" style="display: none;">
+                    <h3 style="text-align: center; text-transform: capitalize;" id="loc_title">Localization Strings
+                    </h3>
+                    <div style="clear: both;">
+                        <table class="table table-striped" id="loc_table">
+                            <thead>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="LocalizationReportLoading" style="margin-top: 150px;">
+                    <div class="loading">
+                        <div style="text-align: center;">
+                            loading...
+                        </div>
+                        <div style="text-align: center; margin-top: 5px;">
+                            <img src="@Url.Content("~/Content/images/loading.gif")" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    var loc_oTable = null;
+    var loc_Reloading_InCourse = null;
+
+    function loc_updatetable() {
+        if (loc_Reloading_InCourse == null) {
+            $("#LocalizationReportResults").hide();
+            $("#LocalizationReportLoading").show();
+            loc_oTable.loc_fnReloadAjax(getLocalizationURL(), function () { });
+        }
+    }
+
+    function getLocalizationURL() {
+        return '../Localization/GetLocalizationJson?';
+    }
+
+    $.fn.dataTableExt.oApi.loc_fnReloadAjax = function (oSettings, sNewSource, fnCallback, bStandingRedraw) {
+        if (typeof sNewSource != 'undefined' && sNewSource != null) {
+            oSettings.sAjaxSource = sNewSource;
+        }
+        this.oApi._fnProcessingDisplay(oSettings, true);
+        var that = this;
+        var iStart = oSettings._iDisplayStart;
+        var aData = [];
+
+        this.oApi._fnServerParams(oSettings, aData);
+
+        oSettings.fnServerData(oSettings.sAjaxSource, aData, function (json) {
+            //(json);
+            //alert(json);
+            //that.fnSort([[4, 'desc']]);
+
+            //Clear the old information from the table
+            that.oApi._fnClearTable(oSettings);
+            $('#loc_table_wrapper').hide();
+            $('#loc_title').hide();
+            $('#loc_no_visits').hide();
+
+            $("#LocalizationReportLoading").hide();
+            $("#LocalizationReportResults").show();
+
+            if (json == false) {
+                $('#loc_no_visits').show();
+            } else {
+                //Got the data - add it to the table
+                var aData = (oSettings.sAjaxDataProp !== "") ?
+                that.oApi._fnGetObjectDataFn(oSettings.sAjaxDataProp)(json) : json;
+
+                if (aData != null) {
+
+                    if (aData.length > 0) {
+                        $('#loc_table_wrapper').show();
+                        $('#loc_title').show();
+                        $('#loc_no_visits').hide();
+                    }
+
+                    for (var i = 0; i < aData.length; i++) {
+                        that.oApi._fnAddData(oSettings, aData[i]);
+                    }
+
+                    oSettings.aiDisplay = oSettings.aiDisplayMaster.slice();
+                    that.fnDraw();
+
+                    if (typeof bStandingRedraw != 'undefined' && bStandingRedraw === true) {
+                        oSettings._iDisplayStart = iStart;
+                        that.fnDraw(false);
+                    }
+
+                    that.oApi._fnProcessingDisplay(oSettings, false);
+
+                    //Callback user function - for event handlers etc
+                    if (typeof fnCallback == 'function' && fnCallback != null) {
+                        fnCallback(oSettings);
+                    }
+
+                }
+
+            }
+
+            loc_Reloading_InCourse = null;
+
+        }, oSettings);
+    }
+
+
+    $(document).ready(function () {
+
+        loc_oTable = $('#loc_table').dataTable({
+            "aLengthMenu": [
+            [25, 50, 100, 200, -1],
+            [25, 50, 100, 200, "All"]
+            ],
+            "iDisplayLength": -1,
+            "bProcessing": false,
+            "fnServerData": function (sSource, aoData, fnCallback) {
+                loc_Reloading_InCourse = $.ajax({
+                    "dataType": 'json',
+                    "type": "POST",
+                    "url": sSource,
+                    "data": aoData,
+                    "error": function () {
+                        loc_Reloading_InCourse = null;
+                    },
+                    "success": fnCallback
+                });
+            },
+            "bAutoWidth": false,
+            /*"sAjaxSource": getAnalyticsURL(),*/
+            "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                $('td', nRow).addClass("clickable");
+            },
+            "fnInitComplete": function (oSettings, json) {
+            },
+            "aoColumns": [
+                {
+                    "bSearchable": true, "bVisible": true, "sTitle": "ID", "sWidth": "30px"
+                },
+                {
+                    "bSearchable": true, "bVisible": true, "sTitle": "Lang", "sWidth": "20px"
+                },
+                {
+                    "bSearchable": true, "bVisible": true, "sTitle": "Reference", "sWidth": "100px"
+                },
+                {
+                    "bSearchable": true,
+                    "bVisible": true,
+                    "sTitle": "Localized Text",
+                    "fnRender": function (oObj) {
+                        if (oObj == null) { return ''; }
+                        if (oObj.aData == null) { return ''; }
+                        return "<textarea style='width: 98%; background-color: #FAFAFA; border: none; box-shadow: none; resize: none; font-family: monospace; cursor: pointer;'>" + oObj.aData[3] + "</textarea>";
+                    }
+                }
+            ]
+        });
+        loc_updatetable();
+        $("#loc_table tbody tr").live("click", function (event) {
+
+            var id = loc_oTable.fnGetData(this)[0];
+
+            if (vizzop.Daemon != null) {
+                vizzop.Daemon.loadLocalizeBox(id);
+            }
+
+        });
+    });
+</script>

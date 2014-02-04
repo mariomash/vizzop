@@ -1,0 +1,237 @@
+﻿@model vizzopWeb.Models.NewvizzopAccount
+@{
+    ViewBag.Title = "Register";
+}
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+<br />
+<br />
+<center>
+    @using (Html.BeginForm("Create", "vizzop", FormMethod.Get))
+    {
+        @Html.ValidationSummary(true)
+        if (ViewBag.errors != null)
+        {
+        <div class="alert-message warning">@Html.Raw(ViewBag.errors)</div>
+        }
+        <style type="text/css">
+            .table th {
+                text-align: center;
+                width: 200px; /*white-space: nowrap;*/
+            }
+
+            .table td {
+                text-align: center;
+            }
+        </style>
+        <div class="well">
+            <fieldset>
+                <legend>Creating a new Account at Zentralized</legend>
+                <h5>First Step to Sign Up, choose your Version of Zen Tools</h5>
+                <table class="table table- table-striped" style="width: 790px; margin: 0 auto;">
+                    <tr style="background: none;">
+                        <th>
+                            &nbsp;
+                        </th>
+                        <th>
+                            <span style="font-size: 15px;">Free Version</span>
+                        </th>
+                        <th>
+                            <span style="font-size: 15px;">Standard Version</span>
+                        </th>
+                        <th>
+                            <span style="font-size: 15px;">Premium Version</span>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th style="text-align: left;">
+                            Live Chat
+                        </th>
+                        <td>
+                            <i class="icon-ok"></i>
+                        </td>
+                        <td>
+                            <i class="icon-ok"></i>
+                        </td>
+                        <td>
+                            <i class="icon-ok"></i>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="text-align: left;">
+                            Audio & Video Chat
+                        </th>
+                        <td>
+                            -
+                        </td>
+                        <td>
+                            <i class="icon-ok"></i>
+                        </td>
+                        <td>
+                            <i class="icon-ok"></i>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="text-align: left;">
+                            Client's Screen Sharing
+                        </th>
+                        <td>
+                            -
+                        </td>
+                        <td>
+                            <i class="icon-ok"></i>
+                        </td>
+                        <td>
+                            <i class="icon-ok"></i>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="text-align: left;">
+                            SSL encription
+                        </th>
+                        <td>
+                            <i class="icon-ok"></i>
+                        </td>
+                        <td>
+                            <i class="icon-ok"></i>
+                        </td>
+                        <td>
+                            <i class="icon-ok"></i>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="text-align: left;">
+                            Web Access
+                        </th>
+                        <td>
+                            <i class="icon-ok"></i>
+                        </td>
+                        <td>
+                            <i class="icon-ok"></i>
+                        </td>
+                        <td>
+                            <i class="icon-ok"></i>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="text-align: left;">
+                            Iphone & Android chat
+                        </th>
+                        <td>
+                            -
+                        </td>
+                        <td>
+                            <i class="icon-ok"></i>
+                        </td>
+                        <td>
+                            <i class="icon-ok"></i>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="text-align: left;">
+                            Ticket System
+                        </th>
+                        <td>
+                            -
+                        </td>
+                        <td>
+                            <i class="icon-ok"></i>
+                        </td>
+                        <td>
+                            <i class="icon-ok"></i>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="text-align: left;">
+                            <div>
+                                Ads Free</div>
+                            <span class="help-block">No Insertion of Ads in your customers chat</span>
+                        </th>
+                        <td>
+                            -
+                        </td>
+                        <td>
+                            <i class="icon-ok"></i>
+                        </td>
+                        <td>
+                            <i class="icon-ok"></i>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="text-align: left;">
+                            <div>
+                                White Label</div>
+                            <span class="help-block">Complete removal of all references to Zentralized or vizzop name in your website's chat </span>
+                        </th>
+                        <td>
+                            -
+                        </td>
+                        <td>
+                            -
+                        </td>
+                        <td>
+                            <i class="icon-ok"></i>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="text-align: left;">
+                            Number of Agents
+                        </th>
+                        <td>
+                            <strong>1</strong>
+                        </td>
+                        <td>
+                            <strong>3</strong>
+                        </td>
+                        <td>
+                            <strong>10</strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="text-align: left;">
+                            Price
+                        </th>
+                        <td>
+                            <strong class="label label-free">Free</strong>
+                        </td>
+                        <td>
+                            <strong class="label-price">$<span style="font-size: 1.4em">24</span>/month</strong>
+                        </td>
+                        <td>
+                            <strong class="label-price">$<span style="font-size: 1.4em">59</span>/month</strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                        </th>
+                        <td>
+                        </td>
+                        <td>
+                            $12 per aditional agent/month
+                        </td>
+                        <td>
+                            $20 per aditional agent/month
+                        </td>
+                    </tr>
+                    <tr style="background: none;">
+                        <th style="text-align: left;">
+                            &nbsp;
+                        </th>
+                        <td>
+                            <button type="submit" name="SelectedOption" value="0" class="btn btn-success btn-large" style="width: 150px; white-space: normal;">
+                                Select Free Version and continue</button>
+                        </td>
+                        <td>
+                            <button type="submit" name="SelectedOption" value="1" class="btn btn-success btn-large" style="width: 150px; white-space: normal;">
+                                Select Standard Version and continue</button>
+                        </td>
+                        <td>
+                            <button type="submit" name="SelectedOption" value="2" class="btn btn-success btn-large" style="width: 150px; white-space: normal;">
+                                Select Premium Version and continue</button>
+                        </td>
+                    </tr>
+                </table>
+            </fieldset>
+        </div>
+    }
+</center>

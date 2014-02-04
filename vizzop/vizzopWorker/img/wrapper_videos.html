@@ -1,0 +1,144 @@
+<html style="margin: 0; padding: 0;">
+<head>
+    <title></title>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript">
+        var data = null;
+        var StartDate = new Date();
+        var OrdersRequest_InCourse = null;
+
+        function CheckIfFrameLoaded() {
+            try {
+                var iframe = document.getElementById('WrapperIframe');
+                if (iframe.contentDocument) {
+                    iframeDoc = iframe.contentDocument;
+                } else {
+                    iframeDoc = iframe.contentWindow.document;
+                }
+
+                // Check if loading is complete
+                if (iframeDoc.readyState == 'complete') {
+
+                    var iframe = document.getElementById('WrapperIframe');
+                    iframe.contentWindow.scrollTo(data.ScrollLeft, data.ScrollTop);
+
+                    var filename = data.GUID + '_.png';
+
+                    window.callPhantom({
+                        'command': 'iframeloaded',
+                        'filename': filename,
+                        'ScrollLeft': data.ScrollLeft,
+                        'ScrollTop': data.ScrollTop,
+                        'Width': data.Width,
+                        'Height': data.Height
+                    });
+
+                } else {
+                    setTimeout(function () { CheckIfFrameLoaded(); }, 1);
+                }
+
+            } catch (err) {
+                window.callPhantom({
+                    'command': 'exit'
+                });
+            }
+        }
+
+        function GetScreenCapture(page, mainURL, UserName, Domain, Password, GUID) {
+            try {
+                /*
+                window.callPhantom({
+                    'log': Password
+                });
+                */
+                var msg = {
+                    'UserName': UserName,
+                    'Domain': Domain,
+                    'Password': Password,
+                    'GUID': GUID
+                };
+                var url = mainURL + "/Messages/GetScreenCaptureByGuid";
+
+                var request = $.ajax({
+                    url: url,
+                    type: "POST",
+                    data: msg,
+                    dataType: "jsonp",
+                    success: function (d) {
+                        try {
+                            if ((d == null) || (d == false)) {
+                                window.callPhantom({
+                                    'command': 'exit'
+                                });
+                                return;
+                            }
+
+
+                            window.callPhantom({
+                                'log':
+                                '\n    htmlsize: ' + d.Html.length
+                            });
+
+                            data = d;
+
+                            var iFrame = document.createElement('iframe');
+                            iFrame.id = 'WrapperIframe';
+                            iFrame.src = "javascript:;";
+                            iFrame.frameborder = 0;
+                            iFrame.noresize = true;
+                            iFrame.scrolling = "no";
+                            document.getElementById('WrapperDiv').appendChild(iFrame);
+                            $('#WrapperIframe').css({ 'border': 'none' });
+
+                            var win = iFrame.contentWindow;
+                            win.document.open('text/html', 'replace');
+                            win.document.write(data.Html);
+                            win.document.close();
+
+                            $(iFrame)
+                                .attr('width', data.Width)
+                                .attr('height', data.Height)
+                                .css({
+                                    'height': data.Height,
+                                    'width': data.Width
+                                });
+
+                            $('#WrapperDiv')
+                                .attr('width', data.Width)
+                                .attr('height', data.Height)
+                                .css({
+                                    'height': data.Height,
+                                    'width': data.Width
+                                });
+
+                            setTimeout(function () { CheckIfFrameLoaded(); }, 1);
+
+                        } catch (err) {
+                            window.callPhantom({
+                                'log': err
+                            });
+                            window.callPhantom({
+                                'command': 'exit'
+                            });
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        window.callPhantom({
+                            'command': 'exit'
+                        });
+                    }
+                });
+            } catch (_err) {
+                window.callPhantom({
+                    'command': 'exit'
+                });
+            }
+
+        }
+    </script>
+</head>
+<body style="margin: 0; padding: 0">
+    <div id="WrapperDiv" style="margin: 0; padding: 0; overflow: hidden;">
+    </div>
+</body>
+</html>

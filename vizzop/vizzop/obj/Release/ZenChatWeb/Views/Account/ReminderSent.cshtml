@@ -1,0 +1,41 @@
+﻿@model Zentralized.Models.Business
+@{
+    ViewBag.Title = "Password Reminder - Zentralized";
+}
+<script type="text/javascript">
+    var seconds = new Number(7);
+    $("#seconds").text(seconds);
+    function ChangeRedir() {
+        if (seconds > 0) {
+            $("#seconds").text(seconds);
+            seconds--;
+            setTimeout(ChangeRedir, 1000);
+            return;
+        }
+        window.location = '@Url.Action("LogOn", "Account")';
+    }
+    $(function () {
+        setTimeout(ChangeRedir, 1000);
+    });
+</script>
+<center>
+    <br />
+    <h3>
+        Reminder Send Successful</h3>
+    <br />
+    <div style="width: 400px; text-align: center;" class="well">
+        <h2>
+            We have sent you a reminder to your E-mail!</h2>
+        <br />
+        <h4>
+            Redirecting to login page in
+            <span id="seconds">7</span>
+            seconds
+        </h4>
+        <br />
+        <p>
+            @Html.ActionLink("Take me to the Login now", "LogOn", "Account", null, null, null, null, new { @class = "btn btn-large btn-success" })
+        </p>
+        <br />
+    </div>
+</center>

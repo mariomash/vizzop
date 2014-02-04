@@ -1,0 +1,75 @@
+﻿@model vizzopWeb.Models.LogOn
+@{
+    ViewBag.Title = "Log On - vizzop";
+}
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+
+<style>
+    .form-horizontal .control-group {
+        margin-bottom: 10px;
+    }
+
+    .form-actions {
+        background: none;
+        border: none;
+        margin: 0;
+        padding-top: 0;
+    }
+
+    .LogOnPartial {
+        display: none;
+    }
+
+    .navbar {
+        display: none;
+    }
+</style>
+<br />
+<br />
+<div style="width: 300px; margin: 0 auto 0;">
+    <img src="~/Content/images/logo.png" />
+</div>
+<br />
+@using (Html.BeginForm("LogOn", "Account", FormMethod.Post, new { @class = "well form-horizontal", @style = "display: block; width: 500px; margin: 0 auto;" }))
+{
+    @Html.ValidationSummary(true)
+    if (ViewBag.errors != null)
+    {
+    <div class="alert error">
+        <a class="close" data-dismiss="alert">×</a>
+        @Html.Raw(ViewBag.errors)
+    </div>
+    }
+    <fieldset>
+        <legend>
+            <h3>Sign in to your vizzop account</h3>
+        </legend>
+        <div class="control-group">
+            <label for="Email" class="control-label">
+                E-mail</label>
+            <div class="controls">
+                <div class="input-append">
+                    @Html.TextBoxFor(model => model.Email, new { @class = "input-large", @placeholder = "john@doe.com" })
+                    @Html.ValidationMessageFor(model => model.Email, null, new { @class = "help-inline" })
+                </div>
+            </div>
+        </div>
+        <div class="control-group">
+            @Html.LabelFor(model => model.Password, new { @class = "control-label" })
+            <div class="controls">
+                @Html.TextBoxFor(model => model.Password, new { @class = "input-medium", @placeholder = "password", @type = "password" })
+                @Html.ValidationMessageFor(model => model.Password, null, new { @class = "help-inline" })
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                @Html.ActionLink("I can't log in", "reminder", "Account")
+            </div>
+        </div>
+        <div class="form-actions">
+            <input type="submit" value="Login" class="btn btn-success btn-large" />
+            <a href="@Url.Action("En", "vizzop")" class="btn btn-primary btn-large">What is vizzop?</a>
+        </div>
+    </fieldset>
+}

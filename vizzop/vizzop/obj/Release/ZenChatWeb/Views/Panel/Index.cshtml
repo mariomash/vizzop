@@ -1,0 +1,64 @@
+﻿@{
+    Zentralized.Models.Converser converser = (Zentralized.Models.Converser)Session["converser"];
+    ViewBag.Title = "Zentralized Panel - " + converser.FullName;
+}
+<script type="text/javascript">
+    $(function () {
+        prettyPrint();
+    });
+</script>
+<div id="content">
+    <div class="tab-content">
+        @if (converser.Agent.IsAdmin == true)
+        {
+            <div class="tab-pane active" id="quickstart">
+                <div class="content-header">
+                    <h1>@converser.Business.BusinessName Dashboard
+                    </h1>
+                </div>
+                <div id="breadcrumb">
+                    <a class="tip-bottom"><i class="icon-home"></i>
+                        <span style="vertical-align: middle;">Control Panel</span></a><a style="vertical-align: middle;" class="current">Dashboard</a>
+                </div>
+                <div class="container-fluid">
+                    <div class="row-fluid">
+                        <!--
+                        <div class="span6">
+                            </div>
+                            -->
+                        <div class="widget-box">
+                            <div class="widget-title">
+                                <span class="icon">
+                                    <i class="icon-question-sign"></i>
+                                </span>
+                                <h5>Quick Installation Info</h5>
+                            </div>
+                            <div class="widget-content">
+                                <h4>How to install Zentralized script in your Web Site.</h4>
+                                <br />
+                                <ol>
+                                    <li>Just add this script into the <strong>Head</strong> tag to every page of your WebSite, like this:
+                                        <br />
+                                        <br />
+                                        <pre class="prettyprint linenums lang-html">@ViewBag.Code</pre>
+                                    </li>
+                                    <li>That's it! You're up and running. From this Panel you can configure everything related to your account, and chat with your users and agents.</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="tab-pane" id="analytics">
+            @{Html.RenderAction("Index", "Analytics");}
+        </div>
+        <div class="tab-pane @if (converser.Agent.IsAdmin == false)
+                             {<text>active</text>}" id="realtime">
+            @{Html.RenderAction("Index", "RealTime");}
+        </div>
+        <div class="tab-pane" id="tickets">
+            @{Html.RenderAction("Index", "CommSession", new { CommSession_filter = ViewBag.CommSession_filter });}
+        </div>
+    </div>
+</div>

@@ -1,0 +1,121 @@
+﻿@{
+    Layout = null;
+    vizzopWeb.Utils utils = new vizzopWeb.Utils();
+}
+<div class="content-header">
+    <h1>Realtime
+    </h1>
+</div>
+<div id="breadcrumb">
+    <a class="tip-bottom"><i class="icon-home"></i>
+        <span style="vertical-align: middle;">Control Panel</span><a style="vertical-align: middle;" class="current">Realtime</a></a>
+</div>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <!--<h4>Milliseconds Spent by message - client to client Vs In Server</h4>-->
+        <!--<div id="ClientToClientChart" class="ClientToClientChart chart"></div>-->
+        <!--
+        <h4>Total Milliseconds Spent in Server</h4>
+        <div class="SrvToSrvChart chart"></div>
+        -->
+        <span id="Audit_spanStatus">(display)</span>
+        <input type="button" value="Start Auditing" id="Audit_btnConnect" />
+        <input type="button" value="Stop Auditing" id="Audit_btnDisconnect" />
+        <!--
+        <input type="text" id="textInput" />
+        <input type="button" value="Send" id="btnSend" /><br />
+            -->
+
+        <div id="Audit_Data" class="AuditLog"></div>
+        <div id="Audit_Log" class="AuditLog"></div>
+    </div>
+</div>
+
+
+<script type='text/javascript'>
+    var ws;
+    $().ready(function () {
+        $("#Audit_btnConnect").click(function () {
+            $("#Audit_spanStatus").text("connecting");
+            var protocol = "ws:";
+            if (window.location.protocol.toLowerCase() === "https:") {
+                protocol = "wss:";
+            }
+            var url = protocol + "//" + window.location.hostname + "/vizzop/Audit.ashx";
+            //(url);
+            ws = new WebSocket(url);
+            ws.onopen = function () {
+                $("#Audit_spanStatus").text("connected");
+                $("#Audit_btnConnect").hide();
+                $("#Audit_btnDisconnect").show();
+            };
+            ws.onmessage = function (evt) {
+                //(evt);
+
+                var json = $.parseJSON(evt.data);
+                /*
+                $(json.Audit).each(function (index, item) {
+                    Audit_Chart_data.shift();
+                    Audit_Chart_data.push(item);
+
+                    //$("#Audit_spanStatus").text(item.Subject);
+                });
+                */
+
+                $(json.Audit).each(function (index, item) {
+                    var divLog = $("#Audit_Data");
+                    //(item);
+                    var log = $("<div></div>")
+                        .text(
+                        'Total: ' + item.Total
+                        + ' | InServer: ' + item.InServer
+                        + ' | InSendingClient: ' + item.InSendingClient
+                        + ' | Subject: ' + item.Subject
+                        + ' | UserAgent: ' + item.UserAgent
+                        + ' | From: ' + item.From
+                        + ' | To: ' + item.To
+                        )
+                        .appendTo(divLog);
+                    divLog.scrollTop(divLog.scrollHeight);
+                });
+
+                $(json.Log).each(function (index, item) {
+                    var divLog = $("#Audit_Log");
+                    var log = $("<div></div>")
+                        .text(item.TimeStamp + ' : ' + item.Text)
+                        .appendTo(divLog);
+                    divLog.scrollTop(divLog.scrollHeight);
+                });
+                //(chartC2C_data);
+                //chartC2C_data.push(evt.data);
+                //redrawAudit_Chart();
+            };
+            ws.onerror = function (evt) {
+                $("#Audit_spanStatus").text(evt.message);
+            };
+            ws.onclose = function () {
+                $("#Audit_spanStatus").text("disconnected");
+                $("#Audit_btnConnect").show();
+                $("#Audit_btnDisconnect").hide();
+            };
+            $(this).hide();
+            $("#Audit_btnDisconnect").show();
+        });
+        /*
+        $("#btnSend").click(function () {
+            if (ws.readyState == WebSocket.OPEN) {
+                ws.send($("#textInput").val());
+            }
+            else {
+                $("#spanStatus").text("Connection is closed");
+            }
+        });
+        */
+        $("#Audit_btnDisconnect").click(function () {
+            ws.close();
+            $(this).hide();
+        });
+        $("#Audit_btnConnect").trigger('click');
+    });
+
+</script>

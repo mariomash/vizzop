@@ -1,0 +1,41 @@
+﻿@model vizzopWeb.Models.Business
+@{
+    ViewBag.Title = "Done";
+}
+<script type="text/javascript">
+    var seconds = new Number(7);
+    $("#seconds").text(seconds);
+    function ChangeRedir() {
+        if (seconds > 0) {
+            $("#seconds").text(seconds);
+            seconds--;
+            setTimeout(ChangeRedir, 1000);
+            return;
+        }
+        window.location = '@Url.Action("Index", "Panel")'; //  + '#quickstart';
+    }
+    $(function () {
+        setTimeout(ChangeRedir, 1000);
+    });
+</script>
+<center>
+    <br /><br />
+    <div style="width: 400px; text-align: center;" class="well">
+            <div style="width: 300px; margin: 0 auto 0;">
+                <img src="~/Content/images/logo.png" />
+            </div>
+        <h2>
+            Congratulations, your payment has been sucessful!</h2>
+        <br />
+        <h4>
+            Redirecting to your Control Panel in
+            <span id="seconds">7</span>
+            seconds
+        </h4>
+        <br />
+        <p>
+            @Html.ActionLink("Control Panel", "Index", "Panel", null, null, "quickstart", null, new { @class = "btn btn-large btn-success" })
+        </p>
+        <br />
+    </div>
+</center>

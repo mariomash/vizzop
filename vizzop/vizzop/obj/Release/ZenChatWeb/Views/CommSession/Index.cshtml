@@ -1,0 +1,258 @@
+﻿@model IEnumerable<Zentralized.Models.CommSession>
+@{
+
+    Layout = null;
+    Zentralized.Utils utils = new Zentralized.Utils();
+}
+<div class="content-header">
+    <h1>
+        Client Support
+    </h1>
+</div>
+<div id="breadcrumb">
+    <a class="tip-bottom"><i class="icon-home"></i>
+        <span style="vertical-align: middle;">
+            Control Panel</span><a style="vertical-align: middle;" class="current">Client Support</a></a>
+</div>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="widget-box">
+            <div class="widget-title">
+                <span class="icon">
+                    <i class="icon-cog"></i>
+                </span>
+                <h5>
+                    Report Configuration</h5>
+            </div>
+            <div class="widget-content">
+                <label for="commsession_filter" style="display: inline-block; vertical-align: middle; margin: 0;">
+                    Filter by</label>
+                <span style="vertical-align: middle; display: inline-block; margin: 0;">@Html.DropDownList("commsession_filter", (List<SelectListItem>)ViewBag.filter_items,
+new { onchange = "ses_updatetable();", @class = "input-large" })</span>
+                <span style="vertical-align: middle; display: inline-block; margin: 0;" id="text_updating">
+                </span>
+                <!--
+		<span style="float: left;">
+			<a href="Url.Action("Create")" class='btn'><i class="icon-plus"></i>&nbsp;Create New Ticket</a>
+		</span>
+		-->
+            </div>
+        </div>
+        <script type="text/javascript">
+
+            var ses_update_seconds = new Number(3);
+            var ses_Reloading_InCourse = null;
+            var loading_img = $('<img src="https://www.zentralized.com/Content/images/loading.gif"/>');
+
+            /*
+            function ses_Countdown() {
+            if (ses_update_seconds > -1) {
+            ses_update_seconds--;
+            setTimeout(ses_Countdown, 1000);
+            return;
+            }
+            //ses_updatetable();
+            ses_update_seconds = new Number(2);
+            setTimeout(ses_Countdown, 1000);
+            }
+            */
+
+            var ses_oTable;
+
+
+            function ses_updatetable() {
+                $('#text_updating').html(loading_img);
+                $("#commsession_filter").css({ 'disabled': true });
+                ses_oTable.ses_fnReloadAjax('../CommSession/GetCommSessionsJson?commsession_filter=' + $("#commsession_filter").val());
+                if (ses_Reloading_InCourse == null) {
+                    try {
+
+                    } catch (err) {
+                    }
+                }
+            }
+
+
+            $(document).ready(function () {
+                //setTimeout(ses_Countdown, 1000);
+
+                $.fn.dataTableExt.oApi.ses_fnReloadAjax = function (oSettings, sNewSource, fnCallback, bStandingRedraw) {
+                    if (typeof sNewSource != 'undefined' && sNewSource != null) {
+                        oSettings.sAjaxSource = sNewSource;
+                    }
+                    this.oApi._fnProcessingDisplay(oSettings, true);
+                    var that = this;
+                    var iStart = oSettings._iDisplayStart;
+                    var aData = [];
+
+                    this.oApi._fnServerParams(oSettings, aData);
+
+                    oSettings.fnServerData(oSettings.sAjaxSource, aData, function (json) {
+                        $('#text_updating').text('');
+                        $("#commsession_filter").css({ 'disabled': false });
+                        //Clear the old information from the table
+                        that.oApi._fnClearTable(oSettings);
+
+                        //Got the data - add it to the table
+                        var aData = (oSettings.sAjaxDataProp !== "") ?
+			that.oApi._fnGetObjectDataFn(oSettings.sAjaxDataProp)(json) : json;
+
+                        if (aData != null) {
+
+                            for (var i = 0; i < aData.length; i++) {
+                                that.oApi._fnAddData(oSettings, aData[i]);
+                            }
+
+                            oSettings.aiDisplay = oSettings.aiDisplayMaster.slice();
+                            that.fnDraw();
+
+                            if (typeof bStandingRedraw != 'undefined' && bStandingRedraw === true) {
+                                oSettings._iDisplayStart = iStart;
+                                that.fnDraw(false);
+                            }
+
+                            that.oApi._fnProcessingDisplay(oSettings, false);
+
+                            //Callback user function - for event handlers etc
+                            if (typeof fnCallback == 'function' && fnCallback != null) {
+                                fnCallback(oSettings);
+                            }
+
+                        }
+                    }, oSettings);
+                }
+
+                ses_oTable = $('#CommSession_table').dataTable({
+                    "bProcessing": false,
+                    "fnServerData": function (sSource, aoData, fnCallback) {
+                        ses_Reloading_InCourse = $.ajax({
+                            "dataType": 'json',
+                            "type": "POST",
+                            "url": sSource,
+                            "data": aoData,
+                            "error": function () {
+                                ses_Reloading_InCourse = null;
+                            },
+                            "success": fnCallback
+                        });
+                    },
+                    "bAutoWidth": false,
+                    "sAjaxSource": '@Url.Action("GetCommSessionsJson", "CommSession")',
+                    'fnRowCallback': function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                    },
+                    "aoColumns": [
+			{
+			    /* ID */
+			    "sWidth": "50px"
+			},
+			{
+			    /* SESSIONTYPE */
+			    "bSearchable": false,
+			    "bVisible": false
+			},
+			{
+			    /* STATUS */
+			    "bSearchable": false,
+			    "sWidth": "100px"
+			},
+			{
+			    /* AGENTS */
+			    "bSearchable": false,
+			    "bVisible": false
+			},
+			{
+			    /* WAITING FROM (FORMATO DATETIME) */
+			    "bSearchable": false,
+			    "bVisible": false,
+			},
+			{
+			    /* WAITING FROM (FORMATO HUMANO) */
+			    "bSearchable": false,
+			    "bVisible": false,
+			    "sWidth": "100px"
+			},
+			{
+			    /* LAST MESSAGE */
+			    "iDataSort": 4
+			},
+			{
+			    /* ACTIONS */
+			    "sWidth": "80px",
+			    "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+			        if (oData[1].toString().toUpperCase() == "TICKET") {
+			            var a = $('<a class="btn session-edit" data-id="' + oData[0] + '" style="white-space:nowrap;"><i class="icon-list-alt"></i>&nbsp;<span style="vertical-align: middle;">show</span></a>');
+			            a.on('click', function () {
+			                if (zentools.Daemon != null) {
+			                    zentools.Daemon.loadTicketBox(oData[0]);
+			                }
+			                return false;
+			            });
+			            $(nTd).empty();
+			            $(nTd).prepend(a);
+			        }
+			    },
+			    "fnRender": function (oObj) {
+			        $('#text_updating').text('');
+			        $("#commsession_filter").css({ 'disabled': false });
+			        ses_Reloading_InCourse = null;
+			        $('#customer_support_title').text($("#commsession_filter option:selected").html());
+                    return '';
+			    },
+			    "sTitle": "",
+			    "sName": "id",
+			    "aTargets": [0],
+			    "bSortable": false,
+			    "bSearchable": false
+			}
+		]
+                });
+
+                ses_updatetable()
+            });
+        </script>
+        <div class="widget-box">
+            <div class="widget-title">
+                <span class="icon">
+                    <i class="icon-th"></i>
+                </span>
+                <h5>
+                    Client Support Report</h5>
+            </div>
+            <div class="widget-content">
+                <h3 style="text-align: center;" id="customer_support_title">
+                </h3>
+                <table class="table table-striped" id="CommSession_table">
+                    <thead>
+                        <tr>
+                            <th>
+                                ID
+                            </th>
+                            <th>
+                                Type
+                            </th>
+                            <th>
+                                Status
+                            </th>
+                            <th>
+                                Agents
+                            </th>
+                            <th>
+                                Waiting From Datetime
+                            </th>
+                            <th>
+                                Awaiting Response From
+                            </th>
+                            <th>
+                                Last Message
+                            </th>
+                            <th>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

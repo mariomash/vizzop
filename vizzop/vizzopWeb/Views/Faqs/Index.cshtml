@@ -1,0 +1,225 @@
+﻿@model IEnumerable<vizzopWeb.Models.Faq>
+
+@{
+    Layout = null;
+    vizzopWeb.Utils utils = new vizzopWeb.Utils();
+}
+
+<div class="content-header">
+    <h1>Your FAQs 
+    </h1>
+</div>
+<div id="breadcrumb">
+    <a class="tip-bottom"><i class="icon-home"></i>
+        <span style="vertical-align: middle;">Control Panel</span><a style="vertical-align: middle;" class="current">Your FAQs</a></a>
+</div>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="widget-box">
+            <div class="widget-title">
+                <span class="icon">
+                    <i class="icon-th"></i>
+                </span>
+                <h5>Report Options</h5>
+            </div>
+            <div class="widget-content">
+                <div class="widget-content">
+                    <div class="reportOptions" id="FaqReportOptions">
+                        <span style="vertical-align: middle; display: inline-block; margin: 0;" id="faq_text_updating"></span>
+                        <span class="btn" onclick="javascript:var box = new FaqBox();"><i class="icon-plus"></i>&nbsp;<span style="vertical-align: middle;">Add F.A.Q,</span></span>
+                    </div>
+                    <h3 style="text-align: center; text-transform: capitalize;" id="faq_title">Your FAQs</h3>
+                    <table class="table table-striped" id="Faq_table">
+                        <thead>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+
+                    <div id="no_faqs" class="" style="margin-top: 150px; text-align: center; display: none; width: 400px; margin: 100px auto 0;">
+                        <h4>No F.A.Q.s found</h4>
+                    </div>
+                </div>
+                <div id="FaqReportLoading" style="margin-top: 150px;">
+                    <div class="loading">
+                        <div style="text-align: center;">
+                            loading...
+                        </div>
+                        <div style="text-align: center; margin-top: 5px;">
+                            <img src="@Url.Content("~/Content/images/loading.gif")" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    var Faq_Reloading_InCourse = null;
+    var Faq_oTable = null;
+
+    function Faq_updatetable() {
+        if (Faq_Reloading_InCourse == null) {
+            $('#faq_filter').attr("disabled", "disabled");
+            $("#FaqReportResults").hide();
+            $("#FaqReportLoading").show();
+            Faq_oTable.Faq_fnReloadAjax(getFaqsURL(), function () { });
+        }
+    }
+
+    function getFaqsURL() {
+        return '../Faqs/GetFaqsJson?faq_filter=' + $("#faq_filter").val();
+    }
+
+    $.fn.dataTableExt.oApi.Faq_fnReloadAjax = function (oSettings, sNewSource, fnCallback, bStandingRedraw) {
+        if (typeof sNewSource != 'undefined' && sNewSource != null) {
+            oSettings.sAjaxSource = sNewSource;
+        }
+        this.oApi._fnProcessingDisplay(oSettings, true);
+        var that = this;
+        var iStart = oSettings._iDisplayStart;
+        var aData = [];
+
+        this.oApi._fnServerParams(oSettings, aData);
+
+        oSettings.fnServerData(oSettings.sAjaxSource, aData, function (json) {
+
+            $('#faq_filter').removeAttr("disabled");
+            $("#FaqReportResults").show();
+            $("#FaqReportLoading").hide();
+
+            //Clear the old information from the table
+            that.oApi._fnClearTable(oSettings);
+            $('#Faq_table_wrapper').hide();
+            $('#faq_title').hide();
+            $('#no_faqs').show();
+
+            //Got the data - add it to the table
+            var aData = (oSettings.sAjaxDataProp !== "") ?
+that.oApi._fnGetObjectDataFn(oSettings.sAjaxDataProp)(json) : json;
+
+            if (aData != null) {
+
+                if (aData.length > 0) {
+                    $('#Faq_table_wrapper').show();
+                    $('#faq_title').show();
+                    $('#no_faqs').hide();
+                } else {
+                    $('#no_faqs').show();
+                    $('#faq_title').hide();
+                }
+
+
+                for (var i = 0; i < aData.length; i++) {
+                    that.oApi._fnAddData(oSettings, aData[i]);
+                }
+
+                oSettings.aiDisplay = oSettings.aiDisplayMaster.slice();
+                that.fnDraw();
+
+                if (typeof bStandingRedraw != 'undefined' && bStandingRedraw === true) {
+                    oSettings._iDisplayStart = iStart;
+                    that.fnDraw(false);
+                }
+
+                that.oApi._fnProcessingDisplay(oSettings, false);
+
+                $('#Faq_table tbody tr').each(function () {
+                    $(this).find('td:eq(2)').attr('nowrap', 'nowrap');
+                });
+
+                //Callback user function - for event handlers etc
+                if (typeof fnCallback == 'function' && fnCallback != null) {
+                    fnCallback(oSettings);
+                }
+
+            }
+
+            Faq_Reloading_InCourse = null;
+
+        }, oSettings);
+
+    }
+
+    $(document).ready(function () {
+
+        Faq_oTable = $('#Faq_table').dataTable({
+            "aLengthMenu": [
+            [25, 50, 100, 200, -1],
+            [25, 50, 100, 200, "All"]
+            ],
+            "iDisplayLength": -1,
+            "bProcessing": false,
+            "fnServerData": function (sSource, aoData, fnCallback) {
+                Faq_Reloading_InCourse = $.ajax({
+                    "dataType": 'json',
+                    "type": "POST",
+                    "url": sSource,
+                    "data": aoData,
+                    "error": function () {
+                        Faq_Reloading_InCourse = null;
+                    },
+                    "success": fnCallback
+                });
+            },
+            "bAutoWidth": false,
+            /*"sAjaxSource": getCommSessionsURL(),*/
+            'fnRowCallback': function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                $('td', nRow).addClass("clickable");
+            },
+            "fnInitComplete": function (oSettings, json) {
+            },
+            "aoColumns": [
+                {
+                    /* ID */
+                    "sTitle": "ID",
+                    "sWidth": "50px",
+                },
+                {
+                    /* Timestamp (FORMATO DATETIME) */
+                    "sTitle": "Timestamp",
+                    "bSearchable": false,
+                    "bVisible": false
+                },
+                {
+                    /* Timestamp (FORMATO HUMANO) */
+                    "sTitle": "Updated",
+                    "bSearchable": false,
+                    "bVisible": true,
+                    "iDataSort": 1,
+                    "sWidth": "110px"
+                },
+                {
+                    /* Languages */
+                    "sTitle": "Languages",
+                    "bSearchable": false,
+                    "bVisible": true
+                },
+                {
+                    /* Question */
+                    "sTitle": "Question",
+                    "bSearchable": true,
+                    "bVisible": true
+                },
+                {
+                    /* Answer */
+                    "sTitle": "Answer",
+                    "bSearchable": true,
+                    "bVisible": true
+                }
+            ]
+        });
+        Faq_updatetable();
+        $("#Faq_table tbody tr").live("click", function (event) {
+
+            var id = Faq_oTable.fnGetData(this)[0];
+
+            if (vizzop.Daemon != null) {
+                vizzop.Daemon.loadFaqBox(id);
+            }
+
+        });
+    });
+</script>

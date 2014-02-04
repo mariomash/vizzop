@@ -1,0 +1,365 @@
+﻿@{
+    Zentralized.Models.ZentralizedContext db = new Zentralized.Models.ZentralizedContext();
+    Zentralized.Utils utils = new Zentralized.Utils();
+    var converser = utils.GetLoggedConverser(Session);
+}
+<!DOCTYPE html>
+@{
+    var class_ = "";
+    if (ViewBag.LayoutPanelMode == true)
+    {
+        class_ = "plain";
+    }
+    else if (ViewBag.LayoutWhiteLabelMode == true)
+    {
+        class_ = "plainwhitelabel";
+    }
+}
+<html class="@class_">
+<head>
+    @if (Request["popupmsg"] != null)
+    { 
+        <script type="text/javascript">
+            alert("@Request["popupmsg"]");
+        </script>
+    }
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title</title>
+    <link rel="icon" href="@Url.Content("~/Content/images/favicon.png")" type="image/png" />
+    <script type="text/javascript" src="@Url.Content("~/Scripts/jquery-1.8.3.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/bootstrap/js/bootstrap.js")"></script>
+    @if ((ViewBag.LayoutPanelMode == true) || (ViewBag.LayoutWhiteLabelMode == true))
+    {
+        <script src="@Url.Content("~/Scripts/scriptloader.ashx")" type="text/javascript" ></script>
+    }
+    <link href="@Url.Content("~/Scripts/bootstrap/css/bootstrap.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/themes/base/jquery.ui.dialog.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/prettify.css")" rel="stylesheet" type="text/css" />
+    <!--
+    <link href="@Url.Content("~/Scripts/DataTables-1.9.0/media/css/jquery.dataTables.css")" rel="stylesheet" type="text/css" />
+    -->
+    <link href="@Url.Content("~/Scripts/jqplot/jquery.jqplot.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Scripts/DatePicker/css/datepicker.css")" rel="stylesheet" type="text/css" />
+
+    <link href="@Url.Content("~/ZenTools/css/zen-bootstrap.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/ZenTools/css/zen-jquery.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/ZenTools/css/zen-site.css")" rel="stylesheet" type="text/css" />
+    <script type="text/javascript">
+        $(function () {
+            $('.btn-delete').click(function () {
+                return confirm('Are you sure you wish to remove it?');
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-29363897-1']);
+        _gaq.push(['_trackPageview']);
+
+        (function () {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+    @{
+        try
+        {
+            if ((ViewBag.LayoutPanelMode != true) && (ViewBag.LayoutWhiteLabelMode != true))
+            {
+                var _business = (from m in db.Businesses
+                                 where m.Email == "customer.service@zentralized.com"
+                                 select m).FirstOrDefault();
+                ViewBag.business = _business;
+                ViewBag.ApiKey = _business.ApiKey;
+        <script type="text/javascript" src="/ZenTools/jsapi.ashx?mode=client&apikey=@Html.Raw(ViewBag.ApiKey)"></script>   
+            }
+            else
+            {
+                if (converser != null)
+                {                    
+        <script type="text/javascript">
+            setTimeout(function () {
+                var d = document; h = d.getElementsByTagName('head')[0];
+                var s = d.createElement('script'); s.type = 'text/javascript'; s.async = true; s.setAttribute('async', 'true');
+                s.src = "/ZenTools/jsapi.ashx?mode=agent&apikey=@Html.Raw(converser.Business.ApiKey)&username=@Html.Raw(converser.UserName)&password=@Html.Raw(converser.Password)&domain=@Html.Raw(converser.Business.Domain)";
+                h.appendChild(s);
+            }, 1000);
+            function SendReview() {
+                try {
+                    $('#popover_action_send').hide();
+                    $('#popover_action_loading').show();
+                    var msg = {
+                        'UserName': '@Html.Raw(converser.UserName)',
+                        'Domain': '@Html.Raw(converser.Business.Domain)',
+                        'Password': '@Html.Raw(converser.Password)',
+                        'newReviewRating': $('#beta_rating').val(),
+                        'newReviewComment': $('#beta_comment').val()
+                    };
+                    //console.log(msg);
+                    var post = $.ajax({
+                        url: '@Url.Action("SendNewReview", "Messages")',
+                        type: "POST",
+                        data: msg,
+                        dataType: "jsonp",
+                        beforeSend: function (xhr) {
+                            //console.log(xhr);
+                        },
+                        success: function (data) {
+                            if (data == true) {
+                                $('#popover_contents')
+                                                .html('<center style="color: #009900; width: 350px;">Message sent successfuly.</center><br/><h4>Thank you for your Comment. We will answer you very soon.</h4>');
+                            } else {
+                                $('#popover_action_loading').hide();
+                                $('#popover_action_send').show();
+                                $('#popover_action_result')
+                                                .html('<span class=error style="margin-left: 5px; vertical-align: middle">Error sending comment, please try again</span>')
+                                                .show();
+                            }
+                        },
+                        error: function (jqXHR, textStatus) {
+                            $('#popover_action_loading').hide();
+                            $('#popover_action_send').show();
+                            $('#popover_action_result')
+                                            .html('<span class=error style="margin-left: 5px; vertical-align: middle">Error sending comment, please try again</span>')
+                                            .show();
+                        }
+                    });
+                    } catch (err) {
+                        $('#popover_action_loading').hide();
+                        $('#popover_action_send').show();
+                        $('#popover_action_result')
+                                                .html('<span class=error style="margin-left: 5px; vertical-align: middle">Error sending comment, please try again</span>')
+                                                .show();
+                    }
+                }
+                $(document).bind('ready.beta', function () {
+                    var formContents = '<div id="popover_contents"><div>Do you need help or have any suggestion? We promise we will ask you soon.</div>';
+                    formContents += '<br/>';
+                    formContents += '<div><label>Write your comment or question</label></div>';
+                    formContents += '<div><textarea style="width: 190px; height: 150px;" id=beta_comment></textarea>';
+                    formContents += '</div>';
+                    formContents += '<br/>';
+                    formContents += '<div><label>Please rate ZenTools</label></div>';
+                    formContents += '<div>';
+                    formContents += '<select id=beta_rating style="width: 190px;">';
+                    formContents += '<option>- select rating -</option>';
+                    formContents += '<option value="5">5 - Best Valoration Possible</option>';
+                    formContents += '<option value="4">4</option>';
+                    formContents += '<option value="3">3</option>';
+                    formContents += '<option value="2">2</option>';
+                    formContents += '<option value="1">1 - Completely Useless</option>';
+                    formContents += '</select>';
+                    formContents += '</div>';
+                    formContents += '<br/>';
+                    formContents += '<div class=actions id=popover_action>';
+                    formContents += '<button class="btn btn-primary" id=popover_action_send onclick="javascript:SendReview();return false;">Send</button>';
+                    formContents += '<span id=popover_action_loading style="display:none;"><img src="https://www.zentralized.com/Content/images/loading.gif"/></span>';
+                    formContents += '<span id=popover_action_result style="display:none;"></span>';
+                    formContents += '</div></div>';
+                    $('#previewbut').attr({
+                        'rel': 'popover',
+                        'title': 'ZenTools Beta Contact',
+                        'data-content': formContents,
+                        'data-trigger': 'manual',
+                        'data-placement': 'bottom',
+                        'data-html': 'true'
+                    });
+                    $('#previewbut').popover();
+
+                    $('#previewbut').click(function (e) {
+                        if ($(e.target).parents('#popover_contents').length > 0) {
+                            return false;
+                        }
+                        $('#previewbut').popover('toggle');
+                    });
+                });
+        </script>
+        <link href="@Url.Content("~/Scripts/bootstrap/css/unicorn.main.css")" rel="stylesheet" type="text/css" />
+        <link href="@Url.Content("~/Scripts/bootstrap/css/unicorn.grey.css")" rel="stylesheet" type="text/css" />
+                }
+            }
+        }
+        catch (Exception ex) { utils.GrabaLog(Zentralized.Utils.NivelLog.error, ex.Message); } 
+    }
+</head>
+<body class="@class_">
+    <div class="page">
+        <div class="header @class_" id="header">
+            @{
+                
+                if (ViewBag.LayoutWhiteLabelMode == true)
+                {
+                <span class="logo">
+                    <span style="display: inline-block; vertical-align: middle;">
+                        <h1>@Html.Raw(ViewBag.BusinessName)</h1>
+                    </span>
+                </span>
+                }
+                else
+                {
+                <span class="LogOnPartial">
+                    @Html.Partial("_LogOnPartial")
+                </span>
+                    if (ViewBag.LayoutPanelMode == true)
+                    {
+                <span class="logotitle">
+                    <span style="vertical-align: middle;">
+                        @Html.Raw(converser.Business.BusinessName) Control Panel
+                    </span>
+                </span>
+                <span class="logomain">
+                    <img src='@Url.Content("~/Content/images/logo.png")' alt="Zentralized Ltd." style="height: 40px;"/>
+                </span>
+                    }
+                    else
+                    {
+                <span class="logo">
+                    <a href="@Url.Action("Index", "Home")">
+                        <img src='@Url.Content("~/Content/images/logo.png")' alt="Zentralized Ltd." style="width: auto;"/>
+                    </a>
+                </span>
+                <span class="menu">
+                    <ul class="nav nav-pills">
+                        <li>
+                            <a href="@Url.Action("Index", "Home", new { force = true })">Home</a>
+                        </li>
+                        <!--
+                        <li>@Html.ActionLink("Blog", "Index", "Home")</li>
+                            -->
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Products <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li>@Html.ActionLink("ZenTools", "En", "ZenTools")</li>
+                                <!--
+                                <li class="divider"></li>
+                                <li>@Html.ActionLink("ZenMeeting", "Index", "ZenMeeting")</li>
+                                    -->
+                            </ul>
+                        </li>
+
+                        @if (ViewBag.LayoutPanelMode != true)
+                        { 
+                            <li>@Html.ActionLink("Log in", "LogOn", "Account")</li>
+                        }
+                    </ul>
+                </span>           
+                    }
+                }
+            }
+        </div>
+        @{
+            if (ViewBag.LayoutPanelMode == true)
+            {
+                if (ViewBag.LayoutSubPanelMode == true)
+                {
+            <div id="sidebar">
+                <ul>
+                    <li class="tab">
+                        <a href="@Url.Action("Index", "Panel")"><i class="icon-arrow-left icon-blue"></i>
+                            <span style="vertical-align: middle;">&nbsp;Back to Dashboard</span></a>
+                    </li>
+                </ul>
+                <div id="chatlist" style="margin: 10px; background-color: #fafafa;">
+                </div>
+            </div>
+                }
+                else
+                {
+            <script type="text/javascript">
+                $(function () {
+                    $('.nav-tabs').tab();
+                    //console.log(window.location.hash);
+                    if (window.location.hash.length > 0) {
+                        $('ul > li.tab > a[href="' + window.location.hash + '"]').tab('show');
+                    } else {
+                        $('ul > li.tab > a:first').tab('show');
+                    }
+                })
+            </script>
+            <div id="sidebar">
+                <ul>
+                    @{
+                    var _activeclass = "";
+                    if (converser.Agent.IsAdmin == false)
+                    {
+                        _activeclass = "active";
+                    }
+                    }
+                    @if (converser.Agent.IsAdmin == true)
+                    {
+                        <li class="active tab">
+                            <a href="#quickstart" data-toggle="tab"><i class="icon-question-sign icon-blue"></i>
+                                <span style="vertical-align: middle;">&nbsp;Dashboard</span></a>
+                        </li>
+                    }
+                    <li class="tab @_activeclass">
+                        <a href="#tickets" data-toggle="tab"><i class="icon-comment icon-blue"></i>
+                            <span style="vertical-align: middle;">&nbsp;Client Support</span></a>
+                    </li>
+                    <li class="tab">
+                        <a href="#realtime" data-toggle="tab"><i class="icon-eye-open icon-blue"></i>
+                            <span style="vertical-align: middle;">&nbsp;Real Time Analytics</span></a>
+                    </li>
+                    <li class="tab">
+                        <a href="#analytics" data-toggle="tab"><i class="icon-eye-open icon-blue"></i>
+                            <span style="vertical-align: middle;">&nbsp;Standard Analytics</span></a>
+                    </li>
+                    @if (converser.Agent.IsAdmin == true)
+                    {
+                        <li class="tab">
+                            <a href="@Url.Action("Index", "Agent")"><i class="icon-user icon-blue"></i>
+                                <span style="vertical-align: middle;">&nbsp;Support Agents</span></a>
+                        </li>
+                        <li class="tab">
+                            <a href="@Url.Action("EditBusiness")"><i class="icon-cog icon-blue"></i>
+                                <span style="vertical-align: middle;">&nbsp;Account Settings</span></a>
+                        </li>
+                    }
+                </ul>
+                <div id="chatlist" style="margin: 10px; background-color: #fafafa;">
+                </div>
+            </div>
+                }
+            }
+            @RenderBody()
+            if ((ViewBag.LayoutPanelMode != true) && (ViewBag.LayoutWhiteLabelMode != true))
+            {
+            <div style="width: 630px; margin: 55px auto;">
+                <address style="display: inline-block; vertical-align: top; width: 150px;">
+                    <strong>Zentralized Ltd.</strong>
+                    <br />
+                    145-157 St John Street
+                    <br />
+                    London, EC1V 4PW
+                    <br />
+                    <a href="mailto:info@zentralized.com">info@zentralized.com</a>
+                </address>
+                <blockquote style="display: inline-block; vertical-align: top; width: 450px;">
+                    <strong>Copyright 2011 Zentralized, Ltd.</strong> All Rights Reserved. Zentralized and the Zentralized logo are trademarks of Zentralized, Ltd. in the United States and other countries.All other trademarks used are the property of their respective owners.
+                </blockquote>
+            </div>
+            <br />
+            <!-- Google Code for Etiqueta de remarketing: -->
+            <!-- Remarketing tags may not be associated with personally identifiable information or placed on pages related to sensitive categories. For instructions on adding this tag and more information on the above requirements, read the setup guide: google.com/ads/remarketingsetup -->
+            <script type="text/javascript">
+                /* <![CDATA[ */
+                var google_conversion_id = 1006879207;
+                var google_conversion_label = "G0dnCIG9uQMQ54OP4AM";
+                var google_custom_params = window.google_tag_params;
+                var google_remarketing_only = true;
+                /* ]]> */
+            </script>
+            <script type="text/javascript" src="//www.googleadservices.com/pagead/conversion.js">
+            </script>
+            <noscript>
+                <div style="display: inline;">
+                    <img height="1" width="1" style="border-style: none;" alt="" src="//googleads.g.doubleclick.net/pagead/viewthroughconversion/1006879207/?value=0&amp;label=G0dnCIG9uQMQ54OP4AM&amp;guid=ON&amp;script=0" />
+                </div>
+            </noscript>
+            }
+        }
+    </div>
+</body>
+</html>
