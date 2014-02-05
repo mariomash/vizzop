@@ -1495,7 +1495,7 @@ namespace vizzopWeb
                 SingletonCache.Instance.Insert(key, sc_control);
 
                 //Y no tenemos claro si poner a funcionar el worker... a ver si no se resiente mucho la CPU
-                //GetScreenCapture(UserName, Domain);
+                GetScreenCapture(UserName, Domain);
 
                 /* 
                  * Lanzamos el Save en otro hilo... pero antes le mentemos el HTML que toca ya procesado.. 
