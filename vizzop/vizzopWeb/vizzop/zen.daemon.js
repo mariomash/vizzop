@@ -301,45 +301,66 @@ var Daemon = jVizzop.zs_Class.create({
                     vizzop.RunningDaemon = window.setInterval(function () { vizzop.Daemon.checkAgent(); }, vizzop.DaemonTiming);
                     break;
                 case 'client':
-                    if (jVizzop.cookie(name_mecookie) != null) {
-                        if (jVizzop.cookie(name_mecookie) != "") {
-                            vizzop.me = jVizzop.secureEvalJSON(jVizzop.cookie(name_mecookie));
-                        }
-                    }
-                    vizzoplib.setCookie(name_mecookie, jVizzop.toJSON(vizzop.me), 300);
-                    self.clientmessagebox = new ClientMessageBox();
-                    //self.controlBox.hideBox();
-                    //self.chatlistBox.hideBox();
-                    /*
-                    if (vizzop.ShowHelpButton == false) {
-                        self.clientmessagebox.hideBox();
-                    }*/
-                    if (vizzop.ShowHelpButton != false) {
-                        self.clientmessagebox._box.show();
-                    }
+                    vizzop.IsInFrame = vizzoplib.PageisInIframe();
+                    console.log(vizzop.IsInFrame);
+                    if (vizzop.IsInFrame == true) {
 
-                    var disclaimer_accepted = null;
-                    if (jVizzop.cookie(disclaimer_idcookie) != null) {
-                        if (jVizzop.cookie(disclaimer_idcookie) != "") {
-                            disclaimer_accepted = true;
-                        }
-                    }
-                    if ((vizzop.ShowDisclaimer != false) && (disclaimer_accepted == null)) {
-                        self.disclaimerbox = new DisclaimerBox();
-                        self.disclaimerbox.ShowDisclaimer();
-                        vizzoplib.setCookie(disclaimer_idcookie, true, 300);
-                    }
+                        /*
+                        * Respecto a guardar los contenidos de un iframe y saltarse el cross-domain:
+                        * Primero: no hay daemon
+                        * Segundo: se detectan las mutaciones (mutation observer y compañia)
+                        * cada vez que haya una mutación se envía el outerHTML al TOP frame
+                        * en un json con formato {id: id, html: outerHTML}
+                        */
 
-                    self._commsessionid = null;
-                    if (typeof jVizzop.cookie(name_comsessionidcookie) != "undefined") {
-                        /*Creo que aqui abajo fallaba... igualandolo a ""*/
-                        if (jVizzop.cookie(name_comsessionidcookie) != "") {
-                            self._commsessionid = jVizzop.cookie(name_comsessionidcookie);
-                            self.clientmessagebox._commsessionid = self._commsessionid;
+                    } else {
+
+                        /*
+                        * Respecto a guardar los contenidos de un iframe y saltarse el cross-domain:
+                        * se registra el Listener de evento "message" y cuando te llega uno de "vizzop"
+                        * se mete $(message.data.id).attr('src', 'data:' + escape(message.data.html));
+                        */
+
+                        if (jVizzop.cookie(name_mecookie) != null) {
+                            if (jVizzop.cookie(name_mecookie) != "") {
+                                vizzop.me = jVizzop.secureEvalJSON(jVizzop.cookie(name_mecookie));
+                            }
                         }
+                        vizzoplib.setCookie(name_mecookie, jVizzop.toJSON(vizzop.me), 300);
+                        self.clientmessagebox = new ClientMessageBox();
+                        //self.controlBox.hideBox();
+                        //self.chatlistBox.hideBox();
+                        /*
+                        if (vizzop.ShowHelpButton == false) {
+                            self.clientmessagebox.hideBox();
+                        }*/
+                        if (vizzop.ShowHelpButton != false) {
+                            self.clientmessagebox._box.show();
+                        }
+
+                        var disclaimer_accepted = null;
+                        if (jVizzop.cookie(disclaimer_idcookie) != null) {
+                            if (jVizzop.cookie(disclaimer_idcookie) != "") {
+                                disclaimer_accepted = true;
+                            }
+                        }
+                        if ((vizzop.ShowDisclaimer != false) && (disclaimer_accepted == null)) {
+                            self.disclaimerbox = new DisclaimerBox();
+                            self.disclaimerbox.ShowDisclaimer();
+                            vizzoplib.setCookie(disclaimer_idcookie, true, 300);
+                        }
+
+                        self._commsessionid = null;
+                        if (typeof jVizzop.cookie(name_comsessionidcookie) != "undefined") {
+                            /*Creo que aqui abajo fallaba... igualandolo a ""*/
+                            if (jVizzop.cookie(name_comsessionidcookie) != "") {
+                                self._commsessionid = jVizzop.cookie(name_comsessionidcookie);
+                                self.clientmessagebox._commsessionid = self._commsessionid;
+                            }
+                        }
+                        self.checkCommSessions();
+                        vizzop.RunningDaemon = window.setInterval(function () { vizzop.Daemon.checkClient(); }, vizzop.DaemonTiming);
                     }
-                    self.checkCommSessions();
-                    vizzop.RunningDaemon = window.setInterval(function () { vizzop.Daemon.checkClient(); }, vizzop.DaemonTiming);
                     break;
                 case 'meeting':
                     if (jVizzop.cookie(name_mecookie) != null) {

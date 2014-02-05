@@ -514,7 +514,8 @@ var vizzop = {
     WidgetText: " + WidgetText + @",
     BusinessHours: " + BusinessHours + @",
     WSchat: null,
-    WSscreen: null
+    WSscreen: null,
+    IsInFrame: false
 }
 
 jVizzop(document).bind('ready.ashx', function () {

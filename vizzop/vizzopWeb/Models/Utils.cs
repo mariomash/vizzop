@@ -1186,12 +1186,6 @@ namespace vizzopWeb
                     return false;
                 }
 
-
-#if DEBUG
-                GrabaLog(Utils.NivelLog.info, "Pre Foreach");
-#endif
-
-
                 foreach (Dictionary<string, object> dict in arrDict)
                 {
                     try
@@ -1373,10 +1367,6 @@ namespace vizzopWeb
                             {
                                 string SerializedBlob = new JavaScriptSerializer().Serialize(dict["blob"]);
                                 new_screencapture.Blob = SerializedBlob;
-
-#if DEBUG
-                                GrabaLog(Utils.NivelLog.info, "Post LoadHTML Pre AddToQueue");
-#endif
 
                                 AddScreenCaptureToProcessQueue(new_screencapture);
 

@@ -183,6 +183,13 @@
         }
 
         return new Blob([uInt8Array], { type: contentType });
+    },
+    PageisInIframe: function () {
+        try {
+            return window.self !== window.top;
+        } catch (err) {
+            return true;
+        }
     }
 }
 
