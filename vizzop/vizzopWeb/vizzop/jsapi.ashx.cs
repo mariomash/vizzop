@@ -438,27 +438,27 @@ namespace vizzopWeb
                 string WidgetFg = "null";
                 if (business.WidgetForegroundColor != null)
                 {
-                    WidgetFg = business.WidgetForegroundColor;
+                    WidgetFg = @"'" + business.WidgetForegroundColor + @"'";
                 }
                 string WidgetBg = "null";
                 if (business.WidgetBackgroundColor != null)
                 {
-                    WidgetBg = business.WidgetBackgroundColor;
+                    WidgetBg = @"'" + business.WidgetBackgroundColor + @"'";
                 }
                 string WidgetBorder = "null";
                 if (business.WidgetBorderColor != null)
                 {
-                    WidgetBorder = business.WidgetBorderColor;
+                    WidgetBorder = @"'" + business.WidgetBorderColor + @"'";
                 }
                 string WidgetText = "null";
                 if (business.WidgetText != null)
                 {
-                    WidgetText = "'" + business.WidgetText + "'";
+                    WidgetText = @"'" + business.WidgetText + @"'";
                 }
                 string BusinessHours = "null";
                 if (business.BusinessHours != null)
                 {
-                    BusinessHours = "'" + business.BusinessHours + "'";
+                    BusinessHours = @"'" + business.BusinessHours + @"'";
                 }
 
                 string vizzop = @"
