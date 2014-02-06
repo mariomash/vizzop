@@ -301,25 +301,15 @@ var Daemon = jVizzop.zs_Class.create({
                     vizzop.RunningDaemon = window.setInterval(function () { vizzop.Daemon.checkAgent(); }, vizzop.DaemonTiming);
                     break;
                 case 'client':
-                    vizzop.IsInFrame = vizzoplib.PageisInIframe();
-                    console.log(vizzop.IsInFrame);
-                    if (vizzop.IsInFrame == true) {
-
-                        /*
-                        * Respecto a guardar los contenidos de un iframe y saltarse el cross-domain:
-                        * Primero: no hay daemon
-                        * Segundo: se detectan las mutaciones (mutation observer y compañia)
-                        * cada vez que haya una mutación se envía el outerHTML al TOP frame
-                        * en un json con formato {id: id, html: outerHTML}
-                        */
-
-                    } else {
-
-                        /*
-                        * Respecto a guardar los contenidos de un iframe y saltarse el cross-domain:
-                        * se registra el Listener de evento "message" y cuando te llega uno de "vizzop"
-                        * se mete $(message.data.id).attr('src', 'data:' + escape(message.data.html));
-                        */
+                    console.log(document.location + ' is iframe: ' + vizzop.IsInFrame);
+                    /*
+                    * Respecto a guardar los contenidos de un iframe y saltarse el cross-domain:
+                    * Primero: no hay daemon
+                    * Segundo: se detectan las mutaciones (mutation observer y compañia)
+                    * cada vez que haya una mutación se envía el outerHTML al TOP frame
+                    * en un json con formato {id: id, html: outerHTML}
+                    */
+                    if (vizzop.IsInFrame == false) {
 
                         if (jVizzop.cookie(name_mecookie) != null) {
                             if (jVizzop.cookie(name_mecookie) != "") {
@@ -328,12 +318,7 @@ var Daemon = jVizzop.zs_Class.create({
                         }
                         vizzoplib.setCookie(name_mecookie, jVizzop.toJSON(vizzop.me), 300);
                         self.clientmessagebox = new ClientMessageBox();
-                        //self.controlBox.hideBox();
-                        //self.chatlistBox.hideBox();
-                        /*
-                        if (vizzop.ShowHelpButton == false) {
-                            self.clientmessagebox.hideBox();
-                        }*/
+
                         if (vizzop.ShowHelpButton != false) {
                             self.clientmessagebox._box.show();
                         }
@@ -360,6 +345,7 @@ var Daemon = jVizzop.zs_Class.create({
                         }
                         self.checkCommSessions();
                         vizzop.RunningDaemon = window.setInterval(function () { vizzop.Daemon.checkClient(); }, vizzop.DaemonTiming);
+
                     }
                     break;
                 case 'meeting':

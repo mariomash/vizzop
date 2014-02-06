@@ -97,27 +97,6 @@
     },
     ReBindForms: function () {
 
-        /*
-        jVizzop('input').unbind('change.vizzop keyup.vizzop input.vizzop click.vizzop');
-
-        jVizzop('textarea').unbind('change.vizzop keyup.vizzop input.vizzop click.vizzop');
-
-        jVizzop('select').unbind('change.vizzop keyup.vizzop input.vizzop click.vizzop');
-        */
-        /*
-        jVizzop('input').bind('change.vizzop keyup.vizzop input.vizzop', function () {
-            vizzop.HtmlSend_ForceSendComplete = true;
-        }, 100);
-
-        jVizzop('textarea').on('change.vizzop keyup.vizzop input.vizzop', function () {
-            vizzop.HtmlSend_ForceSendComplete = true;
-        }, 100);
-
-        jVizzop('select').on('change.vizzop keyup.vizzop input.vizzop', function () {
-            vizzop.HtmlSend_ForceSendComplete = true;
-        }, 100);
-        */
-
         //Vamos a ir poniendo los clicks como tocan...
         jVizzop('*').on('focus.vizzop', function () {
             try {
@@ -126,12 +105,19 @@
                     name = jVizzop(this).attr("name");
                 }
                 var url = document.URL + '/focus_' + jVizzop(this).attr("name");
-                vizzop.Tracking.TrackPageView(url, document.referrer);
+                if (vizzop.IsInFrame == true) {
+                    var data = {
+                        url: url,
+                        referrer: document.referrer
+                    }
+                    top.postMessage(JSON.stringify(data), "http://vizzop.com");
+                } else {
+                    vizzop.Tracking.TrackPageView(url, document.referrer);
+                }
             } catch (err) {
 
             }
         }, 0);
-
 
         jVizzop('input[type="submit"], button, img, a').on('click.vizzop', function () {
             try {
@@ -140,7 +126,15 @@
                     name = jVizzop(this).attr("name");
                 }
                 var url = document.URL + '/click_' + jVizzop(this).attr("name");
-                vizzop.Tracking.TrackPageView(url, document.referrer);
+                if (vizzop.IsInFrame == true) {
+                    var data = {
+                        url: url,
+                        referrer: document.referrer
+                    }
+                    top.postMessage(JSON.stringify(data), "http://vizzop.com");
+                } else {
+                    vizzop.Tracking.TrackPageView(url, document.referrer);
+                }
             } catch (err) {
 
             }
@@ -154,10 +148,16 @@
                     name = jVizzop(this).attr("name");
                 }
                 var url = document.URL + '/change_' + jVizzop(this).attr("name");
-                vizzop.Tracking.TrackPageView(url, document.referrer);
-            } catch (err) {
-
-            }
+                if (vizzop.IsInFrame == true) {
+                    var data = {
+                        url: url,
+                        referrer: document.referrer
+                    }
+                    top.postMessage(JSON.stringify(data), "http://vizzop.com");
+                } else {
+                    vizzop.Tracking.TrackPageView(url, document.referrer);
+                }
+            } catch (err) { }
         }, 100);
 
     },
@@ -189,6 +189,27 @@
             return window.self !== window.top;
         } catch (err) {
             return true;
+        }
+    },
+    ReceivedMessageFromIframe: function (evt) {
+        try {
+            console.log(evt);
+
+            var json = jVizzop.parseJSON(evt.data);
+            console.log(json);
+            if (json.vizzop == true) {
+                switch (json.mode) {
+                    case 'html':
+                        jVizzop('#' + json.id).attr('vizzop-html', json.html); //escape()
+                        jVizzop(vizzop).trigger("mutated");
+                        break;
+                    case 'event':
+                        vizzop.Tracking.TrackPageView(json.url, json.referrer);
+                        break;
+                }
+            }
+        } catch (err) {
+            vizzoplib.log(err);
         }
     }
 }
@@ -531,10 +552,8 @@ function _arrayBufferToBase64(buffer) {
 *
 **/
 var Base64 = {
-
     // private property
     _keyStr: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
-
     // public method for encoding
     encode: function (input) {
         var output = "";
@@ -568,7 +587,6 @@ var Base64 = {
 
         return output;
     },
-
     // public method for decoding
     decode: function (input) {
         var output = "";
@@ -605,7 +623,6 @@ var Base64 = {
         return output;
 
     },
-
     // private method for UTF-8 encoding
     _utf8_encode: function (string) {
         string = string.replace(/\r\n/g, "\n");
@@ -632,7 +649,6 @@ var Base64 = {
 
         return utftext;
     },
-
     // private method for UTF-8 decoding
     _utf8_decode: function (utftext) {
         var string = "";
@@ -663,7 +679,6 @@ var Base64 = {
 
         return string;
     }
-
 }
 
 jVizzop.eachCallback = function (arr, process, callback) {
@@ -697,6 +712,8 @@ jVizzop.fn.eachCallback = function (process, callback) {
 
 jVizzop(document).bind('ready.vizzop', function () {
     //vizzoplib.log("[LOADED VIZZOP]");
+
+    vizzop.IsInFrame = vizzoplib.PageisInIframe();
 
     vizzoplib.ReBindForms();
 
@@ -758,5 +775,27 @@ jVizzop(document).bind('ready.vizzop', function () {
         var attrToFind = "[vizzop-id='" + jVizzop(this).attr('vizzop-id') + "']";
         jVizzop(vizzop.screenshot).find(attrToFind).attr('value', jVizzop(this).val());
     });
+
+    if (vizzop.IsInFrame == false) {
+        /*
+        * Respecto a guardar los contenidos de un iframe y saltarse el cross-domain:
+        * se registra el Listener de evento "message" (en el jsapi) y cuando te llega uno de "vizzop"
+        * se mete $(message.data.id).attr('src', 'data:' + escape(message.data.html));
+        */
+        if (window.addEventListener) {
+            window.addEventListener("message", vizzoplib.ReceivedMessageFromIframe, false);
+        } else {
+            window.attachEvent("onmessage", vizzoplib.ReceivedMessageFromIframe);
+        }
+    } else {
+        vizzoplib.ReBindForms();
+        var data = {
+            vizzop: true,
+            id: 'id',
+            html: document.documentElement.outerHTML
+        }
+        console.log(data);
+        top.postMessage(JSON.stringify(data), "*");
+    }
 
 });
