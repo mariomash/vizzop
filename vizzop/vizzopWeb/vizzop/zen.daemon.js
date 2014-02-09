@@ -301,7 +301,7 @@ var Daemon = jVizzop.zs_Class.create({
                     vizzop.RunningDaemon = window.setInterval(function () { vizzop.Daemon.checkAgent(); }, vizzop.DaemonTiming);
                     break;
                 case 'client':
-                    console.log(document.location + ' is iframe: ' + vizzop.IsInFrame);
+                    //console.log(document.location + ' is iframe: ' + vizzop.IsInFrame);
                     /*
                     * Respecto a guardar los contenidos de un iframe y saltarse el cross-domain:
                     * Primero: no hay daemon
@@ -1757,7 +1757,7 @@ var Daemon = jVizzop.zs_Class.create({
                 'url': document.URL,
                 'date': DateUTC,
                 'img': null,
-                'blob': screenshotPage()
+                'blob': vizzoplib.screenshotPage()
             }
 
             self.activateMutationObserver();

@@ -266,7 +266,7 @@ namespace vizzopWeb
                 zenapi += utils.LeeArchivo(ROOT_PATH + "/Scripts/jVizzop.h5validate.js") + System.Environment.NewLine;
                 zenapi += utils.LeeArchivo(ROOT_PATH + "/Scripts/json2.js") + System.Environment.NewLine;
                 //zenapi += utils.LeeArchivo(ROOT_PATH + "/Scripts/html2canvas.js") + System.Environment.NewLine;
-                zenapi += utils.LeeArchivo(ROOT_PATH + "/Scripts/bidelmanshot.js") + System.Environment.NewLine;
+                //zenapi += utils.LeeArchivo(ROOT_PATH + "/Scripts/bidelmanshot.js") + System.Environment.NewLine;
                 zenapi += utils.LeeArchivo(ROOT_PATH + "/Scripts/diff_match_patch.js") + System.Environment.NewLine;
                 //zenapi += utils.LeeArchivo(ROOT_PATH + "/Scripts/bootstrap-wysiwyg.js") + System.Environment.NewLine;
                 /* Lo de arriba era para completar el obfuscate... */

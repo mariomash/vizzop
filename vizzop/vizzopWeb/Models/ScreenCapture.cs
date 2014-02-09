@@ -147,12 +147,12 @@ namespace vizzopWeb.Models
                 //Solo metemos en caché las capturas con imagen o blob asociados....
                 if ((this.Data != null) || (this.Data != "") || (this.Blob != null))
                 {
-
+/*
 #if DEBUG
                     this.utils = new Utils();
                     utils.GrabaLog(Utils.NivelLog.info, " Imagen ingresada a cache");
 #endif
-
+*/
                     return SingletonCache.Instance.Insert(key, this);
                 }
 

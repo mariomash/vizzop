@@ -855,10 +855,10 @@ namespace vizzopWeb.Controllers
                     //Aqui ponemos un html arregladito arregladito con sus values y sus todo
                     HtmlDocument doc = new HtmlDocument();
                     doc.LoadHtml(sc_control.CompleteHtml);
-                    var nodes = doc.DocumentNode.SelectNodes("//textarea");
-                    if (nodes != null)
+                    var TextareaNodes = doc.DocumentNode.SelectNodes("//textarea");
+                    if (TextareaNodes != null)
                     {
-                        foreach (HtmlNode node in nodes)
+                        foreach (HtmlNode node in TextareaNodes)
                         {
                             if (node.Attributes["value"] != null)
                             {
@@ -870,6 +870,26 @@ namespace vizzopWeb.Controllers
                             }
                         }
                     }
+
+                    /*
+                    var IframeNodes = doc.DocumentNode.SelectNodes("//iframe");
+                    if (IframeNodes != null)
+                    {
+                        foreach (HtmlNode node in IframeNodes)
+                        {
+                            if (node.Attributes["value"] != null)
+                            {
+                                var textnode = HtmlNode.CreateNode(node.Attributes["value"].Value);
+                                if (textnode != null)
+                                {
+                                    node.Attributes["src"].Value = @"data:text/html;charset=utf-8," + node.Attributes["value"].Value; //escape(localS);";
+                                    //node.AppendChild(textnode);
+                                }
+                            }
+                        }
+                    }
+                    */
+
                     sc_control.CompleteHtml = doc.DocumentNode.OuterHtml;
 
                     var toReturn = new
@@ -885,9 +905,11 @@ namespace vizzopWeb.Controllers
                         ScrollLeft = sc_control.ScreenCapture.ScrollLeft
                     };
 
+                    /*
 #if DEBUG
                     utils.GrabaLog(Utils.NivelLog.info, "Lanzando imagen a Phantom");
 #endif
+                    */
 
                     return Json(toReturn);
                 }
