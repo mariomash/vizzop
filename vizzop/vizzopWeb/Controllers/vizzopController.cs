@@ -360,7 +360,11 @@ namespace vizzopWeb.Controllers
                             Sms sms = new Sms();
                             sms.message = "Nuevo business " + business.BusinessName;
                             sms.phonenumber = "34655778343";
-                            sms.send();
+#if DEBUG
+#else
+        sms.send();
+#endif
+
                         }
                         catch (Exception _ex)
                         {
@@ -374,7 +378,12 @@ namespace vizzopWeb.Controllers
                             newmessage.To = converser.UserName + "@" + converser.Business.Domain;
                             newmessage.Lang = utils.GetLang(HttpContext);
                             newmessage.Subject = utils.LocalizeLang("email_account_created_subject", newmessage.Lang, null);
+                            /*
+                            We have commented this code line because we want to send a email just with the name and email of the Business,
+                            without UserName and Business' Domain
                             string[] args = { converser.Business.BusinessName, converser.FullName, converser.UserName + "@" + converser.Business.Domain };
+                            */
+                            string[] args = { converser.Business.BusinessName, converser.FullName, converser.Email};
                             newmessage.Content = utils.LocalizeLang("email_account_created_contents", newmessage.Lang, args);
                             newmessage.db = db;
                             newmessage.MessageType = "email";
