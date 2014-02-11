@@ -8,6 +8,11 @@
                     var new_id = null;
                     while (new_id == null) {
                         new_id = vizzoplib.randomnumber();
+
+                        if (vizzop.IsInFrame == true) {
+                            new_id = window.frameElement.getAttribute("id") + '_' + new_id;
+                        }
+
                         var attrToFind = "[vizzop-id='" + new_id + "']";
                         if (jVizzop(attrToFind).length > 0) {
                             new_id = null;
@@ -23,6 +28,11 @@
             });
 
             var screenshot = document.documentElement.cloneNode(true);
+
+            /*
+            * Si está en un iframe... vamos a cambiarle el style del body al tamaño del iframe que lo contiene... a ver si asi el F*CKING phantomJS pirula
+            * HACK
+            */
 
             jVizzop.each(jVizzop('*').get(), function (idx, val) {
                 if (jVizzop(val).is(":focus")) {
@@ -40,20 +50,35 @@
             jVizzop(screenshot).find('script').each(function () {
                 jVizzop(this).remove();
             });
+
+            /*
+            if (vizzop.IsInFrame == true) {
+                jVizzop(screenshot).find('body').css('width', window.frameElement.getAttribute("width"));
+                jVizzop(screenshot).find('body').css('height', window.frameElement.getAttribute("height"));
+            }
+            */
+
             jVizzop(screenshot).find('iframe').each(function () {
-                jVizzop(this).empty();
-                if (jVizzop(this).attr('width') != null) {
-                    jVizzop(this).css('width', jVizzop(this).attr('width') + 'px');
-                }
-                if (jVizzop(this).attr('height') != null) {
-                    jVizzop(this).css('height', jVizzop(this).attr('height') + 'px');
-                }
+                //jVizzop(this).empty();
                 var contents = jVizzop(this).attr('value');
                 if (contents == null) {
                     contents = "";
                 }
-                jVizzop(this).attr('src', "data:text/html;charset=utf-8," + contents);
+                jVizzop(this).removeAttr('value');
+                if (vizzop.IsInFrame == true) {
+                    jVizzop(this).attr('src', 'data:text/html;charset=utf-8,' + contents);
+                } else {
+                    //Pero que sucio eres PhantomJS... tengo que crear un DIV para hacer de wrapper pfffff
+                    var wrapper = jVizzop('<div></div>')
+                        .attr('style', 'width: ' + jVizzop(this).attr('width') + 'px !important; height: ' + jVizzop(this).attr('height') + 'px !important; overflow: hidden !important;')
+                        .insertBefore(this);
+                    var new_iframe = jVizzop('<iframe></iframe>')
+                        .attr('src', 'data:text/html;charset=utf-8,' + contents)
+                        .appendTo(wrapper);
+                }
+                jVizzop(this).hide();
             });
+
             jVizzop(screenshot).find('noscript').each(function () {
                 jVizzop(this).remove();
             });
@@ -367,12 +392,12 @@
         try {
             //console.log(evt);
             var json = jVizzop.parseJSON(evt.data);
-            //console.log(json);
+            //console.log(unescape(json.html));
             if (json.vizzop) {
                 if (json.vizzop == true) {
                     switch (json.mode) {
                         case 'html':
-                            jVizzop('#' + json.id).attr('value', json.html); //escape()
+                            jVizzop('#' + json.id).attr('value', unescape(json.html)); //escape()
                             //console.log(jVizzop('#' + json.id));
                             jVizzop(vizzop).trigger("mutated");
                             break;
@@ -967,12 +992,13 @@ jVizzop(document).bind('ready.vizzop', function () {
         var id = window.frameElement.getAttribute("id");
         var screenshot = vizzoplib.prepareScreenShot();
         var current_html = screenshot.outerHTML;
+        //console.log(current_html);
         //document.documentElement.outerHTML
         var data = {
             mode: 'html',
             vizzop: true,
             id: id,
-            html: current_html
+            html: escape(current_html)
         }
         //console.log(data);
         top.postMessage(JSON.stringify(data), "*");

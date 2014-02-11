@@ -58,7 +58,7 @@ page.onCallback = function (param) {
         param.filename = "captures_video/" + param.filename;
 
         page.render(param.filename);
-        console.log(date + ' rendered: ' + param.filename);
+        //console.log(date + ' rendered: ' + param.filename);
         phantom.exit();
 
     } else {

@@ -50,6 +50,20 @@
 
                     /*
                     window.callPhantom({
+                        'log': document.documentElement.outerHTML
+                    });
+                    */
+
+                    /*
+                    $.each($('iframe'), function (index, elem) {
+                        window.callPhantom({
+                            'log': $(elem).attr('id') + '  ' + $(elem).attr('style')
+                        });
+                    });
+                    */
+
+                    /*
+                    window.callPhantom({
                         'log': iframe.contentWindow.document.documentElement.innerHTML
                     });
                     */
@@ -68,7 +82,7 @@
                 }
             } catch (err) {
                 window.callPhantom({
-                    'log': err
+                    'log': 'error ' + err
                 });
                 setTimeout(function () { CheckIfFrameLoaded(); }, 1);
             }
@@ -133,20 +147,26 @@
                             iFrame = document.getElementById("WrapperIframe");
                             if (iFrame == null) {
                                 iFrame = CreateAndAddIframe();
+                                //iFrame.src = "data:text/html;charset=utf-8," + data.Html;
+                                
                                 var win = iFrame.contentWindow;
                                 win.document.open('text/html', 'replace');
                                 win.document.write(data.Html);
                                 win.document.close();
+                                
                             }
                         } else {
                             iFrame = document.getElementById("WrapperIframe");
                             if (iFrame == null) {
                                 iFrame = CreateAndAddIframe();
                             }
+                            //iFrame.src = "data:text/html;charset=utf-8," + data.Html;
+                            
                             var win = iFrame.contentWindow;
                             win.document.open('text/html', 'replace');
                             win.document.write(data.Html);
                             win.document.close();
+                            
                         }
 
                         $('#WrapperIframe')
@@ -165,6 +185,7 @@
                                 'width': data.Width
                             });
 
+                        //In MS
                         setTimeout(function () { CheckIfFrameLoaded(); }, 1);
 
                     },

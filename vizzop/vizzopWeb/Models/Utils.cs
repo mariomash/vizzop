@@ -2483,21 +2483,23 @@ namespace vizzopWeb
                     GrabaLog(Utils.NivelLog.info, _ex.Message);
                 }
                 string mainURL = scheme + @"://" + strdomain + ":" + port;
-
-#if DEBUG
-                var psi = new ProcessStartInfo(phantomjs_filename)
-                {
-                    RedirectStandardError = false,
-                    RedirectStandardOutput = false,
-                    UseShellExecute = false,
-                    Verb = "runas",
-                    CreateNoWindow = false,
-                    WindowStyle = ProcessWindowStyle.Normal,
-                    WorkingDirectory = strPath,
-                    Arguments = @" --proxy-type=none --disk-cache=yes --web-security=no --ignore-ssl-errors=yes " + pathjs + @" " + mainURL + @" " + username + @" " + domain + @" " + password + @" " + GUID,
-                    ErrorDialog = false
-                };
-#else
+                /*
+                #if DEBUG
+                                var psi = new ProcessStartInfo(phantomjs_filename)
+                                {
+                                    RedirectStandardError = false,
+                                    RedirectStandardOutput = false,
+                                    UseShellExecute = false,
+                                    Verb = "runas",
+                                    CreateNoWindow = false,
+                                    WindowStyle = ProcessWindowStyle.Normal,
+                                    WorkingDirectory = strPath,
+                                    Arguments = @" --proxy-type=none --disk-cache=yes --web-security=no --ignore-ssl-errors=yes " + pathjs + @" " + mainURL + @" " + username + @" " + domain + @" " + password + @" " + GUID,
+                                    ErrorDialog = false
+                                };
+                #else
+                #endif
+                 */
                 var psi = new ProcessStartInfo(phantomjs_filename)
                 {
                     RedirectStandardError = true,
@@ -2510,7 +2512,6 @@ namespace vizzopWeb
                     Arguments = @" --proxy-type=none --disk-cache=yes --web-security=no --ignore-ssl-errors=yes " + pathjs + @" " + mainURL + @" " + username + @" " + domain + @" " + password + @" " + GUID,
                     ErrorDialog = false
                 };
-#endif
 
                 var process = new Process
                 {
@@ -2518,22 +2519,39 @@ namespace vizzopWeb
                     StartInfo = psi
                 };
 
+                string Logged = "";
                 Action<object, DataReceivedEventArgs> actionWrite = (sender, e) =>
                 {
-#if DEBUG
-                    GrabaLog(Utils.NivelLog.info, e.Data);
-#endif
+                    /*
+                    #if DEBUG
+                    #endif
+                     */
+                    if (e.Data != null)
+                    {
+                        Logged += e.Data;
+                    }
                 };
 
                 process.ErrorDataReceived += (sender, e) => actionWrite(sender, e);
                 process.OutputDataReceived += (sender, e) => actionWrite(sender, e);
 
+                process.Exited += (sender, e) =>
+                {
+                    //Debug.WriteLine("Process exited with exit code " + process.ExitCode.ToString());
+                    if (Logged != "")
+                    {
+                        GrabaLog(Utils.NivelLog.info, Logged);
+                    }
+                };
+
                 process.Start();
-#if DEBUG
-#else
+                /*
+                #if DEBUG
+                #else
+                #endif
+                 */
                 process.BeginOutputReadLine();
                 process.BeginErrorReadLine();
-#endif
                 //process.WaitForExit();
                 return process;
             }

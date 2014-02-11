@@ -871,7 +871,7 @@ namespace vizzopWeb.Controllers
                         }
                     }
 
-                    /*
+
                     var IframeNodes = doc.DocumentNode.SelectNodes("//iframe");
                     if (IframeNodes != null)
                     {
@@ -879,16 +879,19 @@ namespace vizzopWeb.Controllers
                         {
                             if (node.Attributes["value"] != null)
                             {
+                                node.Attributes["value"].Value = null;
+                                /*
                                 var textnode = HtmlNode.CreateNode(node.Attributes["value"].Value);
                                 if (textnode != null)
                                 {
                                     node.Attributes["src"].Value = @"data:text/html;charset=utf-8," + node.Attributes["value"].Value; //escape(localS);";
                                     //node.AppendChild(textnode);
                                 }
+                                 * */
                             }
                         }
                     }
-                    */
+
 
                     sc_control.CompleteHtml = doc.DocumentNode.OuterHtml;
 
