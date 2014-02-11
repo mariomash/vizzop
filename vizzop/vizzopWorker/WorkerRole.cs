@@ -32,9 +32,10 @@ namespace vizzopWorker
             utils.GrabaLog(Utils.NivelLog.info, "vizzopWorker entry point called");
             LanzaYControlaProcesoFileScreenShots();
             LanzaYControlaProcesoPhantom();
-            LanzaYControlaProcesoCreaVideos();
+            
 #if DEBUG
 #else
+    LanzaYControlaProcesoCreaVideos();
 #endif
             while (true)
             {

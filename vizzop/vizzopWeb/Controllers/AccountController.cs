@@ -156,7 +156,11 @@ namespace vizzopWeb.Controllers
                 newmessage.To = converser.UserName + "@" + converser.Business.Domain;
                 newmessage.Lang = utils.GetLang(HttpContext);
                 newmessage.Subject = utils.LocalizeLang("email_reminder_subject", newmessage.Lang, null);
+                /*
+                change UserName to Email, we don't want to send the UserName to the Business(our client), just the Email
                 string[] args = { converser.UserName, "https://vizzop.com/" + Url.Action("PasswordReset", new { key = passwordreset.Key }) };
+                */
+                string[] args = { converser.Email, "https://vizzop.com/" + Url.Action("PasswordReset", new { key = passwordreset.Key }) };
                 newmessage.Content = utils.LocalizeLang("email_reminder_contents", newmessage.Lang, args);
                 newmessage.db = db;
                 newmessage.MessageType = "email";

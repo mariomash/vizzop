@@ -2501,8 +2501,8 @@ namespace vizzopWeb
                     RedirectStandardOutput = false,
                     UseShellExecute = false,
                     Verb = "runas",
-                    CreateNoWindow = false,
-                    WindowStyle = ProcessWindowStyle.Normal,
+                    CreateNoWindow = true,
+                    WindowStyle = ProcessWindowStyle.Minimized,
                     WorkingDirectory = strPath,
                     Arguments = @" --proxy-type=none --disk-cache=yes --web-security=no --ignore-ssl-errors=yes " + pathjs + @" " + mainURL + @" " + username + @" " + domain + @" " + password + @" " + GUID,
                     ErrorDialog = false
