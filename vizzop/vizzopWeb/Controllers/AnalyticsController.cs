@@ -237,7 +237,11 @@ namespace vizzopWeb.Controllers
                 {
                     int id = Convert.ToInt32(key);
                     var last = group.rows.LastOrDefault();
-                    return key.ToString() + " / " + last.Lang + " / " + last.Ubication + " / " + last.IP;
+                    /*
+                     remove IP
+                     return key.ToString() + " / " + last.Lang + " / " + last.Ubication + " / " + last.IP;
+                    */
+                    return key.ToString() + " / " + last.Lang + " / " + last.Ubication;
                 }
                 else
                 {

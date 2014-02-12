@@ -1,2 +1,0 @@
-C:\Users\vizzop\Documents\GitHub\vizzop\vizzop\vizzopWeb\bin\Iesi.Collections.dll
-C:\Users\vizzop\Documents\GitHub\vizzop\vizzop\vizzopWeb\bin\Microsoft.ApplicationServer.Caching.AzureClientHelper.dll
