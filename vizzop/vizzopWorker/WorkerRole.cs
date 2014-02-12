@@ -452,7 +452,7 @@ namespace vizzopWorker
                     blockBlob.DeleteIfExists();
                     blockBlob.UploadFromStream(fileStream);
 
-                    utils.GrabaLog(Utils.NivelLog.info, "Subido " + inputFileName + ".mp4");
+                    //utils.GrabaLog(Utils.NivelLog.info, "Subido " + inputFileName + ".mp4");
                 }
 
                 return true;

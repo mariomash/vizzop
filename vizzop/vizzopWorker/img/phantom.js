@@ -17,7 +17,7 @@ var wrapper = 'wrapper.html';
 
 page.onCallback = function (param) {
     var date = new Date();
-    console.log(date + ' ' + param.command);
+    //console.log(date + ' ' + param.command);
     if (param.command == 'exit') {
         phantom.exit();
     } else if (param.command == 'iframeloaded') {
@@ -25,7 +25,8 @@ page.onCallback = function (param) {
         param.filename = "captures/" + param.filename;
 
         page.render(param.filename);
-        console.log(date + ' rendered: ' + param.filename);
+        //console.log(date + ' rendered: ' + param.filename);
+
         page.evaluate(function () {
             OrdersRequest_InCourse = null;
         });

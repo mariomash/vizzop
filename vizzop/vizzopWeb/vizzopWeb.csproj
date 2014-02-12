@@ -300,6 +300,7 @@
     <Content Include="Content\images\carousel_1.gif" />
     <Content Include="Content\images\carousel_2.png" />
     <Content Include="Content\images\cloud.png" />
+    <Content Include="Content\images\customer_service.png" />
     <Content Include="Content\images\descript.png" />
     <Content Include="Content\images\descript1.png" />
     <Content Include="Content\images\descript1_cap.png" />

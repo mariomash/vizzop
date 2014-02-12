@@ -3932,11 +3932,11 @@ inse .zs_dialog .vizzop-btn-navbar {
     -webkit-background-clip: padding-box !important;
     -moz-background-clip: padding-box !important;
     background-clip: padding-box !important;
-    height: 70px;
+    height: auto;
     overflow: hidden;
     font-weight: normal !important;
     font-size: 12px;
-    color: #666;
+    color: #999;
 }
 
     .zs_dialog .vizzop-popover-content p, .zs_dialog .vizzop-popover-content ul, .zs_dialog .vizzop-popover-content ol {
@@ -5801,7 +5801,7 @@ inse .zs_dialog .vizzop-btn-navbar {
     clear: both !important;
     margin-bottom: 0 !important;
     padding: 4px 15px !important;
-    text-align: right !important;
+    text-align: center !important;
     opacity: 0.7 !important;
     filter: alpha(opacity=70) !important;
     cursor: pointer !important;
@@ -6826,6 +6826,7 @@ inse .zs_dialog .vizzop-btn-navbar {
     margin: 5px 15px 5px 10px !important;
     font-size: 14px !important;
     cursor: pointer !important;
+    text-align: center !important;
 }
 
 .zs_dialog .zs_hoverbarimg {

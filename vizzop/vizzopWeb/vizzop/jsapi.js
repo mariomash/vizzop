@@ -1,4 +1,198 @@
 ﻿var vizzoplib = {
+    prepareScreenShot: function () {
+        try {
+            jVizzop.each(jVizzop('*').get(), function (idx, val) {
+                if (jVizzop(val).attr('vizzop-id')) {
+                } else {
+                    //Vamos a asegurarnos de que no hay mas elementos como este...
+                    var new_id = null;
+                    while (new_id == null) {
+                        new_id = vizzoplib.randomnumber();
+
+                        if (vizzop.IsInFrame == true) {
+                            new_id = window.frameElement.getAttribute("id") + '_' + new_id;
+                        }
+
+                        var attrToFind = "[vizzop-id='" + new_id + "']";
+                        if (jVizzop(attrToFind).length > 0) {
+                            new_id = null;
+                        }
+                    }
+                    jVizzop(val).attr('vizzop-id', new_id);
+                }
+                if (jVizzop(val).is(":focus")) {
+                    var attrToFind = "[vizzop-id='" + jVizzop(val).attr('vizzop-id') + "']";
+                    var elem = jVizzop(vizzop.screenshot).find(attrToFind);
+                    jVizzop(elem).attr('style', 'border: solid 2px blue !important; background-color: solid 2px #aaaaff !important;');
+                }
+            });
+
+            var screenshot = document.documentElement.cloneNode(true);
+
+            /*
+            * Si está en un iframe... vamos a cambiarle el style del body al tamaño del iframe que lo contiene... a ver si asi el F*CKING phantomJS pirula
+            * HACK
+            */
+
+            jVizzop.each(jVizzop('*').get(), function (idx, val) {
+                if (jVizzop(val).is(":focus")) {
+                    var attrToFind = "[vizzop-id='" + jVizzop(val).attr('vizzop-id') + "']";
+                    var elem = jVizzop(screenshot).find(attrToFind);
+                    jVizzop(elem).attr('style', 'border: solid 2px blue !important; background-color: solid 2px #aaaaff !important; box-shadow: 0 0 5px rgba(0, 0, 255, 1) !important;');
+                }
+            });
+            jVizzop(screenshot).find('img').each(function () {
+                jVizzop(this).attr('src', this.src);
+            });
+            jVizzop(screenshot).find('link').each(function () {
+                jVizzop(this).attr('src', this.src);
+            });
+            jVizzop(screenshot).find('script').each(function () {
+                jVizzop(this).remove();
+            });
+
+            /*
+            if (vizzop.IsInFrame == true) {
+                jVizzop(screenshot).find('body').css('width', window.frameElement.getAttribute("width"));
+                jVizzop(screenshot).find('body').css('height', window.frameElement.getAttribute("height"));
+            }
+            */
+
+            jVizzop(screenshot).find('iframe').each(function () {
+                //jVizzop(this).empty();
+                var contents = jVizzop(this).attr('value');
+                if (contents == null) {
+                    contents = "";
+                }
+                jVizzop(this).removeAttr('value');
+                if (vizzop.IsInFrame == true) {
+                    jVizzop(this).attr('src', 'data:text/html;charset=utf-8,' + contents);
+                } else {
+                    //Pero que sucio eres PhantomJS... tengo que crear un DIV para hacer de wrapper pfffff
+                    var wrapper = jVizzop('<div></div>')
+                        .attr('style', 'width: ' + jVizzop(this).attr('width') + 'px !important; height: ' + jVizzop(this).attr('height') + 'px !important; overflow: hidden !important;')
+                        .insertBefore(this);
+                    var new_iframe = jVizzop('<iframe></iframe>')
+                        .attr('src', 'data:text/html;charset=utf-8,' + contents)
+                        .appendTo(wrapper);
+                }
+                jVizzop(this).hide();
+            });
+
+            jVizzop(screenshot).find('noscript').each(function () {
+                jVizzop(this).remove();
+            });
+
+            //urlsToAbsolute(document.scripts);
+            // 2. Duplicate entire document.
+            jVizzop('input').each(function () {
+                var attrToFind = "[vizzop-id='" + jVizzop(this).attr('vizzop-id') + "']";
+                jVizzop(screenshot).find(attrToFind).attr('value', jVizzop(this).val());
+            });
+            jVizzop('textarea').each(function () {
+                var attrToFind = "[vizzop-id='" + jVizzop(this).attr('vizzop-id') + "']";
+                jVizzop(screenshot).find(attrToFind).attr('value', jVizzop(this).val());
+            });
+            jVizzop('select').each(function () {
+                var attrToFind = "[vizzop-id='" + jVizzop(this).attr('vizzop-id') + "']";
+                jVizzop(screenshot).find(attrToFind).attr('value', jVizzop(this).val());
+            });
+
+            // Use <base> to make anchors and other relative links absolute.
+            var b = document.createElement('base');
+            b.href = document.location.protocol + '//' + location.host;
+            var head = screenshot.querySelector('head');
+            head.insertBefore(b, head.firstChild);
+            // 3. Screenshot should be readyonly, no scrolling, and no selections.
+            /*
+            screenshot.style.pointerEvents = 'none';
+            screenshot.style.overflow = 'hidden';
+            screenshot.style.webkitUserSelect = 'none';
+            screenshot.style.mozUserSelect = 'none';
+            screenshot.style.msUserSelect = 'none';
+            screenshot.style.oUserSelect = 'none';
+            screenshot.style.userSelect = 'none';
+            */
+            // 4. Preserve current x,y scroll position of this page. See addOnPageLoad_().
+            /*
+            screenshot.dataset.scrollX = window.scrollX;
+            screenshot.dataset.scrollY = window.scrollY;
+            */
+            // 4.5. When the screenshot loads (e.g. as ablob URL, as iframe.src, etc.),
+            // scroll it to the same location of this page. Do this by appending a
+            // window.onDOMContentLoaded listener which pulls out the saved scrollX/Y
+            // state from the DOM.
+            /*
+            var script = document.createElement('script');
+            script.textContent = '(' + addOnPageLoad_.toString() + ')();'; // self calling.
+            screenshot.querySelector('body').appendChild(script);
+            */
+            // 5. Create a new .html file from the cloned content.
+            return screenshot;
+        } catch (err) {
+            vizzoplib.log(err);
+            return null;
+        }
+    },
+    screenshotPage: function () {
+        try {
+            // 1. Rewrite current doc's imgs, css, and script URLs to be absolute before
+            // we duplicate. This ensures no broken links when viewing the duplicate.
+            //urlsToAbsolute(document.images);
+            //urlsToAbsolute(document.querySelectorAll("link[rel='stylesheet']"));
+
+            vizzop.screenshot = vizzoplib.prepareScreenShot();
+            var current_html = vizzop.screenshot.outerHTML;
+
+            //current_html = escape(current_html);
+
+            if (vizzop.HtmlSend_LastHtmlContents == null) {
+                vizzop.HtmlSend_LastHtmlContents = "";
+            }
+
+            var objdiff = new diff_match_patch();
+            //console.log(vizzop.HtmlSend_LastHtmlContents);
+            //console.log(current_html);
+            var diffresult = objdiff.diff_main(vizzop.HtmlSend_LastHtmlContents, current_html);
+
+            for (var i in diffresult) {
+                var elem = diffresult[i];
+                //console.log(elem[1]);
+                //console.log(elem[1].length);
+                if (elem[0] == 0) {
+                    //Sustituimos el texto por el número de caracteres que hay que saltarse...
+                    elem[1] = elem[1].length;
+                } else if (elem[0] == -1) {
+                    //Sustituimos el texto por el número de caracteres que hay que eliminar...
+                    elem[1] = elem[1].length;
+                }
+            }
+
+            //console.log(diffresult);
+
+            vizzop.HtmlSend_LastHtmlContents = current_html;
+
+            //var html = '<html>' + jVizzop(vizzop.screenshot).html() + '</html>';
+            //diffresult = Base64.encode(diffresult);
+            //html = LZW.compress(html);
+            /*
+            var arr_current_html = LZW.compress(html);
+            html = "";
+            jVizzop(arr_current_html).each(function (idx, val) {
+                var val_ = val + "_";
+                html += val_;
+            });
+            html = html.substring(0, html.length - 1);
+            */
+            return diffresult;
+            //var blob = new Blob([diffresult], { type: 'text/html' });
+            //var blob = new Blob([diffresult], { type: 'text/plain' });
+            //return blob;
+        } catch (err) {
+            vizzoplib.log(err);
+            return null;
+        }
+    },
     getLocation: function (href) {
         var l = document.createElement("a");
         l.href = href;
@@ -97,27 +291,6 @@
     },
     ReBindForms: function () {
 
-        /*
-        jVizzop('input').unbind('change.vizzop keyup.vizzop input.vizzop click.vizzop');
-
-        jVizzop('textarea').unbind('change.vizzop keyup.vizzop input.vizzop click.vizzop');
-
-        jVizzop('select').unbind('change.vizzop keyup.vizzop input.vizzop click.vizzop');
-        */
-        /*
-        jVizzop('input').bind('change.vizzop keyup.vizzop input.vizzop', function () {
-            vizzop.HtmlSend_ForceSendComplete = true;
-        }, 100);
-
-        jVizzop('textarea').on('change.vizzop keyup.vizzop input.vizzop', function () {
-            vizzop.HtmlSend_ForceSendComplete = true;
-        }, 100);
-
-        jVizzop('select').on('change.vizzop keyup.vizzop input.vizzop', function () {
-            vizzop.HtmlSend_ForceSendComplete = true;
-        }, 100);
-        */
-
         //Vamos a ir poniendo los clicks como tocan...
         jVizzop('*').on('focus.vizzop', function () {
             try {
@@ -126,12 +299,20 @@
                     name = jVizzop(this).attr("name");
                 }
                 var url = document.URL + '/focus_' + jVizzop(this).attr("name");
-                vizzop.Tracking.TrackPageView(url, document.referrer);
+                if (vizzop.IsInFrame == true) {
+                    var data = {
+                        mode: 'event',
+                        url: url,
+                        referrer: document.referrer
+                    }
+                    top.postMessage(JSON.stringify(data), "http://vizzop.com");
+                } else {
+                    vizzop.Tracking.TrackPageView(url, document.referrer);
+                }
             } catch (err) {
 
             }
         }, 0);
-
 
         jVizzop('input[type="submit"], button, img, a').on('click.vizzop', function () {
             try {
@@ -140,7 +321,16 @@
                     name = jVizzop(this).attr("name");
                 }
                 var url = document.URL + '/click_' + jVizzop(this).attr("name");
-                vizzop.Tracking.TrackPageView(url, document.referrer);
+                if (vizzop.IsInFrame == true) {
+                    var data = {
+                        mode: 'event',
+                        url: url,
+                        referrer: document.referrer
+                    }
+                    top.postMessage(JSON.stringify(data), "http://vizzop.com");
+                } else {
+                    vizzop.Tracking.TrackPageView(url, document.referrer);
+                }
             } catch (err) {
 
             }
@@ -154,10 +344,17 @@
                     name = jVizzop(this).attr("name");
                 }
                 var url = document.URL + '/change_' + jVizzop(this).attr("name");
-                vizzop.Tracking.TrackPageView(url, document.referrer);
-            } catch (err) {
-
-            }
+                if (vizzop.IsInFrame == true) {
+                    var data = {
+                        mode: 'event',
+                        url: url,
+                        referrer: document.referrer
+                    }
+                    top.postMessage(JSON.stringify(data), "http://vizzop.com");
+                } else {
+                    vizzop.Tracking.TrackPageView(url, document.referrer);
+                }
+            } catch (err) { }
         }, 100);
 
     },
@@ -183,6 +380,36 @@
         }
 
         return new Blob([uInt8Array], { type: contentType });
+    },
+    PageisInIframe: function () {
+        try {
+            return window.self !== window.top;
+        } catch (err) {
+            return true;
+        }
+    },
+    ReceivedMessageFromIframe: function (evt) {
+        try {
+            //console.log(evt);
+            var json = jVizzop.parseJSON(evt.data);
+            //console.log(unescape(json.html));
+            if (json.vizzop) {
+                if (json.vizzop == true) {
+                    switch (json.mode) {
+                        case 'html':
+                            jVizzop('#' + json.id).attr('value', unescape(json.html)); //escape()
+                            //console.log(jVizzop('#' + json.id));
+                            jVizzop(vizzop).trigger("mutated");
+                            break;
+                        case 'event':
+                            vizzop.Tracking.TrackPageView(json.url, json.referrer);
+                            break;
+                    }
+                }
+            }
+        } catch (err) {
+            vizzoplib.log(err);
+        }
     }
 }
 
@@ -524,10 +751,8 @@ function _arrayBufferToBase64(buffer) {
 *
 **/
 var Base64 = {
-
     // private property
     _keyStr: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
-
     // public method for encoding
     encode: function (input) {
         var output = "";
@@ -561,7 +786,6 @@ var Base64 = {
 
         return output;
     },
-
     // public method for decoding
     decode: function (input) {
         var output = "";
@@ -598,7 +822,6 @@ var Base64 = {
         return output;
 
     },
-
     // private method for UTF-8 encoding
     _utf8_encode: function (string) {
         string = string.replace(/\r\n/g, "\n");
@@ -625,7 +848,6 @@ var Base64 = {
 
         return utftext;
     },
-
     // private method for UTF-8 decoding
     _utf8_decode: function (utftext) {
         var string = "";
@@ -656,7 +878,6 @@ var Base64 = {
 
         return string;
     }
-
 }
 
 jVizzop.eachCallback = function (arr, process, callback) {
@@ -691,6 +912,8 @@ jVizzop.fn.eachCallback = function (process, callback) {
 jVizzop(document).bind('ready.vizzop', function () {
     //vizzoplib.log("[LOADED VIZZOP]");
 
+    vizzop.IsInFrame = vizzoplib.PageisInIframe();
+
     vizzoplib.ReBindForms();
 
     if (vizzop.me) {
@@ -705,7 +928,7 @@ jVizzop(document).bind('ready.vizzop', function () {
         } catch (err) {
 
         }
-    }, 250);
+    }, 500);
 
     jVizzop(document).on('mousemove.vizzop', function (e) {
         try {
@@ -751,5 +974,34 @@ jVizzop(document).bind('ready.vizzop', function () {
         var attrToFind = "[vizzop-id='" + jVizzop(this).attr('vizzop-id') + "']";
         jVizzop(vizzop.screenshot).find(attrToFind).attr('value', jVizzop(this).val());
     });
+
+    if (vizzop.IsInFrame == false) {
+        /*
+        * Respecto a guardar los contenidos de un iframe y saltarse el cross-domain:
+        * se registra el Listener de evento "message" (en el jsapi) y cuando te llega uno de "vizzop"
+        * se mete $(message.data.id).attr('src', 'data:' + escape(message.data.html));
+        */
+        if (window.addEventListener) {
+            window.addEventListener("message", vizzoplib.ReceivedMessageFromIframe, false);
+        } else {
+            window.attachEvent("onmessage", vizzoplib.ReceivedMessageFromIframe);
+        }
+    } else {
+        vizzoplib.ReBindForms();
+        // window.frameElement Gets IFrame element which document inside
+        var id = window.frameElement.getAttribute("id");
+        var screenshot = vizzoplib.prepareScreenShot();
+        var current_html = screenshot.outerHTML;
+        //console.log(current_html);
+        //document.documentElement.outerHTML
+        var data = {
+            mode: 'html',
+            vizzop: true,
+            id: id,
+            html: escape(current_html)
+        }
+        //console.log(data);
+        top.postMessage(JSON.stringify(data), "*");
+    }
 
 });
