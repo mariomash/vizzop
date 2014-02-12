@@ -79,11 +79,12 @@ namespace vizzopWeb.Controllers
                         return RedirectToAction("ErrorPage", "Home");
                     }
 
+                    /*
+                     When the Email attribute has been created,
+                     we should change passwordreset.UserName to passwordreset.UserName
+                     */
+                    Converser converser = utils.GetConverserFromSystemWithEmailAndBusinessId(passwordreset.UserName, passwordreset.Business.ID, db);
 
-                    Converser converser = (from m in db.Conversers
-                                           where m.Email == passwordreset.UserName
-                                           && m.Business.ID == passwordreset.Business.ID
-                                           select m).FirstOrDefault();
                     if (converser != null)
                     {
                         converser.Password = newpasswordreset.Password;
@@ -144,7 +145,11 @@ namespace vizzopWeb.Controllers
                 }
 
                 PasswordReset passwordreset = new PasswordReset();
-                passwordreset.UserName = converser.UserName;
+                /*
+                 We should create the attribute Email on PasswordReset. 
+                 Momentarily, we put the Email on passwordreset.UserName
+                 */
+                passwordreset.UserName = converser.Email;
                 passwordreset.Business = converser.Business;
                 passwordreset.Password = converser.Password;
                 passwordreset.ConfirmPassword = converser.Password;
