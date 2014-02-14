@@ -101,9 +101,11 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                 if (data.Location.Referrer != null) {
                     all_info += '<dl><dt>Referrer</dt><dd>' + data.Location.Referrer + '</dd></dl>';
                 }
+                /*
                 if (data.Location.IP != null) {
                     all_info += '<dl><dt>IP</dt><dd>' + data.Location.IP + '</dd></dl>';
                 }
+                */
                 if (data.Location.UserAgent != null) {
                     var browser = data.Location.UserAgent.substring(data.Location.UserAgent.lastIndexOf(" ") + 1, data.Location.length);
                     all_info += '<dl><dt>Browser</dt><dd>' + browser + '</dd></dl>';

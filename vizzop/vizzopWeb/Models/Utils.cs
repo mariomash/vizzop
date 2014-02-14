@@ -700,6 +700,7 @@ namespace vizzopWeb
                     db = new vizzopContext();
                 }
 
+
                 converser = (from m in db.Conversers.Include("Business").Include("Agent")
                              where m.Email == Email
                              && m.Password == Password
@@ -719,8 +720,9 @@ namespace vizzopWeb
             }
             catch (Exception ex)
             {
-                Utils utils = new Utils();
+                //Utils utils = new Utils();
                 GrabaLogExcepcion(ex);
+                
             }
             return converser;
         }
@@ -2563,6 +2565,41 @@ namespace vizzopWeb
         }
 
 
+
+        internal Converser GetConverserFromSystemWithEmailAndBusinessId(string Email, int id, vizzopContext db)
+        {
+
+            Converser converser = null;
+            try
+            {
+                if (db == null)
+                {
+                    db = new vizzopContext();
+                }
+                
+                converser = (from m in db.Conversers.Include("Business").Include("Agent")
+                             where m.Email == Email
+                             && m.Business.ID == id
+                             select m).FirstOrDefault();
+
+                if (converser == null)
+                {
+                    return null;
+                }
+
+                TimeZone localZone = TimeZone.CurrentTimeZone;
+                DateTime loctime = DateTime.Now;
+                DateTime loctimeUTC = localZone.ToUniversalTime(loctime);
+                converser.LastActive = loctimeUTC;
+
+                db.SaveChanges();
+            }
+            catch (Exception ex)
+            {           
+                GrabaLogExcepcion(ex);
+            }
+            return converser;
+        }
     }
 
     public static class ProcessExtensions
