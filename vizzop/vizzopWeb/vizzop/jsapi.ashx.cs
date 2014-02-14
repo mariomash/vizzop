@@ -334,7 +334,7 @@ namespace vizzopWeb
                 }
 
                 string UserAgent = context.Request.UserAgent;
-                string allowsockets = business.AllowSockets.ToString().ToLowerInvariant();
+                string allowsockets = business.AllowChatSockets.ToString().ToLowerInvariant();
                 var useragent_in_db = (from m in db.BrowserFeatures
                                        where m.UserAgent == UserAgent
                                        select m).FirstOrDefault();

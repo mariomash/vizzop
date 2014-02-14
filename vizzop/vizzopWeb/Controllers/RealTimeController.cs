@@ -134,6 +134,19 @@ namespace vizzopWeb
                 }
                 else
                 {
+                    if (sc.converser == null)
+                    {
+                        Converser converser = utils.GetConverserFromSystem(this._UserName, this._Password, this._Domain, db);
+                        if (converser == null)
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            sc.converser = converser;
+                        }
+                    }
+
                     sc.GUID = this._ScreenCapture.GUID;
                     sc.Headers = this._ScreenCapture.Headers;
                     sc.Height = this._ScreenCapture.Height;
