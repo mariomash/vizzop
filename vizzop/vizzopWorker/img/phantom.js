@@ -25,7 +25,7 @@ page.onCallback = function (param) {
         param.filename = "captures/" + param.filename;
 
         page.render(param.filename);
-        //console.log(date + ' rendered: ' + param.filename);
+        console.log(date + ' rendered: ' + param.filename);
 
         page.evaluate(function () {
             OrdersRequest_InCourse = null;

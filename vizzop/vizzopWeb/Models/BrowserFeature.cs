@@ -18,7 +18,9 @@ namespace vizzopWeb.Models
         [StringLength(100)]
         public string UserAgent { get; set; }
 
-        public Boolean AllowSockets { get; set; }
+        public Boolean AllowChatSockets { get; set; }
+
+        public Boolean AllowScreenSockets { get; set; }
 
         public Boolean AllowScreenCaptures { get; set; }
     }

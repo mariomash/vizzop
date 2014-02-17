@@ -722,7 +722,7 @@ namespace vizzopWeb
             {
                 //Utils utils = new Utils();
                 GrabaLogExcepcion(ex);
-                
+
             }
             return converser;
         }
@@ -2485,23 +2485,7 @@ namespace vizzopWeb
                     GrabaLog(Utils.NivelLog.info, _ex.Message);
                 }
                 string mainURL = scheme + @"://" + strdomain + ":" + port;
-                /*
-                #if DEBUG
-                                var psi = new ProcessStartInfo(phantomjs_filename)
-                                {
-                                    RedirectStandardError = false,
-                                    RedirectStandardOutput = false,
-                                    UseShellExecute = false,
-                                    Verb = "runas",
-                                    CreateNoWindow = false,
-                                    WindowStyle = ProcessWindowStyle.Normal,
-                                    WorkingDirectory = strPath,
-                                    Arguments = @" --proxy-type=none --disk-cache=yes --web-security=no --ignore-ssl-errors=yes " + pathjs + @" " + mainURL + @" " + username + @" " + domain + @" " + password + @" " + GUID,
-                                    ErrorDialog = false
-                                };
-                #else
-                #endif
-                 */
+
                 var psi = new ProcessStartInfo(phantomjs_filename)
                 {
                     RedirectStandardError = true,
@@ -2514,6 +2498,14 @@ namespace vizzopWeb
                     Arguments = @" --proxy-type=none --disk-cache=yes --web-security=no --ignore-ssl-errors=yes " + pathjs + @" " + mainURL + @" " + username + @" " + domain + @" " + password + @" " + GUID,
                     ErrorDialog = false
                 };
+
+#if DEBUG
+                psi.CreateNoWindow = false;
+                psi.WindowStyle = ProcessWindowStyle.Minimized;
+                psi.RedirectStandardError = false;
+                psi.RedirectStandardInput = false;
+                psi.RedirectStandardOutput = false;
+#endif
 
                 var process = new Process
                 {
@@ -2534,8 +2526,11 @@ namespace vizzopWeb
                     }
                 };
 
+#if DEBUG
+#else
                 process.ErrorDataReceived += (sender, e) => actionWrite(sender, e);
                 process.OutputDataReceived += (sender, e) => actionWrite(sender, e);
+#endif
 
                 process.Exited += (sender, e) =>
                 {
@@ -2547,13 +2542,11 @@ namespace vizzopWeb
                 };
 
                 process.Start();
-                /*
-                #if DEBUG
-                #else
-                #endif
-                 */
+#if DEBUG
+#else
                 process.BeginOutputReadLine();
                 process.BeginErrorReadLine();
+#endif
                 //process.WaitForExit();
                 return process;
             }
@@ -2576,7 +2569,7 @@ namespace vizzopWeb
                 {
                     db = new vizzopContext();
                 }
-                
+
                 converser = (from m in db.Conversers.Include("Business").Include("Agent")
                              where m.Email == Email
                              && m.Business.ID == id
@@ -2595,7 +2588,7 @@ namespace vizzopWeb
                 db.SaveChanges();
             }
             catch (Exception ex)
-            {           
+            {
                 GrabaLogExcepcion(ex);
             }
             return converser;

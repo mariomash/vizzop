@@ -129,6 +129,10 @@
                 };
                 var url = mainURL + "/Messages/CheckCaptureControl";
 
+                window.callPhantom({
+                    'log': 'calling ' + url + ' ' + UserName
+                });
+
                 OrdersRequest_InCourse = $.ajax({
                     url: url,
                     type: "POST",

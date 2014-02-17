@@ -845,8 +845,6 @@ namespace vizzopWeb.Controllers
                     }
                 }
 
-
-
                 if (sc_control != null)
                 {
 

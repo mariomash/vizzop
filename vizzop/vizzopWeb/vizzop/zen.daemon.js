@@ -367,7 +367,7 @@ var Daemon = jVizzop.zs_Class.create({
         vizzop.WSchat = null;
         vizzop.WSscreen = null;
         try {
-            if ((typeof (WebSocket) === "function") && (vizzop.AllowSockets === true)) {
+            if ((typeof (WebSocket) === "function") && (vizzop.AllowChatSockets === true)) {
                 var url = vizzop.wsURL + "/vizzop/Socket.ashx";
                 vizzop.WSchat = new WebSocket(url);
                 vizzop.WSchat.onopen = function () {
@@ -385,8 +385,9 @@ var Daemon = jVizzop.zs_Class.create({
                 vizzop.WSchat.onclose = function () {
                     //vizzoplib.log("Socket Closed");
                 };
+            }
 
-
+            if ((typeof (WebSocket) === "function") && (vizzop.AllowScreenSockets === true)) {
                 vizzop.WSscreen = new WebSocket(url);
                 vizzop.WSscreen.onopen = function () {
                     //vizzoplib.log("Socket Connected");
