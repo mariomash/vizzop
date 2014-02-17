@@ -81,7 +81,7 @@ namespace vizzopWeb.Controllers
 
                     /*
                      When the Email attribute has been created,
-                     we should change passwordreset.UserName to passwordreset.UserName
+                     we should change passwordreset.UserName to passwordreset.Email
                      */
                     Converser converser = utils.GetConverserFromSystemWithEmailAndBusinessId(passwordreset.UserName, passwordreset.Business.ID, db);
 
