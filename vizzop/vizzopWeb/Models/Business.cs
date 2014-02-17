@@ -18,7 +18,8 @@ namespace vizzopWeb.Models
             this.ShowHelpButton = true;
             this.AuditMessages = false;
             this.AllowScreenCaptures = true;
-            this.AllowSockets = true;
+            this.AllowChatSockets = true;
+            this.AllowScreenSockets = false;
             this.ShowDisclaimer = false;
             this.AllowCaptureMouse = true;
             this.WidgetBackgroundColor = null;
@@ -95,7 +96,8 @@ namespace vizzopWeb.Models
         public bool ShowHelpButton { get; set; }
 
         public bool AuditMessages { get; set; }
-        public bool AllowSockets { get; set; }
+        public bool AllowChatSockets { get; set; }
+        public bool AllowScreenSockets { get; set; }
         public bool AllowScreenCaptures { get; set; }
         public bool ShowDisclaimer { get; set; }
         public bool AllowCaptureMouse { get; set; }

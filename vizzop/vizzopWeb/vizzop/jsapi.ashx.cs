@@ -334,19 +334,36 @@ namespace vizzopWeb
                 }
 
                 string UserAgent = context.Request.UserAgent;
-                string allowsockets = business.AllowChatSockets.ToString().ToLowerInvariant();
+                string allowchatsockets = business.AllowChatSockets.ToString().ToLowerInvariant();
                 var useragent_in_db = (from m in db.BrowserFeatures
                                        where m.UserAgent == UserAgent
                                        select m).FirstOrDefault();
                 if (useragent_in_db != null)
                 {
-                    allowsockets = useragent_in_db.AllowSockets.ToString().ToLowerInvariant();
+                    allowchatsockets = useragent_in_db.AllowChatSockets.ToString().ToLowerInvariant();
                 }
                 try
                 {
-                    if (context.Request.Params["allowsockets"] != null)
+                    if (context.Request.Params["allowchatsockets"] != null)
                     {
-                        allowsockets = context.Request.Params["allowsockets"].ToString();
+                        allowchatsockets = context.Request.Params["allowchatsockets"].ToString();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    utils.GrabaLog(vizzopWeb.Utils.NivelLog.error, ex.Message);
+                }
+
+                string allowscreensockets = business.AllowScreenSockets.ToString().ToLowerInvariant();
+                if (useragent_in_db != null)
+                {
+                    allowscreensockets = useragent_in_db.AllowScreenSockets.ToString().ToLowerInvariant();
+                }
+                try
+                {
+                    if (context.Request.Params["allowscreensockets"] != null)
+                    {
+                        allowscreensockets = context.Request.Params["allowscreensockets"].ToString();
                     }
                 }
                 catch (Exception ex)
@@ -503,7 +520,8 @@ var vizzop = {
     AllowCaptureMouse: " + allowcapturemouse + @",
     AllowChat: " + allowchat + @",
     AllowScreenCaptures: " + allowscreencaptures + @",
-    AllowSockets: " + allowsockets + @",
+    AllowChatSockets: " + allowchatsockets + @",
+    AllowScreenSockets: " + allowscreensockets + @",
     ShowHelpButton: " + showhelpbutton + @",
     AuditMessages: " + auditmessages + @",
     SessionID: '" + context.Session.SessionID + @"',
