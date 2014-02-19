@@ -210,14 +210,14 @@ var Message = jVizzop.zs_Class.create({
             self.msg_ok = jVizzop('<span></span>')
                         .prependTo(jVizzop(self.divmsg_contents));
 
-            /*
+            
             var msg_ok_text = jVizzop('<i></i>')
                         .addClass('vizzop-icon-ok')
                         .css({
                             'float': 'right'
                         })
                         .appendTo(jVizzop(self.msg_ok));
-                        */
+                        
 
         } catch (err) {
             vizzoplib.log("MarkAsOk " + err);

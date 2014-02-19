@@ -1022,12 +1022,25 @@ namespace vizzopWeb.Controllers
                         {
                             string key = "messages_to_" + UserName + "@" + Domain;
 
+
+                            DataCacheLockHandle lockHandle;
+                            object result = SingletonCache.Instance.GetWithLock(key, out lockHandle);
+                            //object result = SingletonCache.Instance.Get(key);
+                            if (result != null)
+                            {
+                                messages = (List<Message>)result;
+                            }
+                            List<Message> Messages = new List<Message>();
+                            SingletonCache.Instance.InsertWithLock(key, Messages, lockHandle);
+
+                            /*
                             object result = SingletonCache.Instance.Get(key);
                             if (result != null)
                             {
                                 messages = (List<Message>)result;
                                 SingletonCache.Instance.Remove(key);
                             }
+                             */
                         }
                         catch (Exception ex__)
                         {

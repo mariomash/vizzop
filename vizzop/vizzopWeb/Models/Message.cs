@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.ApplicationServer.Caching;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -29,14 +30,16 @@ namespace vizzopWeb.Models
                 this.db = null;
                 string key = "messages_to_" + this.To_UserName + "@" + this.To_Domain;
 
-
-                object result = SingletonCache.Instance.Get(key);
+                DataCacheLockHandle lockHandle;
+                object result = SingletonCache.Instance.GetWithLock(key, out lockHandle);
+                //object result = SingletonCache.Instance.Get(key);
                 if (result != null)
                 {
                     Messages = (List<Message>)result;
                 }
                 Messages.Add(this);
-                return SingletonCache.Instance.Insert(key, Messages);
+                return SingletonCache.Instance.InsertWithLock(key, Messages, lockHandle);
+                //return SingletonCache.Instance.Insert(key, Messages);
 
                 /*
                 if (HttpContext.Current.Application[key] != null)
@@ -49,18 +52,6 @@ namespace vizzopWeb.Models
                     Messages.Add(this);
                     HttpContext.Current.Application[key] = Messages;
                 }
-                */
-
-                /*
-                DataCacheFactory cacheFactory = new DataCacheFactory();
-                DataCache cache = cacheFactory.GetDefaultCache();
-                object result = cache.Get(key);
-                if (result != null)
-                {
-                    Messages = (List<Message>)result;
-                    Messages.Add(this);
-                }
-                cache.Put(key, Messages, TimeSpan.FromMinutes(10));
                 */
 
                 //return true;
