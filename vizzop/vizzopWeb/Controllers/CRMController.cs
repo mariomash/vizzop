@@ -82,6 +82,7 @@ namespace vizzopWeb.Controllers
                 }
 
                 List<Business> businessList = (from m in db.Businesses
+                                               where m.Active == true
                                                select m).ToList<Business>();
 
                 if (businessList.Count() > 0)
@@ -90,6 +91,7 @@ namespace vizzopWeb.Controllers
                     {
                         aaData = businessList.Select((x, index) => new Object[] {
                                     x.ID,
+                                    x.CreatedOn.ToString("G"),
                                     x.BusinessName,
                                     x.ApiKey,
                                     x.Email,
