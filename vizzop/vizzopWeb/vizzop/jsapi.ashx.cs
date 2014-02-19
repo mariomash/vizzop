@@ -333,11 +333,48 @@ namespace vizzopWeb
                     allowchat = "false";
                 }
 
+
                 string UserAgent = context.Request.UserAgent;
-                string allowchatsockets = business.AllowChatSockets.ToString().ToLowerInvariant();
+                if (UserAgent.Contains("MSIE 6.0") == true)
+                {
+                    UserAgent = "MSIE 6.0";
+                }
+                else if (UserAgent.Contains("MSIE 7.0") == true)
+                {
+                    UserAgent = "MSIE 7.0";
+                }
+                else if (UserAgent.Contains("MSIE 8.0") == true)
+                {
+                    UserAgent = "MSIE 8.0";
+                }
+                else if (UserAgent.Contains("MSIE 8.0") == true)
+                {
+                    UserAgent = "MSIE 8.0";
+                }
+                else if (UserAgent.Contains("MSIE 9.0") == true)
+                {
+                    UserAgent = "MSIE 9.0";
+                }
+                else if (UserAgent.Contains("MSIE 10.0") == true)
+                {
+                    UserAgent = "MSIE 10.0";
+                }
+
                 var useragent_in_db = (from m in db.BrowserFeatures
                                        where m.UserAgent == UserAgent
                                        select m).FirstOrDefault();
+
+                var allowjsapi = true;
+                if (useragent_in_db != null)
+                {
+                    allowjsapi = useragent_in_db.AllowJsApi;
+                }
+                if (allowjsapi == false)
+                {
+                    return;
+                }
+
+                string allowchatsockets = business.AllowChatSockets.ToString().ToLowerInvariant();
                 if (useragent_in_db != null)
                 {
                     allowchatsockets = useragent_in_db.AllowChatSockets.ToString().ToLowerInvariant();
