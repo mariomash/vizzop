@@ -122,6 +122,24 @@ namespace vizzopWeb.Models
             }
         }
 
+
+        public bool UnLock(string key, DataCacheLockHandle lockHandle)
+        {
+            try
+            {
+                if (lockHandle != null)
+                {
+                    _cache.Unlock(key, lockHandle);
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                utils.GrabaLogExcepcion(ex);
+                return false;
+            }
+        }
+
         public void Remove(string key)
         {
             try

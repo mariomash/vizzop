@@ -891,7 +891,10 @@ namespace vizzopWeb
                 var item = UserName + "@" + Domain;
                 Dictionary<string, string> sc_control_list = null;
 
-                object result = SingletonCache.Instance.Get(key);
+                //object result = SingletonCache.Instance.Get(key);
+                DataCacheLockHandle lockHandle;
+                object result = SingletonCache.Instance.GetWithLock(key, out lockHandle);
+
                 if (result != null)
                 {
                     sc_control_list = (Dictionary<string, string>)result;
@@ -906,7 +909,13 @@ namespace vizzopWeb
                 if (sc_control_list.ContainsKey(item) == false)
                 {
                     sc_control_list.Add(item, null);
-                    SingletonCache.Instance.Insert(key, sc_control_list);
+                    //SingletonCache.Instance.Insert(key, sc_control_list);
+                    SingletonCache.Instance.InsertWithLock(key, sc_control_list, lockHandle);
+                    //SingletonCache.Instance.Insert(key, sc_control_list);
+                }
+                else
+                {
+                    SingletonCache.Instance.UnLock(key, lockHandle);
                 }
 
                 /*
@@ -915,6 +924,7 @@ namespace vizzopWeb
 
                 key = "screenshot_from_" + UserName + "@" + Domain;
                 result = SingletonCache.Instance.Get(key);
+                //object result = SingletonCache.Instance.GetWithLock(key, out lockHandle);
 
                 if (result != null)
                 {
@@ -1370,7 +1380,7 @@ namespace vizzopWeb
                                 string SerializedBlob = new JavaScriptSerializer().Serialize(dict["blob"]);
                                 new_screencapture.Blob = SerializedBlob;
 
-                                AddScreenCaptureToProcessQueue(new_screencapture);
+                                bool sent = AddScreenCaptureToProcessQueue(new_screencapture);
 
                                 continue;
                             }
@@ -1400,8 +1410,10 @@ namespace vizzopWeb
             }
         }
 
-        private void AddScreenCaptureToProcessQueue(ScreenCapture new_screencapture)
+        private bool AddScreenCaptureToProcessQueue(ScreenCapture new_screencapture)
         {
+            DataCacheLockHandle lockHandle = null;
+            string key = "";
             try
             {
                 /*
@@ -1409,12 +1421,16 @@ namespace vizzopWeb
                  * Y aplicaremos esos cambios para que siempre haya un LastHtml
                  * TODO meter mutations y POS... por ahora va a cargar siempre todo el HTML entero
                  */
+
                 var UserName = new_screencapture.converser.UserName;
                 var Domain = new_screencapture.converser.Business.Domain;
                 var Password = new_screencapture.converser.Password;
 
-                string key = "screenshot_control_from_" + UserName + "@" + Domain;
-                object result = SingletonCache.Instance.Get(key);
+                key = "screenshot_control_from_" + UserName + "@" + Domain;
+
+                object result = SingletonCache.Instance.GetWithLock(key, out lockHandle);
+                //object result = SingletonCache.Instance.Get(key);
+
                 ScreenCaptureControl sc_control = null;
                 if (result != null)
                 {
@@ -1454,7 +1470,8 @@ namespace vizzopWeb
                                 (new_screencapture.Blob != sc_control.ScreenCapture.Blob)
                                 )
                             {
-                                return;
+                                SingletonCache.Instance.UnLock(key, lockHandle);
+                                return true;
                             }
                         }
                     }
@@ -1479,12 +1496,13 @@ namespace vizzopWeb
                         sc_control.CompleteHtml = sc_control.CompleteHtml.Remove(0, Convert.ToInt32(contents));
                     }
                 }
-
                 sc_control.CompleteHtml = processedHtml;
+
                 new_screencapture.converser = null;
                 sc_control.ScreenCapture = new_screencapture;
 
-                SingletonCache.Instance.Insert(key, sc_control);
+                SingletonCache.Instance.InsertWithLock(key, sc_control, lockHandle);
+                //SingletonCache.Instance.Insert(key, sc_control);
 
                 //Y no tenemos claro si poner a funcionar el worker... a ver si no se resiente mucho la CPU
                 GetScreenCapture(UserName, Domain);
@@ -1503,7 +1521,13 @@ namespace vizzopWeb
             catch (Exception ex)
             {
                 GrabaLogExcepcion(ex);
+                if (lockHandle != null)
+                {
+                    SingletonCache.Instance.UnLock(key, lockHandle);
+                }
             }
+
+            return true;
         }
 
         public string unescape(string processedHtml)
