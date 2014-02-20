@@ -1662,11 +1662,18 @@ var Daemon = jVizzop.zs_Class.create({
                 console.log(vizzop.HtmlSend_Data[0]);
             }
             */
+
+            /*
+            console.log(diffresult);
+            diffresult = LZString.compressToBase64(diffresult);
+            console.log(diffresult);
+            */
+
             var msg = {
                 'username': vizzop.me.UserName,
                 'password': vizzop.me.Password,
                 'domain': vizzop.me.Business.Domain,
-                'data': vizzop.HtmlSend_Data,
+                'data': LZString.compressToBase64(JSONVIZZOP.stringify(vizzop.HtmlSend_Data)),
                 'listeners': listeners_list,
                 'messagetype': 'Screen'
             };

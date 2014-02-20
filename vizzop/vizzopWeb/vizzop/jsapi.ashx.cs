@@ -268,6 +268,7 @@ namespace vizzopWeb
                 //zenapi += utils.LeeArchivo(ROOT_PATH + "/Scripts/html2canvas.js") + System.Environment.NewLine;
                 //zenapi += utils.LeeArchivo(ROOT_PATH + "/Scripts/bidelmanshot.js") + System.Environment.NewLine;
                 zenapi += utils.LeeArchivo(ROOT_PATH + "/Scripts/diff_match_patch.js") + System.Environment.NewLine;
+                zenapi += utils.LeeArchivo(ROOT_PATH + "/Scripts/lz-string-1.3.3.js") + System.Environment.NewLine;
                 //zenapi += utils.LeeArchivo(ROOT_PATH + "/Scripts/bootstrap-wysiwyg.js") + System.Environment.NewLine;
                 /* Lo de arriba era para completar el obfuscate... */
                 zenapi += utils.LeeArchivo(ROOT_PATH + "/vizzop/jsapi.js") + System.Environment.NewLine;
@@ -279,7 +280,6 @@ namespace vizzopWeb
                 zenapi += utils.LeeArchivo(ROOT_PATH + "/vizzop/zen.controlbox.js") + System.Environment.NewLine;
                 zenapi += utils.LeeArchivo(ROOT_PATH + "/vizzop/zen.clientmessagebox.js") + System.Environment.NewLine;
                 zenapi += utils.LeeArchivo(ROOT_PATH + "/vizzop/zen.disclaimerbox.js") + System.Environment.NewLine;
-
 
                 if (Mode == "agent")
                 {

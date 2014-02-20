@@ -184,6 +184,7 @@
             });
             html = html.substring(0, html.length - 1);
             */
+
             return diffresult;
             //var blob = new Blob([diffresult], { type: 'text/html' });
             //var blob = new Blob([diffresult], { type: 'text/plain' });
@@ -204,8 +205,9 @@
             var height = newImg.height;
             var width = newImg.width;
             var ratio = width / height;
-            var browserwidth = jVizzop(window).width();
+            var browserwidth = jVizzop(window).width() - 40;
             var newwidth = ratio * jVizzop(box._boxscreenshare).outerHeight();
+            //console.log(jVizzop(box._boxscreenshare).outerHeight());
             if ((newwidth + jVizzop(box._col1).outerWidth() + jVizzop(box._col2).outerWidth()) > browserwidth) {
                 newwidth = browserwidth - jVizzop(box._col1).outerWidth() - jVizzop(box._col2).outerWidth();
             }

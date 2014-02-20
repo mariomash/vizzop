@@ -123,7 +123,7 @@ var Box = jVizzop.zs_Class.create({
             /**/
             self._boxtitle.dblclick(function (event) {
                 jVizzop(self._boxinfo).toggle();
-                jVizzop(self._boxstatus).toggle();
+                //jVizzop(self._boxstatus).toggle();
                 if (self._minimized == null) {
                     self._minimized = true;
                 } else {

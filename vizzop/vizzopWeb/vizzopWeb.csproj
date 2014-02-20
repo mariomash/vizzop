@@ -685,6 +685,7 @@
     <Content Include="Scripts\jqplot\README.txt" />
     <Content Include="Scripts\jqplot\usage.txt" />
     <Content Include="Scripts\json2.js" />
+    <Content Include="Scripts\lz-string-1.3.3.js" />
     <Content Include="Scripts\tokbox\TB.min.js" />
     <Content Include="sitemap.xml" />
     <Content Include="vizzop\img\customer_service.png" />
