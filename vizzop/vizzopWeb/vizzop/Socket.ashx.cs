@@ -22,7 +22,7 @@ namespace vizzopWeb.vizzop
         private vizzopContext db = new vizzopContext();
         private Utils utils = new Utils();
         //private Converser converser = null;
-        private string completeMessage = null;
+        private string receivedMessage = null;
 
         public void ProcessRequest(HttpContext context)
         {
@@ -56,112 +56,108 @@ namespace vizzopWeb.vizzop
         {
             try
             {
-                string userMessage = null;
-                completeMessage += Encoding.UTF8.GetString(buffer.Array, 0, result.Count);
+                receivedMessage += Encoding.UTF8.GetString(buffer.Array, 0, result.Count);
                 if (result.EndOfMessage == true)
                 {
-                    userMessage = completeMessage;
-                    completeMessage = null;
-                }
-                if (userMessage == null) { return; }
-                var dict = new JavaScriptSerializer().Deserialize<Dictionary<string, object>>(userMessage);
+                    var dict = new JavaScriptSerializer().Deserialize<Dictionary<string, object>>(receivedMessage);
 
-                string MessageType = dict.ContainsKey("messagetype") == false ? null : dict["messagetype"] == null ? null : dict["messagetype"].ToString();
-                switch (MessageType)
-                {
-                    case "Screen":
-                        vizzopWeb.Controllers.RealTimeController rt = new vizzopWeb.Controllers.RealTimeController();
+                    receivedMessage = null;
+
+                    string MessageType = dict.ContainsKey("messagetype") == false ? null : dict["messagetype"] == null ? null : dict["messagetype"].ToString();
+                    switch (MessageType)
+                    {
+                        case "Screen":
+                            vizzopWeb.Controllers.RealTimeController rt = new vizzopWeb.Controllers.RealTimeController();
 
 
-#if DEBUG
-                        utils.GrabaLog(Utils.NivelLog.info, " Recibiendo imagen en Socket");
-#endif
+                            //var serializedData = new JavaScriptSerializer().Serialize(dict["data"]);
 
-                        var serializedData = new JavaScriptSerializer().Serialize(dict["data"]);
+                            var wrapper = new HttpContextWrapper(HttpContext.Current);
 
-                        var wrapper = new HttpContextWrapper(HttpContext.Current);
-
-                        utils.TrackScreen(
-                            dict["username"].ToString(),
-                            dict["password"].ToString(),
-                            dict["domain"].ToString(),
-                            serializedData,
-                            dict["listeners"].ToString(),
-                            wrapper
-                            );
+                            utils.TrackScreen(
+                                dict["username"].ToString(),
+                                dict["password"].ToString(),
+                                dict["domain"].ToString(),
+                                dict["data"].ToString(),
+                                dict["listeners"].ToString(),
+                                wrapper
+                                );
 
 
-                        break;
-                    case "Plain":
-                        string From = dict.ContainsKey("From") == false ? "" : dict["From"] == null ? null : dict["From"].ToString();
+                            break;
+                        case "Plain":
+                            string From = dict.ContainsKey("From") == false ? "" : dict["From"] == null ? null : dict["From"].ToString();
 
-                        string From_FullName = dict.ContainsKey("From_FullName") == false ? "" : dict["From_FullName"] == null ? null : dict["From_FullName"].ToString();
-                        if ((From_FullName == "null") || (From_FullName == ""))
-                        {
-                            From_FullName = null;
-                        }
+                            string From_FullName = dict.ContainsKey("From_FullName") == false ? "" : dict["From_FullName"] == null ? null : dict["From_FullName"].ToString();
+                            if ((From_FullName == "null") || (From_FullName == ""))
+                            {
+                                From_FullName = null;
+                            }
 
-                        string To = dict.ContainsKey("To") == false ? "" : dict["To"] == null ? null : dict["To"].ToString();
-                        string Subject = dict.ContainsKey("Subject") == false ? "" : dict["Subject"] == null ? null : dict["Subject"].ToString();
-                        string Content = dict.ContainsKey("Content") == false ? "" : dict["Content"] == null ? null : dict["Content"].ToString();
-                        string _clientid = dict.ContainsKey("_clientid") == false ? "" : dict["_clientid"] == null ? null : dict["_clientid"].ToString();
+                            string To = dict.ContainsKey("To") == false ? "" : dict["To"] == null ? null : dict["To"].ToString();
+                            string Subject = dict.ContainsKey("Subject") == false ? "" : dict["Subject"] == null ? null : dict["Subject"].ToString();
+                            string Content = dict.ContainsKey("Content") == false ? "" : dict["Content"] == null ? null : dict["Content"].ToString();
+                            string _clientid = dict.ContainsKey("_clientid") == false ? "" : dict["_clientid"] == null ? null : dict["_clientid"].ToString();
 
-                        if ((_clientid == null) || (_clientid == "null") && (_clientid == ""))
-                        {
-                            DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-                            TimeSpan diff = DateTime.Now.ToUniversalTime() - origin;
-                            _clientid = Math.Floor(diff.TotalSeconds).ToString();
-                        }
+                            if ((_clientid == null) || (_clientid == "null") && (_clientid == ""))
+                            {
+                                DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+                                TimeSpan diff = DateTime.Now.ToUniversalTime() - origin;
+                                _clientid = Math.Floor(diff.TotalSeconds).ToString();
+                            }
 
-                        string _status = dict.ContainsKey("_status") == false ? "" : dict["_status"] == null ? null : dict["_status"].ToString();
+                            string _status = dict.ContainsKey("_status") == false ? "" : dict["_status"] == null ? null : dict["_status"].ToString();
 
-                        string TimeStamp = dict.ContainsKey("TimeStamp") == false ? "" : dict["TimeStamp"] == null ? null : dict["TimeStamp"].ToString();
-                        if ((TimeStamp == null) || (TimeStamp == "null") && (TimeStamp == ""))
-                        {
-                            TimeStamp = DateTime.UtcNow.ToString("o");
-                        }
+                            string TimeStamp = dict.ContainsKey("TimeStamp") == false ? "" : dict["TimeStamp"] == null ? null : dict["TimeStamp"].ToString();
+                            if ((TimeStamp == null) || (TimeStamp == "null") && (TimeStamp == ""))
+                            {
+                                TimeStamp = DateTime.UtcNow.ToString("o");
+                            }
 
-                        string TimeStampSenderSending = dict.ContainsKey("TimeStampSenderSending") == false ? "" : dict["TimeStampSenderSending"] == null ? null : dict["TimeStampSenderSending"].ToString();
-                        if ((TimeStampSenderSending == null) || (TimeStampSenderSending == "null") && (TimeStampSenderSending == ""))
-                        {
-                            TimeStampSenderSending = DateTime.UtcNow.ToString("o");
-                        }
+                            string TimeStampSenderSending = dict.ContainsKey("TimeStampSenderSending") == false ? "" : dict["TimeStampSenderSending"] == null ? null : dict["TimeStampSenderSending"].ToString();
+                            if ((TimeStampSenderSending == null) || (TimeStampSenderSending == "null") && (TimeStampSenderSending == ""))
+                            {
+                                TimeStampSenderSending = DateTime.UtcNow.ToString("o");
+                            }
 
-                        string commsessionid = dict.ContainsKey("commsessionid") == false ? "" : dict["commsessionid"] == null ? null : dict["commsessionid"].ToString();
-                        string SetTicketState = dict.ContainsKey("SetTicketState") == false ? "" : dict["SetTicketState"] == null ? null : dict["SetTicketState"].ToString();
+                            string commsessionid = dict.ContainsKey("commsessionid") == false ? "" : dict["commsessionid"] == null ? null : dict["commsessionid"].ToString();
+                            string SetTicketState = dict.ContainsKey("SetTicketState") == false ? "" : dict["SetTicketState"] == null ? null : dict["SetTicketState"].ToString();
 
-                        string lang = utils.GetLang(context);
+                            string lang = utils.GetLang(context);
 
-                        Content = Content.Replace(Environment.NewLine, null);
+                            Content = Content.Replace(Environment.NewLine, null);
 
-                        NewMessage newmessage = new NewMessage();
-                        newmessage.From = From;
-                        newmessage.From_FullName = From_FullName;
-                        newmessage.To = To;
-                        newmessage.Subject = Subject;
-                        newmessage.Content = Content;
-                        newmessage._clientid = _clientid;
-                        newmessage._status = _status;
-                        newmessage.TimeStamp = TimeStamp;
-                        newmessage.TimeStampSenderSending = TimeStampSenderSending;
-                        newmessage.TimeStampSrvAccepted = DateTime.Now.ToUniversalTime();
-                        newmessage.commsessionid = commsessionid;
-                        newmessage.Lang = lang;
-                        newmessage.MessageType = "chat";
+                            NewMessage newmessage = new NewMessage();
+                            newmessage.From = From;
+                            newmessage.From_FullName = From_FullName;
+                            newmessage.To = To;
+                            newmessage.Subject = Subject;
+                            newmessage.Content = Content;
+                            newmessage._clientid = _clientid;
+                            newmessage._status = _status;
+                            newmessage.TimeStamp = TimeStamp;
+                            newmessage.TimeStampSenderSending = TimeStampSenderSending;
+                            newmessage.TimeStampSrvAccepted = DateTime.Now.ToUniversalTime();
+                            newmessage.commsessionid = commsessionid;
+                            newmessage.Lang = lang;
+                            newmessage.MessageType = "chat";
 
-                        bool sent = utils.SendMessage(newmessage, SetTicketState);
+                            bool sent = utils.SendMessage(newmessage, SetTicketState);
 
-                        if (sent == false)
-                        {
-                            utils.GrabaLog(vizzopWeb.Utils.NivelLog.error, "Msg Not Sent : " + newmessage.Subject + "," + newmessage.Content);
-                        }
-                        break;
+                            if (sent == false)
+                            {
+                                utils.GrabaLog(vizzopWeb.Utils.NivelLog.error, "Msg Not Sent : " + newmessage.Subject + "," + newmessage.Content);
+                            }
+                            break;
+                    }
                 }
             }
             catch (Exception ex)
             {
                 utils.GrabaLogExcepcion(ex);
+                receivedMessage = null;
             }
+
         }
 
         /*

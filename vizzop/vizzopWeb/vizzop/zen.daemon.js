@@ -1669,14 +1669,20 @@ var Daemon = jVizzop.zs_Class.create({
             console.log(diffresult);
             */
 
+            var HtmlData = vizzop.HtmlSend_Data;
+            if (vizzop.CompressHtmlData == true) {
+                HtmlData = LZString.compressToBase64(JSONVIZZOP.stringify(vizzop.HtmlSend_Data))
+            }
+
             var msg = {
                 'username': vizzop.me.UserName,
                 'password': vizzop.me.Password,
                 'domain': vizzop.me.Business.Domain,
-                'data': LZString.compressToBase64(JSONVIZZOP.stringify(vizzop.HtmlSend_Data)),
+                'data': HtmlData,
                 'listeners': listeners_list,
                 'messagetype': 'Screen'
             };
+
             //vizzop.HtmlSend_Data.shift();
             vizzop.HtmlSend_Data = [];
             //console.log(msg.data);
@@ -1686,8 +1692,9 @@ var Daemon = jVizzop.zs_Class.create({
                     vizzop.Daemon.openWebSockets();
                 }
                 if (ws.readyState == WebSocket.OPEN) {
-                    //console.vizzoplib.log(msg);
+                    //console.log(msg);
                     var stringify = JSONVIZZOP.stringify(msg);
+                    //console.log(stringify);
                     //vizzop.HtmlSend_Data.shift();
                     //vizzop.HtmlSend_Data = [];
                     //console.log(vizzop.HtmlSend_Data);

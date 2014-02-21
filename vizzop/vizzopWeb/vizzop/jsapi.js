@@ -172,23 +172,7 @@
 
             vizzop.HtmlSend_LastHtmlContents = current_html;
 
-            //var html = '<html>' + jVizzop(vizzop.screenshot).html() + '</html>';
-            //diffresult = Base64.encode(diffresult);
-            //html = LZW.compress(html);
-            /*
-            var arr_current_html = LZW.compress(html);
-            html = "";
-            jVizzop(arr_current_html).each(function (idx, val) {
-                var val_ = val + "_";
-                html += val_;
-            });
-            html = html.substring(0, html.length - 1);
-            */
-
             return diffresult;
-            //var blob = new Blob([diffresult], { type: 'text/html' });
-            //var blob = new Blob([diffresult], { type: 'text/plain' });
-            //return blob;
         } catch (err) {
             vizzoplib.log(err);
             return null;

@@ -25,6 +25,7 @@ namespace vizzopWeb.Models
             this.WidgetBackgroundColor = null;
             this.WidgetBorderColor = null;
             this.WidgetForegroundColor = null;
+            this.CompressHtmlData = true;
         }
 
         [Key]
@@ -101,7 +102,7 @@ namespace vizzopWeb.Models
         public bool AllowScreenCaptures { get; set; }
         public bool ShowDisclaimer { get; set; }
         public bool AllowCaptureMouse { get; set; }
-
+        public bool CompressHtmlData { get; set; }
 
         public bool HideHelpOnStartup { get; set; }
 

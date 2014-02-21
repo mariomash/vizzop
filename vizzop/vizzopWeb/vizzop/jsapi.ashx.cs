@@ -246,11 +246,22 @@ namespace vizzopWeb
 
                 //JS LOCALES
                 string sJsLocals = null;
+#if DEBUG
                 sJsLocals += utils.LeeArchivo(ROOT_PATH + "/Scripts/jVizzop-1.8.3.js");
+#else
+                sJsLocals += utils.LeeArchivo(ROOT_PATH + "/Scripts/jVizzop-1.8.3_min.js");
+#endif
+
                 sJsLocals += @"
                 var jVizzop = jVizzop.noConflict();
                 ";
+
+#if DEBUG
                 sJsLocals += utils.LeeArchivo(ROOT_PATH + "/Scripts/jVizzop-ui-1.9.2.js") + System.Environment.NewLine;
+#else
+                sJsLocals += utils.LeeArchivo(ROOT_PATH + "/Scripts/jVizzop-ui-1.9.2_min.js") + System.Environment.NewLine;
+#endif
+
                 sJsLocals += utils.LeeArchivo(ROOT_PATH + "/Scripts/jVizzop.class.js") + System.Environment.NewLine;
 
                 string zenapi = "";
@@ -437,6 +448,20 @@ namespace vizzopWeb
                 {
                     utils.GrabaLog(vizzopWeb.Utils.NivelLog.error, ex.Message);
                 }
+
+                string compresshtmldata = business.CompressHtmlData.ToString().ToLowerInvariant();
+                try
+                {
+                    if (context.Request.Params["compresshtmldata"] != null)
+                    {
+                        compresshtmldata = context.Request.Params["compresshtmldata"].ToString();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    utils.GrabaLog(vizzopWeb.Utils.NivelLog.error, ex.Message);
+                }
+
                 //Opentok Secret
                 //0184561023487034817234012873410237510553
                 //sessionid
@@ -559,6 +584,7 @@ var vizzop = {
     AllowScreenCaptures: " + allowscreencaptures + @",
     AllowChatSockets: " + allowchatsockets + @",
     AllowScreenSockets: " + allowscreensockets + @",
+    CompressHtmlData: " + compresshtmldata + @",
     ShowHelpButton: " + showhelpbutton + @",
     AuditMessages: " + auditmessages + @",
     SessionID: '" + context.Session.SessionID + @"',

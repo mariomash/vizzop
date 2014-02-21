@@ -1865,8 +1865,13 @@ namespace vizzopWeb
                  */
 
                 List<Dictionary<string, object>> arrDict = null;
-                string StrData = LZString.decompressFromBase64(data);
-                arrDict = new JavaScriptSerializer().Deserialize<List<Dictionary<string, object>>>(StrData);
+
+                if (converser.Business.CompressHtmlData == true)
+                {
+                    data = LZString.decompressFromBase64(data);
+                }
+
+                arrDict = new JavaScriptSerializer().Deserialize<List<Dictionary<string, object>>>(data);
                 if (arrDict.Count == 0)
                 {
                     Dictionary<string, object> dict = null;
@@ -2185,8 +2190,13 @@ namespace vizzopWeb
                     }
                     else if (type == "0")
                     {
+                        if (Convert.ToInt32(contents) > sc_control.CompleteHtml.Length)
+                        {
+                            return false;
+                        }
                         processedHtml += sc_control.CompleteHtml.Substring(0, Convert.ToInt32(contents));
                         sc_control.CompleteHtml = sc_control.CompleteHtml.Remove(0, Convert.ToInt32(contents));
+
                     }
                 }
                 sc_control.CompleteHtml = processedHtml;
@@ -2213,7 +2223,10 @@ namespace vizzopWeb
             }
             catch (Exception ex)
             {
-                GrabaLogExcepcion(ex);
+                if (ex.Message.Contains("ErrorCode<ERRCA0012>:SubStatus<ES0001>:") == false)
+                {
+                    GrabaLogExcepcion(ex);
+                }
                 if (lockHandle != null)
                 {
                     SingletonCache.Instance.UnLock(key, lockHandle);

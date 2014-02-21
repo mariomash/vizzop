@@ -189,23 +189,25 @@ namespace vizzopWeb
 
         private List<ScreenMovie> GetListOfMovies(string from, string to, Converser converser)
         {
+            List<ScreenMovie> List = new List<ScreenMovie>();
             try
             {
+
                 DateTime dtFrom = DateTime.Parse(from);
                 DateTime dtTo = DateTime.Parse(to);
                 dtTo = dtTo.AddHours(23).AddMinutes(59).AddSeconds(59).AddMilliseconds(999);
 
-                var List = (from w in db.ScreenMovies.Include("converser")
-                            where (w.CreatedOn >= dtFrom && w.CreatedOn <= dtTo)
-                            select w);
+                var tempList = (from w in db.ScreenMovies.Include("converser")
+                                where (w.CreatedOn >= dtFrom && w.CreatedOn <= dtTo)
+                                select w);
 
                 //&& (w.Headers.Contains("'DNT':'1'") == false)
 
                 if (converser.Business.Domain.ToLowerInvariant() != "vizzop")
                 {
-                    List = (from w in List
-                            where w.converser.Business.ID == converser.Business.ID
-                            select w);
+                    tempList = (from w in tempList
+                                where w.converser.Business.ID == converser.Business.ID
+                                select w);
                 }
 
                 /*
@@ -222,13 +224,19 @@ namespace vizzopWeb
                              };
                 */
 
-                return List.ToList();
+                if (tempList.Count() > 0)
+                {
+                    List = tempList.ToList();
+                }
+
             }
             catch (Exception ex)
             {
                 utils.GrabaLogExcepcion(ex);
-                return new List<ScreenMovie>();
             }
+
+            return List;
+
         }
     }
 }
