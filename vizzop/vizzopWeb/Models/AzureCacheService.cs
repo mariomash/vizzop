@@ -11,7 +11,7 @@ namespace vizzopWeb.Models
         private DataCacheFactory _factory = new DataCacheFactory();
         private DataCache _cache = new DataCache();
         private Utils utils = new Utils();
-        private TimeSpan LockTimeout = TimeSpan.FromMinutes(1);
+        private TimeSpan LockTimeout = TimeSpan.FromSeconds(5);
         private TimeSpan ObjTimeout = TimeSpan.FromHours(1);
         //private DataCacheLockHandle lockHandle;
 
