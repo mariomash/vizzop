@@ -48,6 +48,12 @@
 
                     var filename = data.UserName + '_' + data.Domain + '_' + data.GUID + '_.png';
 
+                    var style = document.createElement('style'),
+                        text = document.createTextNode('body { background: #fff }');
+                    style.setAttribute('type', 'text/css');
+                    style.appendChild(text);
+                    document.head.insertBefore(style, document.head.firstChild);
+
                     /*
                     window.callPhantom({
                         'log': document.documentElement.outerHTML
@@ -152,12 +158,12 @@
                             if (iFrame == null) {
                                 iFrame = CreateAndAddIframe();
                                 //iFrame.src = "data:text/html;charset=utf-8," + data.Html;
-                                
+
                                 var win = iFrame.contentWindow;
                                 win.document.open('text/html', 'replace');
                                 win.document.write(data.Html);
                                 win.document.close();
-                                
+
                             }
                         } else {
                             iFrame = document.getElementById("WrapperIframe");
@@ -165,12 +171,12 @@
                                 iFrame = CreateAndAddIframe();
                             }
                             //iFrame.src = "data:text/html;charset=utf-8," + data.Html;
-                            
+
                             var win = iFrame.contentWindow;
                             win.document.open('text/html', 'replace');
                             win.document.write(data.Html);
                             win.document.close();
-                            
+
                         }
 
                         $('#WrapperIframe')

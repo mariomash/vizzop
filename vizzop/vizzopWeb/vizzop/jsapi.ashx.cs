@@ -246,11 +246,22 @@ namespace vizzopWeb
 
                 //JS LOCALES
                 string sJsLocals = null;
+#if DEBUG
                 sJsLocals += utils.LeeArchivo(ROOT_PATH + "/Scripts/jVizzop-1.8.3.js");
+#else
+                sJsLocals += utils.LeeArchivo(ROOT_PATH + "/Scripts/jVizzop-1.8.3_min.js");
+#endif
+
                 sJsLocals += @"
                 var jVizzop = jVizzop.noConflict();
                 ";
+
+#if DEBUG
                 sJsLocals += utils.LeeArchivo(ROOT_PATH + "/Scripts/jVizzop-ui-1.9.2.js") + System.Environment.NewLine;
+#else
+                sJsLocals += utils.LeeArchivo(ROOT_PATH + "/Scripts/jVizzop-ui-1.9.2_min.js") + System.Environment.NewLine;
+#endif
+
                 sJsLocals += utils.LeeArchivo(ROOT_PATH + "/Scripts/jVizzop.class.js") + System.Environment.NewLine;
 
                 string zenapi = "";
@@ -268,6 +279,7 @@ namespace vizzopWeb
                 //zenapi += utils.LeeArchivo(ROOT_PATH + "/Scripts/html2canvas.js") + System.Environment.NewLine;
                 //zenapi += utils.LeeArchivo(ROOT_PATH + "/Scripts/bidelmanshot.js") + System.Environment.NewLine;
                 zenapi += utils.LeeArchivo(ROOT_PATH + "/Scripts/diff_match_patch.js") + System.Environment.NewLine;
+                zenapi += utils.LeeArchivo(ROOT_PATH + "/Scripts/lz-string-1.3.3.js") + System.Environment.NewLine;
                 //zenapi += utils.LeeArchivo(ROOT_PATH + "/Scripts/bootstrap-wysiwyg.js") + System.Environment.NewLine;
                 /* Lo de arriba era para completar el obfuscate... */
                 zenapi += utils.LeeArchivo(ROOT_PATH + "/vizzop/jsapi.js") + System.Environment.NewLine;
@@ -279,7 +291,6 @@ namespace vizzopWeb
                 zenapi += utils.LeeArchivo(ROOT_PATH + "/vizzop/zen.controlbox.js") + System.Environment.NewLine;
                 zenapi += utils.LeeArchivo(ROOT_PATH + "/vizzop/zen.clientmessagebox.js") + System.Environment.NewLine;
                 zenapi += utils.LeeArchivo(ROOT_PATH + "/vizzop/zen.disclaimerbox.js") + System.Environment.NewLine;
-
 
                 if (Mode == "agent")
                 {
@@ -437,6 +448,20 @@ namespace vizzopWeb
                 {
                     utils.GrabaLog(vizzopWeb.Utils.NivelLog.error, ex.Message);
                 }
+
+                string compresshtmldata = business.CompressHtmlData.ToString().ToLowerInvariant();
+                try
+                {
+                    if (context.Request.Params["compresshtmldata"] != null)
+                    {
+                        compresshtmldata = context.Request.Params["compresshtmldata"].ToString();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    utils.GrabaLog(vizzopWeb.Utils.NivelLog.error, ex.Message);
+                }
+
                 //Opentok Secret
                 //0184561023487034817234012873410237510553
                 //sessionid
@@ -559,6 +584,7 @@ var vizzop = {
     AllowScreenCaptures: " + allowscreencaptures + @",
     AllowChatSockets: " + allowchatsockets + @",
     AllowScreenSockets: " + allowscreensockets + @",
+    CompressHtmlData: " + compresshtmldata + @",
     ShowHelpButton: " + showhelpbutton + @",
     AuditMessages: " + auditmessages + @",
     SessionID: '" + context.Session.SessionID + @"',

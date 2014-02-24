@@ -362,7 +362,7 @@ var Daemon = jVizzop.zs_Class.create({
             vizzoplib.log(err);
         }
     },
-    openWebSockets: function () {
+    openWebSockets: function (callback) {
         var self = this;
         vizzop.WSchat = null;
         vizzop.WSscreen = null;
@@ -371,6 +371,7 @@ var Daemon = jVizzop.zs_Class.create({
                 var url = vizzop.wsURL + "/vizzop/Socket.ashx";
                 vizzop.WSchat = new WebSocket(url);
                 vizzop.WSchat.onopen = function () {
+                    self.sendHtml();
                     //vizzoplib.log("Socket Connected");
                 };
                 vizzop.WSchat.onmessage = function (evt) {
@@ -390,6 +391,7 @@ var Daemon = jVizzop.zs_Class.create({
             if ((typeof (WebSocket) === "function") && (vizzop.AllowScreenSockets === true)) {
                 vizzop.WSscreen = new WebSocket(url);
                 vizzop.WSscreen.onopen = function () {
+                    //self.callback();
                     //vizzoplib.log("Socket Connected");
                 };
                 vizzop.WSscreen.onmessage = function (evt) {
@@ -1662,16 +1664,29 @@ var Daemon = jVizzop.zs_Class.create({
                 console.log(vizzop.HtmlSend_Data[0]);
             }
             */
+
+            /*
+            console.log(diffresult);
+            diffresult = LZString.compressToBase64(diffresult);
+            console.log(diffresult);
+            */
+
+            var HtmlData = vizzop.HtmlSend_Data;
+            if (vizzop.CompressHtmlData == true) {
+                HtmlData = LZString.compressToBase64(JSONVIZZOP.stringify(vizzop.HtmlSend_Data))
+            }
+
             var msg = {
                 'username': vizzop.me.UserName,
                 'password': vizzop.me.Password,
                 'domain': vizzop.me.Business.Domain,
-                'data': vizzop.HtmlSend_Data,
+                'data': HtmlData,
                 'listeners': listeners_list,
                 'messagetype': 'Screen'
             };
+
             //vizzop.HtmlSend_Data.shift();
-            vizzop.HtmlSend_Data = [];
+            //vizzop.HtmlSend_Data = [];
             //console.log(msg.data);
             var ws = vizzop.WSscreen;
             if (ws != null) {
@@ -1679,10 +1694,11 @@ var Daemon = jVizzop.zs_Class.create({
                     vizzop.Daemon.openWebSockets();
                 }
                 if (ws.readyState == WebSocket.OPEN) {
-                    //console.vizzoplib.log(msg);
+                    //console.log(msg);
                     var stringify = JSONVIZZOP.stringify(msg);
+                    //console.log(stringify);
                     //vizzop.HtmlSend_Data.shift();
-                    //vizzop.HtmlSend_Data = [];
+                    vizzop.HtmlSend_Data = [];
                     //console.log(vizzop.HtmlSend_Data);
                     ws.send(stringify);
                 }
@@ -1692,7 +1708,7 @@ var Daemon = jVizzop.zs_Class.create({
                 msg.data = JSONVIZZOP.stringify(msg.data);
 
                 //vizzop.HtmlSend_Data.shift();
-                //vizzop.HtmlSend_Data = [];
+                vizzop.HtmlSend_Data = [];
                 vizzop.HtmlSend_InCourse = jVizzop.ajax({
                     url: url,
                     type: "POST",

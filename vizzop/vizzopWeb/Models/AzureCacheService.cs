@@ -11,7 +11,7 @@ namespace vizzopWeb.Models
         private DataCacheFactory _factory = new DataCacheFactory();
         private DataCache _cache = new DataCache();
         private Utils utils = new Utils();
-        private TimeSpan LockTimeout = TimeSpan.FromMinutes(1);
+        private TimeSpan LockTimeout = TimeSpan.FromSeconds(5);
         private TimeSpan ObjTimeout = TimeSpan.FromHours(1);
         //private DataCacheLockHandle lockHandle;
 
@@ -119,6 +119,24 @@ namespace vizzopWeb.Models
                 utils.GrabaLogExcepcion(ex);
                 return this.Insert(key, obj);
                 //return false;
+            }
+        }
+
+
+        public bool UnLock(string key, DataCacheLockHandle lockHandle)
+        {
+            try
+            {
+                if (lockHandle != null)
+                {
+                    _cache.Unlock(key, lockHandle);
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                utils.GrabaLogExcepcion(ex);
+                return false;
             }
         }
 

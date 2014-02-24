@@ -1,6 +1,8 @@
 ﻿var vizzoplib = {
     prepareScreenShot: function () {
         try {
+
+            //Le ponemos a todo un ID...
             jVizzop.each(jVizzop('*').get(), function (idx, val) {
                 if (jVizzop(val).attr('vizzop-id')) {
                 } else {
@@ -29,24 +31,51 @@
 
             var screenshot = document.documentElement.cloneNode(true);
 
+            var attrToFind = "[vizzop-id='" + jVizzop(':focus').attr('vizzop-id') + "']";
+            var elem = jVizzop(screenshot).find(attrToFind);
+            jVizzop(elem).attr('style', 'border: solid 2px blue !important; background-color: solid 2px #aaaaff !important; box-shadow: 0 0 5px rgba(0, 0, 255, 1) !important;');
+
+            //Vamos a recorrer todo metiendole el focus
             /*
-            * Si está en un iframe... vamos a cambiarle el style del body al tamaño del iframe que lo contiene... a ver si asi el F*CKING phantomJS pirula
-            * HACK
+            jVizzop.each(jVizzop('*').get(), function (idx, val) {
+                var attrToFind = "[vizzop-id='" + jVizzop(val).attr('vizzop-id') + "']";
+                var elem = jVizzop(screenshot).find(attrToFind);
+                if (jVizzop(val).is(":focus")) {
+                    jVizzop(elem).attr('style', 'border: solid 2px blue !important; background-color: solid 2px #aaaaff !important; box-shadow: 0 0 5px rgba(0, 0, 255, 1) !important;');
+                    return false;
+                }
+                //jVizzop(elem).makeAbsolute();
+            });
             */
 
-            jVizzop.each(jVizzop('*').get(), function (idx, val) {
-                if (jVizzop(val).is(":focus")) {
-                    var attrToFind = "[vizzop-id='" + jVizzop(val).attr('vizzop-id') + "']";
-                    var elem = jVizzop(screenshot).find(attrToFind);
-                    jVizzop(elem).attr('style', 'border: solid 2px blue !important; background-color: solid 2px #aaaaff !important; box-shadow: 0 0 5px rgba(0, 0, 255, 1) !important;');
-                }
+            //Vamos a recorrer todo quitándonos todo lo que esté pasado el scroll..
+            /*
+            jVizzop.each(jVizzop('body').find('*').get(), function (idx, val) {
+                setZeroTimeout(function (val) {
+                    console.log(val);
+                    return function () {
+                        if (vizzoplib.isElementVisible(jVizzop(val)) == false) {
+                            console.log("este está más abajo " + jVizzop(val).attr('class'));
+                            var attrToFind = "[vizzop-id='" + jVizzop(val).attr('vizzop-id') + "']";
+                            var elem = jVizzop(screenshot).find(attrToFind);
+                            jVizzop(elem).remove();
+                        }
+                        //doSomethingHeavy(val);
+                    }
+                }(idx), 3);
             });
+            */
+            //console.log(jVizzop(screenshot)[0].innerHTML);
+
+            /*
             jVizzop(screenshot).find('img').each(function () {
                 jVizzop(this).attr('src', this.src);
             });
             jVizzop(screenshot).find('link').each(function () {
                 jVizzop(this).attr('src', this.src);
             });
+            */
+
             jVizzop(screenshot).find('script').each(function () {
                 jVizzop(this).remove();
             });
@@ -172,25 +201,37 @@
 
             vizzop.HtmlSend_LastHtmlContents = current_html;
 
-            //var html = '<html>' + jVizzop(vizzop.screenshot).html() + '</html>';
-            //diffresult = Base64.encode(diffresult);
-            //html = LZW.compress(html);
-            /*
-            var arr_current_html = LZW.compress(html);
-            html = "";
-            jVizzop(arr_current_html).each(function (idx, val) {
-                var val_ = val + "_";
-                html += val_;
-            });
-            html = html.substring(0, html.length - 1);
-            */
             return diffresult;
-            //var blob = new Blob([diffresult], { type: 'text/html' });
-            //var blob = new Blob([diffresult], { type: 'text/plain' });
-            //return blob;
         } catch (err) {
             vizzoplib.log(err);
             return null;
+        }
+    },
+    isElementVisibleHelper: function (el) {
+        try {
+            var rect = el.getBoundingClientRect();
+            return (rect.top <= (window.innerHeight || document.documentElement.clientHeight) &&
+                rect.left <= (window.innerWidth || document.documentElement.clientWidth));
+            /*
+            return (
+                rect.top >= 0 &&
+                rect.left >= 0 &&
+                rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && 
+                rect.right <= (window.innerWidth || document.documentElement.clientWidth) 
+            );
+            */
+            /*or $(window).height() */
+            /*or $(window).width() */
+        } catch (err) {
+            return true;
+        }
+    },
+    isElementVisible: function (el) {
+        try {
+            var visible = vizzoplib.isElementVisibleHelper(el[0]);
+            return visible;
+        } catch (err) {
+            return true;
         }
     },
     getLocation: function (href) {
@@ -204,8 +245,9 @@
             var height = newImg.height;
             var width = newImg.width;
             var ratio = width / height;
-            var browserwidth = jVizzop(window).width();
+            var browserwidth = jVizzop(window).width() - 40;
             var newwidth = ratio * jVizzop(box._boxscreenshare).outerHeight();
+            //console.log(jVizzop(box._boxscreenshare).outerHeight());
             if ((newwidth + jVizzop(box._col1).outerWidth() + jVizzop(box._col2).outerWidth()) > browserwidth) {
                 newwidth = browserwidth - jVizzop(box._col1).outerWidth() - jVizzop(box._col2).outerWidth();
             }
@@ -416,6 +458,63 @@
 String.prototype.dateFromJSON = function () {
     return eval(this.replace(/\/Date\((\d+)\)\//gi, "new Date($1)"));
 };
+
+/**
+ * If the browser is capable, tries zero timeout via postMessage (setTimeout can't go faster than 10ms).
+ * Otherwise, it falls back to setTimeout(fn, delay) (which is the same as setTimeout(fn, 10) if under 10).
+ * @function
+ * @param {Function} fn
+ * @param {int} delay
+ * @example setZeroTimeout(function () { $.ajax('about:blank'); }, 0);
+ */
+
+var setZeroTimeout = (function (w) {
+    if (w.postMessage) {
+        var timeouts = [],
+        msg_name = 'asc0tmot',
+
+        // Like setTimeout, but only takes a function argument.  There's
+        // no time argument (always zero) and no arguments (you have to
+        // use a closure).
+        _postTimeout = function (fn) {
+            timeouts.push(fn);
+            postMessage(msg_name, '*');
+        },
+
+        _handleMessage = function (event) {
+            if (event.source == w && event.data == msg_name) {
+                if (event.stopPropagation) {
+                    event.stopPropagation();
+                }
+                if (timeouts.length) {
+                    try {
+                        timeouts.shift()();
+                    } catch (e) {
+                        // Throw in an asynchronous closure to prevent setZeroTimeout from hanging due to error
+                        setTimeout((function (e) {
+                            return function () {
+                                throw e.stack || e;
+                            };
+                        }(e)), 0);
+                    }
+                }
+                if (timeouts.length) { // more left?
+                    postMessage(msg_name, '*');
+                }
+            }
+        };
+
+        if (w.addEventListener) {
+            addEventListener('message', _handleMessage, true);
+            return _postTimeout;
+        } else if (w.attachEvent) {
+            attachEvent('onmessage', _handleMessage);
+            return _postTimeout;
+        }
+    }
+
+    return setTimeout;
+}(window));
 
 var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
 

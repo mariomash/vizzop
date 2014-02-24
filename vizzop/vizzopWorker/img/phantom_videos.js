@@ -74,7 +74,7 @@ page.onLoadFinished = function (status) {
             return;
         }
         counter++;
-
+        
         page.evaluate(function (page, mainURL, UserName, Domain, Password, GUID) {
 
             GetScreenCapture(page, mainURL, UserName, Domain, Password, GUID);

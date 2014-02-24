@@ -5794,9 +5794,11 @@ inse .zs_dialog .vizzop-btn-navbar {
     cursor: pointer !important;
     overflow: visible !important;
 }
+
 .zs_dialoghandle {
     min-width: 150px !important;
 }
+
 .zs_dialog .zs_dialoghandlepubli {
     clear: both !important;
     margin-bottom: 0 !important;
@@ -6349,12 +6351,13 @@ inse .zs_dialog .vizzop-btn-navbar {
 .zs_dialog .boxscreensharepositiondiv {
     position: relative !important;
     height: auto !important;
+    display: none;
 }
 
 .zs_dialog .boxscreensharesliderdiv {
     position: relative !important;
     height: 45px !important;
-    width: 85%;
+    width: 93%;
     margin: 0 auto;
 }
 
@@ -6451,8 +6454,8 @@ inse .zs_dialog .vizzop-btn-navbar {
 
 .zs_dialog .boxscreenshare {
     display: block;
-    height: 350px !important;
-    margin: 10px 10px 40px 10px !important;
+    height: 410px !important;
+    margin: 10px !important;
     overflow: visible !important;
     /*
     box-shadow: 0 0 6px #aaa !important;
@@ -6472,7 +6475,7 @@ inse .zs_dialog .vizzop-btn-navbar {
 
     .zs_dialog .boxscreenshare .interlocutor_img {
         box-shadow: 0 0 6px #aaa !important;
-        border-bottom: solid 1px #aaa;
+        /*border-bottom: solid 1px #aaa;*/
     }
 
 .zs_dialog .infoscreenshare {
