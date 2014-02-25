@@ -1,4 +1,6 @@
-﻿//LZW Compression/Decompression for Strings
+﻿
+
+//LZW Compression/Decompression for Strings
 var LZW = {
     compress: function (uncompressed) {
         "use strict";

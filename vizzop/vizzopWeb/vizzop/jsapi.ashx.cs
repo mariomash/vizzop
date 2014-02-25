@@ -253,7 +253,7 @@ namespace vizzopWeb
 #endif
 
                 sJsLocals += @"
-                var jVizzop = jVizzop.noConflict();
+    var jVizzop = jVizzop.noConflict();
                 ";
 
 #if DEBUG
@@ -597,12 +597,19 @@ var vizzop = {
     WSchat: null,
     WSscreen: null,
     IsInFrame: false
-}
+};";
 
+
+                /*
+                 * Esto va dentro del JS.....
+                 * 
 jVizzop(document).bind('ready.ashx', function () {
     vizzop.Daemon = new Daemon();
 });
-";
+
+
+                */
+
                 sContent += vizzop;
 
                 //CSS
