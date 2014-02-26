@@ -74,7 +74,8 @@ var Message = jVizzop.zs_Class.create({
             }
 
 
-            var timestamp_toshow = self._timestamp.toTimeString().substring(0, (self._timestamp.toTimeString().indexOf(' ') - 3));
+            var timestamp_toshow = self._timestamp.toTimeString().substring(0, (self._timestamp.toTimeString().indexOf(' ') - 3));                      
+         
             if (self._box._type == "TicketBox") {
                 timestamp_toshow = self._timestamp.toString();
             }
@@ -228,7 +229,6 @@ var Message = jVizzop.zs_Class.create({
         var self = this;
         try {
             //se envia en UTC
-            //var _timestamp_utc = new Date(self._timestamp.getUTCFullYear(), self._timestamp.getUTCMonth(), self._timestamp.getUTCDate(), self._timestamp.getUTCHours(), self._timestamp.getUTCMinutes(), self._timestamp.getUTCSeconds(), self._timestamp.getUTCMilliseconds());
             var TimeStampSenderSending = new Date();
             var msg = {
                 'From': self._from,
@@ -239,9 +239,6 @@ var Message = jVizzop.zs_Class.create({
                 '_clientid': self._clientid,
                 '_status': self._status,
                 'TimeStamp': self._timestamp.toJSON(),
-
-                //'TimeStamp': _timestamp_utc.toJSON(),
-
                 'TimeStampSenderSending': TimeStampSenderSending.toJSON(),
                 'commsessionid': self._commsessionid,
                 'SetTicketState': self._selfticketstate,
