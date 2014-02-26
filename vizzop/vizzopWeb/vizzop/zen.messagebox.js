@@ -370,7 +370,7 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
             */
 
             url = vizzop.mainURL + "/RealTime/GetScreen";
-            console.log(url);
+
             var guid = null;
             if (self.ScreenShots.length > 0) {
                 guid = self.ScreenShots[self.ScreenShots.length - 1].GUID;
