@@ -1028,7 +1028,7 @@ jVizzop(document).bind('ready.vizzop', function () {
         } catch (err) {
 
         }
-    }, 500);
+    }, 250);
 
     jVizzop(document).on('mousemove.vizzop', function (e) {
         try {

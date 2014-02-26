@@ -303,137 +303,147 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
             var msg = null;
             /*
             Si no tiene lista de imagenes primero cargamos la lista...
-            Despues quitamos el loading y dejamos que carge la primera imagen
             */
+
             if (self.ScreenShots == null) {
                 self.ScreenShots = [];
-                url = vizzop.mainURL + "/Screenshot/GetScreenshotJsonByConverser";
-                msg = {
-                    'username': self._interlocutor.UserName,
-                    'domain': self._interlocutor.Business.Domain
-                };
-                var reqScreenShotHistory = jVizzop.ajax({
-                    url: url,
-                    type: "POST",
-                    data: msg,
-                    dataType: "jsonp",
-                    beforeSend: function (xhr) {
-                    },
-                    success: function (data) {
+            }
 
-                        //console.vizzoplib.log("reqs " + rt_imagereqs.length);
-                        if (data != null) {
-                            if (data != false) {
-                                //console.vizzoplib.log(data);
-                                for (var i = data.length - 1; i > 0; i--) {
-                                    /*
-                                    var GUID = {
-                                        'GUID': data.aaData[i][0],
-                                        'CreatedOn': data.aaData[i][1]
-                                    };
-                                    */
-                                    //console.vizzoplib.log(data[i]);
-                                    self.ScreenShots.unshift(data[i]);
-                                }
-                                self.loadingScreen = null;
-                            } else {
-                                self.loadingScreen = null;
+            /*
+            url = vizzop.mainURL + "/Screenshot/GetScreenshotJsonByConverser";
+            msg = {
+                'username': self._interlocutor.UserName,
+                'domain': self._interlocutor.Business.Domain
+            };
+            var reqScreenShotHistory = jVizzop.ajax({
+                url: url,
+                type: "POST",
+                data: msg,
+                dataType: "jsonp",
+                beforeSend: function (xhr) {
+                },
+                success: function (data) {
+                    //console.vizzoplib.log("reqs " + rt_imagereqs.length);
+                    if (data != null) {
+                        if (data != false) {
+                            //console.vizzoplib.log(data);
+                            for (var i = data.length - 1; i > 0; i--) {
+                                //console.vizzoplib.log(data[i]);
+                                self.ScreenShots.unshift(data[i]);
                             }
+                            self.loadingScreen = null;
                         } else {
                             self.loadingScreen = null;
                         }
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        vizzoplib.log(url, msg, jqXHR);
+                    } else {
                         self.loadingScreen = null;
                     }
-                });
-            } else {
-                if (self.slider_interlocutor_image.attr('value') == self.slider_interlocutor_image.attr('max')) {
-                    url = vizzop.mainURL + "/RealTime/GetScreen";
-
-                    var guid = null;
-                    if (self.ScreenShots.length > 0) {
-                        guid = self.ScreenShots[self.ScreenShots.length - 1].GUID;
-                    }
-                    msg = {
-                        'username': self._interlocutor.UserName,
-                        'domain': self._interlocutor.Business.Domain,
-                        'guid': guid,
-                        'height': self._boxscreenshare.outerHeight()
-                    };
-                } else {
-                    url = vizzop.mainURL + "/RealTime/GetScreenByGUID";
-                    var index = self.slider_interlocutor_image.attr('value');
-                    msg = {
-                        'username': self._interlocutor.UserName,
-                        'domain': self._interlocutor.Business.Domain,
-                        'guid': self.ScreenShots[index].GUID
-                    };
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    vizzoplib.log(url, msg, jqXHR);
+                    self.loadingScreen = null;
                 }
-                self.loadingScreen = jVizzop.ajax({
-                    url: url,
-                    type: "POST",
-                    data: msg,
-                    dataType: "jsonp",
-                    beforeSend: function (xhr) {
-                    },
-                    success: function (data) {
-                        self._boxscreenshareloading.hide();
-                        if (data != null) {
-                            if (data != false) {
-                                if (self.slider_interlocutor_image.attr('value') == self.slider_interlocutor_image.attr('max')) {
-                                    //self._boxscreenshareposition.text("auto updating");
-                                    self.ScreenShots.push(data);
-                                    self.slider_interlocutor_image.attr('max', self.ScreenShots.length);
-                                    self.slider_interlocutor_image.attr('value', self.ScreenShots.length);
-                                } else {
-                                    self.slider_interlocutor_image.attr('max', self.ScreenShots.length);
-                                }
+            });
 
-                                if (self.ScreenShots.length > 1) {
-                                    self._boxscreensliderdiv.show();
-                                }
-                                self._boxscreenshareposition
-                                    .text(data.CreatedOn + " - " + data.Url);
+            if (self.slider_interlocutor_image.attr('value') == self.slider_interlocutor_image.attr('max')) {
+                url = vizzop.mainURL + "/RealTime/GetScreen";
 
-                                vizzoplib.ResizeWidthLikeImg(self, data.Data, function resize(newwidth, newimg) {
-                                    jVizzop(newimg)
-                                        .attr('style', 'width: ' + newwidth.toFixed(0) + 'px !important;')
-                                        .addClass('interlocutor_img')
-                                        .appendTo(self._boxscreenshare);
-                                    jVizzop(self._boxscreenshare).children().each(function (index, item) {
-                                        if (item != newimg) {
-                                            jVizzop(item).remove();
-                                        }
-                                    });
-                                    //self.checkSafePosition();
+                var guid = null;
+                if (self.ScreenShots.length > 0) {
+                    guid = self.ScreenShots[self.ScreenShots.length - 1].GUID;
+                }
+                msg = {
+                    'username': self._interlocutor.UserName,
+                    'domain': self._interlocutor.Business.Domain,
+                    'guid': guid,
+                    'height': self._boxscreenshare.outerHeight()
+                };
+            } else {
+                url = vizzop.mainURL + "/RealTime/GetScreenByGUID";
+                var index = self.slider_interlocutor_image.attr('value');
+                msg = {
+                    'username': self._interlocutor.UserName,
+                    'domain': self._interlocutor.Business.Domain,
+                    'guid': self.ScreenShots[index].GUID
+                };
+            }
+            */
 
-                                    self.positionBox(function () { jVizzop(self._box).show(); }, 'fast');
+            url = vizzop.mainURL + "/RealTime/GetScreen";
+            console.log(url);
+            var guid = null;
+            if (self.ScreenShots.length > 0) {
+                guid = self.ScreenShots[self.ScreenShots.length - 1].GUID;
+            }
+            msg = {
+                'username': self._interlocutor.UserName,
+                'domain': self._interlocutor.Business.Domain,
+                'guid': guid,
+                'height': self._boxscreenshare.outerHeight()
+            };
+            self.loadingScreen = jVizzop.ajax({
+                url: url,
+                type: "POST",
+                data: msg,
+                dataType: "jsonp",
+                beforeSend: function (xhr) {
+                },
+                success: function (data) {
+                    self._boxscreenshareloading.hide();
+                    if (data != null) {
+                        if (data != false) {
+                            if (self.slider_interlocutor_image.attr('value') == self.slider_interlocutor_image.attr('max')) {
+                                //self._boxscreenshareposition.text("auto updating");
+                                self.ScreenShots.push(data);
+                                self.slider_interlocutor_image.attr('max', self.ScreenShots.length);
+                                self.slider_interlocutor_image.attr('value', self.ScreenShots.length);
+                            } else {
+                                self.slider_interlocutor_image.attr('max', self.ScreenShots.length);
+                            }
 
-                                    if (self.slider_interlocutor_image.attr('value') == self.slider_interlocutor_image.attr('max')) {
-                                        self.loadingScreen = null;
+                            if (self.ScreenShots.length > 1) {
+                                self._boxscreensliderdiv.show();
+                            }
+                            self._boxscreenshareposition
+                                .text(data.CreatedOn + " - " + data.Url);
+
+                            vizzoplib.ResizeWidthLikeImg(self, data.Data, function resize(newwidth, newimg) {
+                                jVizzop(newimg)
+                                    .attr('style', 'width: ' + newwidth.toFixed(0) + 'px !important;')
+                                    .addClass('interlocutor_img')
+                                    .appendTo(self._boxscreenshare);
+                                jVizzop(self._boxscreenshare).children().each(function (index, item) {
+                                    if (item != newimg) {
+                                        jVizzop(item).remove();
                                     }
                                 });
-                            } else {
+                                //self.checkSafePosition();
+
+                                self.positionBox(function () { jVizzop(self._box).show(); }, 'fast');
+
                                 if (self.slider_interlocutor_image.attr('value') == self.slider_interlocutor_image.attr('max')) {
                                     self.loadingScreen = null;
                                 }
-                            }
+                            });
                         } else {
                             if (self.slider_interlocutor_image.attr('value') == self.slider_interlocutor_image.attr('max')) {
                                 self.loadingScreen = null;
                             }
                         }
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        vizzoplib.log(url, msg, jqXHR);
+                    } else {
                         if (self.slider_interlocutor_image.attr('value') == self.slider_interlocutor_image.attr('max')) {
                             self.loadingScreen = null;
                         }
                     }
-                });
-            }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    vizzoplib.log(url, msg, jqXHR);
+                    if (self.slider_interlocutor_image.attr('value') == self.slider_interlocutor_image.attr('max')) {
+                        self.loadingScreen = null;
+                    }
+                }
+            });
+
         } catch (err) {
             vizzoplib.log(err);
             if (self.slider_interlocutor_image.attr('value') == self.slider_interlocutor_image.attr('max')) {
