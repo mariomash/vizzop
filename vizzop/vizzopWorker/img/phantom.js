@@ -20,16 +20,12 @@ page.onCallback = function (param) {
     //console.log(date + ' ' + param.command);
     if (param.command == 'exit') {
         phantom.exit();
-    } else if (param.command == 'iframeloaded') {
+    } else if (param.command == 'render') {
 
         param.filename = "captures/" + param.filename;
 
         page.render(param.filename);
         console.log(date + ' rendered: ' + param.filename);
-
-        page.evaluate(function () {
-            OrdersRequest_InCourse = null;
-        });
 
     } else {
         console.log(date + ' ' + param.log);

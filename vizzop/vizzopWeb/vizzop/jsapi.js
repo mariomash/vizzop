@@ -1009,7 +1009,8 @@ jVizzop.fn.eachCallback = function (process, callback) {
 };
 
 jVizzop(document).bind('ready.vizzop', function () {
-    //vizzoplib.log("[LOADED VIZZOP]");
+
+    //vizzoplib.log("LOADED VIZZOP");
 
     vizzop.IsInFrame = vizzoplib.PageisInIframe();
 
@@ -1027,7 +1028,7 @@ jVizzop(document).bind('ready.vizzop', function () {
         } catch (err) {
 
         }
-    }, 500);
+    }, 250);
 
     jVizzop(document).on('mousemove.vizzop', function (e) {
         try {
@@ -1075,11 +1076,7 @@ jVizzop(document).bind('ready.vizzop', function () {
     });
 
     if (vizzop.IsInFrame == false) {
-        /*
-        * Respecto a guardar los contenidos de un iframe y saltarse el cross-domain:
-        * se registra el Listener de evento "message" (en el jsapi) y cuando te llega uno de "vizzop"
-        * se mete $(message.data.id).attr('src', 'data:' + escape(message.data.html));
-        */
+        // Respecto a guardar los contenidos de un iframe y saltarse el cross-domain: se registra el Listener de evento "message" (en el jsapi) y cuando te llega uno de "vizzop" se mete $(message.data.id).attr('src', 'data:' + escape(message.data.html));
         if (window.addEventListener) {
             window.addEventListener("message", vizzoplib.ReceivedMessageFromIframe, false);
         } else {
@@ -1102,5 +1099,7 @@ jVizzop(document).bind('ready.vizzop', function () {
         //console.log(data);
         top.postMessage(JSON.stringify(data), "*");
     }
+
+    vizzop.Daemon = new Daemon();
 
 });

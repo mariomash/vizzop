@@ -484,7 +484,7 @@ namespace vizzopWeb.Controllers
                         GUID = sc.GUID,
                         CreatedOn = sc.CreatedOn.ToLocalTime().ToString("G"),
                         Url = sc.Url,
-                        Data = "data:image/jpg;base64," + utils.ImageToJpegBase64(utils.PrepareScreenToReturn(sc, height, width, false), 75L)
+                        Data = "data:image/jpg;base64," + utils.ImageToJpegBase64(utils.PrepareScreenToReturn(sc, height, width, false), 85L)
                     }, JsonRequestBehavior.AllowGet);
                 }
             }

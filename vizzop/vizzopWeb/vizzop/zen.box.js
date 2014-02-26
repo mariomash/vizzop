@@ -377,7 +377,7 @@ var Box = jVizzop.zs_Class.create({
                     //.fadeIn();
                     break;
                 case 'standbychat':
-                    var bottom = new Number(10);
+                    var bottom = new Number(0);
                     var right = new Number(10);
 
                     box

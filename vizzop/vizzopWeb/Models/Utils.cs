@@ -3003,7 +3003,9 @@ namespace vizzopWeb
 
                             string key = "screenshot_control_from_" + UserName + "@" + Domain;
                             ScreenCaptureControl sc_control = null;
-                            object result = SingletonCache.Instance.Get(key);
+                            //object result = SingletonCache.Instance.Get(key);
+                            DataCacheLockHandle lockHandle;
+                            object result = SingletonCache.Instance.GetWithLock(key, out lockHandle);
                             if (result != null)
                             {
                                 sc_control = (ScreenCaptureControl)result;
@@ -3036,11 +3038,10 @@ namespace vizzopWeb
                             #endif
                             */
 
-                            SingletonCache.Instance.Insert(key, sc_control);
+                            //SingletonCache.Instance.Insert(key, sc_control);
+                            SingletonCache.Instance.InsertWithLock(key, sc_control, lockHandle);
 
                             SaveScreenCapture(sc_control.UserName, sc_control.Password, sc_control.Domain, sc, null);
-
-
 
                         }
                     }

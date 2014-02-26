@@ -215,13 +215,21 @@ jVizzop.extend(jVizzop.zs_Class, {
                 if (property != 'superClass') {
                     switch (jVizzop.type(parent.prototype[property])) {
                         case 'function':
-                            eval('handle.prototype[property] = ' + parent.prototype[property]);
+                            try {
+                                //console.log(parent);
+                                //console.log(property);
+                                eval('handle.prototype[property] = ' + parent.prototype[property]);
+                            } catch (err) { }
                             break;
                         case 'object':
-                            handle.prototype[property] = clone(parent.prototype[property]);
+                            try {
+                                handle.prototype[property] = clone(parent.prototype[property]);
+                            } catch (err) { }
                             break;
                         default:
-                            handle.prototype[property] = parent.prototype[property];
+                            try {
+                                handle.prototype[property] = parent.prototype[property];
+                            } catch (err) { }
                             break;
                     }
                 }
@@ -347,7 +355,7 @@ jVizzop.extend(jVizzop.zs_Class, {
             }
         }
 
-        //set value section
+            //set value section
         else if (this.constructor.prototype.hasOwnProperty('set' + arguments[0])) {
             if (jVizzop.isFunction(this['set' + arguments[0]])) {
                 this['set' + arguments[0]](arguments[1]);
@@ -396,12 +404,12 @@ jVizzop.extend(jVizzop.zs_Class, {
             if (this.superClass.superClass) {
                 this.superClass = this.superClass.superClass;
             }
-			var caller = 'this["temp" + methodName](';
-			if(arguments[1])
-				caller += 'arguments[1]';
-			for(var i = 2; i < arguments.length; i++)
-				caller += ', arguments[' + i + ']';
-			caller += ');';
+            var caller = 'this["temp" + methodName](';
+            if (arguments[1])
+                caller += 'arguments[1]';
+            for (var i = 2; i < arguments.length; i++)
+                caller += ', arguments[' + i + ']';
+            caller += ');';
             eval(caller);
             this['temp' + methodName] = null;
             this.superClass = temp;

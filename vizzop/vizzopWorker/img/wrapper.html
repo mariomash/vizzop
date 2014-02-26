@@ -40,57 +40,37 @@
                 var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
                 */
 
+                var iframe = document.getElementById('WrapperIframe');
+                iframe.contentWindow.scrollTo(data.ScrollLeft, data.ScrollTop);
+
+                var filename = data.UserName + '_' + data.Domain + '_' + data.GUID + '_.png';
+
+                window.callPhantom({
+                    'command': 'render',
+                    'filename': filename
+                });
+
                 // Check if loading is complete
                 if (iframeDoc.readyState == 'complete') {
 
-                    var iframe = document.getElementById('WrapperIframe');
+                    /*
                     iframe.contentWindow.scrollTo(data.ScrollLeft, data.ScrollTop);
-
-                    var filename = data.UserName + '_' + data.Domain + '_' + data.GUID + '_.png';
-
-                    var style = document.createElement('style'),
-                        text = document.createTextNode('body { background: #fff }');
-                    style.setAttribute('type', 'text/css');
-                    style.appendChild(text);
-                    document.head.insertBefore(style, document.head.firstChild);
-
-                    /*
                     window.callPhantom({
-                        'log': document.documentElement.outerHTML
+                        'command': 'render',
+                        'filename': filename
                     });
                     */
 
-                    /*
-                    $.each($('iframe'), function (index, elem) {
-                        window.callPhantom({
-                            'log': $(elem).attr('id') + '  ' + $(elem).attr('style')
-                        });
-                    });
-                    */
-
-                    /*
-                    window.callPhantom({
-                        'log': iframe.contentWindow.document.documentElement.innerHTML
-                    });
-                    */
-
-                    window.callPhantom({
-                        'command': 'iframeloaded',
-                        'filename': filename,
-                        'ScrollLeft': data.ScrollLeft,
-                        'ScrollTop': data.ScrollTop,
-                        'Width': data.Width,
-                        'Height': data.Height
-                    });
+                    OrdersRequest_InCourse = null;
 
                 } else {
-                    setTimeout(function () { CheckIfFrameLoaded(); }, 1);
+                    setTimeout(function () { CheckIfFrameLoaded(); }, 500);
                 }
             } catch (err) {
                 window.callPhantom({
                     'log': 'error ' + err
                 });
-                setTimeout(function () { CheckIfFrameLoaded(); }, 1);
+                setTimeout(function () { CheckIfFrameLoaded(); }, 500);
             }
         }
 
@@ -195,8 +175,14 @@
                                 'width': data.Width
                             });
 
-                        //In MS
-                        setTimeout(function () { CheckIfFrameLoaded(); }, 1);
+
+                        var style = document.createElement('style'),
+                            text = document.createTextNode('body { background: #fff }');
+                        style.setAttribute('type', 'text/css');
+                        style.appendChild(text);
+                        document.head.insertBefore(style, document.head.firstChild);
+
+                        CheckIfFrameLoaded();
 
                     },
                     error: function (jqXHR, textStatus, errorThrown) {

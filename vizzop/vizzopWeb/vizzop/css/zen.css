@@ -5773,20 +5773,22 @@ inse .zs_dialog .vizzop-btn-navbar {
 }
 
 .zs_dialog .zs_dialoghandle {
-    background: #ffffff !important; /* Old browsers */
-    background: -moz-linear-gradient(top, #ffffff 0%, #e5e5e5 100%) !important; /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#e5e5e5)) !important; /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(top, #ffffff 0%,#e5e5e5 100%) !important; /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(top, #ffffff 0%,#e5e5e5 100%) !important; /* Opera 11.10+ */
-    background: -ms-linear-gradient(top, #ffffff 0%,#e5e5e5 100%) !important; /* IE10+ */
-    background: linear-gradient(to bottom, #ffffff 0%,#e5e5e5 100%) !important; /* W3C */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e5e5e5',GradientType=0 ) !important; /* IE6-9 */
+    background: #ffff55 !important; /* Old browsers */
+    background: -moz-linear-gradient(top, #ffff55 0%, #ffff99 100%) !important; /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffff55), color-stop(100%,#ffff99)) !important; /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, #ffff55 0%,#ffff99 100%) !important; /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, #ffff55 0%,#ffff99 100%) !important; /* Opera 11.10+ */
+    background: -ms-linear-gradient(top, #ffff55 0%,#ffff99 100%) !important; /* IE10+ */
+    background: linear-gradient(to bottom, #ffff55 0%,#ffff99 100%) !important; /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffff55', endColorstr='#ffff99',GradientType=0 ) !important; /* IE6-9 */
     color: #333 !important;
-    border-radius: 7px !important;
+    border-top-left-radius: 7px !important;
+    border-top-right-radius: 7px !important;
+    /*
     -ms-border-radius: 7px !important;
     -moz-border-radius: 7px !important;
     -webkit-border-radius: 7px !important;
-    -khtml-border-radius: 7px !important;
+    -khtml-border-radius: 7px !important;*/
     display: block;
     text-align: center !important;
     border: 1px solid white !important;
@@ -5807,7 +5809,7 @@ inse .zs_dialog .vizzop-btn-navbar {
     opacity: 0.7 !important;
     filter: alpha(opacity=70) !important;
     cursor: pointer !important;
-    margin-top: 10px !important;
+    margin-top: 2px !important;
 }
 
 .zs_bubble {
