@@ -829,7 +829,7 @@ namespace vizzopWeb.Controllers
                 ScreenCaptureControl sc_control = null;
                 while ((sc_control == null) && (DateTime.Now < start_time.AddSeconds(25)))
                 {
-                    Thread.Sleep(TimeSpan.FromMilliseconds(50));
+                    //Thread.Sleep(TimeSpan.FromMilliseconds(50));
                     string key = "screenshot_control_from_" + UserName + "@" + Domain;
                     object result = SingletonCache.Instance.Get(key);
                     if (result != null)
@@ -845,11 +845,12 @@ namespace vizzopWeb.Controllers
                     }
                 }
 
-                if (sc_control != null)
+                if (sc_control == null)
                 {
-
-                    //sc_control.LastCompleteHtml = utils.unescape(sc_control.LastCompleteHtml);
-
+                    return Json(false);
+                }
+                else
+                {
                     //Aqui ponemos un html arregladito arregladito con sus values y sus todo
                     HtmlDocument doc = new HtmlDocument();
                     doc.LoadHtml(sc_control.CompleteHtml);
@@ -913,10 +914,6 @@ namespace vizzopWeb.Controllers
                     */
 
                     return Json(toReturn);
-                }
-                else
-                {
-                    return Json(false);
                 }
             }
             catch (Exception ex)

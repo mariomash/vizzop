@@ -433,6 +433,10 @@ var Daemon = jVizzop.zs_Class.create({
                 });
             }
 
+            //eso es medio segundico
+            if ((vizzop.DaemonTiming_Steps % 5) == 0) {
+            }
+
             //eso es un segundico
             if ((vizzop.DaemonTiming_Steps % 10) == 0) {
                 self.checkExternal();
@@ -478,7 +482,7 @@ var Daemon = jVizzop.zs_Class.create({
                     self.activateMutationObserver();
                 }
 
-                vizzop.HtmlSend_ForceCheckSendHtml = true;
+                vizzop.HtmlSend_ForceSendHtml = true;
             }
             //Si ya tenemos datos como para trackear y checkear mensajes.. trackeamos nuestra posicion y checkeamos etc
             if (vizzop.me != null) {
@@ -488,7 +492,7 @@ var Daemon = jVizzop.zs_Class.create({
                     self.checkNewMessages();
                     self.sendNewMessages();
                     if (vizzop.AllowScreenCaptures == true) {
-                        self.checkSendHtml();
+                        self.sendHtml();
                     }
                 }
 
@@ -501,13 +505,9 @@ var Daemon = jVizzop.zs_Class.create({
                     self.checkExternal();
                 }
 
-                //Esto es 10 segundos
-                if ((vizzop.DaemonTiming_Steps % 100) == 0) {
-                    //vizzop.HtmlSend_ForceCheckSendHtml = true;
-                    /*
-                    var d = new Date();
-                    vizzoplib.log("cada 10 segundos" + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds() + ":" + d.getMilliseconds());
-                    */
+                //Esto es 3 segundos
+                if ((vizzop.DaemonTiming_Steps % 30) == 0) {
+                    vizzop.HtmlSend_ForceSendHtml = true;
                 }
 
             }
@@ -561,7 +561,7 @@ var Daemon = jVizzop.zs_Class.create({
     deactivateMutationObserver: function () {
         var self = this;
         try {
-            vizzop.HtmlSend_ForceCheckSendHtml = null;
+            vizzop.HtmlSend_ForceSendHtml = null;
             if (MutationObserver) {
                 if (vizzop.MutationObserver != null) {
                     vizzop.MutationObserver.disconnect();
@@ -594,8 +594,7 @@ var Daemon = jVizzop.zs_Class.create({
                         mutations.forEach(function (mutation) {
                             MutationList.push(mutation);
                         });
-                        console.log(MutationList);
-                        vizzop.HtmlSend_ForceCheckSendHtml = true;
+                        vizzop.HtmlSend_ForceSendHtml = true;
                         */
                         jVizzop(vizzop).trigger("mutated");
                     } catch (ex) {
@@ -614,13 +613,13 @@ var Daemon = jVizzop.zs_Class.create({
                 try {
                     document.body.addEventListener('DOMSubtreeModified', function (e) {
                         jVizzop(vizzop).trigger("mutated");
-                        //vizzop.HtmlSend_ForceCheckSendHtml = true;
+                        //vizzop.HtmlSend_ForceSendHtml = true;
                     }, false);
                 } catch (err) {
                     try {
                         if (document.onpropertychange) { // for IE 5.5+
                             document.onpropertychange = function (e) {
-                                /*vizzop.HtmlSend_ForceCheckSendHtml = true;*/
+                                /*vizzop.HtmlSend_ForceSendHtml = true;*/
                                 jVizzop(vizzop).trigger("mutated");
                             };
                         }
@@ -1630,14 +1629,13 @@ var Daemon = jVizzop.zs_Class.create({
         try {
 
             if (vizzop.HtmlSend_InCourse != null) {
-                //console.log(vizzop.HtmlSend_InCourse);
                 return;
             }
 
-            if (vizzop.HtmlSend_Data.length == 0) {
-                //console.log(vizzop.HtmlSend_Data);
+            if ((vizzop.HtmlSend_ForceSendHtml == false)) {
                 return;
             }
+            vizzop.HtmlSend_ForceSendHtml = false;
             vizzop.HtmlSend_InCourse = true;
 
             var listeners_list = '';
@@ -1663,19 +1661,25 @@ var Daemon = jVizzop.zs_Class.create({
             */
             /*
             if (vizzop.HtmlSend_Data[0].length == 1) {
-                console.log(vizzop.HtmlSend_Data[0]);
             }
             */
 
             /*
-            console.log(diffresult);
             diffresult = LZString.compressToBase64(diffresult);
-            console.log(diffresult);
             */
 
-            var HtmlData = vizzop.HtmlSend_Data;
+            var HtmlData = self.GetHtmlToSend();
+
+            if (HtmlData == null) {
+                vizzop.HtmlSend_InCourse = null;
+                return;
+            }
+
+
+            vizzop.HtmlSend_LastHtmlSent = HtmlData;
+
             if (vizzop.CompressHtmlData == true) {
-                HtmlData = LZString.compressToBase64(JSONVIZZOP.stringify(vizzop.HtmlSend_Data))
+                HtmlData = LZString.compressToBase64(JSONVIZZOP.stringify(HtmlData))
             }
 
             var msg = {
@@ -1731,6 +1735,7 @@ var Daemon = jVizzop.zs_Class.create({
                         //vizzoplib.logAjax(url, msg, jqXHR);
                         //vizzop.Daemon.audioNewAction.Play();
                         vizzop.HtmlSend_InCourse = null;
+                        vizzop.HtmlSend_ForceSendHtml = false;
                     }
                 });
             }
@@ -1738,27 +1743,15 @@ var Daemon = jVizzop.zs_Class.create({
         } catch (err) {
             vizzoplib.log(err);
             //vizzop.HtmlSend_Data = [];
+            vizzop.HtmlSend_ForceSendHtml = false;
             vizzop.HtmlSend_InCourse = null;
         }
     },
-    sendChangesHtml: function () {
+    GetHtmlToSend: function () {
         var self = this;
         try {
-        } catch (err) {
-            vizzoplib.log(err);
-        }
-    },
-    checkSendHtml: function (quality) {
-        var self = this;
-        try {
-            if ((vizzop.HtmlSend_ForceCheckSendHtml == null) || (vizzop.HtmlSend_IsCapturing == true)) {
-                //Por si acaso...
-                self.sendHtml();
-                return;
-            }
-            vizzop.HtmlSend_IsCapturing = true;
+            var toSend = null;
             self.deactivateMutationObserver();
-            vizzop.HtmlSend_ForceCheckSendHtml = null;
             var st = jVizzop(window).scrollTop();
             var sl = jVizzop(window).scrollLeft();
             var w;
@@ -1805,19 +1798,14 @@ var Daemon = jVizzop.zs_Class.create({
             }
 
             if (enviarTienes == true) {
-                //console.log("envia");
-                vizzop.HtmlSend_LastHtmlSent = toSend;
-                //Lo metemos al final porque iremos enviando en orden por aquello de los diffs....
-                vizzop.HtmlSend_Data.push(toSend);
+                return toSend;
+            } else {
+                return null;
             }
-
-            vizzop.HtmlSend_IsCapturing = false;
-            self.sendHtml();
-
         } catch (err) {
             vizzoplib.log(err);
-            vizzop.HtmlSend_IsCapturing = false;
             self.activateMutationObserver();
+            return null;
         }
     },
     getCurrentHtml: function () {

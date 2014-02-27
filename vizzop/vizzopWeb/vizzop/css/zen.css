@@ -3936,7 +3936,7 @@ inse .zs_dialog .vizzop-btn-navbar {
     overflow: hidden;
     font-weight: normal !important;
     font-size: 12px;
-    color: #999;
+    color: #555;
 }
 
     .zs_dialog .vizzop-popover-content p, .zs_dialog .vizzop-popover-content ul, .zs_dialog .vizzop-popover-content ol {
@@ -6133,6 +6133,10 @@ inse .zs_dialog .vizzop-btn-navbar {
     border-bottom: solid 1px #eee !important;
 }
 
+    .zs_dialog.stacked .item i {
+        margin-right: 10px !important;
+    }
+
     .zs_dialog.stacked .item li {
         padding: 5px 10px !important;
         cursor: pointer !important;
@@ -6361,6 +6365,7 @@ inse .zs_dialog .vizzop-btn-navbar {
     height: 45px !important;
     width: 93%;
     margin: 0 auto;
+    display: block;
 }
 
 .zs_dialog .boxscreenshareslider {
@@ -6456,8 +6461,12 @@ inse .zs_dialog .vizzop-btn-navbar {
 
 .zs_dialog .boxscreenshare {
     display: block;
+    /*
     height: 410px !important;
     margin: 10px !important;
+        */
+    height: 100% !important;
+    margin: 0;
     overflow: visible !important;
     /*
     box-shadow: 0 0 6px #aaa !important;
@@ -6476,7 +6485,7 @@ inse .zs_dialog .vizzop-btn-navbar {
 }
 
     .zs_dialog .boxscreenshare .interlocutor_img {
-        box-shadow: 0 0 6px #aaa !important;
+        /*box-shadow: 0 0 6px #aaa !important;*/
         /*border-bottom: solid 1px #aaa;*/
     }
 

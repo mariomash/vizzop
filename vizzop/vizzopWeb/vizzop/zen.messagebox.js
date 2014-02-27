@@ -89,9 +89,10 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
             all_info += '<dl><dt>' + interlocutor_type + '</dt><dd>' + self._interlocutor.FullName + '</dd></dl>';
 
             if (vizzop.mode == 'agent') {
-                var first_message_time = vizzoplib.parseJsonDate(data.Session.CreatedOn);
-
-                all_info += '<dl><dt>First Access</dt><dd>' + first_message_time.toDateString() + ' ' + first_message_time.toTimeString().substring(0, (first_message_time.toTimeString().indexOf(' ') - 3)) + '</dd></dl>';
+                if (data.Session.CreatedOn != null) {
+                    var first_message_time = vizzoplib.parseJsonDate(data.Session.CreatedOn);
+                    all_info += '<dl><dt>First Access</dt><dd>' + first_message_time.toDateString() + ' ' + first_message_time.toTimeString().substring(0, (first_message_time.toTimeString().indexOf(' ') - 3)) + '</dd></dl>';
+                }
                 if (data.Location.Lang != null) {
                     all_info += '<dl><dt>Language</dt><dd>' + data.Location.Lang + '</dd></dl>';
                 }
@@ -400,10 +401,11 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                             } else {
                                 self.slider_interlocutor_image.attr('max', self.ScreenShots.length);
                             }
-
+                            /*
                             if (self.ScreenShots.length > 1) {
                                 self._boxscreensliderdiv.show();
                             }
+                            */
                             self._boxscreenshareposition
                                 .text(data.CreatedOn + " - " + data.Url);
 

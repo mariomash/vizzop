@@ -26,6 +26,7 @@
         var data = null;
         var StartDate = new Date();
         var OrdersRequest_InCourse = null;
+        var sacafotos = false;
 
         function CheckIfFrameLoaded() {
             try {
@@ -36,41 +37,26 @@
                     iframeDoc = iframe.contentWindow.document;
                 }
 
-                /*
-                var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                */
-
                 var iframe = document.getElementById('WrapperIframe');
                 iframe.contentWindow.scrollTo(data.ScrollLeft, data.ScrollTop);
 
-                var filename = data.UserName + '_' + data.Domain + '_' + data.GUID + '_.png';
+                var filename = data.UserName + '_' + data.Domain + '_.png';
 
-                window.callPhantom({
-                    'command': 'render',
-                    'filename': filename
-                });
-
-                // Check if loading is complete
-                if (iframeDoc.readyState == 'complete') {
-
-                    /*
-                    iframe.contentWindow.scrollTo(data.ScrollLeft, data.ScrollTop);
+                if (sacafotos == true) {
                     window.callPhantom({
                         'command': 'render',
                         'filename': filename
                     });
-                    */
-
-                    OrdersRequest_InCourse = null;
-
-                } else {
-                    setTimeout(function () { CheckIfFrameLoaded(); }, 500);
                 }
+
+                if (iframeDoc.readyState.toLowerCase() != 'complete') {
+                    sacafotos = false;
+                }
+
             } catch (err) {
                 window.callPhantom({
                     'log': 'error ' + err
                 });
-                setTimeout(function () { CheckIfFrameLoaded(); }, 500);
             }
         }
 
@@ -90,7 +76,7 @@
         function GetOrders(page, mainURL, UserName, Domain) {
             try {
                 var dateToCompare = new Date();
-                dateToCompare.setTime(StartDate.getTime() + (4 * 60 * 1000)); // 4 minutes in milliseconds
+                dateToCompare.setTime(StartDate.getTime() + (4 * 60 * 1000)); // 2 minutes in milliseconds
 
                 var dateNow = new Date();
 
@@ -116,7 +102,7 @@
                 var url = mainURL + "/Messages/CheckCaptureControl";
 
                 window.callPhantom({
-                    'log': 'calling ' + url + ' ' + UserName
+                    'log': 'calling ' + url + ' ' + GUID
                 });
 
                 OrdersRequest_InCourse = $.ajax({
@@ -131,6 +117,11 @@
                         }
 
                         data = d;
+
+                        window.callPhantom({
+                            'log': 'GOT NEW IMG: GUID ' + data.GUID
+                        });
+
                         StartDate = new Date();
                         var iFrame = null
                         if ((data.Blob.length == 1) && (data.Blob[0][0] == 0)) {
@@ -182,7 +173,8 @@
                         style.appendChild(text);
                         document.head.insertBefore(style, document.head.firstChild);
 
-                        CheckIfFrameLoaded();
+                        sacafotos = true;
+                        OrdersRequest_InCourse = null;
 
                     },
                     error: function (jqXHR, textStatus, errorThrown) {

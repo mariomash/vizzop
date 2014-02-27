@@ -33,6 +33,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Linq;
+using Newtonsoft.Json;
 
 
 public class LZString
@@ -1596,7 +1597,7 @@ namespace vizzopWeb
                     sc_control_list = new Dictionary<string, string>();
                 }
 
-                //Si el proceso se hubiera muerto lo hubieramos kitado del cache monitorizando en cada worker...
+                //Si el proceso se hubiera muerto lo hubieramos Quitado del cache monitorizando en cada worker...
                 if (sc_control_list.ContainsKey(item) == false)
                 {
                     sc_control_list.Add(item, null);
@@ -2143,12 +2144,13 @@ namespace vizzopWeb
                 }
 
                 ArrayList ArrBlob = new ArrayList();
-                ArrBlob = new JavaScriptSerializer().Deserialize<ArrayList>(new_screencapture.Blob);
+                //ArrBlob = new JavaScriptSerializer().Deserialize<ArrayList>(new_screencapture.Blob);
+                ArrBlob = JsonConvert.DeserializeObject<ArrayList>(new_screencapture.Blob);
 
                 //Casos especiales... o la primera vez que se carga o no ha cambiado en total...
                 if (ArrBlob.Count == 1)
                 {
-                    var elem = (ArrayList)ArrBlob[0];
+                    var elem = (Newtonsoft.Json.Linq.JArray)ArrBlob[0];
                     if (elem[0].ToString() == "1")
                     {
                         //Si es la primera vez que carga la página... es que siempre es nueva
@@ -2176,7 +2178,7 @@ namespace vizzopWeb
                 }
 
                 string processedHtml = "";
-                foreach (ArrayList elem in ArrBlob)
+                foreach (Newtonsoft.Json.Linq.JArray elem in ArrBlob)
                 {
                     var type = elem[0].ToString();
                     var contents = elem[1].ToString();
@@ -2999,7 +3001,6 @@ namespace vizzopWeb
                             string FileName = file.Split('\\')[file.Split('\\').Length - 1];
                             string UserName = FileName.Split('_')[0];
                             string Domain = FileName.Split('_')[1];
-                            string Guid = FileName.Split('_')[2];
 
                             string key = "screenshot_control_from_" + UserName + "@" + Domain;
                             ScreenCaptureControl sc_control = null;
@@ -3021,16 +3022,18 @@ namespace vizzopWeb
 
                             if (sc == null)
                             {
-                                GrabaLog(Utils.NivelLog.error, "sc is null: " + Guid);
+                                GrabaLog(Utils.NivelLog.error, "sc is null: ");
                                 continue;
                             }
 
+                            //sc.GUID = Guid.NewGuid().ToString();
+                            /*
                             if (sc.GUID == Guid)
                             {
                                 sc.Data = strBase64;
                                 sc.Blob = sc_control.CompleteHtml;
-                                //sc_control.ScreenCapture = null;
                             }
+                            */
 
                             /*
                             #if DEBUG
@@ -3041,6 +3044,9 @@ namespace vizzopWeb
                             //SingletonCache.Instance.Insert(key, sc_control);
                             SingletonCache.Instance.InsertWithLock(key, sc_control, lockHandle);
 
+                            sc.Data = strBase64;
+                            sc.Blob = sc_control.CompleteHtml;
+                            sc.GUID = Guid.NewGuid().ToString();
                             SaveScreenCapture(sc_control.UserName, sc_control.Password, sc_control.Domain, sc, null);
 
                         }

@@ -171,13 +171,13 @@
         </div>
         @if (converser.Agent.IsAdmin == true)
         {
+            <div class="tab-pane" id="widget">
+                @{Html.RenderAction("Widget", "Panel");}
+            </div>
         }
 
         @if (converser.Business.Domain.ToLowerInvariant() == "vizzop")
         {
-            <div class="tab-pane" id="widget">
-                @{Html.RenderAction("Widget", "Panel");}
-            </div>
             <div class="tab-pane" id="crm">
                 @{Html.RenderAction("Index", "CRM");}
             </div>

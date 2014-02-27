@@ -1022,9 +1022,7 @@ jVizzop(document).bind('ready.vizzop', function () {
 
     jVizzop(vizzop).on('mutated', function (e) {
         try {
-            vizzop.HtmlSend_ForceCheckSendHtml = true;
-            vizzoplib.ReBindForms();
-            //vizzop.HtmlSend_ForceSendComplete = true;
+            vizzop.HtmlSend_ForceSendHtml = true;
         } catch (err) {
 
         }
@@ -1045,7 +1043,6 @@ jVizzop(document).bind('ready.vizzop', function () {
     jVizzop(window).on('scroll.vizzop', function (e) {
         try {
             jVizzop(vizzop).trigger("mutated");
-            //vizzop.HtmlSend_ForceSendComplete = true;
         } catch (err) {
 
         }
@@ -1054,7 +1051,6 @@ jVizzop(document).bind('ready.vizzop', function () {
     jVizzop(window).on('resize.vizzop', function (e) {
         try {
             jVizzop(vizzop).trigger("mutated");
-            //vizzop.HtmlSend_ForceSendComplete = true;
         } catch (err) {
 
         }

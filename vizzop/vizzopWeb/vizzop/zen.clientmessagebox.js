@@ -663,6 +663,10 @@ var ClientMessageBox = jVizzop.zs_Class.create(MessageBox, {
                 .text(LLang('start_chat', null))
                 .addClass('vizzop-btn vizzop-btn-primary vizzop-btn-large')
                 .click(function (event) {
+                    var name_mecookie = vizzop.ApiKey + "_me";
+                    vizzoplib.deleteCookie(name_mecookie);
+                    vizzop.me.FullName = null;
+                    self._commsessionid = null;
                     if (vizzop.me.FullName == null) {
                         self.fillBox_FindingSupport_WithoutName();
                     } else {
