@@ -73,7 +73,9 @@ var Message = jVizzop.zs_Class.create({
                 }
             }
 
-            var timestamp_toshow = self._timestamp.toTimeString().substring(0, (self._timestamp.toTimeString().indexOf(' ') - 3));
+
+            var timestamp_toshow = self._timestamp.toTimeString().substring(0, (self._timestamp.toTimeString().indexOf(' ') - 3));                      
+         
             if (self._box._type == "TicketBox") {
                 timestamp_toshow = self._timestamp.toString();
             }
