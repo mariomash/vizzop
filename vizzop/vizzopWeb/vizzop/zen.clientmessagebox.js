@@ -258,8 +258,13 @@ var ClientMessageBox = jVizzop.zs_Class.create(MessageBox, {
                 .addClass('zs_dialoghandle')
                 .appendTo(box);
 
-            if (vizzop.WidgetBg != null) {
-                self._handle.attr('style', 'background-color : ' + vizzop.WidgetBg + ' !important; color: ' + vizzop.WidgetFg + ' !important; border: solid 1px ' + vizzop.WidgetBorder + ' !important;')
+            if ((vizzop.WidgetBg != null) &&
+                (vizzop.WidgetFg != null) &&
+                (vizzop.WidgetBorder != null) &&
+                (vizzop.WidgetBg != "") &&
+                (vizzop.WidgetFg != "") &&
+                (vizzop.WidgetBorder != "")) {
+                self._handle.attr('style', 'background : ' + vizzop.WidgetBg + ' !important; color: ' + vizzop.WidgetFg + ' !important; border: solid 1px ' + vizzop.WidgetBorder + ' !important;')
             }
 
             //Bubble Information

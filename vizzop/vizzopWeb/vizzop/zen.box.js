@@ -99,12 +99,10 @@ var Box = jVizzop.zs_Class.create({
             //Info Box
             self._boxinfo = jVizzop('<div></div>')
 				.addClass('zs_boxinfo')
-				.attr('style', 'border: solid 2px ' + vizzop.WidgetBg + ' !important;')
 				.appendTo(self._boxinner);
 
             //Statusbar
             self._boxstatus = jVizzop('<div></div>')
-				.attr('style', 'background-color: ' + vizzop.WidgetBg + ' !important;')
 				.addClass('boxstatus')
 				.hide()
 				.appendTo(self._boxinner);
@@ -360,7 +358,14 @@ var Box = jVizzop.zs_Class.create({
                     //.fadeIn();
                     break;
                 case 'center':
-                    var top = Math.floor(((jVizzop(window).height() / 2) - (jVizzop(box).outerHeight() / 2)));
+                    var top = new Number(20);
+                    if (jVizzop(window).height() > jVizzop(box).outerHeight() + top) {
+                        top = Math.floor(((jVizzop(window).height() / 2) - (jVizzop(box).outerHeight() / 2)));
+                    }
+                    var left = new Number(20);
+                    if (jVizzop(window).width() > jVizzop(box).outerWidth() + left) {
+                        left = Math.floor(((jVizzop(window).width() / 2) - (jVizzop(box).outerWidth() / 2)))
+                    }
                     /*
 					if (top == 0) {
 						top = 20;
@@ -371,7 +376,7 @@ var Box = jVizzop.zs_Class.create({
 						    'top': top + 'px',
 						    'right': 'auto',
 						    'bottom': 'auto',
-						    'left': Math.floor(((jVizzop(window).width() / 2) - (jVizzop(box).outerWidth() / 2))) + 'px',
+						    'left': left + 'px',
 						    'position': 'fixed'
 						});
                     //.fadeIn();

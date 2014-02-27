@@ -590,7 +590,7 @@ var vizzop = {
     SessionID: '" + context.Session.SessionID + @"',
     MeetingSession: " + serializedMeetingSession + @",
     WidgetFg: " + WidgetFg + @",
-    WidgetBg: " + WidgetFg + @",
+    WidgetBg: " + WidgetBg + @",
     WidgetBorder: " + WidgetBorder + @",
     WidgetText: " + WidgetText + @",
     BusinessHours: " + BusinessHours + @",

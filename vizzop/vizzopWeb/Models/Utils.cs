@@ -2273,10 +2273,13 @@ namespace vizzopWeb
                 new_screencapture.converser = converser;
                 new_screencapture.AddToCache();
 
+                /*
                 // Lanzamos el Save en otro hilo...
                 Thread_TrackScreenHelper oThread = new Thread_TrackScreenHelper(username, password, domain, new_screencapture);
                 Thread rHelper = new Thread(oThread.DoThings);
                 rHelper.Start();
+                 */
+
                 return true;
 
             }

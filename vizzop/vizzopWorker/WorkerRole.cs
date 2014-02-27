@@ -35,7 +35,7 @@ namespace vizzopWorker
 
 #if DEBUG
 #else
-            LanzaYControlaProcesoCreaVideos();
+            //LanzaYControlaProcesoCreaVideos();
 #endif
             while (true)
             {
