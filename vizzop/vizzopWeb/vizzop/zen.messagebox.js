@@ -183,7 +183,7 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                 self._preferredheight = 'auto';
                 self._preferredubication = 'center';
 
-                self._col0.css('display', 'inline-block');
+                //self._col0.css('display', 'inline-block');
 
                 /*Screen*/
                 self._boxscreenshare = jVizzop('<div></div>')
@@ -391,8 +391,10 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                 },
                 success: function (data) {
                     self._boxscreenshareloading.hide();
+                    
                     if (data != null) {
                         if (data != false) {
+                            self._col0.css('display', 'inline-block');
                             if (self.slider_interlocutor_image.attr('value') == self.slider_interlocutor_image.attr('max')) {
                                 //self._boxscreenshareposition.text("auto updating");
                                 self.ScreenShots.push(data);

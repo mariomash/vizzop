@@ -484,7 +484,7 @@ namespace vizzopWeb.Controllers
                         GUID = sc.GUID,
                         CreatedOn = sc.CreatedOn.ToLocalTime().ToString("G"),
                         Url = sc.Url,
-                        Data = "data:image/jpg;base64," + utils.ImageToJpegBase64(utils.PrepareScreenToReturn(sc, height, width, false), 85L)
+                        Data = "data:image/jpg;base64," + utils.ImageToJpegBase64(utils.PrepareScreenToReturn(sc, height, width, false), 90L)
                     }, JsonRequestBehavior.AllowGet);
                 }
             }
@@ -723,11 +723,9 @@ namespace vizzopWeb.Controllers
 
                 if (DefLocList.Count > 0)
                 {
-
-                    return Json(new
-                    {
-                        aaData = DefLocList.Select(x => new[] { 
+                    var aaData = DefLocList.Select(x => new[] { 
                         x.ID.ToString(), 
+                        "",
                         "",
                         "",
                         x.Url,
@@ -742,8 +740,22 @@ namespace vizzopWeb.Controllers
                         x.Domain,
                         x.Password,
                         ""
-                        })
-                    }, JsonRequestBehavior.AllowGet);
+                        }).ToList();
+
+                    foreach (var item in aaData)
+                    {
+                        ScreenCapture sc = utils.GetScreenCapture(item[12], item[13]);
+                        if (sc != null)
+                        {
+                            item[1] = "data:image/jpg;base64," + utils.ImageToJpegBase64(
+                                utils.PrepareScreenToReturn(sc, "90", "90", false), 90L
+                                );
+                            item[2] = sc.Width.ToString();
+                            item[3] = sc.Height.ToString();
+                        }
+                    }
+
+                    return Json(aaData, JsonRequestBehavior.AllowGet);
 
                 }
                 else

@@ -88,7 +88,7 @@
                 dataType: "json",
                 success: function (data) {
                     if (data != null) {
-                        rt_tabledata = data.aaData;
+                        rt_tabledata = data;
                     } else {
                         rt_tabledata = [];
                     }
@@ -432,23 +432,11 @@
                 * Si lo encontramos lo actualizamos.... lo eliminamos de temp_tabledata
                 * Y lo marcamos como encontrado
                 */
-                var orig_userdomain = orig_tabledata[i][10] + orig_tabledata[i][11];
-                var new_userdomain = temp_tabledata[j][10] + temp_tabledata[j][11];
+                var orig_userdomain = orig_tabledata[i][12] + orig_tabledata[i][13];
+                var new_userdomain = temp_tabledata[j][12] + temp_tabledata[j][13];
                 if (new_userdomain == orig_userdomain) {
-                    /*rt_oTable.fnUpdate(temp_tabledata[j], i);*/
-                    //Solo actualizamos esa celda si es diferente
-                    var table = $(rt_oTable).find("tbody")[0];
-                    if (table.rows[j] != null) {
-                        var cell = table.rows[j].cells[0]; // This is a DOM "TD" element
-                        var $cell = $(cell);
-                        var $div_to_update = $cell.find('div');
-                        var cel_userdomain = $div_to_update.attr('data-username') + $div_to_update.attr('data-domain');
-                        if (cel_userdomain != (new_userdomain)) {
-                            rt_oTable.fnUpdate(temp_tabledata[j][2], i, 2);
-                        }
-                    }
-                    //El resto si.. siempre
                     rt_oTable.fnUpdate(temp_tabledata[j][0], i, 0);
+                    rt_oTable.fnUpdate(temp_tabledata[j][1], i, 1);
                     rt_oTable.fnUpdate(temp_tabledata[j][2], i, 2);
                     rt_oTable.fnUpdate(temp_tabledata[j][3], i, 3);
                     rt_oTable.fnUpdate(temp_tabledata[j][4], i, 4);
@@ -458,6 +446,11 @@
                     rt_oTable.fnUpdate(temp_tabledata[j][8], i, 8);
                     rt_oTable.fnUpdate(temp_tabledata[j][9], i, 9);
                     rt_oTable.fnUpdate(temp_tabledata[j][10], i, 10);
+                    rt_oTable.fnUpdate(temp_tabledata[j][11], i, 11);
+                    rt_oTable.fnUpdate(temp_tabledata[j][12], i, 12);
+                    rt_oTable.fnUpdate(temp_tabledata[j][13], i, 13);
+                    rt_oTable.fnUpdate(temp_tabledata[j][14], i, 14);
+                    rt_oTable.fnUpdate(temp_tabledata[j][15], i, 15);
                     temp_tabledata.splice(j, 1);
                     found = true;
                     break;
@@ -646,33 +639,33 @@
             },
             "fnInitComplete": function (oSettings, json) { },
             "aoColumns": [
-                { "sTitle": "ID", "bSearchable": false, "bVisible": false, "bSortable": false },
+                { "sTitle": "ID", "bSearchable": false, "bVisible": true, "bSortable": false, "sWidth": "25px" },
                 {
-                    "sTitle": "Screenshot", "bSortable": false, "bSearchable": false, "sWidth": "100px", "bVisible": false,
+                    "sTitle": "Screenshot", "bSortable": false, "bSearchable": false, "sWidth": "100px", "bVisible": true,
                     "fnRender": function (oObj) {
-                        return '<div style="position: relative; width: 90px; height: 90px;"/>';
-                    }
-                },
-                {
-                    "sTitle": "IP",
-                    "fnRender": function (oObj) {
+                        var imgSrc = "";
                         try {
                             if (oObj == null) { return ''; }
                             if (oObj.aData == null) { return ''; }
-                            return oObj.aData[2];
+                            imgSrc = oObj.aData[1];
                         } catch (_err) {
-                            rt_Reloading_InCourse = null;
                         }
-                    },
-                    "bVisible": false,
+                        if ((imgSrc == null) || (imgSrc == '')) {
+                            return '<div style="position: relative; width: 90px; height: 90px;"></div>';
+                        } else {
+                            return '<div style="position: relative; width: 90px; height: 90px;"><img src="' + imgSrc + '"/></div>';
+                        }
+                    }
                 },
+                { "sTitle": "Width", "sWidth": "40px" },
+                { "sTitle": "Height", "sWidth": "40px" },
                 { "sTitle": "URL" },
-                { "sTitle": "Language", "sWidth": "60px" },
+                { "sTitle": "Lang", "sWidth": "40px" },
                 { "sTitle": "Ubication", "sWidth": "100px" },
                 {
-                    "sTitle": "User Agent", "sWidth": "150px",
+                    "sTitle": "Browser", "sWidth": "120px",
                     "fnRender": function (oObj) {
-                        var useragent_toCompare = oObj.aData[6].toLowerCase();
+                        var useragent_toCompare = oObj.aData[7].toLowerCase();
                         var useragent = "";
 
                         if (useragent_toCompare.indexOf("windows") > -1) {
@@ -691,13 +684,13 @@
                         }
 
                         if (useragent == "") {
-                            useragent = oObj.aData[6];
+                            useragent = oObj.aData[7];
                         }
 
                         return useragent;
                     }
                 },
-                { "sTitle": "Referrer", "sWidth": "200px" },
+                { "sTitle": "Referrer", "sWidth": "200px", "bVisible": false },
                 { "sTitle": "TimeStamp", "bSearchable": false, "bVisible": false, "bSortable": false },
                 { "sTitle": "Last Active", "bSearchable": false, "bSortable": false, "sWidth": "100px" },
                 { "sTitle": "Name", "bSearchable": false, "bVisible": false, "bSortable": false },
@@ -714,13 +707,15 @@
         //rt_updatetable();
         $("#realtime_table tbody tr").live("click", function (event) {
             var id = rt_oTable.fnGetData(this)[0];
-            var fullname = rt_oTable.fnGetData(this)[10];
+            var fullname = rt_oTable.fnGetData(this)[11];
             if (fullname == "-") {
                 fullname = '@utils.LocalizeLang("anon_client", utils.GetLang(Context), null)';
         }
-            var username = rt_oTable.fnGetData(this)[11];
-            var password = rt_oTable.fnGetData(this)[13];
-            var domain = rt_oTable.fnGetData(this)[12];
+            var username = rt_oTable.fnGetData(this)[12];
+            var domain = rt_oTable.fnGetData(this)[13];
+            var password = rt_oTable.fnGetData(this)[14];
+            var scrwidth = rt_oTable.fnGetData(this)[2];
+            //console.log(scrwidth);
             if (vizzop.Daemon != null) {
 
                 var found = false;
@@ -744,7 +739,12 @@
                     };
                     agentmessagebox._interlocutor = client;
                     agentmessagebox._apikey = vizzop.ApiKey;
-                    agentmessagebox.fillBox_RequestScreenView();
+
+                    if ((scrwidth == null) || ((scrwidth == ''))) {
+                        agentmessagebox.fillBox_RequestScreenView();
+                    } else {
+                        agentmessagebox.fillBox_RequestScreenView();
+                    }
                     agentmessagebox.bringtofrontBox();
                 }
                 /*

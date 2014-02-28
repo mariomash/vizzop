@@ -1667,22 +1667,30 @@ namespace vizzopWeb
 
         public string ImageToJpegBase64(Image image, long Q)
         {
-            using (MemoryStream ms = new MemoryStream())
+            string base64String = "";
+            try
             {
-                //image.Save(ms, format);
+                if (image != null)
+                {
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        // Convert Image to byte[] formato jpeg
+                        EncoderParameters eps = new EncoderParameters(1);
+                        eps.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, Q);
+                        ImageCodecInfo ici = GetEncoderInfo("image/jpeg");
+                        image.Save(ms, ici, eps);
 
-                // Convert Image to byte[] formato jpeg
-                EncoderParameters eps = new EncoderParameters(1);
-                eps.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, Q);
-                ImageCodecInfo ici = GetEncoderInfo("image/jpeg");
-                image.Save(ms, ici, eps);
+                        byte[] imageBytes = ms.ToArray();
 
-                byte[] imageBytes = ms.ToArray();
-
-                // Convert byte[] to Base64 String
-                string base64String = Convert.ToBase64String(imageBytes);
-                return base64String;
+                        // Convert byte[] to Base64 String
+                        base64String = Convert.ToBase64String(imageBytes);
+                    }
+                }
             }
+            catch (Exception ex)
+            {
+            }
+            return base64String;
         }
 
         public string FixBase64ForImage(string Image)

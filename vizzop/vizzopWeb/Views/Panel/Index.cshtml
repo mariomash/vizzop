@@ -32,10 +32,10 @@
                                 <div style="padding: 20px;">
                                     <h5 class="hovertab"><i class="icon-eye-open icon-blue" style="margin: 5px;"></i><span style="vertical-align: middle;">Realtime</span></h5>
                                     <p>Here you can see your visitors in realtime, and start a chat with them, even see their browser contents when they are at your site.</p>
-
+                                    <!--
                                     <h5 class="hovertab"><i class="icon-signal icon-blue" style="margin: 5px;"></i><span style="vertical-align: middle;">Analytics</span></h5>
                                     <p>See your Site Analitics for a given date range with all possible information.</p>
-
+                                    -->
                                     <h5 class="hovertab"><i class="icon-comment icon-blue" style="margin: 5px;"></i><span style="vertical-align: middle;">Customer Support</span></h5>
                                     <p>Here you can see your current opened tickets and chats, as well as your full support history.</p>
 
@@ -63,6 +63,7 @@
                                                 <strong>@ViewBag.Chats1Week chats</strong> during last 7 days.
                                             </a>
                                         </li>
+                                        <!--
                                         <li>
                                             <a href="#" onclick="javascript:ShowTab('#analytics');">
                                                 <strong>@ViewBag.VisitsYesterday visits</strong> during last 24 hours.
@@ -73,6 +74,7 @@
                                                 <strong>@ViewBag.UniqueVisitsInterval unique visitors</strong> during last 7 days.
                                             </a>
                                         </li>
+                                            -->
                                         <li><a href="@Url.Action("Index", "Agent")">Your account has a maximum of @converser.Business.MaxAgents agents.
                                         </a>
                                         </li>
