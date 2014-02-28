@@ -57,48 +57,29 @@ var Message = jVizzop.zs_Class.create({
                 index = self._box.Messages.length;
             }
 
-            var show = true;
+            var timestamp_toshow = self._timestamp.toTimeString().substring(0, (self._timestamp.toTimeString().indexOf(' ') - 3));
 
-            if (self._box._type == "MessageBox") {
-                if (self._box.Messages.length > 0) {
-                    if (self._box._boxtextchat != null) {
-                        if (jVizzop(self._box._boxtextchat.msgZone).find('.message').length > 0) {
-                            if (self._box.Messages[index - 1]) {
-                                if (self._box.Messages[index - 1]._from == self._from) {
-                                    show = false;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-
-            var timestamp_toshow = self._timestamp.toTimeString().substring(0, (self._timestamp.toTimeString().indexOf(' ') - 3));                      
-         
             if (self._box._type == "TicketBox") {
                 timestamp_toshow = self._timestamp.toString();
             }
 
-            if (show == true) {
-                var divdate = jVizzop('<span></span>')
-                        .addClass('timestamp')
-                        .text(timestamp_toshow)
-                        .appendTo(self.divmsg);
-                var name_from = self._from;
-                //console.vizzoplib.log(self._from_username + " " + vizzop.me.UserName)
-                if (msg_mine == true) {
-                    name_from = LLang("yo", null);
-                } else {
-                    if ((self._from == null) || (self._from == "")) {
-                        name_from = LLang("anon_client", null);
-                    }
+            var divdate = jVizzop('<span></span>')
+                    .addClass('timestamp')
+                    .text(timestamp_toshow)
+                    .appendTo(self.divmsg);
+            var name_from = self._from;
+            //console.vizzoplib.log(self._from_username + " " + vizzop.me.UserName)
+            if (msg_mine == true) {
+                name_from = LLang("yo", null);
+            } else {
+                if ((self._from == null) || (self._from == "")) {
+                    name_from = LLang("anon_client", null);
                 }
-                var divfrom = jVizzop('<span></span>')
-                        .addClass('from')
-                        .html(name_from)
-                        .appendTo(self.divmsg);
             }
+            var divfrom = jVizzop('<span></span>')
+                    .addClass('from')
+                    .html(name_from)
+                    .appendTo(self.divmsg);
 
             var arr_content = self._content.split("\n");
             //var content = self._content.replace(/\n/g, "<br/>");
@@ -176,6 +157,23 @@ var Message = jVizzop.zs_Class.create({
                 vizzoplib.log(_err);
             }
 
+            /*
+            Una vez añadido el mensaje... 
+            recorremos los .message mirando si toca esconder o mostrar cabeceras
+            */
+
+            var arr = jVizzop(self._box._boxtextchat.msgZone).find('.message');
+            for (i = 1; i < arr.length; i++) {
+                if ((jVizzop(arr[i - 1]).hasClass("interlocutor") == true) && (jVizzop(arr[i]).hasClass("interlocutor") == true) ||
+                    (jVizzop(arr[i - 1]).hasClass("mine") == true) && (jVizzop(arr[i]).hasClass("mine") == true)) {
+                    jVizzop(arr[i]).find(".from").hide();
+                    jVizzop(arr[i]).find(".timestamp").hide();
+                } else {
+                    jVizzop(arr[i]).find(".from").show();
+                    jVizzop(arr[i]).find(".timestamp").show();
+                }
+            }
+
         } catch (err) {
             vizzoplib.log("AddMsgToChat " + err);
         }
@@ -212,14 +210,13 @@ var Message = jVizzop.zs_Class.create({
             self.msg_ok = jVizzop('<span></span>')
                         .prependTo(jVizzop(self.divmsg_contents));
 
-            
             var msg_ok_text = jVizzop('<i></i>')
                         .addClass('vizzop-icon-ok')
                         .css({
                             'float': 'right'
                         })
                         .appendTo(jVizzop(self.msg_ok));
-                        
+
 
         } catch (err) {
             vizzoplib.log("MarkAsOk " + err);
