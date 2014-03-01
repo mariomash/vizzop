@@ -2218,7 +2218,10 @@ namespace vizzopWeb
                 //SingletonCache.Instance.Insert(key, sc_control);
 
                 //Y no tenemos claro si poner a funcionar el worker... a ver si no se resiente mucho la CPU
+#if DEBUG
+#else
                 GetScreenCapture(UserName, Domain);
+#endif
 
                 /* 
                  * Lanzamos el Save en otro hilo... pero antes le mentemos el HTML que toca ya procesado.. 
@@ -3291,6 +3294,7 @@ namespace vizzopWeb
 
                 process.Start();
 #if DEBUG
+                process.PriorityClass = ProcessPriorityClass.Idle;
 #else
                 process.BeginOutputReadLine();
                 process.BeginErrorReadLine();

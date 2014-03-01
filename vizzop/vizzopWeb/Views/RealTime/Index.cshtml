@@ -718,25 +718,27 @@
             //console.log(scrwidth);
             if (vizzop.Daemon != null) {
 
+                var client = {
+                    "UserName": username,
+                    "FullName": fullname,
+                    "Password": password,
+                    "Business": { "Domain": domain },
+                };
+
                 var found = false;
                 jVizzop.each(vizzop.Boxes, function (index, foundbox) {
-                    if (foundbox._interlocutor != null) {
-                        if (foundbox._interlocutor.UserName + foundbox._interlocutor.Business.Domain == username + domain) {
+                    if ((typeof foundbox._interlocutor != "undefined") && (foundbox._interlocutor != null)) {
+                        if (foundbox.CheckIfInterlocutorIsInList(client) == true) {
                             foundbox.bringtofrontBox();
                             found = true;
                             return false;
                         }
                     }
                 });
+
                 if (found == false) {
                     var agentmessagebox = new AgentMessageBox();
-                    var client = {
-                        "UserName": username,
-                        "FullName": fullname,
-                        "Password": password,
-                        "Business": { "Domain": domain },
-                    };
-                    agentmessagebox._interlocutor = client;
+                    agentmessagebox.AddInterlocutor(client);
                     agentmessagebox._apikey = vizzop.ApiKey;
 
                     if ((scrwidth == null) || ((scrwidth == ''))) {
@@ -746,11 +748,6 @@
                     }
                     agentmessagebox.bringtofrontBox();
                 }
-                /*
-                jVizzop.each(vizzop.Boxes, function (index, foundbox) {
-                    (foundbox._interlocutor);
-                });
-                */
             }
 
         });

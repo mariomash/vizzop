@@ -143,7 +143,7 @@
                     jVizzop(self._boxtextchat.inputZone).hide();
                     if ((jVizzop.trim(jVizzop(self._boxtextchat.inputTextArea).val()) != '') && (jVizzop(self.commentandclose).attr('disabled') != true)) {
                         if (self._interlocutor.UserName != null) {
-                            var msg = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, self._interlocutor.UserName + '@' + self._interlocutor.Business.Domain, 'ticket', jVizzop(self._boxtextchat.inputTextArea).val(), self, self._commsessionid);
+                            var msg = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, self._interlocutor[0].UserName + '@' + self._interlocutor[0].Business.Domain, 'ticket', jVizzop(self._boxtextchat.inputTextArea).val(), self, self._commsessionid);
                             msg._commsessionid = self._commsessionid;
                             msg._selfticketstate = 'close';
                             jVizzop(msg).bind('sent', function (e, value) {
@@ -185,7 +185,7 @@
                     jVizzop(self._boxtextchat.inputZone).hide();
                     if ((jVizzop.trim(jVizzop(self._boxtextchat.inputTextArea).val()) != '') && (jVizzop(self.justcomment).attr('disabled') != true)) {
                         if (self._interlocutor.UserName != null) {
-                            var msg = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, self._interlocutor.UserName + '@' + self._interlocutor.Business.Domain, null, jVizzop(self._boxtextchat.inputTextArea).val(), self, self._commsessionid);
+                            var msg = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, self._interlocutor[0].UserName + '@' + self._interlocutor[0].Business.Domain, null, jVizzop(self._boxtextchat.inputTextArea).val(), self, self._commsessionid);
                             msg._commsessionid = self._commsessionid;
                             msg._selfticketstate = 'open';
                             jVizzop(msg).bind('sent', function (e, value) {
@@ -225,7 +225,7 @@
                     jVizzop(self._boxtextchat.inputZone).hide();
                     if (jVizzop(self.justclose).attr('disabled') != true) {
                         if (self._interlocutor.UserName != null) {
-                            var msg = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, self._interlocutor.UserName + '@' + self._interlocutor.Business.Domain, null, null, self, self._commsessionid);
+                            var msg = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, self._interlocutor[0].UserName + '@' + self._interlocutor[0].Business.Domain, null, null, self, self._commsessionid);
                             msg._commsessionid = self._commsessionid;
                             msg._selfticketstate = 'close';
                             jVizzop(msg).bind('sent', function (e, value) {
@@ -260,7 +260,7 @@
                     e.preventDefault();
                     self._reopenbutton.hide();
                     self._topstatusloading.show();
-                    var msg = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, self._interlocutor.UserName + '@' + self._interlocutor.Business.Domain, null, null, self, self._commsessionid);
+                    var msg = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, self._interlocutor[0].UserName + '@' + self._interlocutor[0].Business.Domain, null, null, self, self._commsessionid);
                     msg._commsessionid = self._commsessionid;
                     msg._selfticketstate = 'open';
                     jVizzop(msg).bind('sent', function (e, value) {

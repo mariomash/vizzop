@@ -283,8 +283,7 @@
             if (vizzop.Daemon != null) {
                 var found = false;
                 jVizzop.each(vizzop.Boxes, function (index, foundbox) {
-                    //(foundbox._interlocutor);
-                    if (foundbox._interlocutor != null) {
+                    if ((typeof foundbox._interlocutor != "undefined") && (foundbox._interlocutor != null)) {
                         if (foundbox._interlocutor.UserName + foundbox._interlocutor.Business.Domain == username + domain) {
                             foundbox.bringtofrontBox();
                             found = true;

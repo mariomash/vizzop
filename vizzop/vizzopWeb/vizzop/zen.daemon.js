@@ -426,7 +426,7 @@ var Daemon = jVizzop.zs_Class.create({
                 self.checkCommSessions();
                 jVizzop.each(vizzop.Boxes, function (index, foundbox) {
                     if ((typeof foundbox._interlocutor != "undefined") && (foundbox._interlocutor != null)) {
-                        if (foundbox._interlocutor.UserName != "undefined") {
+                        if (foundbox._interlocutor.length > 0) {
                             foundbox.loadScreen();
                         }
                     }
@@ -734,8 +734,8 @@ var Daemon = jVizzop.zs_Class.create({
                                         return false;
                                     }
                                     jVizzop.each(vizzop.Boxes, function (_index, __foundbox) {
-                                        if (__foundbox._interlocutor != null) {
-                                            if (__foundbox._interlocutor.UserName == v.UserName) {
+                                        if (__foundbox._interlocutor.length > 0) {
+                                            if (__foundbox.CheckIfInterlocutorIsInList(v)) {
                                                 __foundbox.bringtofrontBox();
                                                 v.Active = false;
                                                 return false;
@@ -745,7 +745,7 @@ var Daemon = jVizzop.zs_Class.create({
                                     if (v.Active == true) {
                                         var agentmessagebox = new AgentMessageBox();
                                         //var client = { "UserName": v.UserName, "FullName": v.FullName, "Domain": v.Business.Domain };
-                                        agentmessagebox._interlocutor = v;
+                                        agentmessagebox.AddInterlocutor(v);
                                         agentmessagebox._apikey = vizzop.ApiKey;
                                         if (v.FullName != "") {
                                             agentmessagebox._statustext = LLang('chat_with', [v.FullName]);
@@ -761,8 +761,8 @@ var Daemon = jVizzop.zs_Class.create({
 
 
                         jVizzop.each(vizzop.Boxes, function (_index, __foundbox) {
-                            if (__foundbox._interlocutor) {
-                                if (__foundbox._interlocutor.UserName == v.UserName) {
+                            if ((typeof __foundbox._interlocutor != "undefined") && (__foundbox._interlocutor != null)) {
+                                if (__foundbox.CheckIfInterlocutorIsInList(v)) {
                                     icon_img = 'vizzop-icon-comment vizzop-icon-green';
                                 }
                             }
@@ -1021,7 +1021,7 @@ var Daemon = jVizzop.zs_Class.create({
                         msgbox.destroyBox();
                         return;
                     }
-                    msgbox._interlocutor = data.Session.Client;
+                    msgbox.AddInterlocutor(data.Session.Client);
                     msgbox.fillBox_ShowMessageHistory();
                     var status_text = "";
                     switch (data.Session.Status) {
@@ -1195,9 +1195,9 @@ var Daemon = jVizzop.zs_Class.create({
                     }
                     var msgbox = null;
                     jVizzop.each(vizzop.Boxes, function (index, _foundbox) {
-                        if (_foundbox._interlocutor != null) {
+                        if ((typeof _foundbox._interlocutor != "undefined") && (_foundbox._interlocutor != null)) {
                             try {
-                                if (_foundbox._interlocutor.UserName == interlocutor) {
+                                if (_foundbox.CheckIfInterlocutorIsInList(interlocutor)) {
                                     msgbox = _foundbox;
                                 }
                             } catch (_err) {
@@ -1304,7 +1304,6 @@ var Daemon = jVizzop.zs_Class.create({
                                     switch (v.Subject) {
                                         case '$#_closesession':
                                         case '$#_ask4screenshare':
-                                        case '$#_currentdimensions':
                                         case '$#_cancelscreenshare':
                                         case '$#_ask4video':
                                         case '$#_cancelvideo':
@@ -1326,7 +1325,7 @@ var Daemon = jVizzop.zs_Class.create({
                             }
 
                             if (v.From.UserName + v.From.Business.Domain != vizzop.me.UserName + vizzop.me.Business.Domain) {
-                                msgbox._interlocutor = v.From;
+                                msgbox.AddInterlocutor(v.From);
                             }
 
                             msgbox._apikey = vizzop.ApiKey;
@@ -1342,8 +1341,8 @@ var Daemon = jVizzop.zs_Class.create({
 
                     if (msgbox == null) {
                         jVizzop.each(vizzop.Boxes, function (index, _foundbox) {
-                            if (_foundbox._interlocutor != null) {
-                                if (v.From.UserName + v.From.Business.Domain == _foundbox._interlocutor.UserName + _foundbox._interlocutor.Business.Domain) {
+                            if ((typeof _foundbox._interlocutor != "undefined") && (_foundbox._interlocutor != null)) {
+                                if (_foundbox.CheckIfInterlocutorIsInList(v.From)) {
                                     msgbox = _foundbox;
                                 }
                             }
@@ -1370,7 +1369,7 @@ var Daemon = jVizzop.zs_Class.create({
                             case '$#_startsession':
                                 //alert("eo");
                                 msgbox._commsessionid = v.Content;
-                                msgbox._interlocutor = v.From;
+                                msgbox.AddInterlocutor(v.From);
                                 msgbox._apikey = vizzop.ApiKey;
                                 break;
                             case '$#_closesession':
@@ -1400,28 +1399,14 @@ var Daemon = jVizzop.zs_Class.create({
                             case '$#_updatescreen':
                                 jVizzop.each(vizzop.Boxes, function (index, foundbox) {
                                     if ((typeof foundbox._interlocutor != "undefined") && (foundbox._interlocutor != null)) {
-                                        if (foundbox._interlocutor.UserName != "undefined") {
-                                            if (v.From.UserName + v.From.Business.Domain == foundbox._interlocutor.UserName + foundbox._interlocutor.Business.Domain) {
-                                                foundbox.loadScreen();
-                                            }
+                                        if (foundbox.CheckIfInterlocutorIsInList(v.From)) {
+                                            foundbox.loadScreen();
                                         }
                                     }
                                 });
                                 break;
                             case '$#_triggerclick':
                                 jVizzop('*[vizzop-id="' + v.Content + '"]').trigger('click');
-                                break;
-                            case '$#_currentdimensions':
-                                var dimensions_arr = v.Content.split(",");
-                                var width = dimensions_arr[0];
-                                var height = dimensions_arr[1];
-                                //vizzoplib.log(msgbox);
-                                msgbox._interlocutor_iframe_width = width;
-                                msgbox._interlocutor_iframe_height = height;
-                                if (jVizzop(msgbox._box).hasClass('screenshare') == true) {
-                                    msgbox._interlocutor_iframe.attr('width', width);
-                                    msgbox._interlocutor_iframe.attr('height', height);
-                                }
                                 break;
                             case '$#_cancelscreenshare':
                                 msgbox.cancel_Screenshare();
@@ -1437,7 +1422,7 @@ var Daemon = jVizzop.zs_Class.create({
                                     msgbox._boxtitletext.attr({
                                         'rel': 'popover',
                                         'title': 'Information',
-                                        'data-content': '<div>' + LLang('interlocutor_ended_video', [msgbox._interlocutor.FullName]) + '</div><div class=actions id=popover_action><button class="vizzop-btn" id=popover_action_ok>Ok</button></div>'
+                                        'data-content': '<div>' + LLang('interlocutor_ended_video', [msgbox._interlocutor[0].FullName]) + '</div><div class=actions id=popover_action><button class="vizzop-btn" id=popover_action_ok>Ok</button></div>'
                                     });
                                     msgbox._boxtitletext.popover({
                                         placement: 'bottom',
@@ -1517,7 +1502,7 @@ var Daemon = jVizzop.zs_Class.create({
                         newmsg._timestamp = vizzoplib.parseJsonDate(v.TimeStamp);
                         newmsg._old = v.Status;
 
-                        msgbox._interlocutor = v.From;
+                        msgbox.AddInterlocutor(v.From);
                         msgbox._commsessionid = v.CommSession.ID;
                         msgbox._col1.css('display', 'inline-block');
                         msgbox.inform_available();
@@ -1639,16 +1624,14 @@ var Daemon = jVizzop.zs_Class.create({
 
             jVizzop.each(vizzop.Boxes, function (index, foundbox) {
                 if ((typeof foundbox._interlocutor != "undefined") && (foundbox._interlocutor != null)) {
-                    if (foundbox._interlocutor.UserName != "undefined") {
-                        listeners_list = listeners_list + foundbox._interlocutor.UserName + '@' + foundbox._interlocutor.Business.Domain + ',';
+                    jVizzop.each(foundbox._interlocutor, function (_index, _interlocutor) {
+                        listeners_list = listeners_list + ',' + _interlocutor.UserName + '@' + _interlocutor.Business.Domain;
+                    });
+                    if (listeners_list.length > 0) {
+                        listeners_list = listeners_list.slice(1);
                     }
                 }
             });
-
-            if (listeners_list.length > 0) {
-                listeners_list = listeners_list.slice(0, -1);
-            }
-
 
             //solo mandamos lo que de tiempo a enviarse (lo ultimo que haya)
             /*
@@ -2056,8 +2039,10 @@ var Daemon = jVizzop.zs_Class.create({
                             box.fillBox_LeaveMessage(LLang('checked_leave_message', null));
                             return;
                         }
-                        //En caso contrario hay un converser con el que chatear.... Transformando!!! :)
-                        box._interlocutor = data;
+                        /*
+                        En caso contrario hay un converser con el que chatear.... lo añadimos a la lista!!! :)
+                        */
+                        box.AddInterlocutor(data);
 
                         /*
                         //Vamos a dejar esto en waiting for hasta que el operador diga algo y entonces mostramos el tema!!!

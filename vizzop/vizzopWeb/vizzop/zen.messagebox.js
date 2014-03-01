@@ -5,9 +5,33 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
         var self = this;
         self.base('initialize');
         self._type = 'MessageBox';
-        self._interlocutor = null;
+        self._interlocutor = [];
         self.Messages = [];
         self.unread_elements = new Number(0);
+    },
+    CheckIfInterlocutorIsInList: function (interlocutor) {
+        var self = this;
+        var found = false;
+        try {
+            jVizzop(self._interlocutor).each(function (index, item) {
+                if ((item.UserName == interlocutor.UserName) && (item.Business.Domain == interlocutor.Business.Domain)) {
+                    found = true;
+                }
+            });
+        } catch (err) {
+            vizzoplib.log("Error AddInterlocutor" + "/" + err);
+        }
+        return found;
+    },
+    AddInterlocutor: function (interlocutor) {
+        var self = this;
+        try {
+            if (self.CheckIfInterlocutorIsInList(interlocutor) == false) {
+                self._interlocutor.push(interlocutor);
+            }
+        } catch (err) {
+            vizzoplib.log("Error AddInterlocutor" + "/" + err);
+        }
     },
     // methodsGetAllDetailsFromCommSession
     GetAllDetailsFromCommSession: function () {
@@ -145,7 +169,7 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                 return false;
             });
             jVizzop('#popover_action_no').click(function (event) {
-                var newmsg = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, self._interlocutor.UserName + '@' + self._interlocutor.Business.Domain, '$#_cancelscreenshare', null, self, self._commsessionid);
+                var newmsg = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, self._interlocutor[0].UserName + '@' + self._interlocutor[0].Business.Domain, '$#_cancelscreenshare', null, self, self._commsessionid);
                 vizzop.MsgCue.push(newmsg);
                 jVizzop(self._boxtitletext).popover('hide');
                 return false;
@@ -345,10 +369,10 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                     self.loadingScreen = null;
                 }
             });
-
+    
             if (self.slider_interlocutor_image.attr('value') == self.slider_interlocutor_image.attr('max')) {
                 url = vizzop.mainURL + "/RealTime/GetScreen";
-
+    
                 var guid = null;
                 if (self.ScreenShots.length > 0) {
                     guid = self.ScreenShots[self.ScreenShots.length - 1].GUID;
@@ -377,8 +401,8 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                 guid = self.ScreenShots[self.ScreenShots.length - 1].GUID;
             }
             msg = {
-                'username': self._interlocutor.UserName,
-                'domain': self._interlocutor.Business.Domain,
+                'username': self._interlocutor[0].UserName,
+                'domain': self._interlocutor[0].Business.Domain,
                 'guid': guid,
                 'height': self._boxscreenshare.outerHeight()
             };
@@ -391,7 +415,7 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                 },
                 success: function (data) {
                     self._boxscreenshareloading.hide();
-                    
+
                     if (data != null) {
                         if (data != false) {
                             self._col0.css('display', 'inline-block');
@@ -626,9 +650,9 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                             'width': '120',
                             'height': '90'
                         });
-                        var newmsg = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, self._interlocutor.UserName + '@' + self._interlocutor.Business.Domain, '$#_ask4video', self._commsessionid, self, self._commsessionid);
+                        var newmsg = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, self._interlocutor[0].UserName + '@' + self._interlocutor[0].Business.Domain, '$#_ask4video', self._commsessionid, self, self._commsessionid);
                         vizzop.MsgCue.push(newmsg);
-                        var newmsg_ = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, self._interlocutor.UserName + '@' + self._interlocutor.Business.Domain, '$#_ask4video', self._commsessionid, self, self._commsessionid);
+                        var newmsg_ = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, self._interlocutor[0].UserName + '@' + self._interlocutor[0].Business.Domain, '$#_ask4video', self._commsessionid, self, self._commsessionid);
                         vizzop.MsgCue.push(newmsg_);
                     } catch (err) {
                         vizzoplib.log(err);
@@ -743,7 +767,7 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
             self._boxinner.show();
             self.positionBox(null, 0);
             if (dont_send_msg == null) {
-                var newmsg = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, self._interlocutor.UserName + '@' + self._interlocutor.Business.Domain, '$#_cancelvideo', self._commsessionid, self, self._commsessionid);
+                var newmsg = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, self._interlocutor[0].UserName + '@' + self._interlocutor[0].Business.Domain, '$#_cancelvideo', self._commsessionid, self, self._commsessionid);
                 vizzop.MsgCue.push(newmsg);
             }
         } catch (err) {
@@ -988,7 +1012,7 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                                 */
                         })
                         .focusout(function () {
-                            var newmsg = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, self._interlocutor.UserName + '@' + self._interlocutor.Business.Domain, '$#_inputfocus_out', self._commsessionid, self, self._commsessionid);
+                            var newmsg = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, self._interlocutor[0].UserName + '@' + self._interlocutor[0].Business.Domain, '$#_inputfocus_out', self._commsessionid, self, self._commsessionid);
                             newmsg._from_fullname = vizzop.me.FullName;
                             /*
                             new_Cue = [];
@@ -1009,13 +1033,14 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                     if (e.keyCode == 13) {
                         e.preventDefault();
                         if (jVizzop.trim(jVizzop(this).val()) != '') {
-                            if (self._interlocutor != null) {
-                                if (self._interlocutor.UserName != null) {
-                                    var msg = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, self._interlocutor.UserName + '@' + self._interlocutor.Business.Domain, null, jVizzop(this).val(), self, self._commsessionid);
+
+                            if ((typeof self._interlocutor != "undefined") && (self._interlocutor != null)) {
+                                jVizzop.each(self._interlocutor, function (index, interlocutor) {
+                                    var msg = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, interlocutor.UserName + '@' + interlocutor.Business.Domain, null, jVizzop(this).val(), self, self._commsessionid);
                                     msg._from_username = vizzop.me.UserName;
                                     msg._from_domain = vizzop.me.Business.Domain;
                                     msg._from_fullname = vizzop.me.FullName;
-                                    msg._to_username = self._interlocutor.UserName;
+                                    msg._to_username = interlocutor.UserName;
                                     //vizzoplib.log(msg);
                                     jVizzop(msg).bind('sent', function (e, value) {
                                         if (value._status == "error") {
@@ -1028,7 +1053,7 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                                     vizzop.Daemon.sendNewMessages();
                                     msg.AddMsgToChat(msg);
                                     jVizzop(this).val(null);
-                                }
+                                });
                             }
                         }
                         if (jVizzop.trim(jVizzop(this).val()) == '') {
@@ -1036,9 +1061,9 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                         }
                     } else {
 
-                        if (self._interlocutor != null) {
-                            if (self._interlocutor.UserName != null) {
-                                var newmsg = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, self._interlocutor.UserName + '@' + self._interlocutor.Business.Domain, '$#_inputfocus_in', self._commsessionid, self, self._commsessionid);
+                        if ((typeof self._interlocutor != "undefined") && (self._interlocutor != null)) {
+                            jVizzop.each(self._interlocutor, function (index, interlocutor) {
+                                var newmsg = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, interlocutor.UserName + '@' + interlocutor.Business.Domain, '$#_inputfocus_in', self._commsessionid, self, self._commsessionid);
                                 newmsg._from_fullname = vizzop.me.FullName;
                                 /*
                                 new_Cue = [];
@@ -1050,7 +1075,7 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                                 vizzop.MsgCue = new_Cue;
                                 */
                                 vizzop.MsgCue.push(newmsg);
-                            }
+                            });
                         }
 
                     }
@@ -1519,9 +1544,9 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                 'agent_username': vizzop.me.UserName,
                 'agent_password': vizzop.me.Password,
                 'agent_domain': vizzop.me.Business.Domain,
-                'username': self._interlocutor.UserName,
-                'domain': self._interlocutor.Business.Domain,
-                'password': self._interlocutor.Password
+                'username': self._interlocutor[0].UserName,
+                'domain': self._interlocutor[0].Business.Domain,
+                'password': self._interlocutor[0].Password
             };
             var url = vizzop.mainURL + "/Comm/Requestcommsessionid";
             //console.vizzoplib.log(msg);
@@ -1534,7 +1559,7 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                     //console.vizzoplib.log(data);
                     if (data != false) {
                         self._commsessionid = data;
-                        var newmsg = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, self._interlocutor.UserName + '@' + self._interlocutor.Business.Domain, '$#_startsession', self._commsessionid, self, self._commsessionid);
+                        var newmsg = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, self._interlocutor[0].UserName + '@' + self._interlocutor[0].Business.Domain, '$#_startsession', self._commsessionid, self, self._commsessionid);
                         newmsg._from_fullname = vizzop.me.FullName;
                         jVizzop(newmsg).bind('sent', function (e, value) {
                             if (value._status == "error") {
@@ -1585,7 +1610,7 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                 success: function (data) {
                     if (data != false) {
                         self._commsessionid = data;
-                        var newmsg = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, self._interlocutor.UserName + '@' + self._interlocutor.Business.Domain, '$#_startsession', self._commsessionid, self, self._commsessionid);
+                        var newmsg = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, self._interlocutor[0].UserName + '@' + self._interlocutor[0].Business.Domain, '$#_startsession', self._commsessionid, self, self._commsessionid);
                         newmsg._from_fullname = vizzop.me.FullName;
                         vizzop.MsgCue.push(newmsg);
                         jVizzop(newmsg).bind('sent', function (e, value) {
