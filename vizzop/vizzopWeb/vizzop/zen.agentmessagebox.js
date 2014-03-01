@@ -21,7 +21,6 @@
 				.addClass('zs_boxinfocontents')
 				.appendTo(self._boxinfo);
 
-			//self._interlocutor.UserName
 			self._text = jVizzop('<h5></h5>')
 				.text(LLang('support_question', null))
 				.appendTo(msgbox);

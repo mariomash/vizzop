@@ -1091,7 +1091,6 @@ var Daemon = jVizzop.zs_Class.create({
                             newmsg._to_domain = v.To.Business.Domain;
                             newmsg._status = "sent";
                             newmsg._timestamp = vizzoplib.parseJsonDate(v.TimeStamp);
-                            //msgbox._interlocutor = v.To;
                             if (v.From.UserName == data.Session.Client.UserName) {
                                 newmsg._from += " (client) ";
                             } else {
@@ -1216,7 +1215,6 @@ var Daemon = jVizzop.zs_Class.create({
                         newmsg._to_domain = v.To.Business.Domain;
                         newmsg._status = "sent";
                         newmsg._timestamp = vizzoplib.parseJsonDate(v.TimeStamp);
-                        //msgbox._interlocutor = v.To;
 
                         newmsg.AddMsgToChat(newmsg);
                     });
@@ -1423,7 +1421,6 @@ var Daemon = jVizzop.zs_Class.create({
                                 if (jVizzop(msgbox._box).hasClass('screenshare') == true) {
                                     msgbox._interlocutor_iframe.attr('width', width);
                                     msgbox._interlocutor_iframe.attr('height', height);
-                                    //vizzoplib.log(msgbox._interlocutor_iframe);
                                 }
                                 break;
                             case '$#_cancelscreenshare':
