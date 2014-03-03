@@ -86,67 +86,77 @@ namespace vizzopWeb.vizzop
 
                             break;
                         case "Plain":
-                            string From = dict.ContainsKey("From") == false ? "" : dict["From"] == null ? null : dict["From"].ToString();
 
-                            string From_FullName = dict.ContainsKey("From_FullName") == false ? "" : dict["From_FullName"] == null ? null : dict["From_FullName"].ToString();
-                            if ((From_FullName == "null") || (From_FullName == ""))
+                            string ToArr = dict.ContainsKey("To") == false ? "" : dict["To"] == null ? null : dict["To"].ToString();
+                            foreach (var ToComplete in ToArr.Split(','))
                             {
-                                From_FullName = null;
-                            }
+                                string To = ToComplete;
+                                if (To.Contains("::"))
+                                {
+                                    To = ToComplete.Split(new string[] { "::" }, StringSplitOptions.None)[1].ToString();
+                                }
+                                string From = dict.ContainsKey("From") == false ? "" : dict["From"] == null ? null : dict["From"].ToString();
 
-                            string To = dict.ContainsKey("To") == false ? "" : dict["To"] == null ? null : dict["To"].ToString();
-                            string Subject = dict.ContainsKey("Subject") == false ? "" : dict["Subject"] == null ? null : dict["Subject"].ToString();
-                            string Content = dict.ContainsKey("Content") == false ? "" : dict["Content"] == null ? null : dict["Content"].ToString();
-                            string _clientid = dict.ContainsKey("_clientid") == false ? "" : dict["_clientid"] == null ? null : dict["_clientid"].ToString();
+                                string From_FullName = dict.ContainsKey("From_FullName") == false ? "" : dict["From_FullName"] == null ? null : dict["From_FullName"].ToString();
+                                if ((From_FullName == "null") || (From_FullName == ""))
+                                {
+                                    From_FullName = null;
+                                }
 
-                            if ((_clientid == null) || (_clientid == "null") && (_clientid == ""))
-                            {
-                                DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-                                TimeSpan diff = DateTime.Now.ToUniversalTime() - origin;
-                                _clientid = Math.Floor(diff.TotalSeconds).ToString();
-                            }
+                                string Subject = dict.ContainsKey("Subject") == false ? "" : dict["Subject"] == null ? null : dict["Subject"].ToString();
+                                string Content = dict.ContainsKey("Content") == false ? "" : dict["Content"] == null ? null : dict["Content"].ToString();
+                                string _clientid = dict.ContainsKey("_clientid") == false ? "" : dict["_clientid"] == null ? null : dict["_clientid"].ToString();
 
-                            string _status = dict.ContainsKey("_status") == false ? "" : dict["_status"] == null ? null : dict["_status"].ToString();
+                                if ((_clientid == null) || (_clientid == "null") && (_clientid == ""))
+                                {
+                                    DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+                                    TimeSpan diff = DateTime.Now.ToUniversalTime() - origin;
+                                    _clientid = Math.Floor(diff.TotalSeconds).ToString();
+                                }
 
-                            string TimeStamp = dict.ContainsKey("TimeStamp") == false ? "" : dict["TimeStamp"] == null ? null : dict["TimeStamp"].ToString();
-                            if ((TimeStamp == null) || (TimeStamp == "null") && (TimeStamp == ""))
-                            {
-                                TimeStamp = DateTime.UtcNow.ToString("o");
-                            }
+                                string _status = dict.ContainsKey("_status") == false ? "" : dict["_status"] == null ? null : dict["_status"].ToString();
 
-                            string TimeStampSenderSending = dict.ContainsKey("TimeStampSenderSending") == false ? "" : dict["TimeStampSenderSending"] == null ? null : dict["TimeStampSenderSending"].ToString();
-                            if ((TimeStampSenderSending == null) || (TimeStampSenderSending == "null") && (TimeStampSenderSending == ""))
-                            {
-                                TimeStampSenderSending = DateTime.UtcNow.ToString("o");
-                            }
+                                string TimeStamp = dict.ContainsKey("TimeStamp") == false ? "" : dict["TimeStamp"] == null ? null : dict["TimeStamp"].ToString();
+                                if ((TimeStamp == null) || (TimeStamp == "null") && (TimeStamp == ""))
+                                {
+                                    TimeStamp = DateTime.UtcNow.ToString("o");
+                                }
 
-                            string commsessionid = dict.ContainsKey("commsessionid") == false ? "" : dict["commsessionid"] == null ? null : dict["commsessionid"].ToString();
-                            string SetTicketState = dict.ContainsKey("SetTicketState") == false ? "" : dict["SetTicketState"] == null ? null : dict["SetTicketState"].ToString();
+                                string TimeStampSenderSending = dict.ContainsKey("TimeStampSenderSending") == false ? "" : dict["TimeStampSenderSending"] == null ? null : dict["TimeStampSenderSending"].ToString();
+                                if ((TimeStampSenderSending == null) || (TimeStampSenderSending == "null") && (TimeStampSenderSending == ""))
+                                {
+                                    TimeStampSenderSending = DateTime.UtcNow.ToString("o");
+                                }
 
-                            string lang = utils.GetLang(context);
+                                string commsessionid = dict.ContainsKey("commsessionid") == false ? "" : dict["commsessionid"] == null ? null : dict["commsessionid"].ToString();
+                                string SetTicketState = dict.ContainsKey("SetTicketState") == false ? "" : dict["SetTicketState"] == null ? null : dict["SetTicketState"].ToString();
 
-                            Content = Content.Replace(Environment.NewLine, null);
+                                string lang = utils.GetLang(context);
 
-                            NewMessage newmessage = new NewMessage();
-                            newmessage.From = From;
-                            newmessage.From_FullName = From_FullName;
-                            newmessage.To = To;
-                            newmessage.Subject = Subject;
-                            newmessage.Content = Content;
-                            newmessage._clientid = _clientid;
-                            newmessage._status = _status;
-                            newmessage.TimeStamp = TimeStamp;
-                            newmessage.TimeStampSenderSending = TimeStampSenderSending;
-                            newmessage.TimeStampSrvAccepted = DateTime.Now.ToUniversalTime();
-                            newmessage.commsessionid = commsessionid;
-                            newmessage.Lang = lang;
-                            newmessage.MessageType = "chat";
+                                Content = Content.Replace(Environment.NewLine, null);
 
-                            bool sent = utils.SendMessage(newmessage, SetTicketState);
+                                NewMessage newmessage = new NewMessage();
+                                newmessage.From = From;
+                                newmessage.From_FullName = From_FullName;
+                                newmessage.To = To;
+                                newmessage.CC = ToArr;
+                                newmessage.Subject = Subject;
+                                newmessage.Content = Content;
+                                newmessage._clientid = _clientid;
+                                newmessage._status = _status;
+                                newmessage.TimeStamp = TimeStamp;
+                                newmessage.TimeStampSenderSending = TimeStampSenderSending;
+                                newmessage.TimeStampSrvAccepted = DateTime.Now.ToUniversalTime();
+                                newmessage.commsessionid = commsessionid;
+                                newmessage.Lang = lang;
+                                newmessage.MessageType = "chat";
 
-                            if (sent == false)
-                            {
-                                utils.GrabaLog(vizzopWeb.Utils.NivelLog.error, "Msg Not Sent : " + newmessage.Subject + "," + newmessage.Content);
+                                bool sent = utils.SendMessage(newmessage, SetTicketState);
+
+                                if (sent == false)
+                                {
+                                    utils.GrabaLog(vizzopWeb.Utils.NivelLog.error, "Msg Not Sent : " + newmessage.Subject + "," + newmessage.Content);
+                                }
                             }
                             break;
                     }

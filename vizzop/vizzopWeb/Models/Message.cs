@@ -217,6 +217,11 @@ namespace vizzopWeb.Models
                     this.To_Domain = newmessage.To.Split('@')[1].ToString();
                     this.To_UserName = newmessage.To.Split('@')[0].ToString();
                 }
+
+                if (newmessage.CC.Length > 0)
+                {
+                    this.CC = newmessage.CC;
+                }
                 this.MessageType = newmessage.MessageType;
 
                 /*
@@ -324,6 +329,8 @@ namespace vizzopWeb.Models
 
         //[Required]
         public virtual Converser To { get; set; }
+
+        public string CC { get; set; }
 
         public string To_UserName { get; set; }
         public string To_Domain { get; set; }

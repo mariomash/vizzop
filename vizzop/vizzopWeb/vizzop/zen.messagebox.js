@@ -57,7 +57,10 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                     if (data == null) {
                         return;
                     }
-                    self.prepareChatInfoSection(data);
+                    if (vizzop.mode == 'agent') {
+                        self.prepareChatInfoSection(data);
+                    }
+
                     if (data.Session.Messages != null) {
                         if (data.Session.Messages.length > 0) {
                             self._col1.css('display', 'inline-block');
@@ -72,7 +75,6 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                                 newmsg._status = "sent";
                                 newmsg._old = v.Status;
                                 newmsg._timestamp = vizzoplib.parseJsonDate(v.TimeStamp);
-                                //msgbox._interlocutor = v.To;
                                 newmsg.AddMsgToChat(newmsg);
                             }
                         });
@@ -104,40 +106,32 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
         var self = this;
         try {
 
-            //console.vizzoplib.log(data);
             var all_info = '';
-            var interlocutor_type = 'Support Agent';
-            if (vizzop.mode == 'agent') {
-                interlocutor_type = 'Client Name';
+            if (data.Session.CreatedOn != null) {
+                var first_message_time = vizzoplib.parseJsonDate(data.Session.CreatedOn);
+                all_info += '<dl><dt>First Access</dt><dd>' + first_message_time.toDateString() + ' ' + first_message_time.toTimeString().substring(0, (first_message_time.toTimeString().indexOf(' ') - 3)) + '</dd></dl>';
             }
-            all_info += '<dl><dt>' + interlocutor_type + '</dt><dd>' + self._interlocutor.FullName + '</dd></dl>';
+            if (data.Location.Lang != null) {
+                all_info += '<dl><dt>Language</dt><dd>' + data.Location.Lang + '</dd></dl>';
+            }
+            if (data.Location.Url != null) {
+                all_info += '<dl><dt>URL</dt><dd>' + data.Location.Url + '</dd></dl>';
+            }
+            if (data.Location.Referrer != null) {
+                all_info += '<dl><dt>Referrer</dt><dd>' + data.Location.Referrer + '</dd></dl>';
+            }
+            /*
+            if (data.Location.IP != null) {
+                all_info += '<dl><dt>IP</dt><dd>' + data.Location.IP + '</dd></dl>';
+            }
+            */
+            if (data.Location.UserAgent != null) {
+                var browser = data.Location.UserAgent.substring(data.Location.UserAgent.lastIndexOf(" ") + 1, data.Location.length);
+                all_info += '<dl><dt>Browser</dt><dd>' + browser + '</dd></dl>';
+                var OS = data.Location.UserAgent.substring(data.Location.UserAgent.indexOf("(") + 1, data.Location.UserAgent.indexOf(")"));
+                all_info += '<dl><dt>Operating System</dt><dd>' + OS + '</dd></dl>';
+            }
 
-            if (vizzop.mode == 'agent') {
-                if (data.Session.CreatedOn != null) {
-                    var first_message_time = vizzoplib.parseJsonDate(data.Session.CreatedOn);
-                    all_info += '<dl><dt>First Access</dt><dd>' + first_message_time.toDateString() + ' ' + first_message_time.toTimeString().substring(0, (first_message_time.toTimeString().indexOf(' ') - 3)) + '</dd></dl>';
-                }
-                if (data.Location.Lang != null) {
-                    all_info += '<dl><dt>Language</dt><dd>' + data.Location.Lang + '</dd></dl>';
-                }
-                if (data.Location.Url != null) {
-                    all_info += '<dl><dt>URL</dt><dd>' + data.Location.Url + '</dd></dl>';
-                }
-                if (data.Location.Referrer != null) {
-                    all_info += '<dl><dt>Referrer</dt><dd>' + data.Location.Referrer + '</dd></dl>';
-                }
-                /*
-                if (data.Location.IP != null) {
-                    all_info += '<dl><dt>IP</dt><dd>' + data.Location.IP + '</dd></dl>';
-                }
-                */
-                if (data.Location.UserAgent != null) {
-                    var browser = data.Location.UserAgent.substring(data.Location.UserAgent.lastIndexOf(" ") + 1, data.Location.length);
-                    all_info += '<dl><dt>Browser</dt><dd>' + browser + '</dd></dl>';
-                    var OS = data.Location.UserAgent.substring(data.Location.UserAgent.indexOf("(") + 1, data.Location.UserAgent.indexOf(")"));
-                    all_info += '<dl><dt>Operating System</dt><dd>' + OS + '</dd></dl>';
-                }
-            }
             self._col2.css('display', 'inline-block');
             self._chatinfo.html(all_info);
 
@@ -169,8 +163,11 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                 return false;
             });
             jVizzop('#popover_action_no').click(function (event) {
-                var newmsg = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, self._interlocutor[0].UserName + '@' + self._interlocutor[0].Business.Domain, '$#_cancelscreenshare', null, self, self._commsessionid);
-                vizzop.MsgCue.push(newmsg);
+
+                jVizzop.each(self._box._interlocutor, function (index, interlocutor) {
+                    var newmsg = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, interlocutor.UserName + '@' + interlocutor.Business.Domain, '$#_cancelscreenshare', null, self, self._commsessionid);
+                    vizzop.MsgCue.push(newmsg);
+                });
                 jVizzop(self._boxtitletext).popover('hide');
                 return false;
             });
@@ -652,8 +649,6 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                         });
                         var newmsg = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, self._interlocutor[0].UserName + '@' + self._interlocutor[0].Business.Domain, '$#_ask4video', self._commsessionid, self, self._commsessionid);
                         vizzop.MsgCue.push(newmsg);
-                        var newmsg_ = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, self._interlocutor[0].UserName + '@' + self._interlocutor[0].Business.Domain, '$#_ask4video', self._commsessionid, self, self._commsessionid);
-                        vizzop.MsgCue.push(newmsg_);
                     } catch (err) {
                         vizzoplib.log(err);
                         self.cancel_VideoChat();
@@ -891,6 +886,11 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                         .appendTo(self._col2)
                         .hide();
 
+
+                self._convinfo = jVizzop('<div></div>')
+                        .addClass('chatinfo')
+                        .appendTo(self._col2);
+
                 self._chatinfo = jVizzop('<div></div>')
                         .addClass('chatinfo')
                         .appendTo(self._col2);
@@ -1012,48 +1012,63 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                                 */
                         })
                         .focusout(function () {
-                            var newmsg = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, self._interlocutor[0].UserName + '@' + self._interlocutor[0].Business.Domain, '$#_inputfocus_out', self._commsessionid, self, self._commsessionid);
-                            newmsg._from_fullname = vizzop.me.FullName;
                             /*
-                            new_Cue = [];
-                            jVizzop.each(vizzop.MsgCue, function (i, v) {
-                                if ((v._subject != '$#_inputfocus_in') && (v._subject != '$#_inputfocus_out')) {
-                                    new_Cue.push(v);
-                                }
+                            jVizzop.each(self._interlocutor, function (index, interlocutor) {
+                                var newmsg = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, interlocutor.UserName + '@' + interlocutor.Business.Domain, '$#_inputfocus_out', self._commsessionid, self, self._commsessionid);
+                                newmsg._from_fullname = vizzop.me.FullName;
+                                vizzop.MsgCue.push(newmsg);
                             });
-                            vizzop.MsgCue = new_Cue;
                             */
-                            vizzop.MsgCue.push(newmsg);
                         })
-                        .appendTo(self._boxtextchat.inputZone);
+                    .appendTo(self._boxtextchat.inputZone);
 
                 self._boxtextchat.inputTextArea.focus();
 
                 self._boxtextchat.inputTextArea.keypress(function (e) {
                     if (e.keyCode == 13) {
                         e.preventDefault();
-                        if (jVizzop.trim(jVizzop(this).val()) != '') {
-
+                        var input = this;
+                        var text = jVizzop.trim(jVizzop(input).val());
+                        if (text != '') {
                             if ((typeof self._interlocutor != "undefined") && (self._interlocutor != null)) {
+                                var msg = null;
+                                var to_list = '';
                                 jVizzop.each(self._interlocutor, function (index, interlocutor) {
-                                    var msg = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, interlocutor.UserName + '@' + interlocutor.Business.Domain, null, jVizzop(this).val(), self, self._commsessionid);
-                                    msg._from_username = vizzop.me.UserName;
-                                    msg._from_domain = vizzop.me.Business.Domain;
-                                    msg._from_fullname = vizzop.me.FullName;
-                                    msg._to_username = interlocutor.UserName;
-                                    //vizzoplib.log(msg);
-                                    jVizzop(msg).bind('sent', function (e, value) {
-                                        if (value._status == "error") {
-                                            msg.MarkAsError();
-                                        } else {
-                                            msg.MarkAsOk();
-                                        }
-                                    });
-                                    vizzop.MsgCue.push(msg);
-                                    vizzop.Daemon.sendNewMessages();
-                                    msg.AddMsgToChat(msg);
-                                    jVizzop(this).val(null);
+                                    if (vizzop.me.UserName + '@' + vizzop.me.Business.Domain != interlocutor.UserName + '@' + interlocutor.Business.Domain) {
+                                        to_list += ',' + interlocutor.FullName + '::' + interlocutor.UserName + '@' + interlocutor.Business.Domain
+                                    }
                                 });
+                                if (to_list.length > 0) {
+                                    to_list = to_list.slice(1);
+                                }
+                                msg = new Message(
+                                    vizzop.me.UserName + '@' + vizzop.me.Business.Domain,
+                                    to_list,
+                                    null,
+                                    text,
+                                    self,
+                                    self._commsessionid);
+                                msg._from_username = vizzop.me.UserName;
+                                msg._from_domain = vizzop.me.Business.Domain;
+                                msg._from_fullname = vizzop.me.FullName;
+
+                                /*
+                                msg._to_username = to_list;
+                                newmsg._to_domain = to_list;
+                                */
+
+                                jVizzop(msg).bind('sent', function (e, value) {
+                                    if (value._status == "error") {
+                                        msg.MarkAsError();
+                                    } else {
+                                        msg.MarkAsOk();
+                                    }
+                                });
+
+                                vizzop.MsgCue.push(msg);
+                                vizzop.Daemon.sendNewMessages();
+                                msg.AddMsgToChat(msg);
+                                jVizzop(input).val(null);
                             }
                         }
                         if (jVizzop.trim(jVizzop(this).val()) == '') {
@@ -1062,29 +1077,37 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                     } else {
 
                         if ((typeof self._interlocutor != "undefined") && (self._interlocutor != null)) {
+
+                            var to_list = '';
                             jVizzop.each(self._interlocutor, function (index, interlocutor) {
-                                var newmsg = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, interlocutor.UserName + '@' + interlocutor.Business.Domain, '$#_inputfocus_in', self._commsessionid, self, self._commsessionid);
-                                newmsg._from_fullname = vizzop.me.FullName;
-                                /*
-                                new_Cue = [];
-                                jVizzop.each(vizzop.MsgCue, function (i, v) {
-                                    if ((v._subject != '$#_inputfocus_in') && (v._subject != '$#_inputfocus_out')) {
-                                        new_Cue.push(v);
-                                    }
-                                });
-                                vizzop.MsgCue = new_Cue;
-                                */
-                                vizzop.MsgCue.push(newmsg);
+                                if (vizzop.me.UserName + '@' + vizzop.me.Business.Domain != interlocutor.UserName + '@' + interlocutor.Business.Domain) {
+                                    to_list += ',' + interlocutor.FullName + '::' + interlocutor.UserName + '@' + interlocutor.Business.Domain
+                                }
                             });
+                            if (to_list.length > 0) {
+                                to_list = to_list.slice(1);
+                            }
+                            var newmsg = new Message(
+                                vizzop.me.UserName + '@' + vizzop.me.Business.Domain,
+                                to_list,
+                                '$#_inputfocus_in',
+                                self._commsessionid,
+                                self,
+                                self._commsessionid
+                                );
+                            newmsg._from_fullname = vizzop.me.FullName;
+                            vizzop.MsgCue.push(newmsg);
                         }
 
                     }
                 });
 
+                /*
                 jVizzop.each(self.Messages, function (i, v) {
                     v.AddMsgToChat(v);
                     return;
                 });
+                */
 
                 self._closebutton
                     .show()
@@ -1610,16 +1633,18 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                 success: function (data) {
                     if (data != false) {
                         self._commsessionid = data;
-                        var newmsg = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, self._interlocutor[0].UserName + '@' + self._interlocutor[0].Business.Domain, '$#_startsession', self._commsessionid, self, self._commsessionid);
-                        newmsg._from_fullname = vizzop.me.FullName;
-                        vizzop.MsgCue.push(newmsg);
-                        jVizzop(newmsg).bind('sent', function (e, value) {
-                            if (value._status == "error") {
-                                newmsg.MarkAsError();
-                                self.destroyBox();
-                            } else {
-                                self.start_TextChat();
-                            }
+                        jVizzop.each(self._interlocutor, function (index, interlocutor) {
+                            var newmsg = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, interlocutor.UserName + '@' + interlocutor.Business.Domain, '$#_startsession', self._commsessionid, self, self._commsessionid);
+                            newmsg._from_fullname = vizzop.me.FullName;
+                            vizzop.MsgCue.push(newmsg);
+                            jVizzop(newmsg).bind('sent', function (e, value) {
+                                if (value._status == "error") {
+                                    newmsg.MarkAsError();
+                                    self.destroyBox();
+                                } else {
+                                    self.start_TextChat();
+                                }
+                            });
                         });
                     } else {
                         self.destroyBox();

@@ -1047,6 +1047,10 @@ namespace vizzopWeb.Controllers
                         {
                             try
                             {
+                                if ((m.Content == null) && (m.Subject == null))
+                                {
+                                    continue;
+                                }
                                 if (m.From == null)
                                 {
                                     if ((m.From_UserName != null) && (m.From_Domain != null))

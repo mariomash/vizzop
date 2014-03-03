@@ -639,7 +639,7 @@
             },
             "fnInitComplete": function (oSettings, json) { },
             "aoColumns": [
-                { "sTitle": "ID", "bSearchable": false, "bVisible": true, "bSortable": false, "sWidth": "25px" },
+                { "sTitle": "ID", "bSearchable": false, "bVisible": true, "bSortable": false, "sWidth": "35px" },
                 {
                     "sTitle": "Screenshot", "bSortable": false, "bSearchable": false, "sWidth": "100px", "bVisible": true,
                     "fnRender": function (oObj) {
@@ -741,11 +741,14 @@
                     agentmessagebox.AddInterlocutor(client);
                     agentmessagebox._apikey = vizzop.ApiKey;
 
+                    /*
                     if ((scrwidth == null) || ((scrwidth == ''))) {
                         agentmessagebox.fillBox_RequestScreenView();
                     } else {
                         agentmessagebox.fillBox_RequestScreenView();
                     }
+                    */
+                    agentmessagebox.fillBox_RequestScreenView();
                     agentmessagebox.bringtofrontBox();
                 }
             }

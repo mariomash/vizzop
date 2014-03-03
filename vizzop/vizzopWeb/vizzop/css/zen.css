@@ -6571,29 +6571,39 @@ inse .zs_dialog .vizzop-btn-navbar {
 }
 
     .zs_dialog .chat_photoZone .photoZone_photo {
-        display: block;
-        height: 60px !important;
-        width: 60px !important;
-        margin: 5px;
         -moz-border-radius: 30px !important;
         -webkit-border-radius: 30px !important;
-        border-radius: 30px !important;
-        background-color: #86c1f2;
+        background-color: #86C1F2;
+        background-image: url("../img/customer_service.png") !important;
         background-size: contain;
-        float: left;
-        background-image: url(../img/customer_service.png) !important;
+        border-radius: 30px !important;
+        display: inline-block;
+        height: 60px !important;
+        margin: 5px;
+        vertical-align: middle;
+        width: 60px !important;
     }
 
     .zs_dialog .chat_photoZone .photoZone_name {
-        display: block;
-        margin: 15px 10px;
-        color: #888;
-        font-size: 17px !important;
+        color: #888888;
+        display: inline-block;
+        font-size: 14px !important;
         font-weight: bold;
+        margin: 0 5px;
+        vertical-align: middle;
+        width: 160px;
+        max-height: 65px;
         /*
     border-bottom: 1px solid rgb(221, 221, 221) !important;
     */
     }
+
+        .zs_dialog .chat_photoZone .photoZone_name div {
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
 
 .zs_dialog .chat_msgZone {
     display: block;

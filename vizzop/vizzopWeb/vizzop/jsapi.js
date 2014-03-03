@@ -332,73 +332,77 @@
         document.cookie = c_name + '=; expires=Thu, 01-Jan-70 00:00:01 GMT;';
     },
     ReBindForms: function () {
-
-        //Vamos a ir poniendo los clicks como tocan...
-        jVizzop('*').on('focus.vizzop', function () {
-            try {
-                var name = jVizzop(this).attr("id");
-                if (typeof name === "undefined") {
-                    name = jVizzop(this).attr("name");
-                }
-                var url = document.URL + '/focus_' + jVizzop(this).attr("name");
-                if (vizzop.IsInFrame == true) {
-                    var data = {
-                        mode: 'event',
-                        url: url,
-                        referrer: document.referrer
+        try {
+            //Vamos a ir poniendo los clicks como tocan...
+            jVizzop('*').on('focus.vizzop', function () {
+                try {
+                    var name = jVizzop(this).attr("id");
+                    if (typeof name === "undefined") {
+                        name = jVizzop(this).attr("name");
                     }
-                    top.postMessage(JSON.stringify(data), "http://vizzop.com");
-                } else {
-                    vizzop.Tracking.TrackPageView(url, document.referrer);
-                }
-            } catch (err) {
-
-            }
-        }, 0);
-
-        jVizzop('input[type="submit"], button, img, a').on('click.vizzop', function () {
-            try {
-                var name = jVizzop(this).attr("id");
-                if (typeof name === "undefined") {
-                    name = jVizzop(this).attr("name");
-                }
-                var url = document.URL + '/click_' + jVizzop(this).attr("name");
-                if (vizzop.IsInFrame == true) {
-                    var data = {
-                        mode: 'event',
-                        url: url,
-                        referrer: document.referrer
+                    var url = document.URL + '/focus_' + jVizzop(this).attr("name");
+                    if (vizzop.IsInFrame == true) {
+                        var data = {
+                            mode: 'event',
+                            url: url,
+                            referrer: document.referrer
+                        }
+                        top.postMessage(JSON.stringify(data), "http://vizzop.com");
+                    } else {
+                        vizzop.Tracking.TrackPageView(url, document.referrer);
                     }
-                    top.postMessage(JSON.stringify(data), "http://vizzop.com");
-                } else {
-                    vizzop.Tracking.TrackPageView(url, document.referrer);
-                }
-            } catch (err) {
+                } catch (err) {
 
-            }
-        }, 0);
-
-        jVizzop('input, textarea, select').on('change.vizzop', function () {
-            try {
-                vizzop.HtmlSend_ForceSendComplete = true;
-                var name = jVizzop(this).attr("id");
-                if (typeof name === "undefined") {
-                    name = jVizzop(this).attr("name");
                 }
-                var url = document.URL + '/change_' + jVizzop(this).attr("name");
-                if (vizzop.IsInFrame == true) {
-                    var data = {
-                        mode: 'event',
-                        url: url,
-                        referrer: document.referrer
+            }, 0);
+
+            jVizzop('input[type="submit"], button, img, a').on('click.vizzop', function () {
+                try {
+                    var name = jVizzop(this).attr("id");
+                    if (typeof name === "undefined") {
+                        name = jVizzop(this).attr("name");
                     }
-                    top.postMessage(JSON.stringify(data), "http://vizzop.com");
-                } else {
-                    vizzop.Tracking.TrackPageView(url, document.referrer);
-                }
-            } catch (err) { }
-        }, 100);
+                    var url = document.URL + '/click_' + jVizzop(this).attr("name");
+                    if (vizzop.IsInFrame == true) {
+                        var data = {
+                            mode: 'event',
+                            url: url,
+                            referrer: document.referrer
+                        }
+                        top.postMessage(JSON.stringify(data), "http://vizzop.com");
+                    } else {
+                        vizzop.Tracking.TrackPageView(url, document.referrer);
+                    }
+                } catch (err) {
 
+                }
+            }, 0);
+
+            jVizzop('input, textarea, select').on('change.vizzop', function () {
+                try {
+                    vizzop.HtmlSend_ForceSendComplete = true;
+                    var name = jVizzop(this).attr("id");
+                    if (typeof name === "undefined") {
+                        name = jVizzop(this).attr("name");
+                    }
+                    var url = document.URL + '/change_' + jVizzop(this).attr("name");
+                    if (vizzop.IsInFrame == true) {
+                        var data = {
+                            mode: 'event',
+                            url: url,
+                            referrer: document.referrer
+                        }
+                        top.postMessage(JSON.stringify(data), "http://vizzop.com");
+                    } else {
+                        if (vizzop.Tracking != null) {
+                            vizzop.Tracking.TrackPageView(url, document.referrer);
+                        }
+                    }
+                } catch (err) { }
+            }, 100);
+        } catch (err) {
+            vizzoplib.log(err);
+        }
     },
     dataURLToBlob: function (dataURL) {
         var BASE64_MARKER = ';base64,';

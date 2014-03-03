@@ -1274,6 +1274,7 @@ namespace vizzopWeb
                 returnmsg.From.UserAgent = oldmsg.From.UserAgent;
                 returnmsg.From.Business = new Business();
                 returnmsg.From.Business.Domain = oldmsg.From.Business.Domain;
+                returnmsg.CC = oldmsg.CC;
                 returnmsg.ID = oldmsg.ID;
                 returnmsg.To = new Converser();
                 returnmsg.To.ID = oldmsg.To.ID;
@@ -2949,6 +2950,12 @@ namespace vizzopWeb
                 message.CommSession = new CommSession();
                 message.CommSession.ID = Convert.ToInt32(newmessage.commsessionid);
 
+
+                if ((message.Content == null) && (message.Subject == null))
+                {
+                    return false;
+                }
+
                 if ((SetTicketState != null) && (SetTicketState != "null") && (SetTicketState != ""))
                 {
                     newmessage.MessageType = "ticket";
@@ -3267,10 +3274,6 @@ namespace vizzopWeb
                 string Logged = "";
                 Action<object, DataReceivedEventArgs> actionWrite = (sender, e) =>
                 {
-                    /*
-                    #if DEBUG
-                    #endif
-                     */
                     if (e.Data != null)
                     {
                         Logged += e.Data;
@@ -3281,8 +3284,6 @@ namespace vizzopWeb
 #else
                 process.ErrorDataReceived += (sender, e) => actionWrite(sender, e);
                 process.OutputDataReceived += (sender, e) => actionWrite(sender, e);
-#endif
-
                 process.Exited += (sender, e) =>
                 {
                     //Debug.WriteLine("Process exited with exit code " + process.ExitCode.ToString());
@@ -3293,12 +3294,10 @@ namespace vizzopWeb
                 };
 
                 process.Start();
-#if DEBUG
-                process.PriorityClass = ProcessPriorityClass.Idle;
-#else
                 process.BeginOutputReadLine();
                 process.BeginErrorReadLine();
 #endif
+
                 //process.WaitForExit();
                 return process;
             }

@@ -35,7 +35,9 @@ var Message = jVizzop.zs_Class.create({
                 msg_mine = true;
             }
 
-            self.divmsg = jVizzop('<span></span>');
+            self.divmsg = jVizzop('<span></span>')
+                .attr("vizzop-from", self._from_username + "@" + self._from_domain);
+
             if (msg_mine == true) {
                 self.divmsg.addClass('message mine');
             } else {
@@ -144,14 +146,37 @@ var Message = jVizzop.zs_Class.create({
             }
 
             try {
+
+                var c_f = {
+                    'UserName': self._from_username,
+                    'FullName': self._from_fullname,
+                    'Business': {
+                        'Domain': self._from_domain
+                    }
+                }
+                self._box.AddInterlocutor(c_f);
+
                 if (vizzop.mode == 'client') {
                     if (msg_mine == false) {
-                        jVizzop(self._box._boxtextchat.photoZone.name)
-                            .text(self._from);
+                        jVizzop(self._box._boxtextchat.photoZone.name).empty();
+                        jVizzop.each(self._box._interlocutor, function (index, interlocutor) {
+                            if (vizzop.me.UserName + '@' + vizzop.me.Business.Domain != interlocutor.UserName + '@' + interlocutor.Business.Domain) {
+                                var i_name = jVizzop('<div></div>')
+                                    .text(interlocutor.FullName)
+                                    .appendTo(jVizzop(self._box._boxtextchat.photoZone.name));
+                            }
+                        });
                         jVizzop(self._box._boxtextchat.photoZone)
-                            .show()
-                        self.positionBox(function () { jVizzop(self._box).show(); }, 'fast');
+                            .show();
                     }
+                } else {
+                    var all_info = '<dl><dt>Conversers in chat</dt><dd>';
+                    jVizzop.each(self._box._interlocutor, function (index, interlocutor) {
+                        all_info += '<div>' + interlocutor.FullName + '</div>';
+                    });
+                    all_info += '</dd></dl>';
+                    jVizzop(self._box._convinfo)
+                        .html(all_info);
                 }
             } catch (_err) {
                 vizzoplib.log(_err);
@@ -164,13 +189,12 @@ var Message = jVizzop.zs_Class.create({
 
             var arr = jVizzop(self._box._boxtextchat.msgZone).find('.message');
             for (i = 1; i < arr.length; i++) {
-                if ((jVizzop(arr[i - 1]).hasClass("interlocutor") == true) && (jVizzop(arr[i]).hasClass("interlocutor") == true) ||
-                    (jVizzop(arr[i - 1]).hasClass("mine") == true) && (jVizzop(arr[i]).hasClass("mine") == true)) {
-                    jVizzop(arr[i]).find(".from").hide();
-                    jVizzop(arr[i]).find(".timestamp").hide();
-                } else {
+                if (jVizzop(arr[i - 1]).attr("vizzop-from") != jVizzop(arr[i]).attr("vizzop-from")) {
                     jVizzop(arr[i]).find(".from").show();
                     jVizzop(arr[i]).find(".timestamp").show();
+                } else {
+                    jVizzop(arr[i]).find(".from").hide();
+                    jVizzop(arr[i]).find(".timestamp").hide();
                 }
             }
 

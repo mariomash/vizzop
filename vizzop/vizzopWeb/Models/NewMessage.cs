@@ -20,6 +20,8 @@ namespace vizzopWeb.Models
         [Required]
         public string To { get; set; }
 
+        public string CC { get; set; }
+
         [Required]
         public string Subject { get; set; }
 

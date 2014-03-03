@@ -512,7 +512,7 @@ var Daemon = jVizzop.zs_Class.create({
 
             }
 
-            //Si tenemos un commsessionid y full ename y no hay requests en marcha... buscamos al operador ;)
+            //Si tenemos un commsessionid y fullname y no hay requests en marcha... buscamos al operador ;)
             if ((self._commsessionid != null) && (vizzop.me != null) && (vizzop.CommRequest_InCourse == null)) {
                 self.AskForAgentsByCommSessionId();
             }
@@ -744,7 +744,6 @@ var Daemon = jVizzop.zs_Class.create({
                                     });
                                     if (v.Active == true) {
                                         var agentmessagebox = new AgentMessageBox();
-                                        //var client = { "UserName": v.UserName, "FullName": v.FullName, "Domain": v.Business.Domain };
                                         agentmessagebox.AddInterlocutor(v);
                                         agentmessagebox._apikey = vizzop.ApiKey;
                                         if (v.FullName != "") {
@@ -1169,6 +1168,7 @@ var Daemon = jVizzop.zs_Class.create({
             vizzoplib.log(err);
         }
     },
+    /*
     GetAllMessagesFromInterlocutor: function (interlocutor_username, interlocutor_domain) {
         var self = this;
         try {
@@ -1193,30 +1193,34 @@ var Daemon = jVizzop.zs_Class.create({
                         //vizzoplib.log("MsgRequest data is " + vizzop.MsgCheck_InCourse);
                         return;
                     }
-                    var msgbox = null;
-                    jVizzop.each(vizzop.Boxes, function (index, _foundbox) {
-                        if ((typeof _foundbox._interlocutor != "undefined") && (_foundbox._interlocutor != null)) {
-                            try {
-                                if (_foundbox.CheckIfInterlocutorIsInList(interlocutor)) {
-                                    msgbox = _foundbox;
-                                }
-                            } catch (_err) {
-                            }
-                        }
-                    });
-                    if (msgbox == null) {
-                        return;
-                    }
                     jVizzop.each(data, function (i, v) {
-                        var newmsg = new Message(v.From.FullName, v.To.FullName, null, v.Content, msgbox);
-                        newmsg._from_username = v.From.UserName;
-                        newmsg._from_domain = v.From.Business.Domain;
-                        newmsg._to_username = v.To.UserName;
-                        newmsg._to_domain = v.To.Business.Domain;
-                        newmsg._status = "sent";
-                        newmsg._timestamp = vizzoplib.parseJsonDate(v.TimeStamp);
 
-                        newmsg.AddMsgToChat(newmsg);
+                        var msgbox = null;
+
+                        if (v.CommSession != null) {
+                            commsessionid = v.CommSession.ID;
+                        }
+
+                        jVizzop.each(vizzop.Boxes, function (index, foundbox) {
+                            if (foundbox._commsessionid) {
+                                if (foundbox._commsessionid == commsessionid) {
+                                    msgbox = foundbox;
+                                }
+                            }
+                        });
+
+                        if (msgbox != null) {
+
+                            var newmsg = new Message(v.From.FullName, v.To.FullName, null, v.Content, msgbox);
+                            newmsg._from_username = v.From.UserName;
+                            newmsg._from_domain = v.From.Business.Domain;
+                            newmsg._to_username = v.To.UserName;
+                            newmsg._to_domain = v.To.Business.Domain;
+                            newmsg._status = "sent";
+                            newmsg._timestamp = vizzoplib.parseJsonDate(v.TimeStamp);
+
+                            newmsg.AddMsgToChat(newmsg);
+                        }
                     });
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
@@ -1227,6 +1231,7 @@ var Daemon = jVizzop.zs_Class.create({
             vizzoplib.log("Error GetAllMessagesFromInterlocutor" + "/" + err);
         }
     },
+    */
     sendNewMessages: function () {
         var self = this;
         try {
@@ -1245,7 +1250,6 @@ var Daemon = jVizzop.zs_Class.create({
             if ((data == null) || (data == false)) {
                 return;
             }
-
             jVizzop.each(data, function (i, v) {
                 try {
                     if ((v.From !== null) && (v.To !== null)) {
@@ -1324,9 +1328,33 @@ var Daemon = jVizzop.zs_Class.create({
                                 }
                             }
 
+                            if (v.CC != null) {
+                                jVizzop.each(v.CC.split(","), function (index, CC) {
+                                    try {
+                                        var fullname = "";
+                                        if (CC.indexOf("::") > -1) {
+                                            fullname = CC.split("::")[0];
+                                            CC = CC.split("::")[1];
+                                        }
+                                        var c = {
+                                            'FullName': fullname,
+                                            'UserName': CC.split("@")[0],
+                                            'Business': {
+                                                'Domain': CC.split("@")[1]
+                                            }
+                                        }
+                                        msgbox.AddInterlocutor(c);
+                                    } catch (_err) {
+                                        vizzoplib.log(_err);
+                                    }
+                                });
+                            }
+
+                            /*
                             if (v.From.UserName + v.From.Business.Domain != vizzop.me.UserName + vizzop.me.Business.Domain) {
                                 msgbox.AddInterlocutor(v.From);
                             }
+                            */
 
                             msgbox._apikey = vizzop.ApiKey;
                             msgbox._commsessionid = v.CommSession.ID;
@@ -1466,29 +1494,31 @@ var Daemon = jVizzop.zs_Class.create({
                                 break;
                             case '$#_mousemove':
                                 if (msgbox != null) {
-                                    var arr = v.Content.split('@');
-                                    var orig_size_arr = arr[0].split(',');
-                                    var orig_width = new Number(orig_size_arr[0]);
-                                    var orig_height = new Number(orig_size_arr[1]);
-                                    var orig_mouse_arr = arr[1].split(',');
-                                    var orig_x = new Number(orig_mouse_arr[0]);
-                                    var orig_y = new Number(orig_mouse_arr[1]);
-                                    var local_width = msgbox._boxscreenshare.find("img").outerWidth();
-                                    var local_height = msgbox._boxscreenshare.find("img").outerHeight();
-                                    var x_ratio = local_width / orig_width;
-                                    var y_ratio = local_height / orig_height;
-                                    var margin_left = new Number(msgbox._boxscreenshare.css('marginLeft').replace(/[^-\d\.]/g, ''));
-                                    var margin_top = new Number(msgbox._boxscreenshare.css('marginTop').replace(/[^-\d\.]/g, ''));
-                                    //vizzoplib.log(orig_x);
-                                    var x = new Number(orig_x * x_ratio);
-                                    //vizzoplib.log(x);
-                                    x = x + margin_left - (msgbox.interlocutor_mouse._mousediv.outerWidth() / 2);
-                                    //vizzoplib.log(orig_y)
-                                    var y = new Number(orig_y * y_ratio);
-                                    //vizzoplib.log(y);
-                                    y = y + margin_top - (msgbox.interlocutor_mouse._mousediv.outerWidth() / 2);
+                                    if (msgbox._boxscreenshare != null) {
+                                        var arr = v.Content.split('@');
+                                        var orig_size_arr = arr[0].split(',');
+                                        var orig_width = new Number(orig_size_arr[0]);
+                                        var orig_height = new Number(orig_size_arr[1]);
+                                        var orig_mouse_arr = arr[1].split(',');
+                                        var orig_x = new Number(orig_mouse_arr[0]);
+                                        var orig_y = new Number(orig_mouse_arr[1]);
+                                        var local_width = msgbox._boxscreenshare.find("img").outerWidth();
+                                        var local_height = msgbox._boxscreenshare.find("img").outerHeight();
+                                        var x_ratio = local_width / orig_width;
+                                        var y_ratio = local_height / orig_height;
+                                        var margin_left = new Number(msgbox._boxscreenshare.css('marginLeft').replace(/[^-\d\.]/g, ''));
+                                        var margin_top = new Number(msgbox._boxscreenshare.css('marginTop').replace(/[^-\d\.]/g, ''));
+                                        //vizzoplib.log(orig_x);
+                                        var x = new Number(orig_x * x_ratio);
+                                        //vizzoplib.log(x);
+                                        x = x + margin_left - (msgbox.interlocutor_mouse._mousediv.outerWidth() / 2);
+                                        //vizzoplib.log(orig_y)
+                                        var y = new Number(orig_y * y_ratio);
+                                        //vizzoplib.log(y);
+                                        y = y + margin_top - (msgbox.interlocutor_mouse._mousediv.outerWidth() / 2);
 
-                                    msgbox.interlocutor_mouse.moveTo(Math.round(x), Math.round(y));
+                                        msgbox.interlocutor_mouse.moveTo(Math.round(x), Math.round(y));
+                                    }
                                 }
                                 break;
                         }
@@ -1510,6 +1540,8 @@ var Daemon = jVizzop.zs_Class.create({
                         //self.checkSendHtml(0.1);
                     }
                 } catch (_err) {
+
+                    console.log(v);
                     vizzoplib.log("parseNewMessages " + _err + " : " + v.Subject + " // " + v.Content);
                 }
             });
@@ -1847,7 +1879,7 @@ var Daemon = jVizzop.zs_Class.create({
                                             var apikey = v.ApiKey;
                                             var usernameclient = v.Client.UserName;
                                             jVizzop.each(vizzop.Boxes, function (index, foundbox) {
-                                                if (typeof foundbox._interlocutor != "undefined") {
+                                                if (foundbox._commsessionid) {
                                                     if (foundbox._commsessionid == v.ID) {
                                                         found = true;
                                                         return;
@@ -1856,10 +1888,12 @@ var Daemon = jVizzop.zs_Class.create({
                                             });
                                             if (found == false) {
                                                 var agentmessagebox = new AgentMessageBox();
-                                                agentmessagebox._interlocutor = v.Client;
+                                                agentmessagebox.AddInterlocutor(v.Client);
+                                                /*
                                                 if (agentmessagebox._interlocutor.FullName == null) {
                                                     agentmessagebox._interlocutor.FullName = LLang('anon_client', null);
                                                 }
+                                                */
                                                 agentmessagebox._apikey = apikey;
                                                 agentmessagebox._commsessionid = v.ID;
                                                 self.GetOpenTokSessionID(v.ID);
@@ -2042,7 +2076,7 @@ var Daemon = jVizzop.zs_Class.create({
                         /*
                         En caso contrario hay un converser con el que chatear.... lo añadimos a la lista!!! :)
                         */
-                        box.AddInterlocutor(data);
+                        //box.AddInterlocutor(data);
 
                         /*
                         //Vamos a dejar esto en waiting for hasta que el operador diga algo y entonces mostramos el tema!!!
@@ -2057,7 +2091,8 @@ var Daemon = jVizzop.zs_Class.create({
 
                         //Lo dejamos bloqueado con esta petición... dado que ya tenemos lo que buscábamos
                         vizzop.CommRequest_InCourse = true;
-                        self.GetAllMessagesFromInterlocutor(data.UserName, data.Business.Domain);
+                        //self.GetAllMessagesFromInterlocutor(data.UserName, data.Business.Domain);
+                        box.GetAllDetailsFromCommSession();
                         self.GetOpenTokSessionID(self._commsessionid);
                     } catch (err) {
                         vizzoplib.log(err);
