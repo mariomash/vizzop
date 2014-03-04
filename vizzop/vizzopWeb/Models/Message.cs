@@ -233,6 +233,7 @@ namespace vizzopWeb.Models
 
                 this.Content = newmessage.Content;
                 this.Subject = newmessage.Subject;
+                this.ClientID = newmessage._clientid;
                 this.Status = 0;
 
                 this.TimeStamp = DateTime.Now.ToUniversalTime();
@@ -331,6 +332,8 @@ namespace vizzopWeb.Models
         public virtual Converser To { get; set; }
 
         public string CC { get; set; }
+
+        public string ClientID { get; set; }
 
         public string To_UserName { get; set; }
         public string To_Domain { get; set; }

@@ -3816,19 +3816,22 @@ inse .zs_dialog .vizzop-btn-navbar {
 }
 
 .zs_dialog .vizzop-popover {
+    /*
     position: absolute !important;
     top: 0;
     left: 0;
+        */
     z-index: 1010 !important;
     display: none;
-    padding: 5px !important;
+    padding-bottom: 5px !important;
     background-color: transparent !important;
     box-shadow: none !important;
     border: none !important;
 }
 
     .zs_dialog .vizzop-popover.top {
-        margin-top: -35px !important;
+        margin: 0 !important;
+        margin-top: -10px !important;
     }
 
     .zs_dialog .vizzop-popover.right {
@@ -5792,9 +5795,10 @@ inse .zs_dialog .vizzop-btn-navbar {
     display: block;
     text-align: center !important;
     border: 1px solid white !important;
-    padding: 5px !important;
+    padding: 0 !important;
     cursor: pointer !important;
     overflow: visible !important;
+    white-space: nowrap !important;
 }
 
 .zs_dialoghandle {
@@ -5804,12 +5808,13 @@ inse .zs_dialog .vizzop-btn-navbar {
 .zs_dialog .zs_dialoghandlepubli {
     clear: both !important;
     margin-bottom: 0 !important;
-    padding: 4px 15px !important;
+    padding: 0px 15px 2px !important;
     text-align: center !important;
-    opacity: 0.7 !important;
-    filter: alpha(opacity=70) !important;
+    opacity: 0.5 !important;
+    filter: alpha(opacity=50) !important;
     cursor: pointer !important;
-    margin-top: 2px !important;
+    border-top: solid 1px #f0f0f0 !important;
+    background-color: #f0f0f0 !important;
 }
 
 .zs_bubble {
@@ -6847,16 +6852,16 @@ inse .zs_dialog .vizzop-btn-navbar {
     /*
 	font-size: 13px !important;
 	*/
-    margin: 5px 15px 5px 10px !important;
+    margin: 0px 3px 5px 0px !important;
     font-size: 14px !important;
     cursor: pointer !important;
     text-align: center !important;
 }
 
 .zs_dialog .zs_hoverbarimg {
-    margin: 5px 0 5px 10px !important;
+    margin: 5px 0 0 0 !important;
     display: inline-block;
-    vertical-align: middle !important;
+    vertical-align: super !important;
     cursor: pointer !important;
 }
 

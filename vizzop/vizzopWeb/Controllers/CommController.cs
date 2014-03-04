@@ -169,6 +169,14 @@ namespace vizzopWeb.Controllers
                                 {
                                     continue;
                                 }
+
+                                if ((from m in return_session.Messages
+                                     where m.ClientID == oldmsg.ClientID
+                                     select m).Count() > 0)
+                                {
+                                    continue;
+                                }
+
                                 oldmsg.From.Password = null;
                                 oldmsg.To.Password = null;
                                 return_session.Messages.Add(utils.TransformMessageToSerializedProof(oldmsg));

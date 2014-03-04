@@ -17,7 +17,7 @@ var Message = jVizzop.zs_Class.create({
         this._commsessionid = commsessionid;
         this._clientid = clientid;
         if (this._clientid == null) {
-            this._clientid = vizzoplib.randomnumber();
+            this._clientid = from + '_' + vizzoplib.randomnumber();
         }
         this._box = box;
     },

@@ -1294,6 +1294,7 @@ namespace vizzopWeb
                 returnmsg.TimeStampSrvSending = oldmsg.TimeStampSrvSending;
                 returnmsg.Subject = oldmsg.Subject;
                 returnmsg.Status = oldmsg.Status;
+                returnmsg.ClientID = oldmsg.ClientID;
                 if (oldmsg.CommSession != null)
                 {
                     returnmsg.CommSession = new CommSession();

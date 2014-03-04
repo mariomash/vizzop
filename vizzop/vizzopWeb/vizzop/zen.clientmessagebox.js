@@ -285,12 +285,12 @@ var ClientMessageBox = jVizzop.zs_Class.create(MessageBox, {
                 .appendTo(self._bubbleinner);
             self.checkBubble();
             /*<img src="' + vizzop.mainURL + '/Content/images/help_25.png"/>')*/
-            self._helpimg = jVizzop('<i class="vizzop-icon-comment"></i>')
-                .addClass('zs_hoverbarimg')
-                .appendTo(self._handle);
             self._hoverbartext = jVizzop('<span></span>')
                 .addClass('zs_hoverbartext')
                 .text(LLang('click_support', null))
+                .appendTo(self._handle);
+            self._helpimg = jVizzop('<i class="vizzop-icon-comment"></i>')
+                .addClass('zs_hoverbarimg')
                 .appendTo(self._handle);
             if ((vizzop.WidgetText != '') && (vizzop.WidgetText != null)) {
                 self._hoverbartext.text(vizzop.WidgetText);
@@ -670,13 +670,12 @@ var ClientMessageBox = jVizzop.zs_Class.create(MessageBox, {
                 .click(function (event) {
                     var name_mecookie = vizzop.ApiKey + "_me";
                     vizzoplib.deleteCookie(name_mecookie);
-                    vizzop.me.FullName = null;
+                    //vizzop.me.FullName = null;
                     self._commsessionid = null;
-                    if (vizzop.me.FullName == null) {
+                    vizzop.me = null;
+                    vizzop.Daemon.getNewConverser(function () {
                         self.fillBox_FindingSupport_WithoutName();
-                    } else {
-                        self.fillBox_FindingSupport_WithName();
-                    }
+                    });
                     return false;
                 })
                 .appendTo(opt_A_contents);
@@ -709,7 +708,6 @@ var ClientMessageBox = jVizzop.zs_Class.create(MessageBox, {
                         return false;
                     })
 
-            self.positionBox(function () { jVizzop(self._box).show(); }, 'fast');
             self.positionBox(function () { jVizzop(self._box).show(); }, 'fast');
 
         } catch (err) {
