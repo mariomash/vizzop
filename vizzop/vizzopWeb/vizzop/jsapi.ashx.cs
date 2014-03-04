@@ -346,30 +346,55 @@ namespace vizzopWeb
 
 
                 string UserAgent = context.Request.UserAgent;
-                if (UserAgent.Contains("MSIE 6.0") == true)
+                if (UserAgent.ToUpperInvariant().Contains("MSIE 6.0") == true)
                 {
                     UserAgent = "MSIE 6.0";
                 }
-                else if (UserAgent.Contains("MSIE 7.0") == true)
+                else if (UserAgent.ToUpperInvariant().Contains("MSIE 7.0") == true)
                 {
                     UserAgent = "MSIE 7.0";
                 }
-                else if (UserAgent.Contains("MSIE 8.0") == true)
+                else if (UserAgent.ToUpperInvariant().Contains("MSIE 8.0") == true)
                 {
                     UserAgent = "MSIE 8.0";
                 }
-                else if (UserAgent.Contains("MSIE 8.0") == true)
+                else if (UserAgent.ToUpperInvariant().Contains("MSIE 8.0") == true)
                 {
                     UserAgent = "MSIE 8.0";
                 }
-                else if (UserAgent.Contains("MSIE 9.0") == true)
+                else if (UserAgent.ToUpperInvariant().Contains("MSIE 9.0") == true)
                 {
                     UserAgent = "MSIE 9.0";
                 }
-                else if (UserAgent.Contains("MSIE 10.0") == true)
+                else if (UserAgent.ToUpperInvariant().Contains("MSIE 10.0") == true)
                 {
                     UserAgent = "MSIE 10.0";
                 }
+                else if (UserAgent.ToUpperInvariant().Contains("ANDROID") == true)
+                {
+                    UserAgent = "ANDROID";
+                }
+                else if (UserAgent.ToUpperInvariant().Contains("IPAD") == true)
+                {
+                    UserAgent = "IPAD";
+                }
+                else if (UserAgent.ToUpperInvariant().Contains("IPHONE") == true)
+                {
+                    UserAgent = "IPHONE";
+                }
+                else if (UserAgent.ToUpperInvariant().Contains("IPOD") == true)
+                {
+                    UserAgent = "IPOD";
+                }
+                else if (UserAgent.ToUpperInvariant().Contains("FIREFOX") == true)
+                {
+                    UserAgent = "FIREFOX";
+                }
+                else if (UserAgent.ToUpperInvariant().Contains("SAFARI") == true)
+                {
+                    UserAgent = "SAFARI";
+                }
+
 
                 var useragent_in_db = (from m in db.BrowserFeatures
                                        where m.UserAgent == UserAgent
@@ -436,6 +461,23 @@ namespace vizzopWeb
                     utils.GrabaLog(vizzopWeb.Utils.NivelLog.error, ex.Message);
                 }
 
+                string showhelpbutton = business.ShowHelpButton.ToString().ToLowerInvariant();
+                if (useragent_in_db != null)
+                {
+                    showhelpbutton = useragent_in_db.ShowHelpButton.ToString().ToLowerInvariant();
+                }
+                try
+                {
+                    if (context.Request.Params["showhelpbutton"] != null)
+                    {
+                        showhelpbutton = context.Request.Params["showhelpbutton"].ToString();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    utils.GrabaLog(vizzopWeb.Utils.NivelLog.error, ex.Message);
+                }
+
                 string showdisclaimer = business.ShowDisclaimer.ToString().ToLowerInvariant();
                 try
                 {
@@ -481,19 +523,6 @@ namespace vizzopWeb
                     if (context.Request.Params["allowcapturemouse"] != null)
                     {
                         allowcapturemouse = context.Request.Params["allowcapturemouse"].ToString();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    utils.GrabaLog(vizzopWeb.Utils.NivelLog.error, ex.Message);
-                }
-
-                string showhelpbutton = business.ShowHelpButton.ToString().ToLowerInvariant();
-                try
-                {
-                    if (context.Request.Params["showhelpbutton"] != null)
-                    {
-                        showhelpbutton = context.Request.Params["showhelpbutton"].ToString();
                     }
                 }
                 catch (Exception ex)

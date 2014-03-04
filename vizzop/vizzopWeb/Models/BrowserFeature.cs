@@ -25,5 +25,7 @@ namespace vizzopWeb.Models
         public Boolean AllowScreenSockets { get; set; }
 
         public Boolean AllowScreenCaptures { get; set; }
+
+        public Boolean ShowHelpButton { get; set; }
     }
 }
