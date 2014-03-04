@@ -153,7 +153,6 @@ var MeetingMessageBox = jVizzop.zs_Class.create(MessageBox, {
 
 			self.positionBox(function() { jVizzop(self._box).show(); }, 'fast');
 
-			//vizzop.Daemon.Requestcommsessionid();
 
 		} catch (err) {
 			vizzoplib.log(err);

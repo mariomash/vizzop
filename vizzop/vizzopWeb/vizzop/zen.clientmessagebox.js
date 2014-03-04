@@ -150,9 +150,6 @@ var ClientMessageBox = jVizzop.zs_Class.create(MessageBox, {
 
             self.positionBox(function () { jVizzop(self._box).show(); }, 'fast');
 
-            /*
-            */
-
             self._commsessionid = null;
             vizzop.CommRequest_InCourse = null;
             vizzop.Daemon.Requestcommsessionid();
@@ -668,14 +665,19 @@ var ClientMessageBox = jVizzop.zs_Class.create(MessageBox, {
                 .text(LLang('start_chat', null))
                 .addClass('vizzop-btn vizzop-btn-primary vizzop-btn-large')
                 .click(function (event) {
+                    /*
                     var name_mecookie = vizzop.ApiKey + "_me";
                     vizzoplib.deleteCookie(name_mecookie);
-                    //vizzop.me.FullName = null;
-                    self._commsessionid = null;
                     vizzop.me = null;
                     vizzop.Daemon.getNewConverser(function () {
                         self.fillBox_FindingSupport_WithoutName();
                     });
+                    */
+                    if (vizzop.me.FullName == null) {
+                        self.fillBox_FindingSupport_WithoutName();
+                    } else {
+                        self.fillBox_FindingSupport_WithName();
+                    }
                     return false;
                 })
                 .appendTo(opt_A_contents);

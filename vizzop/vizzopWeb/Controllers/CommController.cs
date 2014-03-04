@@ -671,7 +671,7 @@ namespace vizzopWeb.Controllers
 
                 if (commsession != null)
                 {
-                    if (commsession.Status == 2)
+                    if ((commsession.Status == 2) || ((agent_username == null) && (agent_password == null) && (agent_domain == null)))
                     {
                         commsession.Status = 0;
                     }
@@ -970,6 +970,13 @@ namespace vizzopWeb.Controllers
                     //Chequeando que hacer con la sesion...
                     if (selected_session.Status == 1)
                     {
+                        /*
+                        selected_session.Status = 0;
+
+                        selected_session.Agents = utils.GetActiveAgents(converser);
+                        db.SaveChanges();
+                        return Json(false);
+                        */
                         //la sesion esta aceptada así que la devolvemos... siempre que tenga agentes,
                         //si no la ponemos a 0 para que otro operador la acepte o no..
                         //y devolvemos false para que el cliente sepa que la session sigue por aceptar... y siga intentando ;)
@@ -985,12 +992,10 @@ namespace vizzopWeb.Controllers
                         }
                         else
                         {
-                            /*
-                             * Esto es raro que pase... si esta aprobada pero no tiene agentes 
-                             * la ponemos a 0 para vuelva al juego 
-                             * y añadimos los agentes logados actualmente
-                             * para que vayan aceptando o denegando...
-                             */
+                            //Esto es raro que pase... si esta aprobada pero no tiene agentes 
+                            //la ponemos a 0 para vuelva al juego 
+                            //y añadimos los agentes logados actualmente
+                            //para que vayan aceptando o denegando...
 
                             selected_session.Status = 0;
 
