@@ -3,7 +3,7 @@
 var mainURL = null;
 
 if (args.length === 1) {
-    console.log('Try to pass some arguments when invoking this script!');
+    //console.log('Try to pass some arguments when invoking this script!');
 } else {
     mainURL = args[1];
     UserName = args[2];
@@ -25,10 +25,10 @@ page.onCallback = function (param) {
         param.filename = "captures/" + param.filename;
 
         page.render(param.filename);
-        console.log(date + ' rendered: ' + param.filename);
+        //console.log(date + ' rendered: ' + param.filename);
 
     } else {
-        console.log(date + ' ' + param.log);
+        //console.log(date + ' ' + param.log);
     }
 }
 

@@ -893,7 +893,9 @@ namespace vizzopWeb
     public class Sms
     {
         private Utils utils = new Utils();
+
         private string _message = null;
+
         private string _phonenumber = null;
 
         public string message
@@ -999,7 +1001,6 @@ namespace vizzopWeb
 
             }
         }
-
     }
 
     public class Utils
@@ -1025,8 +1026,8 @@ namespace vizzopWeb
             db = new vizzopContext();
         }
 
-
         public string vendornumber = "2084568";
+
         public string secret = "tortuga";
 
         public string GetIP(HttpContext Context)
@@ -1382,7 +1383,6 @@ namespace vizzopWeb
             }
         }
 
-
         public Converser GetConverserFromSystem(string Email, string Password, vizzopContext db)
         {
             Converser converser = null;
@@ -1420,7 +1420,6 @@ namespace vizzopWeb
             }
             return converser;
         }
-
 
         public Converser GetConverserFromSystem(string UserName, string Password, string Domain)
         {
@@ -1852,7 +1851,6 @@ namespace vizzopWeb
 
             return doc.DocumentNode.WriteTo();
         }
-
 
         public bool TrackScreen(string username, string password, string domain, string data, string listeners, HttpContextBase context)
         {
@@ -2894,6 +2892,7 @@ namespace vizzopWeb
             }
         }
          * */
+
         public string GetUnixTimeStamp(DateTime target)
         {
             // Unix timestamp is seconds past epoch
@@ -2902,7 +2901,6 @@ namespace vizzopWeb
 
             return unixTimestamp.ToString();
         }
-
 
         public DateTime GetTimeStampfromUnix(string unixTimeStamp)
         {
@@ -2940,7 +2938,6 @@ namespace vizzopWeb
                 return null;
             }
         }
-
 
         internal bool SendMessage(NewMessage newmessage, string SetTicketState)
         {
@@ -2987,7 +2984,6 @@ namespace vizzopWeb
                 return false;
             }
         }
-
 
         public void LaunchScreenShotsFileControl()
         {
@@ -3258,6 +3254,7 @@ namespace vizzopWeb
                     ErrorDialog = false
                 };
 
+                /*
 #if DEBUG
                 psi.CreateNoWindow = false;
                 psi.WindowStyle = ProcessWindowStyle.Minimized;
@@ -3265,6 +3262,7 @@ namespace vizzopWeb
                 psi.RedirectStandardInput = false;
                 psi.RedirectStandardOutput = false;
 #endif
+                */
 
                 var process = new Process
                 {
@@ -3281,8 +3279,6 @@ namespace vizzopWeb
                     }
                 };
 
-#if DEBUG
-#else
                 process.ErrorDataReceived += (sender, e) => actionWrite(sender, e);
                 process.OutputDataReceived += (sender, e) => actionWrite(sender, e);
                 process.Exited += (sender, e) =>
@@ -3297,7 +3293,6 @@ namespace vizzopWeb
                 process.Start();
                 process.BeginOutputReadLine();
                 process.BeginErrorReadLine();
-#endif
 
                 //process.WaitForExit();
                 return process;
@@ -3308,8 +3303,6 @@ namespace vizzopWeb
                 return null;
             }
         }
-
-
 
         internal Converser GetConverserFromSystemWithEmailAndBusinessId(string Email, int id, vizzopContext db)
         {

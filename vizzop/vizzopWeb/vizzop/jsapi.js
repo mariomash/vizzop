@@ -91,7 +91,9 @@
                 //jVizzop(this).empty();
                 var contents = jVizzop(this).attr('value');
                 if (contents == null) {
-                    contents = "";
+                    jVizzop(this).remove();
+                    return true;
+                    //contents = "";
                 }
                 jVizzop(this).removeAttr('value');
                 if (vizzop.IsInFrame == true) {

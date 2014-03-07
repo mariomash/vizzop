@@ -716,7 +716,6 @@
     <Content Include="vizzop\img\loading_black.gif" />
     <Content Include="vizzop\img\loading_gray.gif" />
     <Content Include="vizzop\jsapi.js" />
-    <Content Include="vizzop\loading_shared.htm" />
     <Content Include="vizzop\zen.agentmessagebox.js" />
     <Content Include="vizzop\zen.box.js" />
     <Content Include="vizzop\zen.clientmessagebox.js" />

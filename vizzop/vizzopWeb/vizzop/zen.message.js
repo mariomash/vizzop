@@ -106,7 +106,7 @@ var Message = jVizzop.zs_Class.create({
             if (exists_yet == false) {
 
                 var inserted = false;
-
+                /*
                 jVizzop.each(self._box.Messages, function (i, v) {
                     if (v._timestamp > self._timestamp) {
                         self.divmsg.insertBefore(jVizzop(v.divmsg));
@@ -114,7 +114,7 @@ var Message = jVizzop.zs_Class.create({
                         return false;
                     }
                 });
-
+                */
                 if (inserted == false) {
                     self.divmsg.appendTo(self._box._boxtextchat.msgZone);
                 }

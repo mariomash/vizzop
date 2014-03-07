@@ -59,11 +59,15 @@ namespace vizzopWeb
                         _clientid = Math.Floor(diff.TotalSeconds).ToString();
                     }
                     string _status = context.Request.Params["_status"];
+
+                    string TimeStamp = DateTime.UtcNow.ToString("o");
+                    /*
                     string TimeStamp = context.Request.Params["TimeStamp"];
                     if ((TimeStamp == null) || (TimeStamp == "null") && (TimeStamp == ""))
                     {
                         TimeStamp = DateTime.UtcNow.ToString("o");
                     }
+                    */
 
                     string TimeStampSenderSending = context.Request.Params["TimeStampSenderSending"];
                     if ((TimeStampSenderSending == null) || (TimeStampSenderSending == "null") && (TimeStampSenderSending == ""))

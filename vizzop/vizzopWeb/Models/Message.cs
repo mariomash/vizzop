@@ -218,10 +218,14 @@ namespace vizzopWeb.Models
                     this.To_UserName = newmessage.To.Split('@')[0].ToString();
                 }
 
-                if (newmessage.CC.Length > 0)
+                if (newmessage.CC != null)
                 {
-                    this.CC = newmessage.CC;
+                    if (newmessage.CC.Length > 0)
+                    {
+                        this.CC = newmessage.CC;
+                    }
                 }
+
                 this.MessageType = newmessage.MessageType;
 
                 /*
