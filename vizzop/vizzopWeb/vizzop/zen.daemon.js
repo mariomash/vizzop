@@ -1815,11 +1815,6 @@ var Daemon = jVizzop.zs_Class.create({
             return false;
         }
         try {
-            if (vizzop.Daemon != null) {
-                if (vizzop.Daemon.audioRinging != null) {
-                    vizzop.Daemon.audioRinging.Stop();
-                }
-            }
 
             //Primero miramos las sesiones por aprobar..
             var msg = {
@@ -1920,6 +1915,22 @@ var Daemon = jVizzop.zs_Class.create({
                             }
                         }
                     });
+
+                    //Veamos si hay que parar el ringing porque hay esperando...
+                    var must_ring = false;
+                    jVizzop.each(vizzop.Boxes, function (index, foundbox) {
+                        if (foundbox._status == 'fillBox_SupportYesNo') {
+                            must_ring = true;
+                            return false;
+                        }
+                    });
+                    if (must_ring == false) {
+                        if (vizzop.Daemon != null) {
+                            if (vizzop.Daemon.audioRinging != null) {
+                                vizzop.Daemon.audioRinging.Stop();
+                            }
+                        }
+                    }
 
                     vizzop.CommRequest_InCourse = null;
 
