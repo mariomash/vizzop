@@ -789,13 +789,14 @@ namespace vizzopWeb.Controllers
                               select m).FirstOrDefault();
                     prayer.Business = business;
                     prayer.LastActive = DateTime.Now.ToUniversalTime();
+                }
                     prayer.FullName = fullname;
                     prayer.Email = email;
                     prayer.LangISO = language;
                     prayer.IP = sIP;
                     prayer.UserAgent = useragent;
                     db.SaveChanges();
-                }
+                
 
 
 
@@ -893,6 +894,7 @@ namespace vizzopWeb.Controllers
                     _email.message.To = prayer;
                     _email.message.Subject = _subject;
                     _email.message.Lang = message.Lang;
+                    _email.withBcc = false;
                     _email.send();
 
                     var vizzop_converser_agent = (from m in db.Conversers
