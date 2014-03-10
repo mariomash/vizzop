@@ -56,6 +56,8 @@ namespace vizzopWeb.vizzop
         {
             try
             {
+                Thread.CurrentThread.Priority = ThreadPriority.Highest;
+
                 receivedMessage += Encoding.UTF8.GetString(buffer.Array, 0, result.Count);
                 if (result.EndOfMessage == true)
                 {
@@ -117,13 +119,13 @@ namespace vizzopWeb.vizzop
                                 string _status = dict.ContainsKey("_status") == false ? "" : dict["_status"] == null ? null : dict["_status"].ToString();
 
                                 string TimeStamp = DateTime.UtcNow.ToString("o");
-                                    /*
-                                    dict.ContainsKey("TimeStamp") == false ? "" : dict["TimeStamp"] == null ? null : dict["TimeStamp"].ToString();
-                                if ((TimeStamp == null) || (TimeStamp == "null") && (TimeStamp == ""))
-                                {
-                                    TimeStamp = DateTime.UtcNow.ToString("o");
-                                }
-                                    */
+                                /*
+                                dict.ContainsKey("TimeStamp") == false ? "" : dict["TimeStamp"] == null ? null : dict["TimeStamp"].ToString();
+                            if ((TimeStamp == null) || (TimeStamp == "null") && (TimeStamp == ""))
+                            {
+                                TimeStamp = DateTime.UtcNow.ToString("o");
+                            }
+                                */
 
                                 string TimeStampSenderSending = dict.ContainsKey("TimeStampSenderSending") == false ? "" : dict["TimeStampSenderSending"] == null ? null : dict["TimeStampSenderSending"].ToString();
                                 if ((TimeStampSenderSending == null) || (TimeStampSenderSending == "null") && (TimeStampSenderSending == ""))

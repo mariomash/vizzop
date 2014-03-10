@@ -127,6 +127,11 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
 
             var all_info = '';
             if (data.Session) {
+                if (data.Session.Client != null) {
+                    if (data.Session.Client.ID != null) {
+                        all_info += '<dl><dt>Client ID</dt><dd>' + data.Session.Client.ID + '</dd></dl>';
+                    }
+                }
                 if (data.Session.CreatedOn != null) {
                     var first_message_time = vizzoplib.parseJsonDate(data.Session.CreatedOn);
                     all_info += '<dl><dt>First Access</dt><dd>' + first_message_time.toDateString() + ' ' + first_message_time.toTimeString().substring(0, (first_message_time.toTimeString().indexOf(' ') - 3)) + '</dd></dl>';

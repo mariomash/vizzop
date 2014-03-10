@@ -615,6 +615,10 @@ namespace vizzopWeb.Controllers
                 {
                     try
                     {
+                        if (wl.Converser == null)
+                        {
+                            continue;
+                        }
                         //Solo añadimos los no duplicados...
                         if (DefLocList.Any(m => m.UserName == wl.Converser.UserName) == true)
                         { }

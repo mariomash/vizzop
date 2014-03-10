@@ -318,6 +318,11 @@ namespace vizzopWeb.Controllers
                                && m.ID == _commsessionid
                                select m).FirstOrDefault();
 
+                if (session == null)
+                {
+                    return Json(false);
+                }
+
                 List<Message> returnmessages = new List<Message>();
 
                 if (session != null)

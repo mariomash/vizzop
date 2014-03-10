@@ -2196,17 +2196,22 @@ namespace vizzopWeb
                     }
                     else if (type == "-1")
                     {
-                        sc_control.CompleteHtml = sc_control.CompleteHtml.Remove(0, Convert.ToInt32(contents));
+                        if (sc_control.CompleteHtml != null)
+                        {
+                            sc_control.CompleteHtml = sc_control.CompleteHtml.Remove(0, Convert.ToInt32(contents));
+                        }
                     }
                     else if (type == "0")
                     {
-                        if (Convert.ToInt32(contents) > sc_control.CompleteHtml.Length)
+                        if (sc_control.CompleteHtml != null)
                         {
-                            return false;
+                            if (Convert.ToInt32(contents) > sc_control.CompleteHtml.Length)
+                            {
+                                return false;
+                            }
+                            processedHtml += sc_control.CompleteHtml.Substring(0, Convert.ToInt32(contents));
+                            sc_control.CompleteHtml = sc_control.CompleteHtml.Remove(0, Convert.ToInt32(contents));
                         }
-                        processedHtml += sc_control.CompleteHtml.Substring(0, Convert.ToInt32(contents));
-                        sc_control.CompleteHtml = sc_control.CompleteHtml.Remove(0, Convert.ToInt32(contents));
-
                     }
                 }
                 sc_control.CompleteHtml = processedHtml;
@@ -3291,6 +3296,7 @@ namespace vizzopWeb
                 };
 
                 process.Start();
+
                 process.BeginOutputReadLine();
                 process.BeginErrorReadLine();
 
@@ -3299,7 +3305,7 @@ namespace vizzopWeb
             }
             catch (Exception ex)
             {
-                GrabaLog(Utils.NivelLog.error, ex.Message);
+                //GrabaLog(Utils.NivelLog.error, ex.Message);
                 return null;
             }
         }
