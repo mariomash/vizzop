@@ -5,13 +5,13 @@
 
     if (converser != null)
     {
-    <span style="vertical-align: middle; margin: 0 5px; display: inline-block; font-weight: normal; color: #999;">Logged In as @Html.Raw(converser.FullName) - @Html.Raw(converser.Business.BusinessName)</span>
+    <span style="vertical-align: middle; margin: 0 5px; display: inline-block; font-weight: normal; color: #ddd; font-size: 14px;">Logged In as <strong>@Html.Raw(converser.FullName) - @Html.Raw(converser.Business.BusinessName)</strong></span>
         if (ViewBag.LayoutPanelMode != true)
         { 
     <span style="vertical-align: middle; margin: 0 5px; display: inline-block;">@Html.ActionLink("Control Panel", "Index", "Panel")</span>
         }
-    <span style="vertical-align: middle; display: inline-block; margin: 0 5px;" class="vizzop-btn vizzop-btn-danger">
-        <span><a id="previewbut" href="#" class="" style="display: none;">Report an Issue</a></span>
+    <span style="vertical-align: middle; display: none; margin: 0 5px;" class="vizzop-btn vizzop-btn-danger">
+        <span><a id="previewbut" href="#" class="">Report an Issue</a></span>
     </span>
     <span style="vertical-align: middle; margin: 0 10px 0 5px; display: inline-block;" class="vizzop-btn vizzop-btn-inverse">
         @Html.ActionLink("Log Off", "LogOff", "Account", null, new { })

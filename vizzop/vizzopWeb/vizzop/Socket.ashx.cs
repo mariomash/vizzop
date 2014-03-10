@@ -298,7 +298,7 @@ namespace vizzopWeb.vizzop
                     }
                     catch (Exception _ex)
                     {
-                        utils.GrabaLog(vizzopWeb.Utils.NivelLog.error, _ex.Message);
+                        //utils.GrabaLog(vizzopWeb.Utils.NivelLog.error, _ex.Message);
                         break;
                     }
                 }

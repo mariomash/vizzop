@@ -882,7 +882,16 @@ public class AllowCrossSiteJsonAttribute : ActionFilterAttribute
 {
     public override void OnActionExecuting(ActionExecutingContext filterContext)
     {
-        filterContext.RequestContext.HttpContext.Response.AddHeader("Access-Control-Allow-Origin", "*");
+        /*
+        if (filterContext.RequestContext.HttpContext.Response.Headers.AllKeys.Contains("Access-Control-Allow-Origin") == false)
+        {
+            // If you want it formated in some other way.
+            filterContext.RequestContext.HttpContext.Response.AddHeader("Access-Control-Allow-Origin", "*");
+        }
+        {
+            filterContext.RequestContext.HttpContext.Response.Headers["Access-Control-Allow-Origin"] = "*";
+        }
+         */
         base.OnActionExecuting(filterContext);
     }
 }

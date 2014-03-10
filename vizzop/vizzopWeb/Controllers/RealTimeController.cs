@@ -56,7 +56,10 @@ namespace vizzopWeb
                         }
                         db.WebLocations.Remove(m);
                     }
-                    db.SaveChanges();
+                    if (to_move.Count() > 0)
+                    {
+                        db.SaveChanges();
+                    }
                 }
             }
             catch (Exception _ex)

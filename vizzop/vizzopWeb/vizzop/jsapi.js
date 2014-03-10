@@ -3,6 +3,31 @@
         try {
 
             //Le ponemos a todo un ID...
+            jVizzop.each(jVizzop(':not([vizzop-id])').get(), function (idx, val) {
+                //Vamos a asegurarnos de que no hay mas elementos como este...
+                var new_id = null;
+                while (new_id == null) {
+                    new_id = vizzoplib.randomnumber();
+
+                    if (vizzop.IsInFrame == true) {
+                        new_id = window.frameElement.getAttribute("id") + '_' + new_id;
+                    }
+
+                    var attrToFind = "[vizzop-id='" + new_id + "']";
+                    if (jVizzop(attrToFind).length > 0) {
+                        new_id = null;
+                    }
+                }
+                jVizzop(val).attr('vizzop-id', new_id);
+            });
+            /*
+            if (jVizzop(':focus')) {
+                var attrToFind = "[vizzop-id='" + jVizzop(val).attr('vizzop-id') + "']";
+                var elem = jVizzop(vizzop.screenshot).find(attrToFind);
+                jVizzop(elem).attr('style', 'border: solid 2px blue !important; background-color: solid 2px #aaaaff !important;');
+            }
+            */
+            /*
             jVizzop.each(jVizzop('*').get(), function (idx, val) {
                 if (jVizzop(val).attr('vizzop-id')) {
                 } else {
@@ -28,6 +53,7 @@
                     jVizzop(elem).attr('style', 'border: solid 2px blue !important; background-color: solid 2px #aaaaff !important;');
                 }
             });
+            */
 
             var screenshot = document.documentElement.cloneNode(true);
 

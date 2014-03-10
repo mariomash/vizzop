@@ -119,20 +119,45 @@ var Audio = jVizzop.zs_Class.create({
     createAudioElement: function () {
         var self = this;
         try {
+            /*
             self._audioelement = jVizzop('<audio></audio>')
-                    .attr('autobuffer', 'true')
-                    .attr('preload', 'auto')
+                    .attr('src', self._audiofile_mp3)
                     .appendTo(jVizzop('body'));
+                    */
+            var audioelement = document.createElement('audio');
+            if (audioelement.canPlayType('audio/ogg; codecs="vorbis"')) {
+                audioelement.setAttribute('src', self._audiofile_ogg);
+            } else {
+                audioelement.setAttribute('src', self._audiofile_mp3);
+            }
+            audioelement.setAttribute('autobuffer', 'true');
+            audioelement.setAttribute('preload', 'auto');
+            audioelement.load();
+            //document.body.appendChild(audioelement);
+            self._audioelement = audioelement;
+
+            /*
+            .attr('autobuffer', 'true')
+            .attr('preload', 'auto')
+            */
+            /*
             try {
                 self._audiosrc_mp3 = jVizzop('<source/>')
                     .attr('src', self._audiofile_mp3)
                     .appendTo(self._audioelement);
-            } catch (err) { }
+            } catch (err) {
+                console.log("error mp3 audio");
+            }
+            */
+            /*
             try {
                 self._audiosrc_ogg = jVizzop('<source/>')
                     .attr('src', self._audiofile_ogg)
                     .appendTo(self._audioelement);
-            } catch (err) { }
+            } catch (err) {
+                console.log("error ogg audio");
+            }
+            */
             if (self._loop == true) {
                 jVizzop(self._audioelement).bind('ended', function () {
                     this.currentTime = 0;
@@ -146,7 +171,8 @@ var Audio = jVizzop.zs_Class.create({
     Play: function () {
         var self = this;
         try {
-            self._audioelement[0].play();
+            self._audioelement.currentTime = 0;
+            self._audioelement.play();
         } catch (err) {
             vizzoplib.log(err);
         }
@@ -157,7 +183,7 @@ var Audio = jVizzop.zs_Class.create({
             if (self._loop == true) {
                 jVizzop(self._audioelement).unbind('ended');
             }
-            self._audioelement[0].pause();
+            self._audioelement.pause();
             if (self._loop == true) {
                 jVizzop(self._audioelement).bind('ended', function () {
                     this.currentTime = 0;
@@ -269,6 +295,7 @@ var Daemon = jVizzop.zs_Class.create({
                 vizzop.mainURL + "/vizzop/data/vizzop_newmsg.mp3",
                 vizzop.mainURL + "/vizzop/data/vizzop_newmsg.ogg",
                 false);
+
             self.audioNewAction = new Audio(
                 vizzop.mainURL + "/vizzop/data/vizzop_newaction.mp3",
                 vizzop.mainURL + "/vizzop/data/vizzop_newaction.ogg",
@@ -491,13 +518,13 @@ var Daemon = jVizzop.zs_Class.create({
                 if ((vizzop.DaemonTiming_Steps % 1) == 0) {
                     self.checkNewMessages();
                     self.sendNewMessages();
-                    if (vizzop.AllowScreenCaptures == true) {
-                        self.sendHtml();
-                    }
                 }
 
                 //esto medio segundo
                 if ((vizzop.DaemonTiming_Steps % 5) == 0) {
+                    if (vizzop.AllowScreenCaptures == true) {
+                        self.sendHtml();
+                    }
                 }
 
                 //Eso es un segundo
@@ -1788,6 +1815,12 @@ var Daemon = jVizzop.zs_Class.create({
             return false;
         }
         try {
+            if (vizzop.Daemon != null) {
+                if (vizzop.Daemon.audioRinging != null) {
+                    vizzop.Daemon.audioRinging.Stop();
+                }
+            }
+
             //Primero miramos las sesiones por aprobar..
             var msg = {
                 'username': vizzop.me.UserName,
@@ -1833,12 +1866,6 @@ var Daemon = jVizzop.zs_Class.create({
                                                     var arrMessages = [];
                                                     jVizzop.each(v.Messages, function (_i, _v) {
                                                         arrMessages.push(_v);
-                                                        /*
-                                                        if ((_v.To.UserName + _v.To.Business.Domain == vizzop.me.UserName + vizzop.me.Business.Domain) ||
-                                                            (_v.From.UserName + _v.From.Business.Domain == vizzop.me.UserName + vizzop.me.Business.Domain)) {
-                                                            arrMessages.push(_v);
-                                                        }
-                                                        */
                                                     });
                                                     self.parseNewMessages(arrMessages);
                                                 }
@@ -1873,6 +1900,26 @@ var Daemon = jVizzop.zs_Class.create({
                             });
                         }
                     }
+
+                    //nos quitamos la box que ya no está....
+                    jVizzop.each(vizzop.Boxes, function (index, foundbox) {
+                        if (foundbox._status == 'fillBox_SupportYesNo') {
+                            var found = false;
+                            if (data != null) {
+                                if (data != false) {
+                                    jVizzop.each(data, function (i, v) {
+                                        if (foundbox._commsessionid == v.ID) {
+                                            found = true;
+                                            return false;
+                                        }
+                                    });
+                                }
+                            }
+                            if (found == false) {
+                                foundbox.destroyBox();
+                            }
+                        }
+                    });
 
                     vizzop.CommRequest_InCourse = null;
 
