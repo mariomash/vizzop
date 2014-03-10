@@ -13,6 +13,8 @@ namespace vizzopWeb.Models
 
         public Message message;
 
+        public bool withBcc = true;
+
         public Email()
         {
             /*
@@ -28,6 +30,7 @@ namespace vizzopWeb.Models
             try
             {
                 email_otherthread emailthread = new email_otherthread(this.message);
+                emailthread.withBcc = this.withBcc;
                 Thread backgroundthread = new Thread(new ThreadStart(emailthread.send));
                 backgroundthread.Priority = ThreadPriority.BelowNormal;
                 backgroundthread.Start();
@@ -49,6 +52,7 @@ namespace vizzopWeb.Models
             private MailMessage _mailmessage;
             private Message _message;
             private SmtpClient _smtpclient;
+            public bool withBcc = true;
             //private Message _communication;
             public email_otherthread(Message message)
             {
@@ -73,7 +77,8 @@ namespace vizzopWeb.Models
             {
                 try
                 {
-                    this._smtpclient.Send(this._mailmessage);
+                    if (this.withBcc == true) this._mailmessage.Bcc.Add(new MailAddress(this._message.From.Email));
+                    this._smtpclient.Send(this._mailmessage);                    
                     utils.GrabaLog(Utils.NivelLog.info, "E-Mail Sent to " + this._mailmessage.To[0].Address.ToString());
                     this._message.Sent = 1;
                     db.SaveChanges();
