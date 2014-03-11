@@ -52,11 +52,7 @@
 
                     window.callPhantom({
                         'command': 'iframeloaded',
-                        'filename': filename,
-                        'ScrollLeft': data.ScrollLeft,
-                        'ScrollTop': data.ScrollTop,
-                        'Width': data.Width,
-                        'Height': data.Height
+                        'filename': filename
                     });
 
                 } else {
@@ -137,6 +133,12 @@
                                     'height': data.Height,
                                     'width': data.Width
                                 });
+
+                            var style = document.createElement('style'),
+                                text = document.createTextNode('body { background: #fff }');
+                            style.setAttribute('type', 'text/css');
+                            style.appendChild(text);
+                            document.head.insertBefore(style, document.head.firstChild);
 
                             setTimeout(function () { CheckIfFrameLoaded(); }, 1);
 

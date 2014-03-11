@@ -35,7 +35,7 @@ namespace vizzopWorker
 
 #if DEBUG
 #else
-            //LanzaYControlaProcesoCreaVideos();
+            LanzaYControlaProcesoCreaVideos();
 #endif
             while (true)
             {
@@ -185,7 +185,7 @@ namespace vizzopWorker
                                     captureToCreate.Data = RenderCaptureData(captureToCreate);
                                     if (captureToCreate.Data == null)
                                     {
-                                        utils.GrabaLog(Utils.NivelLog.error, "Ojo!! captura ha fallado ID: " + captureToCreate.ID);
+                                        //utils.GrabaLog(Utils.NivelLog.error, "Ojo!! captura ha fallado ID: " + captureToCreate.ID);
                                         continue;
                                     }
                                 }

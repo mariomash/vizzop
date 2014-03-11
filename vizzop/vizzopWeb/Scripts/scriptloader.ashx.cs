@@ -82,7 +82,25 @@ namespace vizzopWeb.Scripts
                 sContent = ex.Message;
             }
             context.Response.ContentType = "text/javascript";
-            context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+
+            /*
+            var found_origin = false;
+            foreach (var item in context.Response.Headers.AllKeys)
+            {
+                if (item == "Access-Control-Allow-Origin")
+                {
+                    found_origin = true;
+                    break;
+                }
+            }
+            if (found_origin == false)
+            {
+                context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+            }
+            {
+                context.Response.Headers["Access-Control-Allow-Origin"] = "*";
+            }
+            */
 
             context.Response.Write(sContent);
         }

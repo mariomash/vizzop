@@ -56,7 +56,10 @@ namespace vizzopWeb
                         }
                         db.WebLocations.Remove(m);
                     }
-                    db.SaveChanges();
+                    if (to_move.Count() > 0)
+                    {
+                        db.SaveChanges();
+                    }
                 }
             }
             catch (Exception _ex)
@@ -615,6 +618,10 @@ namespace vizzopWeb.Controllers
                 {
                     try
                     {
+                        if (wl.Converser == null)
+                        {
+                            continue;
+                        }
                         //Solo añadimos los no duplicados...
                         if (DefLocList.Any(m => m.UserName == wl.Converser.UserName) == true)
                         { }
