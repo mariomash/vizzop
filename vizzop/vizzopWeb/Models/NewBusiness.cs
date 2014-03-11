@@ -18,7 +18,7 @@ namespace vizzopWeb.Models
         public string ApiKey { get; set; }
 
         [Required]
-        [Display(Name = "Your full name")]
+        [Display(Name = "full name")]
         public string FullName { get; set; }
 
         [Required]
@@ -33,7 +33,7 @@ namespace vizzopWeb.Models
         public string Domain { get; set; }
 
         [Required]
-        [Display(Name = "Your e-mail")]
+        [Display(Name = "e-mail")]
         [Email(ErrorMessage = "Please write a valid E-mail")]
         public string Email { get; set; }
 
@@ -74,7 +74,9 @@ namespace vizzopWeb.Models
         [EqualTo("Password", ErrorMessage = "Please repeat Password")]
         public string ConfirmPassword { get; set; }
 
-        [Display(Name = "Phone Number")]
+        [Required]
+        [Display(Name = "phone number")]
+        [Phone(ErrorMessage = "Please write a valid phone number")]
         public string Phone { get; set; }
 
         public string Url { get; set; }

@@ -14,21 +14,22 @@ namespace vizzopWeb.Models
         }
 
         [Required]
-        [Display(Name = "Your full name")]
+        [Display(Name = "full name")]
         public string FullName { get; set; }
 
         [Required]
-        [Display(Name = "Your business name")]
+        [Display(Name = "business name")]
         public string BusinessName { get; set; }
 
 
         [Required]
-        [Display(Name = "Your e-mail")]
+        [Display(Name = "e-mail")]
         [Email(ErrorMessage = "Please write a valid E-mail")]
         public string Email { get; set; }
 
-        [Display(Name = "Your phone number")]
-        [Phone(ErrorMessage = "Please write a valid Phone number")]
+        [Required]
+        [Display(Name = "phone number")]
+        [Phone(ErrorMessage = "Please write a valid phone number")]
         public string Phone { get; set; }
 
         [Required]
