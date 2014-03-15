@@ -304,20 +304,38 @@ namespace vizzopWeb.Controllers
 
                 int _commsessionid = Convert.ToInt32(commsessionid);
 
-                var session = (from m in db.CommSessions
-                                   .Include("Client")
-                                   .Include("Client.Business")
-                                   .Include("Business")
-                                   .Include("Messages")
-                                   .Include("Agents")
-                                   .Include("Messages.To")
-                                   .Include("Messages.To.Business")
-                                   .Include("Messages.From")
-                                   .Include("Messages.From.Business")
+                CommSession session = null;
+                if (converser.Business.Domain.ToLowerInvariant() == "vizzop")
+                {
+                    session = (from m in db.CommSessions
+                                         .Include("Client")
+                                         .Include("Client.Business")
+                                         .Include("Business")
+                                         .Include("Messages")
+                                         .Include("Agents")
+                                         .Include("Messages.To")
+                                         .Include("Messages.To.Business")
+                                         .Include("Messages.From")
+                                         .Include("Messages.From.Business")
+                               where m.ID == _commsessionid
+                               select m).FirstOrDefault();
+                }
+                else
+                {
+                    session = (from m in db.CommSessions
+                                      .Include("Client")
+                                      .Include("Client.Business")
+                                      .Include("Business")
+                                      .Include("Messages")
+                                      .Include("Agents")
+                                      .Include("Messages.To")
+                                      .Include("Messages.To.Business")
+                                      .Include("Messages.From")
+                                      .Include("Messages.From.Business")
                                where m.Business.ID == converser.Business.ID
                                && m.ID == _commsessionid
                                select m).FirstOrDefault();
-
+                }
                 if (session == null)
                 {
                     return Json(false);
@@ -790,13 +808,13 @@ namespace vizzopWeb.Controllers
                     prayer.Business = business;
                     prayer.LastActive = DateTime.Now.ToUniversalTime();
                 }
-                    prayer.FullName = fullname;
-                    prayer.Email = email;
-                    prayer.LangISO = language;
-                    prayer.IP = sIP;
-                    prayer.UserAgent = useragent;
-                    db.SaveChanges();
-                
+                prayer.FullName = fullname;
+                prayer.Email = email;
+                prayer.LangISO = language;
+                prayer.IP = sIP;
+                prayer.UserAgent = useragent;
+                db.SaveChanges();
+
 
 
 

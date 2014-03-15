@@ -143,8 +143,8 @@
     var default_bg = '@Model.WidgetBackgroundColor';
     var default_fb = '@Model.WidgetForegroundColor';
     var default_border = '@Model.WidgetBorderColor';
-    var default_AllowJsApiLoading = @Model.AllowJsApiLoading;
-    var default_ShowHelpButton = @Model.ShowHelpButton;
+    var default_AllowJsApiLoading = @Html.Raw(Model.AllowJsApiLoading.ToString().ToLowerInvariant());
+    var default_ShowHelpButton = @Html.Raw(Model.ShowHelpButton.ToString().ToLowerInvariant());
     @if ((Model.WidgetText != null) && (Model.WidgetText != ""))
     {
         <text>var default_text = '@Model.WidgetText';</text>
