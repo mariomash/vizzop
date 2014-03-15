@@ -22,9 +22,41 @@
             </div>
             <h4>Widget Settings</h4>
             <br />
+            <h5>General Options</h5>
             <div id="WidgetSettings">
                 <form class="widget-content form-vertical">
+                    <div style="clear: both;">
+                        <div class="control-group">
+                            <div class="controls">
+                                <span style="display: inline-block; vertical-align: middle; margin-right: 5px;">
+                                    @Html.CheckBoxFor(model => model.AllowJsApiLoading, new { @class = "input-medium", @style = "margin: 0" })
+                                </span>
+                                <label for="AllowJsApiLoading" style="display: inline-block; vertical-align: middle; margin: 0;">
+                                    @Html.DisplayNameFor(model => model.AllowJsApiLoading)
+                                </label>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <div class="controls">
+                                <span style="display: inline-block; vertical-align: middle; margin-right: 5px;">
+                                    @Html.CheckBoxFor(model => model.ShowHelpButton, new { @class = "input-medium", @style = "margin: 0" })
+                                </span>
+                                <label for="ShowHelpButton" style="display: inline-block; vertical-align: middle; margin: 0;">
+                                    @Html.DisplayNameFor(model => model.ShowHelpButton)
+                                </label>
+                            </div>
+                        </div>
+                        <div class="control-group" style="display: none;">
+                            @Html.LabelFor(model => model.BusinessHours, new { @class = "control-label" })
+                            <div class="controls">
+                                @Html.TextAreaFor(model => model.BusinessHours, new { @class = "input-medium", @placeholder = "Business Hours" })
+                                @Html.ValidationMessageFor(model => model.BusinessHours, null, new { @class = "help-inline" })
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
                     <div style="width: 420px; vertical-align: top; display: inline-block; border-right: solid 1px #ddd; padding-right: 20px;">
+                        <h5>Help Button Options</h5>
                         <div style="width: 210px; display: inline-block; vertical-align: top;">
                             <div class="control-group">
                                 @Html.LabelFor(model => model.WidgetBackgroundColor, new { @class = "control-label" })
@@ -47,19 +79,11 @@
                                     @Html.ValidationMessageFor(model => model.WidgetBorderColor, null, new { @class = "help-inline" })
                                 </div>
                             </div>
-                            <hr />
                             <div class="control-group">
                                 @Html.LabelFor(model => model.WidgetText, new { @class = "control-label" })
                                 <div class="controls">
                                     @Html.TextBoxFor(model => model.WidgetText, new { @class = "input-large", @placeholder = "...not set...", @onkeyup = "javascript:updatewidget();", @maxlength = "35" })
                                     @Html.ValidationMessageFor(model => model.WidgetText, null, new { @class = "help-inline" })
-                                </div>
-                            </div>
-                            <div class="control-group" style="display: none;">
-                                @Html.LabelFor(model => model.BusinessHours, new { @class = "control-label" })
-                                <div class="controls">
-                                    @Html.TextAreaFor(model => model.BusinessHours, new { @class = "input-medium", @placeholder = "Business Hours" })
-                                    @Html.ValidationMessageFor(model => model.BusinessHours, null, new { @class = "help-inline" })
                                 </div>
                             </div>
                         </div>
@@ -69,7 +93,7 @@
                     </div>
                     <div style="width: 300px; vertical-align: top; display: inline-block; padding-left: 20px;">
                         <div class="control-group-">
-                            <h5>Preview</h5>
+                            <h5>Help Button Preview</h5>
                         </div>
                         <div style="width: 500px; height: 250px; background-color: #fafafa; position: relative; overflow: hidden; border: 1px solid #CCCCCC;">
                             <div style="width: 500px; position: absolute; bottom: 30px; left: 30px; top: auto; right: auto; text-align: justify; color: #bbbbbb;">
@@ -119,6 +143,8 @@
     var default_bg = '@Model.WidgetBackgroundColor';
     var default_fb = '@Model.WidgetForegroundColor';
     var default_border = '@Model.WidgetBorderColor';
+    var default_AllowJsApiLoading = @Model.AllowJsApiLoading;
+    var default_ShowHelpButton = @Model.ShowHelpButton;
     @if ((Model.WidgetText != null) && (Model.WidgetText != ""))
     {
         <text>var default_text = '@Model.WidgetText';</text>
@@ -182,6 +208,8 @@
         $('#WidgetBackgroundColor').val(default_bg);
         $('#WidgetForegroundColor').val(default_fb);
         $('#WidgetBorderColor').val(default_border);
+        $('AllowJsApiLoading').attr('checked', default_AllowJsApiLoading);
+        $('ShowHelpButton').attr('checked', default_ShowHelpButton);
         updatewidget();
     }
     function save_changes() {
@@ -195,6 +223,8 @@
                 'WidgetBorderColor': $('#WidgetBorderColor').val(),
                 'WidgetText': $('#WidgetText').val(),
                 'BusinessHours': $('#BusinessHours').val(),
+                'AllowJsApiLoading': $('#AllowJsApiLoading').is(':checked'),
+                'ShowHelpButton': $('#ShowHelpButton').is(':checked')
             };
             var url = "../Panel/SaveWidgetSettings";
             var post = jVizzop.ajax({

@@ -75,19 +75,20 @@
 
         function GetOrders(page, mainURL, UserName, Domain) {
             try {
-                var dateToCompare = new Date();
-                dateToCompare.setTime(StartDate.getTime() + (1 * 60 * 1000)); // 1 minutes in milliseconds
-
-                var dateNow = new Date();
-
-                if (dateNow > dateToCompare) {
-                    //Esto se autodestruye tras unos minutos sin recibir ordenes...
-                    window.callPhantom({ 'command': 'exit' });
-                }
-
                 if (OrdersRequest_InCourse != null) {
                     return;
                 }
+
+                OrdersRequest_InCourse = true;
+
+                var dateNow = new Date();
+                var dateToCompare = new Date();
+                dateToCompare.setTime(StartDate.getTime() + (1 * 60 * 1000)); // 1 minutes in milliseconds
+                if (dateNow > dateToCompare) {
+                    //Esto se autodestruye tras un tiempo sin recibir ordenes...
+                    window.callPhantom({ 'command': 'exit' });
+                }
+
 
                 var GUID = '';
                 if (data != null) {

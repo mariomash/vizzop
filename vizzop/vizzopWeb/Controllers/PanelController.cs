@@ -126,7 +126,7 @@ namespace vizzopWeb.Controllers
 #else                    
         [RequireHttps]
 #endif
-        public ActionResult SaveWidgetSettings(string WidgetBackgroundColor, string WidgetForegroundColor, string WidgetBorderColor, string WidgetText, string BusinessHours)
+        public ActionResult SaveWidgetSettings(string WidgetBackgroundColor, string WidgetForegroundColor, string WidgetBorderColor, string WidgetText, string BusinessHours, string AllowJsApiLoading, string ShowHelpButton)
         {
 
             Converser converser = new Converser();
@@ -144,29 +144,37 @@ namespace vizzopWeb.Controllers
                         return RedirectToAction("LogOn", "Account");
                     }
 
-                    var businness = (from m in db.Businesses
-                                     where m.ID == converser.Business.ID
-                                     select m).FirstOrDefault();
+                    var business = (from m in db.Businesses
+                                    where m.ID == converser.Business.ID
+                                    select m).FirstOrDefault();
 
                     if (WidgetBackgroundColor != null)
                     {
-                        businness.WidgetBackgroundColor = WidgetBackgroundColor;
+                        business.WidgetBackgroundColor = WidgetBackgroundColor;
                     }
                     if (WidgetForegroundColor != null)
                     {
-                        businness.WidgetForegroundColor = WidgetForegroundColor;
+                        business.WidgetForegroundColor = WidgetForegroundColor;
                     }
                     if (WidgetBorderColor != null)
                     {
-                        businness.WidgetBorderColor = WidgetBorderColor;
+                        business.WidgetBorderColor = WidgetBorderColor;
                     }
                     if (WidgetText != null)
                     {
-                        businness.WidgetText = WidgetText;
+                        business.WidgetText = WidgetText;
                     }
                     if (BusinessHours != null)
                     {
-                        businness.BusinessHours = BusinessHours;
+                        business.BusinessHours = BusinessHours;
+                    }
+                    if (AllowJsApiLoading != null)
+                    {
+                        business.AllowJsApiLoading = Convert.ToBoolean(AllowJsApiLoading);
+                    }
+                    if (ShowHelpButton != null)
+                    {
+                        business.ShowHelpButton = Convert.ToBoolean(ShowHelpButton);
                     }
 
                     //db.Entry(converser).State = EntityState.Modified;

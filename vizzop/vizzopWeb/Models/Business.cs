@@ -13,6 +13,7 @@ namespace vizzopWeb.Models
         public Business()
         {
             this.Active = false;
+            this.AllowJsApiLoading = true;
             this.CreatedOn = DateTime.Now;
             this.HideHelpOnStartup = false;
             this.ShowHelpButton = true;
@@ -25,7 +26,9 @@ namespace vizzopWeb.Models
             this.WidgetBackgroundColor = null;
             this.WidgetBorderColor = null;
             this.WidgetForegroundColor = null;
-            this.CompressHtmlData = true;
+            this.CompressHtmlData = false;
+            this.ShowVideosPanel = false;
+            this.ShowStatsPanel = false;
         }
 
         [Key]
@@ -94,15 +97,22 @@ namespace vizzopWeb.Models
         [Display(Name = "Country")]
         public int CountryId { get; set; }
 
+        public bool AuditMessages { get; set; }
+
+        [Display(Name = "Vizzop is enabled on client")]
+        public bool AllowJsApiLoading { get; set; }
+
+        [Display(Name = "Help button is visible")]
         public bool ShowHelpButton { get; set; }
 
-        public bool AuditMessages { get; set; }
         public bool AllowChatSockets { get; set; }
         public bool AllowScreenSockets { get; set; }
         public bool AllowScreenCaptures { get; set; }
         public bool ShowDisclaimer { get; set; }
         public bool AllowCaptureMouse { get; set; }
         public bool CompressHtmlData { get; set; }
+        public bool ShowVideosPanel { get; set; }
+        public bool ShowStatsPanel { get; set; }
 
         public bool HideHelpOnStartup { get; set; }
 
@@ -115,7 +125,7 @@ namespace vizzopWeb.Models
         [Display(Name = "Border color")]
         public string WidgetBorderColor { get; set; }
 
-        [Display(Name = "Text")]
+        [Display(Name = "Help button text")]
         public string WidgetText { get; set; }
 
         [Display(Name = "Business Hours")]

@@ -359,13 +359,15 @@ var Box = jVizzop.zs_Class.create({
                     break;
                 case 'center':
                     var top = new Number(20);
-                    if (jVizzop(window).height() > jVizzop(box).outerHeight() + top) {
-                        top = Math.floor(((jVizzop(window).height() / 2) - (jVizzop(box).outerHeight() / 2)));
+                    var size = vizzoplib.getViewportSize();
+                    if ((size.h > jVizzop(box).outerHeight() + top) && (jVizzop(box).outerHeight() > 0)) {
+                        top = Math.floor((size.h / 2) - (jVizzop(box).outerHeight() / 2));
                     }
                     var left = new Number(20);
-                    if (jVizzop(window).width() > jVizzop(box).outerWidth() + left) {
-                        left = Math.floor(((jVizzop(window).width() / 2) - (jVizzop(box).outerWidth() / 2)))
+                    if (size.w > jVizzop(box).outerWidth() + left) {
+                        left = Math.floor(((size.w / 2) - (jVizzop(box).outerWidth() / 2)))
                     }
+
                     /*
 					if (top == 0) {
 						top = 20;

@@ -97,15 +97,18 @@
                     $('#RealtimeReportResults').show();
                     rt_updatetable();
                     //rt_drawchart();
+                    rt_Countdown();
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     vizzoplib.logAjax(url, msg, jqXHR);
                     rt_Reloading_InCourse = null;
+                    rt_Countdown();
                 }
             });
         } catch (err) {
             vizzoplib.log(err);
             rt_Reloading_InCourse = null;
+            rt_Countdown();
         }
     }
     /*
@@ -382,8 +385,14 @@
     }
     */
     function rt_Countdown() {
-        rt_timeout = setTimeout(rt_Countdown, 1000);
+        setTimeout(function () {
+            rt_loadExtData();
+            //screenshot_oTable.screenshot_fnReloadAjax(getScreenshotURL(), function () { });
+        }, 3000);
+        /*
+        rt_timeout = setTimeout(rt_Countdown, 3000);
         rt_loadExtData();
+        */
         //rt_drawchart();
     }
 

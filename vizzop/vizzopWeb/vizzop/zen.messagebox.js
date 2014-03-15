@@ -359,66 +359,6 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                 self.ScreenShots = [];
             }
 
-            /*
-            url = vizzop.mainURL + "/Screenshot/GetScreenshotJsonByConverser";
-            msg = {
-                'username': self._interlocutor.UserName,
-                'domain': self._interlocutor.Business.Domain
-            };
-            var reqScreenShotHistory = jVizzop.ajax({
-                url: url,
-                type: "POST",
-                data: msg,
-                dataType: "jsonp",
-                beforeSend: function (xhr) {
-                },
-                success: function (data) {
-                    //console.vizzoplib.log("reqs " + rt_imagereqs.length);
-                    if (data != null) {
-                        if (data != false) {
-                            //console.vizzoplib.log(data);
-                            for (var i = data.length - 1; i > 0; i--) {
-                                //console.vizzoplib.log(data[i]);
-                                self.ScreenShots.unshift(data[i]);
-                            }
-                            self.loadingScreen = null;
-                        } else {
-                            self.loadingScreen = null;
-                        }
-                    } else {
-                        self.loadingScreen = null;
-                    }
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    vizzoplib.log(url, msg, jqXHR);
-                    self.loadingScreen = null;
-                }
-            });
-    
-            if (self.slider_interlocutor_image.attr('value') == self.slider_interlocutor_image.attr('max')) {
-                url = vizzop.mainURL + "/RealTime/GetScreen";
-    
-                var guid = null;
-                if (self.ScreenShots.length > 0) {
-                    guid = self.ScreenShots[self.ScreenShots.length - 1].GUID;
-                }
-                msg = {
-                    'username': self._interlocutor.UserName,
-                    'domain': self._interlocutor.Business.Domain,
-                    'guid': guid,
-                    'height': self._boxscreenshare.outerHeight()
-                };
-            } else {
-                url = vizzop.mainURL + "/RealTime/GetScreenByGUID";
-                var index = self.slider_interlocutor_image.attr('value');
-                msg = {
-                    'username': self._interlocutor.UserName,
-                    'domain': self._interlocutor.Business.Domain,
-                    'guid': self.ScreenShots[index].GUID
-                };
-            }
-            */
-
             url = vizzop.mainURL + "/RealTime/GetScreen";
 
             var guid = null;

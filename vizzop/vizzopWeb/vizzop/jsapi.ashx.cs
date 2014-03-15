@@ -123,6 +123,10 @@ namespace vizzopWeb
                 }
                 else if (Mode == "client")
                 {
+                    if (business.AllowJsApiLoading == false)
+                    {
+                        return;
+                    }
                     string name_mecookie = ApiKey + "_me";
                     if (context.Request.Cookies[name_mecookie] != null)
                     {

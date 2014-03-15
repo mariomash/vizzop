@@ -34,37 +34,46 @@ namespace vizzopWeb
                 var to_move = (from m in db.WebLocations.Include("Converser").Include("Converser.Business")
                                where m.TimeStamp_Last < loctime
                                //&& m.Converser.Business.ID == _Converser.Business.ID
-                               select m);
+                               select m).ToList();
                 if (to_move != null)
                 {
                     foreach (var m in to_move)
                     {
-                        WebLocation_History newloc = new WebLocation_History();
-                        newloc.converser = m.Converser;
-                        newloc.Referrer = m.Referrer;
-                        newloc.TimeStamp_First = m.TimeStamp_First;
-                        newloc.TimeStamp_Last = m.TimeStamp_Last;
-                        newloc.IP = m.IP;
-                        newloc.Lang = m.Lang;
-                        newloc.UserAgent = m.UserAgent;
-                        newloc.Url = m.Url;
-                        newloc.Ubication = m.Ubication;
-                        newloc.Headers = m.Headers;
-                        if (newloc.converser != null)
+                        try
                         {
-                            db.WebLocations_History.Add(newloc);
+                            WebLocation_History newloc = new WebLocation_History();
+                            newloc.converser = m.Converser;
+                            newloc.Referrer = m.Referrer;
+                            newloc.TimeStamp_First = m.TimeStamp_First;
+                            newloc.TimeStamp_Last = m.TimeStamp_Last;
+                            newloc.IP = m.IP;
+                            newloc.Lang = m.Lang;
+                            newloc.UserAgent = m.UserAgent;
+                            newloc.Url = m.Url;
+                            newloc.Ubication = m.Ubication;
+                            newloc.Headers = m.Headers;
+                            if (newloc.converser != null)
+                            {
+                                db.WebLocations_History.Add(newloc);
+                            }
+                            db.WebLocations.Remove(m);
+                            db.SaveChanges();
                         }
-                        db.WebLocations.Remove(m);
+                        catch (Exception _ex)
+                        {
+                            utils.GrabaLogExcepcion(_ex);
+                        }
                     }
+                    /*
                     if (to_move.Count() > 0)
                     {
-                        db.SaveChanges();
                     }
+                     */
                 }
             }
-            catch (Exception _ex)
+            catch (Exception ex)
             {
-                utils.GrabaLogExcepcion(_ex);
+                utils.GrabaLogExcepcion(ex);
             }
         }
     }

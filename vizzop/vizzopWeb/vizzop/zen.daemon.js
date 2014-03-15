@@ -1727,18 +1727,19 @@ var Daemon = jVizzop.zs_Class.create({
             self.deactivateMutationObserver();
             var st = jVizzop(window).scrollTop();
             var sl = jVizzop(window).scrollLeft();
-            var w;
 
             DateUTC = new Date();
             DateUTC.setHours(DateUTC.getHours() - DateUTC.getTimezoneOffset() / 60);
+
+            var size = vizzoplib.getViewportSize();
 
             var toSend = {
                 'mx': vizzop.mouseXPos,
                 'my': vizzop.mouseYPos,
                 'st': jVizzop(window).scrollTop(),
                 'sl': jVizzop(window).scrollLeft(),
-                'w': jVizzop(window).width(),
-                'h': jVizzop(window).height(),
+                'w': size.w, /*jVizzop(window).width(),*/
+                'h': size.h, /*jVizzop(window).height(),*/
                 'url': document.URL,
                 'date': DateUTC,
                 'img': null,
