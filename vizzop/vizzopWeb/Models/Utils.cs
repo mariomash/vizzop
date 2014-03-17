@@ -1577,7 +1577,7 @@ namespace vizzopWeb
             return bitImage;
         }
 
-        public ScreenCapture GetScreenCapture(string UserName, string Domain)
+        public ScreenCapture GetScreenCapture(string UserName, string Domain, string WindowName)
         {
             ScreenCapture sc = null;
 
@@ -1590,7 +1590,7 @@ namespace vizzopWeb
                  */
 
                 string key = "screenshot_control_list";
-                var item = UserName + "@" + Domain;
+                var item = UserName + "@" + Domain + "@" + WindowName;
                 Dictionary<string, string> sc_control_list = null;
 
                 //object result = SingletonCache.Instance.Get(key);
@@ -1624,7 +1624,7 @@ namespace vizzopWeb
                  * Nos traemos la fotico (si la hay)
                  */
 
-                key = "screenshot_from_" + UserName + "@" + Domain;
+                key = "screenshot_from_" + UserName + "@" + Domain + "@" + WindowName;
                 result = SingletonCache.Instance.Get(key);
                 //object result = SingletonCache.Instance.GetWithLock(key, out lockHandle);
 
@@ -2088,6 +2088,14 @@ namespace vizzopWeb
                             message.AddToCache();
                         }
 
+                        if (dict.ContainsKey("windowname"))
+                        {
+                            if ((dict["windowname"] != null) && (dict["windowname"].ToString() != "null"))
+                            {
+                                new_screencapture.WindowName = dict["windowname"].ToString();
+                            }
+                        }
+
                         if (dict.ContainsKey("blob"))
                         {
                             if ((dict["blob"] != null) && (dict["blob"].ToString() != "null"))
@@ -2141,8 +2149,9 @@ namespace vizzopWeb
                 var UserName = new_screencapture.converser.UserName;
                 var Domain = new_screencapture.converser.Business.Domain;
                 var Password = new_screencapture.converser.Password;
+                var WindowName = new_screencapture.WindowName;
 
-                key = "screenshot_control_from_" + UserName + "@" + Domain;
+                key = "screenshot_control_from_" + UserName + "@" + Domain + "@" + WindowName;
 
                 object result = SingletonCache.Instance.GetWithLock(key, out lockHandle);
                 //object result = SingletonCache.Instance.Get(key);
@@ -2232,11 +2241,12 @@ namespace vizzopWeb
                 //SingletonCache.Instance.Insert(key, sc_control);
 
                 //Y no tenemos claro si poner a funcionar el worker... a ver si no se resiente mucho la CPU
+                /*
+                GetScreenCapture(UserName, Domain);
 #if DEBUG
 #else
-                GetScreenCapture(UserName, Domain);
 #endif
-
+                */
                 /* 
                  * Lanzamos el Save en otro hilo... pero antes le mentemos el HTML que toca ya procesado.. 
                  * por aquello de generar luego los videos en otro proceso mañana o pasado ;-)
@@ -2336,7 +2346,7 @@ namespace vizzopWeb
             }
         }
 
-        public Status TrackPageView(string trackID, Converser converser, string url, string referrer, string language, string useragent, string sIP, string headers, vizzopContext db)
+        public Status TrackPageView(string trackID, Converser converser, string url, string referrer, string language, string useragent, string sIP, string headers, string windowname, vizzopContext db)
         {
             if (db == null)
             {
@@ -2413,6 +2423,7 @@ namespace vizzopWeb
                         weblocation.Url = url;
                         weblocation.Ubication = GetUbicationFromIP(sIP);
                         weblocation.Headers = headers;
+                        weblocation.WindowName = windowname;
                         db.WebLocations.Add(weblocation);
                         db.SaveChanges();
 
@@ -3033,8 +3044,8 @@ namespace vizzopWeb
                             string FileName = file.Split('\\')[file.Split('\\').Length - 1];
                             string UserName = FileName.Split('_')[0];
                             string Domain = FileName.Split('_')[1];
-
-                            string key = "screenshot_control_from_" + UserName + "@" + Domain;
+                            string WindowName = FileName.Split('_')[2];
+                            string key = "screenshot_control_from_" + UserName + "@" + Domain + "@" + WindowName;
                             ScreenCaptureControl sc_control = null;
                             //object result = SingletonCache.Instance.Get(key);
                             DataCacheLockHandle lockHandle;
@@ -3046,7 +3057,7 @@ namespace vizzopWeb
 
                             if (sc_control == null)
                             {
-                                GrabaLog(Utils.NivelLog.error, "sc_control is null: " + UserName + '@' + Domain);
+                                GrabaLog(Utils.NivelLog.error, "sc_control is null: " + UserName + '@' + Domain + '@' + WindowName);
                                 continue;
                             }
 
@@ -3173,7 +3184,8 @@ namespace vizzopWeb
                 {
                     var username = item.Key.Split('@')[0];
                     var domain = item.Key.Split('@')[1];
-                    var ProcessID = LaunchCaptureProcess(username, domain);
+                    var windowname = item.Key.Split('@')[2];
+                    var ProcessID = LaunchCaptureProcess(username, domain, windowname);
                     sc_control_list[item.Key] = ProcessID;
                 }
 
@@ -3198,7 +3210,7 @@ namespace vizzopWeb
             }
         }
 
-        public string LaunchCaptureProcess(string username, string domain)
+        public string LaunchCaptureProcess(string username, string domain, string windowname)
         {
             try
             {
@@ -3215,7 +3227,7 @@ namespace vizzopWeb
 
                 string pathjs = "phantom.js";
 
-                Process proc = DoLaunchCaptureProcess(pathjs, username, domain, "", "");
+                Process proc = DoLaunchCaptureProcess(pathjs, username, domain, "", "", windowname);
                 if (proc != null)
                 {
                     return instanceIndex + "_" + proc.Id.ToString();
@@ -3232,7 +3244,7 @@ namespace vizzopWeb
             }
         }
 
-        public Process DoLaunchCaptureProcess(string pathjs, string username, string domain, string password, string GUID)
+        public Process DoLaunchCaptureProcess(string pathjs, string username, string domain, string password, string GUID, string windowname)
         {
             try
             {
@@ -3264,19 +3276,17 @@ namespace vizzopWeb
                     CreateNoWindow = true,
                     WindowStyle = ProcessWindowStyle.Hidden,
                     WorkingDirectory = strPath,
-                    Arguments = @" --proxy-type=none --disk-cache=yes --web-security=no --ignore-ssl-errors=yes " + pathjs + @" " + mainURL + @" " + username + @" " + domain + @" " + password + @" " + GUID,
+                    Arguments = @" --proxy-type=none --disk-cache=yes --web-security=no --ignore-ssl-errors=yes " + pathjs + @" " + mainURL + @" " + username + @" " + domain + @" " + password + @" " + GUID + @" " + windowname,
                     ErrorDialog = false
                 };
 
-                /*
 #if DEBUG
                 psi.CreateNoWindow = false;
-                psi.WindowStyle = ProcessWindowStyle.Minimized;
+                psi.WindowStyle = ProcessWindowStyle.Normal;
                 psi.RedirectStandardError = false;
                 psi.RedirectStandardInput = false;
                 psi.RedirectStandardOutput = false;
 #endif
-                */
 
                 var process = new Process
                 {
@@ -3306,8 +3316,11 @@ namespace vizzopWeb
 
                 process.Start();
 
+#if DEBUG
+#else
                 process.BeginOutputReadLine();
                 process.BeginErrorReadLine();
+#endif
 
                 //process.WaitForExit();
                 return process;
@@ -3352,6 +3365,57 @@ namespace vizzopWeb
                 GrabaLogExcepcion(ex);
             }
             return converser;
+        }
+
+        public void LimpiaWebLocations()
+        {
+            try
+            {
+
+                TimeZone localZone = TimeZone.CurrentTimeZone;
+                DateTime loctime = localZone.ToUniversalTime(DateTime.Now.AddSeconds(-30));
+                var to_move = (from m in db.WebLocations.Include("Converser").Include("Converser.Business")
+                               where m.TimeStamp_Last < loctime
+                               //&& m.Converser.Business.ID == _Converser.Business.ID
+                               select m);
+                if (to_move != null)
+                {
+                    foreach (var m in to_move)
+                    {
+                        try
+                        {
+                            WebLocation_History newloc = new WebLocation_History();
+                            newloc.converser = m.Converser;
+                            newloc.Referrer = m.Referrer;
+                            newloc.TimeStamp_First = m.TimeStamp_First;
+                            newloc.TimeStamp_Last = m.TimeStamp_Last;
+                            newloc.IP = m.IP;
+                            newloc.Lang = m.Lang;
+                            newloc.UserAgent = m.UserAgent;
+                            newloc.Url = m.Url;
+                            newloc.Ubication = m.Ubication;
+                            newloc.Headers = m.Headers;
+                            newloc.WindowName = m.WindowName;
+
+                            if (newloc.converser != null)
+                            {
+                                db.WebLocations_History.Add(newloc);
+                            }
+                            db.WebLocations.Remove(m);
+                        }
+                        catch (Exception _ex)
+                        {
+                            GrabaLogExcepcion(_ex);
+                        }
+                    }
+                    db.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                GrabaLogExcepcion(ex);
+            }
+            Thread.Sleep(TimeSpan.FromSeconds(1));
         }
     }
 

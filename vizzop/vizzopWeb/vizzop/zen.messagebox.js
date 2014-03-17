@@ -19,7 +19,7 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                 }
             });
         } catch (err) {
-            vizzoplib.log("Error AddInterlocutor" + "/" + err);
+            vizzoplib.log("Error CheckIfInterlocutorIsInList" + "/" + err);
         }
         return found;
     },
@@ -368,6 +368,7 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
             msg = {
                 'username': self._interlocutor[0].UserName,
                 'domain': self._interlocutor[0].Business.Domain,
+                'windowname': self._interlocutor[0].WindowName,
                 'guid': guid,
                 'height': self._boxscreenshare.outerHeight()
             };

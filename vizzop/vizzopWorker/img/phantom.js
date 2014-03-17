@@ -8,6 +8,7 @@ if (args.length === 1) {
     mainURL = args[1];
     UserName = args[2];
     Domain = args[3];
+    WindowName = args[4];
 }
 
 var page = require('webpage').create();
@@ -25,10 +26,10 @@ page.onCallback = function (param) {
         param.filename = "captures/" + param.filename;
 
         page.render(param.filename);
-        //console.log(date + ' rendered: ' + param.filename);
+        console.log(date + ' rendered: ' + param.filename);
 
     } else {
-        //console.log(date + ' ' + param.log);
+        console.log(date + ' ' + param.log);
     }
 }
 
@@ -41,10 +42,10 @@ page.onLoadFinished = function (status) {
         }
         counter++;
 
-        page.evaluate(function (page, mainURL, UserName, Domain) {
-            var timerorders = window.setInterval(function () { GetOrders(page, mainURL, UserName, Domain); }, 1);
-            var timerframes = window.setInterval(function () { CheckIfFrameLoaded(); }, 1000);
-        }, page, mainURL, UserName, Domain);
+        page.evaluate(function (page, mainURL, UserName, Domain, WindowName) {
+            var timerorders = window.setInterval(function () { GetOrders(page, mainURL, UserName, Domain, WindowName); }, 1);
+            var timerframes = window.setInterval(function () { CheckIfFrameLoaded(); }, 500);
+        }, page, mainURL, UserName, Domain, WindowName);
     }
 }
 

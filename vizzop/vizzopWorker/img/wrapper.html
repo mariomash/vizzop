@@ -30,29 +30,29 @@
 
         function CheckIfFrameLoaded() {
             try {
-                var iframe = document.getElementById('WrapperIframe');
-                if (iframe.contentDocument) {
-                    iframeDoc = iframe.contentDocument;
-                } else {
-                    iframeDoc = iframe.contentWindow.document;
-                }
-
-                var iframe = document.getElementById('WrapperIframe');
-                iframe.contentWindow.scrollTo(data.ScrollLeft, data.ScrollTop);
-
-                var filename = data.UserName + '_' + data.Domain + '_.png';
-
                 if (sacafotos == true) {
+
+                    var iframe = document.getElementById('WrapperIframe');
+                    if (iframe.contentDocument) {
+                        iframeDoc = iframe.contentDocument;
+                    } else {
+                        iframeDoc = iframe.contentWindow.document;
+                    }
+
+                    var iframe = document.getElementById('WrapperIframe');
+                    iframe.contentWindow.scrollTo(data.ScrollLeft, data.ScrollTop);
+
+                    var filename = data.UserName + '_' + data.Domain + '_' + data.WindowName + '_.png';
+
                     window.callPhantom({
                         'command': 'render',
                         'filename': filename
                     });
-                }
 
-                if (iframeDoc.readyState.toLowerCase() != 'complete') {
-                    sacafotos = false;
+                    if (iframeDoc.readyState.toLowerCase() == 'complete') {
+                        sacafotos = false;
+                    }
                 }
-
             } catch (err) {
                 window.callPhantom({
                     'log': 'error ' + err
@@ -73,7 +73,7 @@
             return iFrame;
         }
 
-        function GetOrders(page, mainURL, UserName, Domain) {
+        function GetOrders(page, mainURL, UserName, Domain, WindowName) {
             try {
                 if (OrdersRequest_InCourse != null) {
                     return;
@@ -91,14 +91,17 @@
 
 
                 var GUID = '';
+                //var WindowName = '';
                 if (data != null) {
                     GUID = data.GUID;
+                    WindowName = data.WindowName;
                 }
 
                 var msg = {
                     'UserName': UserName,
                     'Domain': Domain,
-                    'GUID': GUID
+                    'GUID': GUID,
+                    'WindowName': WindowName
                 };
                 var url = mainURL + "/Messages/CheckCaptureControl";
 

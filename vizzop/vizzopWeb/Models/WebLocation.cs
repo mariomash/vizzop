@@ -42,5 +42,6 @@ namespace vizzopWeb.Models
         [Required]
         public DateTime TimeStamp_Last { get; set; }
 
+        public string WindowName { get; set; }
     }
 }

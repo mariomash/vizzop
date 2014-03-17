@@ -32,13 +32,14 @@ namespace vizzopWorker
             utils.GrabaLog(Utils.NivelLog.info, "vizzopWorker entry point called");
             LanzaYControlaProcesoFileScreenShots();
             LanzaYControlaProcesoPhantom();
+            LanzaYControlaProcesoWebLocations();
 #if DEBUG
 #else
             LanzaYControlaProcesoCreaVideos();
 #endif
             while (true)
             {
-                Thread.Sleep(TimeSpan.FromMilliseconds(100));
+                Thread.Sleep(TimeSpan.FromMilliseconds(1000));
             }
         }
 
@@ -295,7 +296,7 @@ namespace vizzopWorker
 
                 string pathjs = "phantom_videos.js";
 
-                Process proc = utils.DoLaunchCaptureProcess(pathjs, captureToCreate.converser.UserName, captureToCreate.converser.Business.Domain, captureToCreate.converser.Password, captureToCreate.GUID);
+                Process proc = utils.DoLaunchCaptureProcess(pathjs, captureToCreate.converser.UserName, captureToCreate.converser.Business.Domain, captureToCreate.converser.Password, captureToCreate.GUID, captureToCreate.WindowName);
 
                 while (ProcessExtensions.IsRunning(proc))
                 {
@@ -463,6 +464,39 @@ namespace vizzopWorker
                 utils.GrabaLogExcepcion(ex);
                 return false;
             }
+        }
+
+        private void LanzaYControlaProcesoWebLocations()
+        {
+
+            BackgroundWorker bw = new BackgroundWorker();
+
+            // this allows our worker to report progress during work
+            bw.WorkerReportsProgress = true;
+
+            // what to do in the background thread
+            bw.DoWork += new DoWorkEventHandler(
+            delegate(object o, DoWorkEventArgs args)
+            {
+                BackgroundWorker b = o as BackgroundWorker;
+                utils.LimpiaWebLocations();
+            });
+
+            // what to do when progress changed (update the progress bar for example)
+            bw.ProgressChanged += new ProgressChangedEventHandler(
+            delegate(object o, ProgressChangedEventArgs args)
+            {
+                //label1.Text = string.Format("{0}% Completed", args.ProgressPercentage);
+            });
+
+            // what to do when worker completes its task (notify the user)
+            bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(
+            delegate(object o, RunWorkerCompletedEventArgs args)
+            {
+                LanzaYControlaProcesoWebLocations();
+            });
+
+            bw.RunWorkerAsync();
         }
 
 

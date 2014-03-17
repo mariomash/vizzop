@@ -257,7 +257,8 @@ var Tracking = jVizzop.zs_Class.create({
                 'domain': self._domain,
                 'url': url,
                 'referrer': referrer,
-                'trackID': self._id
+                'trackID': self._id,
+                'windowname': window.name
             };
             url = vizzop.mainURL + "/RealTime/TrackPageView";
             vizzop.Tracking_InCourse = jVizzop.ajax({
@@ -287,6 +288,9 @@ var Daemon = jVizzop.zs_Class.create({
         var eo = "profiling";
         console.profile([eo]);
         */
+        if ((window.name == null) || (window.name == '')) {
+            window.name = vizzoplib.randomnumber();
+        }
         var self = this;
         try {
             var l = vizzoplib.getLocation(document.URL);
@@ -518,13 +522,13 @@ var Daemon = jVizzop.zs_Class.create({
                 if ((vizzop.DaemonTiming_Steps % 1) == 0) {
                     self.checkNewMessages();
                     self.sendNewMessages();
+                    if (vizzop.AllowScreenCaptures == true) {
+                        self.sendHtml();
+                    }
                 }
 
                 //esto medio segundo
                 if ((vizzop.DaemonTiming_Steps % 5) == 0) {
-                    if (vizzop.AllowScreenCaptures == true) {
-                        self.sendHtml();
-                    }
                 }
 
                 //Eso es un segundo
@@ -1542,6 +1546,7 @@ var Daemon = jVizzop.zs_Class.create({
                 'CommSessionID': _commmSessionID,
                 'SessionID': vizzop.SessionID,
                 'trackID': _trackID,
+                'WindowName': window.name,
                 'MsgCueAudit': MsgCueAudit
             };
             var url = vizzop.mainURL + "/Messages/CheckExternal";
@@ -1575,7 +1580,8 @@ var Daemon = jVizzop.zs_Class.create({
             var msg = {
                 'UserName': vizzop.me.UserName,
                 'Password': vizzop.me.Password,
-                'Domain': vizzop.me.Business.Domain
+                'Domain': vizzop.me.Business.Domain,
+                'WindowName': window.name
             };
             var url = vizzop.mainURL + "/Messages/CheckNew";
             vizzop.MsgCheck_InCourse = jVizzop.ajax({
@@ -1743,7 +1749,8 @@ var Daemon = jVizzop.zs_Class.create({
                 'url': document.URL,
                 'date': DateUTC,
                 'img': null,
-                'blob': vizzoplib.screenshotPage()
+                'blob': vizzoplib.screenshotPage(),
+                'windowname': window.name
             }
 
             self.activateMutationObserver();

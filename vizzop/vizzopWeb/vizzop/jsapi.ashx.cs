@@ -201,8 +201,10 @@ namespace vizzopWeb
                                 urlreferrer = context.Request.UrlReferrer.AbsoluteUri;
                             }
                             //Y trackeamos la visita.. solo para clientes!! si es la primera vez no habrá trackID... anyway siempre lo traemos
-                            Status returnStatus = utils.TrackPageView(trackID, converser, urlreferrer, "", language, useragent, sIP, headers, db);
+                            /*
+                            Status returnStatus = utils.TrackPageView(trackID, converser, urlreferrer, "", language, useragent, sIP, headers, null, db);
                             var e = returnStatus;
+                             */
                         }
 
                         Converser conv_me = new Converser();

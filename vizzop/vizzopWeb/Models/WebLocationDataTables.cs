@@ -31,6 +31,8 @@ namespace vizzopWeb.Models
 
         public string Ubication { get; set; }
 
+        public string WindowName { get; set; }
+
         public bool Equals(WebLocationDataTables other)
         {
 
@@ -69,5 +71,6 @@ namespace vizzopWeb.Models
             return hID ^ hUrl ^ hReferrer ^ hFullName ^ hUserName ^ hDomain ^ hPassword ^ hUserAgent ^ hLang ^ hIP ^ hUbication;
             //^ hTimeStamp ^ hLastViewed
         }
+
     }
 }

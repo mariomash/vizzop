@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 //using Microsoft.Web.Mvc.Resources;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
@@ -12,7 +14,7 @@ using vizzopWeb.Models;
 
 namespace vizzopWeb
 {
-
+    /*
     public class Thread_GetWebLocationsHelper
     {
         private vizzopContext db = new vizzopContext();
@@ -52,6 +54,8 @@ namespace vizzopWeb
                             newloc.Url = m.Url;
                             newloc.Ubication = m.Ubication;
                             newloc.Headers = m.Headers;
+                            newloc.WindowName = m.WindowName;
+
                             if (newloc.converser != null)
                             {
                                 db.WebLocations_History.Add(newloc);
@@ -64,11 +68,6 @@ namespace vizzopWeb
                             utils.GrabaLogExcepcion(_ex);
                         }
                     }
-                    /*
-                    if (to_move.Count() > 0)
-                    {
-                    }
-                     */
                 }
             }
             catch (Exception ex)
@@ -77,6 +76,7 @@ namespace vizzopWeb
             }
         }
     }
+    */
 
     public class Thread_TrackScreenHelper
     {
@@ -170,6 +170,7 @@ namespace vizzopWeb
                     sc.Width = this._ScreenCapture.Width;
                     sc.Blob = this._ScreenCapture.Blob;
                     sc.Data = this._ScreenCapture.Data;
+                    sc.WindowName = this._ScreenCapture.WindowName;
                 }
                 db.SaveChanges();
 
@@ -296,7 +297,7 @@ namespace vizzopWeb.Controllers
 #else
         [RequireHttps]
 #endif
-        public ActionResult TrackPageView(string trackID, string username, string password, string domain, string url, string referrer, string callback)
+        public ActionResult TrackPageView(string trackID, string username, string password, string domain, string url, string referrer, string windowname, string callback)
         {
             try
             {
@@ -323,7 +324,7 @@ namespace vizzopWeb.Controllers
                     sIP = sIP.Split(',')[0];
                     string[] languages = HttpContext.Request.UserLanguages;
                     string useragent = HttpContext.Request.UserAgent;
-                    Status returnstatus = utils.TrackPageView(trackID, converser, url, referrer, languages[0], useragent, sIP, headers, db);
+                    Status returnstatus = utils.TrackPageView(trackID, converser, url, referrer, languages[0], useragent, sIP, headers, windowname, db);
                     if (returnstatus.Success == true)
                     {
                         return Json(returnstatus.Value.ToString());
@@ -447,7 +448,7 @@ namespace vizzopWeb.Controllers
 #else
         [RequireHttps]
 #endif
-        public ActionResult GetScreen(string UserName, string Domain, string height, string width, string guid)
+        public ActionResult GetScreen(string UserName, string Domain, string WindowName, string height, string width, string guid)
         {
             try
             {
@@ -458,7 +459,7 @@ namespace vizzopWeb.Controllers
                 Boolean CaptureCheck = false;
                 while (CaptureCheck == false)
                 {
-                    sc = utils.GetScreenCapture(UserName, Domain);
+                    sc = utils.GetScreenCapture(UserName, Domain, WindowName);
                     if (sc != null)
                     {
                         if ((sc.GUID != guid) || (DateTime.Now > start_time.AddSeconds(20)))
@@ -493,6 +494,7 @@ namespace vizzopWeb.Controllers
                     {
                         UserName = sc.converser.UserName,
                         Domain = sc.converser.Business.Domain,
+                        WindowName = sc.WindowName,
                         GUID = sc.GUID,
                         CreatedOn = sc.CreatedOn.ToLocalTime().ToString("G"),
                         Url = sc.Url,
@@ -581,6 +583,8 @@ namespace vizzopWeb.Controllers
             }
         }
 
+
+
         [JsonpFilter]
 #if DEBUG
 #else
@@ -604,21 +608,27 @@ namespace vizzopWeb.Controllers
                     return Json(null);
                 }
 
-                Thread_GetWebLocationsHelper oThread_GetWebLocationsHelper = new Thread_GetWebLocationsHelper(converser);
-                oThread_GetWebLocationsHelper.DoThings();
-                //Thread.Sleep(new TimeSpan(0, 0, 15));
+                /*
+                    Thread_GetWebLocationsHelper oThread_GetWebLocationsHelper = new Thread_GetWebLocationsHelper(converser);
+                    oThread_GetWebLocationsHelper.DoThings();
+                 */
+
+                TimeZone localZone = TimeZone.CurrentTimeZone;
+                DateTime loctime = localZone.ToUniversalTime(DateTime.Now.AddSeconds(-30));
 
                 List<WebLocation> weblocations = new List<WebLocation>();
                 List<WebLocationDataTables> DefLocList = new List<WebLocationDataTables>();
                 if (converser.Business.Domain.ToLowerInvariant() == "vizzop")
                 {
                     weblocations = (from m in db.WebLocations
+                                    where m.TimeStamp_Last > loctime
                                     select m).OrderByDescending(z => z.TimeStamp_Last).ToList<WebLocation>();
                 }
                 else
                 {
                     weblocations = (from m in db.WebLocations
                                     where m.Converser.Business.ID == converser.Business.ID &&
+                                    m.TimeStamp_Last > loctime &&
                                     m.Converser.Agent == null
                                     select m).OrderByDescending(z => z.TimeStamp_Last).ToList<WebLocation>();
                 }
@@ -632,14 +642,14 @@ namespace vizzopWeb.Controllers
                             continue;
                         }
                         //Solo añadimos los no duplicados...
-                        if (DefLocList.Any(m => m.UserName == wl.Converser.UserName) == true)
+                        if (DefLocList.Any(m => m.WindowName == wl.WindowName) == true)
                         { }
                         else
                         {
                             if (wl.Converser != null)
                             {
                                 WebLocationDataTables loc = new WebLocationDataTables();
-                                loc.ID = wl.ID;
+                                loc.ID = wl.Converser.ID;
                                 loc.Url = wl.Url;
                                 loc.Referrer = wl.Referrer;
                                 loc.IP = wl.IP;
@@ -652,6 +662,7 @@ namespace vizzopWeb.Controllers
                                 loc.Domain = wl.Converser.Business.Domain;
                                 loc.Password = wl.Converser.Password;
                                 loc.FullName = wl.Converser.FullName != null ? wl.Converser.FullName : "Anonymous";
+                                loc.WindowName = wl.WindowName;
                                 DefLocList.Add(loc);
                             }
                         }
@@ -755,12 +766,13 @@ namespace vizzopWeb.Controllers
                         x.UserName,
                         x.Domain,
                         x.Password,
+                        x.WindowName,
                         ""
                         }).ToList();
 
                     foreach (var item in aaData)
                     {
-                        ScreenCapture sc = utils.GetScreenCapture(item[12], item[13]);
+                        ScreenCapture sc = utils.GetScreenCapture(item[12], item[13], item[15]);
                         if (sc != null)
                         {
                             item[1] = "data:image/jpg;base64," + utils.ImageToJpegBase64(
