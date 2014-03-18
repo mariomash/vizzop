@@ -294,6 +294,11 @@ namespace vizzopWeb
 
                             try
                             {
+                                if (messageaudit.Subject.StartsWith("$#_"))
+                                {
+                                    return;
+                                }
+
                                 db.MessageAudits.Add(messageaudit);
                                 db.SaveChanges();
                             }

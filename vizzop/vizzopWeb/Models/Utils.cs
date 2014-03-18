@@ -27,12 +27,6 @@ using System.Drawing.Imaging;
 using System.Web.WebSockets;
 using Microsoft.WindowsAzure.ServiceRuntime;
 using System.ComponentModel;
-
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Linq;
 using Newtonsoft.Json;
 
 
@@ -1577,55 +1571,67 @@ namespace vizzopWeb
             return bitImage;
         }
 
+        public void CheckIfCaptureProcessMustBeAddedToSc_Control(string UserName, string Domain, string WindowName)
+        {
+            try
+            {
+                /*
+                 * Miramos (en background) La lista de Procesos de Captura a ver si este converser está ahi o no...
+                 * Y en caso de que no esté lo añadimos para que empiecen a sacar "fotos" desde el worker
+                 */
+                Task.Factory.StartNew(() =>
+                {
+                    string key = "screenshot_control_list";
+                    var item = UserName + "@" + Domain + "@" + WindowName;
+                    Dictionary<string, string> sc_control_list = null;
+
+                    //object result = SingletonCache.Instance.Get(key);
+                    DataCacheLockHandle lockHandle;
+                    object result = SingletonCache.Instance.GetWithLock(key, out lockHandle);
+
+                    if (result != null)
+                    {
+                        sc_control_list = (Dictionary<string, string>)result;
+                    }
+
+                    if (sc_control_list == null)
+                    {
+                        sc_control_list = new Dictionary<string, string>();
+                    }
+
+                    //Si el proceso se hubiera muerto lo hubieramos Quitado del cache monitorizando en cada worker...
+                    if (sc_control_list.ContainsKey(item) == false)
+                    {
+                        sc_control_list.Add(item, null);
+                        //SingletonCache.Instance.Insert(key, sc_control_list);
+                        SingletonCache.Instance.InsertWithLock(key, sc_control_list, lockHandle);
+                        //SingletonCache.Instance.Insert(key, sc_control_list);
+                    }
+                    else
+                    {
+                        SingletonCache.Instance.UnLock(key, lockHandle);
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                GrabaLog(NivelLog.error, ex.Message);
+            }
+        }
+
         public ScreenCapture GetScreenCapture(string UserName, string Domain, string WindowName)
         {
             ScreenCapture sc = null;
 
             try
             {
-
-                /*
-                 * Primero miramos La lista de Procesos de Captura a ver si este converser está ahi o no...
-                 * Y en caso de que no esté lo añadimos para que empiecen a sacar "fotos" desde el worker
-                 */
-
-                string key = "screenshot_control_list";
-                var item = UserName + "@" + Domain + "@" + WindowName;
-                Dictionary<string, string> sc_control_list = null;
-
-                //object result = SingletonCache.Instance.Get(key);
-                DataCacheLockHandle lockHandle;
-                object result = SingletonCache.Instance.GetWithLock(key, out lockHandle);
-
-                if (result != null)
-                {
-                    sc_control_list = (Dictionary<string, string>)result;
-                }
-
-                if (sc_control_list == null)
-                {
-                    sc_control_list = new Dictionary<string, string>();
-                }
-
-                //Si el proceso se hubiera muerto lo hubieramos Quitado del cache monitorizando en cada worker...
-                if (sc_control_list.ContainsKey(item) == false)
-                {
-                    sc_control_list.Add(item, null);
-                    //SingletonCache.Instance.Insert(key, sc_control_list);
-                    SingletonCache.Instance.InsertWithLock(key, sc_control_list, lockHandle);
-                    //SingletonCache.Instance.Insert(key, sc_control_list);
-                }
-                else
-                {
-                    SingletonCache.Instance.UnLock(key, lockHandle);
-                }
+                CheckIfCaptureProcessMustBeAddedToSc_Control(UserName, Domain, WindowName);
 
                 /*
                  * Nos traemos la fotico (si la hay)
                  */
-
-                key = "screenshot_from_" + UserName + "@" + Domain + "@" + WindowName;
-                result = SingletonCache.Instance.Get(key);
+                string key = "screenshot_from_" + UserName + "@" + Domain + "@" + WindowName;
+                object result = SingletonCache.Instance.Get(key);
                 //object result = SingletonCache.Instance.GetWithLock(key, out lockHandle);
 
                 if (result != null)
@@ -1638,26 +1644,6 @@ namespace vizzopWeb
             {
                 GrabaLogExcepcion(e);
             }
-
-            /*
-            if (sc == null)
-            {
-                try
-                {
-                    //Esto es rápido ;)
-                    sc = (from m in db.ScreenCaptures.Include("converser").Include("converser.Business")
-                          where m.converser.UserName == UserName &&
-                          m.converser.Business.Domain == Domain
-                          select m).OrderByDescending(m => m.CreatedOn).FirstOrDefault();
-                }
-                catch (Exception e)
-                {
-                    GrabaLogExcepcion(e);
-                    return null;
-                }
-            }
-            */
-
 
             return sc;
         }
@@ -2188,14 +2174,12 @@ namespace vizzopWeb
                         if (sc_control.ScreenCapture != null)
                         {
                             //si no ha cambiado naaaada no renderizamos
-                            if (
-                                (new_screencapture.Height == sc_control.ScreenCapture.Height) &&
+                            if ((new_screencapture.Height == sc_control.ScreenCapture.Height) &&
                                 (new_screencapture.Width == sc_control.ScreenCapture.Width) &&
                                 (new_screencapture.ScrollLeft == sc_control.ScreenCapture.ScrollLeft) &&
-                                (new_screencapture.ScrollTop == sc_control.ScreenCapture.ScrollTop) &&
-                                (new_screencapture.Blob != sc_control.ScreenCapture.Blob)
-                                )
+                                (new_screencapture.ScrollTop == sc_control.ScreenCapture.ScrollTop))
                             {
+                                // && (new_screencapture.Blob != sc_control.ScreenCapture.Blob)
                                 SingletonCache.Instance.UnLock(key, lockHandle);
                                 return true;
                             }
@@ -2726,31 +2710,38 @@ namespace vizzopWeb
 
         public void GrabaLog(NivelLog NLog, string strLog)
         {
-            Task TaskLog = Task.Factory.StartNew(() =>
+            try
             {
-                //Asi pillamos mas info de donde estamos realmente :)
-                System.Diagnostics.StackFrame Frame = new System.Diagnostics.StackFrame(1, false);
-                System.Reflection.MethodBase Method;
-                Method = Frame.GetMethod();
-
-                String strLog_WithRoute = Method.DeclaringType.FullName + "/" + Method.Name + "/" + strLog;
-
-                switch (NLog)
+                Task TaskLog = Task.Factory.StartNew(() =>
                 {
-                    case NivelLog.info:
-                        GrabaAnalyticsLog(NLog, strLog_WithRoute);
-                        //Lo importante va a Syslog y a BD para posterior búsqueda-seguimiento
-                        GrabaDBLog(NLog, strLog_WithRoute);
-                        break;
-                    case NivelLog.error:
-                        GrabaAnalyticsLog(NLog, strLog_WithRoute);
-                        //Los errores van a Syslog y a BD para posterior búsqueda-seguimiento
-                        GrabaDBLog(NLog, strLog_WithRoute);
-                        break;
-                }
-                //Tó va a Syslog, y en caso de que no sea posible, Syslog se encarga de mandarlo a un TXT
-                GrabaSYSLog(NLog, strLog_WithRoute);
-            });
+                    //Asi pillamos mas info de donde estamos realmente :)
+                    System.Diagnostics.StackFrame Frame = new System.Diagnostics.StackFrame(1, false);
+                    System.Reflection.MethodBase Method;
+                    Method = Frame.GetMethod();
+
+                    String strLog_WithRoute = Method.DeclaringType.FullName + "/" + Method.Name + "/" + strLog;
+
+                    switch (NLog)
+                    {
+                        case NivelLog.info:
+                            GrabaAnalyticsLog(NLog, strLog_WithRoute);
+                            //Lo importante va a Syslog y a BD para posterior búsqueda-seguimiento
+                            GrabaDBLog(NLog, strLog_WithRoute);
+                            break;
+                        case NivelLog.error:
+                            GrabaAnalyticsLog(NLog, strLog_WithRoute);
+                            //Los errores van a Syslog y a BD para posterior búsqueda-seguimiento
+                            GrabaDBLog(NLog, strLog_WithRoute);
+                            break;
+                    }
+                    //Tó va a Syslog, y en caso de que no sea posible, Syslog se encarga de mandarlo a un TXT
+                    GrabaSYSLog(NLog, strLog_WithRoute);
+                });
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
 
         public void GrabaLogJavascript(string strLog)
@@ -3013,7 +3004,7 @@ namespace vizzopWeb
         public void LaunchScreenShotsFileControl()
         {
 
-            GrabaLog(Utils.NivelLog.info, "Iniciando LaunchScreenShotsFileControl");
+            //GrabaLog(Utils.NivelLog.info, "Iniciando LaunchScreenShotsFileControl");
             while (true)
             {
                 try
@@ -3199,7 +3190,7 @@ namespace vizzopWeb
 
         public void LaunchCaptureProcesses()
         {
-            GrabaLog(Utils.NivelLog.info, "Iniciando LaunchCaptureProcesses");
+            //GrabaLog(Utils.NivelLog.info, "Iniciando LaunchCaptureProcesses");
             while (true)
             {
                 CheckIfStartedCaptureProcessesAreStillRunning();
@@ -3377,7 +3368,7 @@ namespace vizzopWeb
                 var to_move = (from m in db.WebLocations.Include("Converser").Include("Converser.Business")
                                where m.TimeStamp_Last < loctime
                                //&& m.Converser.Business.ID == _Converser.Business.ID
-                               select m);
+                               select m).ToList();
                 if (to_move != null)
                 {
                     foreach (var m in to_move)
@@ -3402,13 +3393,13 @@ namespace vizzopWeb
                                 db.WebLocations_History.Add(newloc);
                             }
                             db.WebLocations.Remove(m);
+                            db.SaveChanges();
                         }
                         catch (Exception _ex)
                         {
                             GrabaLogExcepcion(_ex);
                         }
                     }
-                    db.SaveChanges();
                 }
             }
             catch (Exception ex)
@@ -3416,6 +3407,76 @@ namespace vizzopWeb
                 GrabaLogExcepcion(ex);
             }
             Thread.Sleep(TimeSpan.FromSeconds(1));
+        }
+
+        internal BrowserFeature FindBrowserFeaturesBasedOnUserAgent(string UserAgent)
+        {
+            try
+            {
+                if (UserAgent.ToUpperInvariant().Contains("GOOGLEBOT") == true)
+                {
+                    UserAgent = "GOOGLEBOT";
+                }
+                else if (UserAgent.ToUpperInvariant().Contains("MSIE 6.0") == true)
+                {
+                    UserAgent = "MSIE 6.0";
+                }
+                else if (UserAgent.ToUpperInvariant().Contains("MSIE 7.0") == true)
+                {
+                    UserAgent = "MSIE 7.0";
+                }
+                else if (UserAgent.ToUpperInvariant().Contains("MSIE 8.0") == true)
+                {
+                    UserAgent = "MSIE 8.0";
+                }
+                else if (UserAgent.ToUpperInvariant().Contains("MSIE 8.0") == true)
+                {
+                    UserAgent = "MSIE 8.0";
+                }
+                else if (UserAgent.ToUpperInvariant().Contains("MSIE 9.0") == true)
+                {
+                    UserAgent = "MSIE 9.0";
+                }
+                else if (UserAgent.ToUpperInvariant().Contains("MSIE 10.0") == true)
+                {
+                    UserAgent = "MSIE 10.0";
+                }
+                else if (UserAgent.ToUpperInvariant().Contains("ANDROID") == true)
+                {
+                    UserAgent = "ANDROID";
+                }
+                else if (UserAgent.ToUpperInvariant().Contains("IPAD") == true)
+                {
+                    UserAgent = "IPAD";
+                }
+                else if (UserAgent.ToUpperInvariant().Contains("IPHONE") == true)
+                {
+                    UserAgent = "IPHONE";
+                }
+                else if (UserAgent.ToUpperInvariant().Contains("IPOD") == true)
+                {
+                    UserAgent = "IPOD";
+                }
+                else if (UserAgent.ToUpperInvariant().Contains("FIREFOX") == true)
+                {
+                    UserAgent = "FIREFOX";
+                }
+                else if (UserAgent.ToUpperInvariant().Contains("SAFARI") == true)
+                {
+                    UserAgent = "SAFARI";
+                }
+
+
+                var useragent_in_db = (from m in db.BrowserFeatures
+                                       where m.UserAgent == UserAgent
+                                       select m).FirstOrDefault();
+                return useragent_in_db;
+            }
+            catch (Exception ex)
+            {
+                GrabaLogExcepcion(ex);
+                return null;
+            }
         }
     }
 

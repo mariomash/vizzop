@@ -1056,16 +1056,25 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                             if (to_list.length > 0) {
                                 to_list = to_list.slice(1);
                             }
-                            var newmsg = new Message(
-                                vizzop.me.UserName + '@' + vizzop.me.Business.Domain,
-                                to_list,
-                                '$#_inputfocus_in',
-                                self._commsessionid,
-                                self,
-                                self._commsessionid
-                                );
-                            newmsg._from_fullname = vizzop.me.FullName;
-                            vizzop.MsgCue.push(newmsg);
+                            var found = false;
+                            jVizzop.each(vizzop.MsgCue, function (i, v) {
+                                if (v._subject == '$#_inputfocus_in') {
+                                    found = true;
+                                    return false;
+                                }
+                            });
+                            if (found == false) {
+                                var newmsg = new Message(
+                                    vizzop.me.UserName + '@' + vizzop.me.Business.Domain,
+                                    to_list,
+                                    '$#_inputfocus_in',
+                                    self._commsessionid,
+                                    self,
+                                    self._commsessionid
+                                    );
+                                newmsg._from_fullname = vizzop.me.FullName;
+                                vizzop.MsgCue.push(newmsg);
+                            }
                         }
 
                     }

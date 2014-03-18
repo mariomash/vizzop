@@ -44,7 +44,7 @@ page.onLoadFinished = function (status) {
 
         page.evaluate(function (page, mainURL, UserName, Domain, WindowName) {
             var timerorders = window.setInterval(function () { GetOrders(page, mainURL, UserName, Domain, WindowName); }, 1);
-            var timerframes = window.setInterval(function () { CheckIfFrameLoaded(); }, 500);
+            var timerframes = window.setInterval(function () { CheckIfFrameLoaded(); }, 1);
         }, page, mainURL, UserName, Domain, WindowName);
     }
 }

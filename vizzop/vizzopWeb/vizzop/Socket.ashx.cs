@@ -56,7 +56,7 @@ namespace vizzopWeb.vizzop
         {
             try
             {
-                Thread.CurrentThread.Priority = ThreadPriority.Highest;
+                //Thread.CurrentThread.Priority = ThreadPriority.Highest;
 
                 receivedMessage += Encoding.UTF8.GetString(buffer.Array, 0, result.Count);
                 if (result.EndOfMessage == true)
@@ -84,7 +84,6 @@ namespace vizzopWeb.vizzop
                                 dict["listeners"].ToString(),
                                 wrapper
                                 );
-
 
                             break;
                         case "Plain":

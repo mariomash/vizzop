@@ -27,7 +27,7 @@
         var StartDate = new Date();
         var OrdersRequest_InCourse = null;
         var sacafotos = false;
-
+        var lastData = null;
         function CheckIfFrameLoaded() {
             try {
                 if (sacafotos == true) {
@@ -44,19 +44,21 @@
 
                     var filename = data.UserName + '_' + data.Domain + '_' + data.WindowName + '_.png';
 
-                    window.callPhantom({
-                        'command': 'render',
-                        'filename': filename
-                    });
-
                     if (iframeDoc.readyState.toLowerCase() == 'complete') {
+                        window.callPhantom({
+                            'command': 'render',
+                            'filename': filename
+                        });
                         sacafotos = false;
+                        OrdersRequest_InCourse = null;
                     }
                 }
             } catch (err) {
                 window.callPhantom({
                     'log': 'error ' + err
                 });
+                sacafotos = false;
+                OrdersRequest_InCourse = null;
             }
         }
 
@@ -122,6 +124,20 @@
 
                         data = d;
 
+                        
+                        if (lastData != null) {
+                            if ((data.Html == lastData.Html) &&
+                                (data.Width == lastData.Width) &&
+                                (data.Height == lastData.Height) &&
+                                (data.ScrollLeft == lastData.ScrollLeft) &&
+                                (data.ScrollTop == lastData.ScrollTop)) {
+                                OrdersRequest_InCourse = null;
+                                return;
+                            }
+                        }
+                        
+                        lastData = data;
+
                         window.callPhantom({
                             'log': 'GOT NEW IMG: GUID ' + data.GUID
                         });
@@ -178,7 +194,7 @@
                         document.head.insertBefore(style, document.head.firstChild);
 
                         sacafotos = true;
-                        OrdersRequest_InCourse = null;
+                        //OrdersRequest_InCourse = null;
 
                     },
                     error: function (jqXHR, textStatus, errorThrown) {

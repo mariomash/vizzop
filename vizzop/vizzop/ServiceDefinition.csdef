@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ServiceDefinition name="vizzop" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2013-10.2.2">
-  <WebRole name="vizzopWeb" vmsize="Medium">
+  <WebRole name="vizzopWeb" vmsize="Large">
     <Sites>
       <Site name="Web">
         <Bindings>

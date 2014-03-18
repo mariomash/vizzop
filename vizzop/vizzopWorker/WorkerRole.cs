@@ -107,11 +107,11 @@ namespace vizzopWorker
                     Directory.CreateDirectory(tempPath + @"img\");
                 }
 
-                DateTime dtFrom = DateTime.Now.ToUniversalTime().Subtract(TimeSpan.FromHours(1));
+                //DateTime dtFrom = DateTime.Now.ToUniversalTime().Subtract(TimeSpan.FromMinutes(2));
 
                 //IEnumerable<ScreenGroup> groups = new List<ScreenGroup>();
                 var groups = (from m in db.ScreenCaptures
-                              where m.CreatedOn < dtFrom
+                              /*where m.CreatedOn < dtFrom*/
                               group m by m.converser.ID into g
                               select new ScreenGroup()
                               {
@@ -204,7 +204,7 @@ namespace vizzopWorker
                                         while (captureToCreate.CreatedOn < NextImgDate)
                                         {
                                             CreateCaptureImage(captureToCreate, intkey.ToString() + "_" + counter);
-                                            captureToCreate.CreatedOn = captureToCreate.CreatedOn.AddMilliseconds(250);//250 es 4fps //33.3 milliseconds — the amount of time one frame lasts in 30fps video
+                                            captureToCreate.CreatedOn = captureToCreate.CreatedOn.AddMilliseconds(33.3);//250 es 4fps //33.3 milliseconds — the amount of time one frame lasts in 30fps video
                                             counter++;
                                         }
                                     }

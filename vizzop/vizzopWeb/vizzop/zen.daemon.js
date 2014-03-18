@@ -507,6 +507,7 @@ var Daemon = jVizzop.zs_Class.create({
                 jVizzop(window).unload(function () {
                     vizzop.Tracking.TrackPageExit(document.URL);
                 });
+                vizzop.Tracking.TrackPageView(document.URL, document.referrer);
                 self.checkExternal();
 
                 if (vizzop.AllowScreenCaptures == true) {
@@ -534,13 +535,17 @@ var Daemon = jVizzop.zs_Class.create({
                 //Eso es un segundo
                 if ((vizzop.DaemonTiming_Steps % 10) == 0) {
                     self.checkExternal();
+                    vizzop.HtmlSend_ForceSendHtml = true;
                 }
 
                 //Esto es 3 segundos
                 if ((vizzop.DaemonTiming_Steps % 30) == 0) {
-                    vizzop.HtmlSend_ForceSendHtml = true;
                 }
 
+                //Esto es 5 segundos
+                if ((vizzop.DaemonTiming_Steps % 50) == 0) {
+
+                }
             }
 
             //Si tenemos un commsessionid y fullname y no hay requests en marcha... buscamos al operador ;)
@@ -1516,7 +1521,6 @@ var Daemon = jVizzop.zs_Class.create({
     },
     checkExternal: function () {
         var self = this;
-        //TrackPageView(document.URL, document.referrer);
         try {
             if ((vizzop.MsgCheckExternal_InCourse != null) || (vizzop.me == null)) {
                 return;

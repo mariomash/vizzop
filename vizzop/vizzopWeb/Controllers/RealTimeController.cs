@@ -616,22 +616,44 @@ namespace vizzopWeb.Controllers
                 TimeZone localZone = TimeZone.CurrentTimeZone;
                 DateTime loctime = localZone.ToUniversalTime(DateTime.Now.AddSeconds(-30));
 
-                List<WebLocation> weblocations = new List<WebLocation>();
-                List<WebLocationDataTables> DefLocList = new List<WebLocationDataTables>();
-                if (converser.Business.Domain.ToLowerInvariant() == "vizzop")
-                {
-                    weblocations = (from m in db.WebLocations
-                                    where m.TimeStamp_Last > loctime
-                                    select m).OrderByDescending(z => z.TimeStamp_Last).ToList<WebLocation>();
-                }
-                else
-                {
-                    weblocations = (from m in db.WebLocations
-                                    where m.Converser.Business.ID == converser.Business.ID &&
-                                    m.TimeStamp_Last > loctime &&
+                var weblocations = (from m in db.WebLocations
+                                    where m.TimeStamp_Last > loctime &&
                                     m.Converser.Agent == null
-                                    select m).OrderByDescending(z => z.TimeStamp_Last).ToList<WebLocation>();
+                                    select m).OrderByDescending(z => z.TimeStamp_Last);
+                List<WebLocationDataTables> DefLocList = new List<WebLocationDataTables>();
+
+#if DEBUG
+                weblocations = (from m in weblocations
+                                where m.Converser.Business.ID == converser.Business.ID
+                                select m).OrderByDescending(z => z.TimeStamp_Last); //.ToList<WebLocation>();
+#endif
+
+                if (converser.Business.Domain.ToLowerInvariant() != "vizzop")
+                {
+                    weblocations = (from m in weblocations
+                                    where m.Converser.Business.ID == converser.Business.ID
+                                    select m).OrderByDescending(z => z.TimeStamp_Last); //.ToList<WebLocation>();
                 }
+
+                /*
+                DefLocList = weblocations.Select(wl => new WebLocationDataTables
+                {
+                    ID = wl.Converser.ID,
+                    Url = wl.Url,
+                    Referrer = wl.Referrer,
+                    IP = wl.IP,
+                    Lang = wl.Lang,
+                    Ubication = wl.Ubication,
+                    UserAgent = wl.UserAgent,
+                    TimeStamp = wl.TimeStamp_Last,
+                    LastViewed = utils.GetPrettyDate(wl.TimeStamp_Last),
+                    UserName = wl.Converser.UserName,
+                    Domain = wl.Converser.Business.Domain,
+                    Password = wl.Converser.Password,
+                    FullName = wl.Converser.FullName != null ? wl.Converser.FullName : "Anonymous",
+                    WindowName = wl.WindowName
+                }).ToList();
+                */
 
                 foreach (WebLocation wl in weblocations)
                 {
@@ -672,81 +694,6 @@ namespace vizzopWeb.Controllers
                         utils.GrabaLogExcepcion(e);
                     }
                 }
-
-                /*
-                List<WebLocation> weblocations = new List<WebLocation>();
-                List<WebLocationDataTables> DefLocList = new List<WebLocationDataTables>();
-                List<WebLocationDataTables> Old_DefLocList = (List<WebLocationDataTables>)HttpContext.Session["DefLocList"];
-                Boolean DifferentLists = false;
-                DateTime start_time = DateTime.Now;
-                while ((DifferentLists == false) && (DateTime.Now < start_time.AddSeconds(15)))
-                {
-                    Thread_GetWebLocationsHelper oThread_GetWebLocationsHelper = new Thread_GetWebLocationsHelper(converser);
-                    oThread_GetWebLocationsHelper.DoThings();
-
-                    if (converser.Business.Domain.ToLowerInvariant() == "vizzop")
-                    {
-                        weblocations = (from m in db.WebLocations
-                                        select m).OrderByDescending(z => z.TimeStamp_Last).ToList<WebLocation>();
-                    }
-                    else
-                    {
-                        weblocations = (from m in db.WebLocations
-                                        where m.Converser.Business.ID == converser.Business.ID &&
-                                        m.Converser.Agent == null
-                                        select m).OrderByDescending(z => z.TimeStamp_Last).ToList<WebLocation>();
-                    }
-
-                    foreach (WebLocation wl in weblocations)
-                    {
-                        try
-                        {
-                            //Solo añadimos los no duplicados...
-                            if (DefLocList.Any(m => m.UserName == wl.Converser.UserName) == true)
-                            { }
-                            else
-                            {
-                                WebLocationDataTables loc = new WebLocationDataTables();
-                                loc.ID = wl.ID;
-                                loc.Url = wl.Url;
-                                loc.Referrer = wl.Referrer;
-                                loc.IP = wl.IP;
-                                loc.Lang = wl.Lang;
-                                loc.Ubication = wl.Ubication;
-                                loc.UserAgent = wl.UserAgent;
-                                loc.TimeStamp = wl.TimeStamp_Last;
-                                loc.LastViewed = utils.GetPrettyDate(wl.TimeStamp_Last).ToString();
-                                loc.UserName = wl.Converser.UserName;
-                                loc.Domain = wl.Converser.Business.Domain;
-                                loc.FullName = wl.Converser.FullName != null ? wl.Converser.FullName : "Anonymous";
-                                DefLocList.Add(loc);
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            utils.GrabaLogExcepcion(e);
-                        }
-                    }
-
-                    if (Old_DefLocList == null)
-                    {
-                        Old_DefLocList = new List<WebLocationDataTables>();
-                    }
-                    
-                      //Muy importante... no comparo el timestamp y lastviewed!!!
-                      //Dado que ya me quito de enmedio a los que hace 30 segundos 
-                      //que no dan señales de vida en segundo plano en "Do Things"
-                     
-                    var firstNotSecond = Old_DefLocList.Except(DefLocList).ToList();
-                    var secondNotFirst = DefLocList.Except(Old_DefLocList).ToList();
-                    if ((firstNotSecond.Count > 0) || (secondNotFirst.Count > 0))
-                    {
-                        DifferentLists = true;
-                    }
-                }
-
-                HttpContext.Session["DefLocList"] = DefLocList;
-                */
 
                 if (DefLocList.Count > 0)
                 {

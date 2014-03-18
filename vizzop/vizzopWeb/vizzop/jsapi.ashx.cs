@@ -352,64 +352,12 @@ namespace vizzopWeb
 
 
                 string UserAgent = context.Request.UserAgent;
-                if (UserAgent.ToUpperInvariant().Contains("MSIE 6.0") == true)
-                {
-                    UserAgent = "MSIE 6.0";
-                }
-                else if (UserAgent.ToUpperInvariant().Contains("MSIE 7.0") == true)
-                {
-                    UserAgent = "MSIE 7.0";
-                }
-                else if (UserAgent.ToUpperInvariant().Contains("MSIE 8.0") == true)
-                {
-                    UserAgent = "MSIE 8.0";
-                }
-                else if (UserAgent.ToUpperInvariant().Contains("MSIE 8.0") == true)
-                {
-                    UserAgent = "MSIE 8.0";
-                }
-                else if (UserAgent.ToUpperInvariant().Contains("MSIE 9.0") == true)
-                {
-                    UserAgent = "MSIE 9.0";
-                }
-                else if (UserAgent.ToUpperInvariant().Contains("MSIE 10.0") == true)
-                {
-                    UserAgent = "MSIE 10.0";
-                }
-                else if (UserAgent.ToUpperInvariant().Contains("ANDROID") == true)
-                {
-                    UserAgent = "ANDROID";
-                }
-                else if (UserAgent.ToUpperInvariant().Contains("IPAD") == true)
-                {
-                    UserAgent = "IPAD";
-                }
-                else if (UserAgent.ToUpperInvariant().Contains("IPHONE") == true)
-                {
-                    UserAgent = "IPHONE";
-                }
-                else if (UserAgent.ToUpperInvariant().Contains("IPOD") == true)
-                {
-                    UserAgent = "IPOD";
-                }
-                else if (UserAgent.ToUpperInvariant().Contains("FIREFOX") == true)
-                {
-                    UserAgent = "FIREFOX";
-                }
-                else if (UserAgent.ToUpperInvariant().Contains("SAFARI") == true)
-                {
-                    UserAgent = "SAFARI";
-                }
-
-
-                var useragent_in_db = (from m in db.BrowserFeatures
-                                       where m.UserAgent == UserAgent
-                                       select m).FirstOrDefault();
+                BrowserFeature browserfeature = utils.FindBrowserFeaturesBasedOnUserAgent(UserAgent);
 
                 var allowjsapi = true;
-                if (useragent_in_db != null)
+                if (browserfeature != null)
                 {
-                    allowjsapi = useragent_in_db.AllowJsApi;
+                    allowjsapi = browserfeature.AllowJsApi;
                 }
                 if (allowjsapi == false)
                 {
@@ -417,9 +365,9 @@ namespace vizzopWeb
                 }
 
                 string allowchatsockets = business.AllowChatSockets.ToString().ToLowerInvariant();
-                if (useragent_in_db != null)
+                if (browserfeature != null)
                 {
-                    allowchatsockets = useragent_in_db.AllowChatSockets.ToString().ToLowerInvariant();
+                    allowchatsockets = browserfeature.AllowChatSockets.ToString().ToLowerInvariant();
                 }
                 try
                 {
@@ -434,9 +382,9 @@ namespace vizzopWeb
                 }
 
                 string allowscreensockets = business.AllowScreenSockets.ToString().ToLowerInvariant();
-                if (useragent_in_db != null)
+                if (browserfeature != null)
                 {
-                    allowscreensockets = useragent_in_db.AllowScreenSockets.ToString().ToLowerInvariant();
+                    allowscreensockets = browserfeature.AllowScreenSockets.ToString().ToLowerInvariant();
                 }
                 try
                 {
@@ -451,9 +399,9 @@ namespace vizzopWeb
                 }
 
                 string allowscreencaptures = business.AllowScreenCaptures.ToString().ToLowerInvariant();
-                if (useragent_in_db != null)
+                if (browserfeature != null)
                 {
-                    allowscreencaptures = useragent_in_db.AllowScreenCaptures.ToString().ToLowerInvariant();
+                    allowscreencaptures = browserfeature.AllowScreenCaptures.ToString().ToLowerInvariant();
                 }
                 try
                 {
@@ -468,9 +416,9 @@ namespace vizzopWeb
                 }
 
                 string showhelpbutton = business.ShowHelpButton.ToString().ToLowerInvariant();
-                if (useragent_in_db != null)
+                if (browserfeature != null)
                 {
-                    showhelpbutton = useragent_in_db.ShowHelpButton.ToString().ToLowerInvariant();
+                    showhelpbutton = browserfeature.ShowHelpButton.ToString().ToLowerInvariant();
                 }
                 try
                 {
