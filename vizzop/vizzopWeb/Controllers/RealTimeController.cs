@@ -119,29 +119,6 @@ namespace vizzopWeb
                     {
                         this._ScreenCapture.converser = converser;
                     }
-
-                    /*
-                    if ((this._ScreenCapture.Data == null) || (this._ScreenCapture.Data == ""))
-                    {
-                        var penul_SC = (from m in db.ScreenCaptures
-                                        where m.converser.ID == converser.ID && m.Data != null
-                                        orderby m.ID descending
-                                        select m).FirstOrDefault();
-                        if (penul_SC != null)
-                        {
-                            if (penul_SC.Data != null)
-                            {
-                                this._ScreenCapture.Data = penul_SC.Data;
-                            }
-                        }
-                    }
-
-                    if (this._ScreenCapture.Data == null)
-                    {
-                        return;
-                    }
-                    */
-
                     db.ScreenCaptures.Add(this._ScreenCapture);
                 }
                 else
@@ -562,6 +539,7 @@ namespace vizzopWeb.Controllers
         {
             try
             {
+                Thread.CurrentThread.Priority = ThreadPriority.Highest;
                 /*
                 var wrapper = new HttpContextWrapper(HttpContext);
                 */

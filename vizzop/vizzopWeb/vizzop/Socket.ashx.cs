@@ -21,31 +21,13 @@ namespace vizzopWeb.vizzop
 
         private vizzopContext db = new vizzopContext();
         private Utils utils = new Utils();
-        //private Converser converser = null;
         private string receivedMessage = null;
 
         public void ProcessRequest(HttpContext context)
         {
-            /*
-            try
-            {
-                if (context.Session != null)
-                {
-                    HttpSessionStateBase session = new HttpSessionStateWrapper(context.Session);
-                    Converser converser = utils.GetLoggedConverser(session);
-                    if (converser != null)
-                    {
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                utils.GrabaLogExcepcion(ex);
-            }
-             */
             if (context.IsWebSocketRequest)
             {
-                //converser = utils.GetConverserFromSystem(context.Request.Params["UserName"], context.Request.Params["Password"], context.Request.Params["Domain"]);
+                //context.AcceptWebSocketRequest(new WebSocketHandler());
                 context.AcceptWebSocketRequest(Process);
             }
         }
@@ -56,7 +38,7 @@ namespace vizzopWeb.vizzop
         {
             try
             {
-                //Thread.CurrentThread.Priority = ThreadPriority.Highest;
+                Thread.CurrentThread.Priority = ThreadPriority.Highest;
 
                 receivedMessage += Encoding.UTF8.GetString(buffer.Array, 0, result.Count);
                 if (result.EndOfMessage == true)

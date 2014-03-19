@@ -1105,7 +1105,6 @@ namespace vizzopWeb.Controllers
                     {
                         utils.GrabaLogExcepcion(ex_);
                     }
-                    Thread.Sleep(TimeSpan.FromMilliseconds(20));
                 }
 
                 if (returnmessages.Count > 0)
@@ -1123,46 +1122,6 @@ namespace vizzopWeb.Controllers
                 return Json(false);
             }
         }
-
-        /*
-        [ValidateInput(false)]
-        [JsonpFilter]
-        [RequireHttps]
-        public ActionResult Send(NewMessage newmessage, string setticketstate, string callback)
-        {
-            try
-            {
-
-                Utils utils = new Utils();
-                string lang = utils.GetLang(HttpContext);
-
-                string scheme = HttpContext.Request.Url.Scheme;
-                string domain = HttpContext.Request.Url.Host;
-                int port = HttpContext.Request.Url.Port;
-                try
-                {
-                    domain = RoleEnvironment.GetConfigurationSettingValue("Domain");
-                    port = Convert.ToInt32(RoleEnvironment.GetConfigurationSettingValue("Port"));
-                    scheme = RoleEnvironment.GetConfigurationSettingValue("Scheme");
-                }
-                catch (Exception ex) { utils.GrabaLog(Utils.NivelLog.info, ex.Message); }
-                string mainUrl = scheme + @"://" + domain + ":" + port;
-
-                // Lanzamos el msg en otro hilo...
-                Thread_SendMsg oThread = new Thread_SendMsg(newmessage, setticketstate, lang, mainUrl);
-                Thread rSend = new Thread(oThread.DoThings);
-                //rSend.Priority = ThreadPriority.AboveNormal;
-                rSend.Start();
-
-                return Json(true);
-            }
-            catch (Exception e)
-            {
-                utils.GrabaLogExcepcion(e);
-                return Json(false);
-            }
-        }
-        */
 
         [ValidateInput(false)]
         [JsonpFilter]

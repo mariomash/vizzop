@@ -365,12 +365,14 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
             if (self.ScreenShots.length > 0) {
                 guid = self.ScreenShots[self.ScreenShots.length - 1].GUID;
             }
+            //var height = self._boxscreenshare.outerHeight();
+            var height = 485;
             msg = {
                 'username': self._interlocutor[0].UserName,
                 'domain': self._interlocutor[0].Business.Domain,
                 'windowname': self._interlocutor[0].WindowName,
                 'guid': guid,
-                'height': self._boxscreenshare.outerHeight()
+                'height': height
             };
             self.loadingScreen = jVizzop.ajax({
                 url: url,

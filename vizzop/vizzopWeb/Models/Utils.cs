@@ -2984,7 +2984,7 @@ namespace vizzopWeb
                         // Lanzamos el msg en otro hilo...
                         Thread_SendMsg oThread = new Thread_SendMsg(newmessage, SetTicketState, null);
                         Thread rSend = new Thread(oThread.DoThings);
-                        //rSend.Priority = ThreadPriority.BelowNormal;
+                        rSend.Priority = ThreadPriority.BelowNormal;
                         rSend.Start();
                         return true;
                     }
@@ -3364,7 +3364,7 @@ namespace vizzopWeb
             {
 
                 TimeZone localZone = TimeZone.CurrentTimeZone;
-                DateTime loctime = localZone.ToUniversalTime(DateTime.Now.AddSeconds(-30));
+                DateTime loctime = localZone.ToUniversalTime(DateTime.Now.AddSeconds(-60));
                 var to_move = (from m in db.WebLocations.Include("Converser").Include("Converser.Business")
                                where m.TimeStamp_Last < loctime
                                //&& m.Converser.Business.ID == _Converser.Business.ID
@@ -3397,7 +3397,7 @@ namespace vizzopWeb
                         }
                         catch (Exception _ex)
                         {
-                            GrabaLogExcepcion(_ex);
+                            //GrabaLogExcepcion(_ex);
                         }
                     }
                 }

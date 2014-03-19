@@ -43,7 +43,7 @@ namespace vizzopWeb.Models
             }
             catch (Exception ex)
             {
-                utils.GrabaLogExcepcion(ex);
+                //utils.GrabaLogExcepcion(ex);
                 return null;
             }
         }
