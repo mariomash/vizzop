@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 //using Microsoft.Web.Mvc.Resources;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
@@ -12,7 +14,7 @@ using vizzopWeb.Models;
 
 namespace vizzopWeb
 {
-
+    /*
     public class Thread_GetWebLocationsHelper
     {
         private vizzopContext db = new vizzopContext();
@@ -34,40 +36,47 @@ namespace vizzopWeb
                 var to_move = (from m in db.WebLocations.Include("Converser").Include("Converser.Business")
                                where m.TimeStamp_Last < loctime
                                //&& m.Converser.Business.ID == _Converser.Business.ID
-                               select m);
+                               select m).ToList();
                 if (to_move != null)
                 {
                     foreach (var m in to_move)
                     {
-                        WebLocation_History newloc = new WebLocation_History();
-                        newloc.converser = m.Converser;
-                        newloc.Referrer = m.Referrer;
-                        newloc.TimeStamp_First = m.TimeStamp_First;
-                        newloc.TimeStamp_Last = m.TimeStamp_Last;
-                        newloc.IP = m.IP;
-                        newloc.Lang = m.Lang;
-                        newloc.UserAgent = m.UserAgent;
-                        newloc.Url = m.Url;
-                        newloc.Ubication = m.Ubication;
-                        newloc.Headers = m.Headers;
-                        if (newloc.converser != null)
+                        try
                         {
-                            db.WebLocations_History.Add(newloc);
+                            WebLocation_History newloc = new WebLocation_History();
+                            newloc.converser = m.Converser;
+                            newloc.Referrer = m.Referrer;
+                            newloc.TimeStamp_First = m.TimeStamp_First;
+                            newloc.TimeStamp_Last = m.TimeStamp_Last;
+                            newloc.IP = m.IP;
+                            newloc.Lang = m.Lang;
+                            newloc.UserAgent = m.UserAgent;
+                            newloc.Url = m.Url;
+                            newloc.Ubication = m.Ubication;
+                            newloc.Headers = m.Headers;
+                            newloc.WindowName = m.WindowName;
+
+                            if (newloc.converser != null)
+                            {
+                                db.WebLocations_History.Add(newloc);
+                            }
+                            db.WebLocations.Remove(m);
+                            db.SaveChanges();
                         }
-                        db.WebLocations.Remove(m);
-                    }
-                    if (to_move.Count() > 0)
-                    {
-                        db.SaveChanges();
+                        catch (Exception _ex)
+                        {
+                            utils.GrabaLogExcepcion(_ex);
+                        }
                     }
                 }
             }
-            catch (Exception _ex)
+            catch (Exception ex)
             {
-                utils.GrabaLogExcepcion(_ex);
+                utils.GrabaLogExcepcion(ex);
             }
         }
     }
+    */
 
     public class Thread_TrackScreenHelper
     {
@@ -110,29 +119,6 @@ namespace vizzopWeb
                     {
                         this._ScreenCapture.converser = converser;
                     }
-
-                    /*
-                    if ((this._ScreenCapture.Data == null) || (this._ScreenCapture.Data == ""))
-                    {
-                        var penul_SC = (from m in db.ScreenCaptures
-                                        where m.converser.ID == converser.ID && m.Data != null
-                                        orderby m.ID descending
-                                        select m).FirstOrDefault();
-                        if (penul_SC != null)
-                        {
-                            if (penul_SC.Data != null)
-                            {
-                                this._ScreenCapture.Data = penul_SC.Data;
-                            }
-                        }
-                    }
-
-                    if (this._ScreenCapture.Data == null)
-                    {
-                        return;
-                    }
-                    */
-
                     db.ScreenCaptures.Add(this._ScreenCapture);
                 }
                 else
@@ -161,6 +147,7 @@ namespace vizzopWeb
                     sc.Width = this._ScreenCapture.Width;
                     sc.Blob = this._ScreenCapture.Blob;
                     sc.Data = this._ScreenCapture.Data;
+                    sc.WindowName = this._ScreenCapture.WindowName;
                 }
                 db.SaveChanges();
 
@@ -287,7 +274,7 @@ namespace vizzopWeb.Controllers
 #else
         [RequireHttps]
 #endif
-        public ActionResult TrackPageView(string trackID, string username, string password, string domain, string url, string referrer, string callback)
+        public ActionResult TrackPageView(string trackID, string username, string password, string domain, string url, string referrer, string windowname, string callback)
         {
             try
             {
@@ -314,7 +301,7 @@ namespace vizzopWeb.Controllers
                     sIP = sIP.Split(',')[0];
                     string[] languages = HttpContext.Request.UserLanguages;
                     string useragent = HttpContext.Request.UserAgent;
-                    Status returnstatus = utils.TrackPageView(trackID, converser, url, referrer, languages[0], useragent, sIP, headers, db);
+                    Status returnstatus = utils.TrackPageView(trackID, converser, url, referrer, languages[0], useragent, sIP, headers, windowname, db);
                     if (returnstatus.Success == true)
                     {
                         return Json(returnstatus.Value.ToString());
@@ -438,7 +425,7 @@ namespace vizzopWeb.Controllers
 #else
         [RequireHttps]
 #endif
-        public ActionResult GetScreen(string UserName, string Domain, string height, string width, string guid)
+        public ActionResult GetScreen(string UserName, string Domain, string WindowName, string height, string width, string guid)
         {
             try
             {
@@ -449,7 +436,7 @@ namespace vizzopWeb.Controllers
                 Boolean CaptureCheck = false;
                 while (CaptureCheck == false)
                 {
-                    sc = utils.GetScreenCapture(UserName, Domain);
+                    sc = utils.GetScreenCapture(UserName, Domain, WindowName);
                     if (sc != null)
                     {
                         if ((sc.GUID != guid) || (DateTime.Now > start_time.AddSeconds(20)))
@@ -484,6 +471,7 @@ namespace vizzopWeb.Controllers
                     {
                         UserName = sc.converser.UserName,
                         Domain = sc.converser.Business.Domain,
+                        WindowName = sc.WindowName,
                         GUID = sc.GUID,
                         CreatedOn = sc.CreatedOn.ToLocalTime().ToString("G"),
                         Url = sc.Url,
@@ -551,6 +539,7 @@ namespace vizzopWeb.Controllers
         {
             try
             {
+                Thread.CurrentThread.Priority = ThreadPriority.Highest;
                 /*
                 var wrapper = new HttpContextWrapper(HttpContext);
                 */
@@ -571,6 +560,8 @@ namespace vizzopWeb.Controllers
                 return Json(false);
             }
         }
+
+
 
         [JsonpFilter]
 #if DEBUG
@@ -595,24 +586,52 @@ namespace vizzopWeb.Controllers
                     return Json(null);
                 }
 
-                Thread_GetWebLocationsHelper oThread_GetWebLocationsHelper = new Thread_GetWebLocationsHelper(converser);
-                oThread_GetWebLocationsHelper.DoThings();
-                //Thread.Sleep(new TimeSpan(0, 0, 15));
+                /*
+                    Thread_GetWebLocationsHelper oThread_GetWebLocationsHelper = new Thread_GetWebLocationsHelper(converser);
+                    oThread_GetWebLocationsHelper.DoThings();
+                 */
 
-                List<WebLocation> weblocations = new List<WebLocation>();
-                List<WebLocationDataTables> DefLocList = new List<WebLocationDataTables>();
-                if (converser.Business.Domain.ToLowerInvariant() == "vizzop")
-                {
-                    weblocations = (from m in db.WebLocations
-                                    select m).OrderByDescending(z => z.TimeStamp_Last).ToList<WebLocation>();
-                }
-                else
-                {
-                    weblocations = (from m in db.WebLocations
-                                    where m.Converser.Business.ID == converser.Business.ID &&
+                TimeZone localZone = TimeZone.CurrentTimeZone;
+                DateTime loctime = localZone.ToUniversalTime(DateTime.Now.AddSeconds(-30));
+
+                var weblocations = (from m in db.WebLocations
+                                    where m.TimeStamp_Last > loctime &&
                                     m.Converser.Agent == null
-                                    select m).OrderByDescending(z => z.TimeStamp_Last).ToList<WebLocation>();
+                                    select m).OrderByDescending(z => z.TimeStamp_Last);
+                List<WebLocationDataTables> DefLocList = new List<WebLocationDataTables>();
+
+#if DEBUG
+                weblocations = (from m in weblocations
+                                where m.Converser.Business.ID == converser.Business.ID
+                                select m).OrderByDescending(z => z.TimeStamp_Last); //.ToList<WebLocation>();
+#endif
+
+                if (converser.Business.Domain.ToLowerInvariant() != "vizzop")
+                {
+                    weblocations = (from m in weblocations
+                                    where m.Converser.Business.ID == converser.Business.ID
+                                    select m).OrderByDescending(z => z.TimeStamp_Last); //.ToList<WebLocation>();
                 }
+
+                /*
+                DefLocList = weblocations.Select(wl => new WebLocationDataTables
+                {
+                    ID = wl.Converser.ID,
+                    Url = wl.Url,
+                    Referrer = wl.Referrer,
+                    IP = wl.IP,
+                    Lang = wl.Lang,
+                    Ubication = wl.Ubication,
+                    UserAgent = wl.UserAgent,
+                    TimeStamp = wl.TimeStamp_Last,
+                    LastViewed = utils.GetPrettyDate(wl.TimeStamp_Last),
+                    UserName = wl.Converser.UserName,
+                    Domain = wl.Converser.Business.Domain,
+                    Password = wl.Converser.Password,
+                    FullName = wl.Converser.FullName != null ? wl.Converser.FullName : "Anonymous",
+                    WindowName = wl.WindowName
+                }).ToList();
+                */
 
                 foreach (WebLocation wl in weblocations)
                 {
@@ -623,14 +642,14 @@ namespace vizzopWeb.Controllers
                             continue;
                         }
                         //Solo añadimos los no duplicados...
-                        if (DefLocList.Any(m => m.UserName == wl.Converser.UserName) == true)
+                        if (DefLocList.Any(m => m.WindowName == wl.WindowName) == true)
                         { }
                         else
                         {
                             if (wl.Converser != null)
                             {
                                 WebLocationDataTables loc = new WebLocationDataTables();
-                                loc.ID = wl.ID;
+                                loc.ID = wl.Converser.ID;
                                 loc.Url = wl.Url;
                                 loc.Referrer = wl.Referrer;
                                 loc.IP = wl.IP;
@@ -643,6 +662,7 @@ namespace vizzopWeb.Controllers
                                 loc.Domain = wl.Converser.Business.Domain;
                                 loc.Password = wl.Converser.Password;
                                 loc.FullName = wl.Converser.FullName != null ? wl.Converser.FullName : "Anonymous";
+                                loc.WindowName = wl.WindowName;
                                 DefLocList.Add(loc);
                             }
                         }
@@ -652,81 +672,6 @@ namespace vizzopWeb.Controllers
                         utils.GrabaLogExcepcion(e);
                     }
                 }
-
-                /*
-                List<WebLocation> weblocations = new List<WebLocation>();
-                List<WebLocationDataTables> DefLocList = new List<WebLocationDataTables>();
-                List<WebLocationDataTables> Old_DefLocList = (List<WebLocationDataTables>)HttpContext.Session["DefLocList"];
-                Boolean DifferentLists = false;
-                DateTime start_time = DateTime.Now;
-                while ((DifferentLists == false) && (DateTime.Now < start_time.AddSeconds(15)))
-                {
-                    Thread_GetWebLocationsHelper oThread_GetWebLocationsHelper = new Thread_GetWebLocationsHelper(converser);
-                    oThread_GetWebLocationsHelper.DoThings();
-
-                    if (converser.Business.Domain.ToLowerInvariant() == "vizzop")
-                    {
-                        weblocations = (from m in db.WebLocations
-                                        select m).OrderByDescending(z => z.TimeStamp_Last).ToList<WebLocation>();
-                    }
-                    else
-                    {
-                        weblocations = (from m in db.WebLocations
-                                        where m.Converser.Business.ID == converser.Business.ID &&
-                                        m.Converser.Agent == null
-                                        select m).OrderByDescending(z => z.TimeStamp_Last).ToList<WebLocation>();
-                    }
-
-                    foreach (WebLocation wl in weblocations)
-                    {
-                        try
-                        {
-                            //Solo añadimos los no duplicados...
-                            if (DefLocList.Any(m => m.UserName == wl.Converser.UserName) == true)
-                            { }
-                            else
-                            {
-                                WebLocationDataTables loc = new WebLocationDataTables();
-                                loc.ID = wl.ID;
-                                loc.Url = wl.Url;
-                                loc.Referrer = wl.Referrer;
-                                loc.IP = wl.IP;
-                                loc.Lang = wl.Lang;
-                                loc.Ubication = wl.Ubication;
-                                loc.UserAgent = wl.UserAgent;
-                                loc.TimeStamp = wl.TimeStamp_Last;
-                                loc.LastViewed = utils.GetPrettyDate(wl.TimeStamp_Last).ToString();
-                                loc.UserName = wl.Converser.UserName;
-                                loc.Domain = wl.Converser.Business.Domain;
-                                loc.FullName = wl.Converser.FullName != null ? wl.Converser.FullName : "Anonymous";
-                                DefLocList.Add(loc);
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            utils.GrabaLogExcepcion(e);
-                        }
-                    }
-
-                    if (Old_DefLocList == null)
-                    {
-                        Old_DefLocList = new List<WebLocationDataTables>();
-                    }
-                    
-                      //Muy importante... no comparo el timestamp y lastviewed!!!
-                      //Dado que ya me quito de enmedio a los que hace 30 segundos 
-                      //que no dan señales de vida en segundo plano en "Do Things"
-                     
-                    var firstNotSecond = Old_DefLocList.Except(DefLocList).ToList();
-                    var secondNotFirst = DefLocList.Except(Old_DefLocList).ToList();
-                    if ((firstNotSecond.Count > 0) || (secondNotFirst.Count > 0))
-                    {
-                        DifferentLists = true;
-                    }
-                }
-
-                HttpContext.Session["DefLocList"] = DefLocList;
-                */
 
                 if (DefLocList.Count > 0)
                 {
@@ -746,12 +691,13 @@ namespace vizzopWeb.Controllers
                         x.UserName,
                         x.Domain,
                         x.Password,
+                        x.WindowName,
                         ""
                         }).ToList();
 
                     foreach (var item in aaData)
                     {
-                        ScreenCapture sc = utils.GetScreenCapture(item[12], item[13]);
+                        ScreenCapture sc = utils.GetScreenCapture(item[12], item[13], item[15]);
                         if (sc != null)
                         {
                             item[1] = "data:image/jpg;base64," + utils.ImageToJpegBase64(

@@ -194,6 +194,7 @@ namespace vizzopWeb.Models
             this.MessageType = "chat";
             this.Subject = null;
             this.Lang = "en";
+            this.WindowNamesCollected = new List<string>();
         }
 
         public Message(NewMessage newmessage)
@@ -265,6 +266,7 @@ namespace vizzopWeb.Models
 
                 this.Lang = newmessage.Lang;
 
+                this.WindowNamesCollected = new List<string>();
             }
             catch (Exception ex)
             {
@@ -354,5 +356,8 @@ namespace vizzopWeb.Models
         public virtual CommSession CommSession { get; set; }
         public virtual MeetingSession MeetingSession { get; set; }
         //public string CommSessionID { get; set; }
+
+        [NotMapped]
+        public List<string> WindowNamesCollected { get; set; }
     }
 }

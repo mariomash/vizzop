@@ -32,14 +32,14 @@ namespace vizzopWorker
             utils.GrabaLog(Utils.NivelLog.info, "vizzopWorker entry point called");
             LanzaYControlaProcesoFileScreenShots();
             LanzaYControlaProcesoPhantom();
-
+            LanzaYControlaProcesoWebLocations();
 #if DEBUG
 #else
             LanzaYControlaProcesoCreaVideos();
 #endif
             while (true)
             {
-                Thread.Sleep(TimeSpan.FromMilliseconds(100));
+                Thread.Sleep(TimeSpan.FromMilliseconds(1000));
             }
         }
 
@@ -107,11 +107,11 @@ namespace vizzopWorker
                     Directory.CreateDirectory(tempPath + @"img\");
                 }
 
-                DateTime dtFrom = DateTime.Now.ToUniversalTime().Subtract(TimeSpan.FromHours(1));
+                //DateTime dtFrom = DateTime.Now.ToUniversalTime().Subtract(TimeSpan.FromMinutes(2));
 
                 //IEnumerable<ScreenGroup> groups = new List<ScreenGroup>();
                 var groups = (from m in db.ScreenCaptures
-                              where m.CreatedOn < dtFrom
+                              /*where m.CreatedOn < dtFrom*/
                               group m by m.converser.ID into g
                               select new ScreenGroup()
                               {
@@ -204,7 +204,7 @@ namespace vizzopWorker
                                         while (captureToCreate.CreatedOn < NextImgDate)
                                         {
                                             CreateCaptureImage(captureToCreate, intkey.ToString() + "_" + counter);
-                                            captureToCreate.CreatedOn = captureToCreate.CreatedOn.AddMilliseconds(250);//250 es 4fps //33.3 milliseconds — the amount of time one frame lasts in 30fps video
+                                            captureToCreate.CreatedOn = captureToCreate.CreatedOn.AddMilliseconds(33.3);//250 es 4fps //33.3 milliseconds — the amount of time one frame lasts in 30fps video
                                             counter++;
                                         }
                                     }
@@ -296,7 +296,7 @@ namespace vizzopWorker
 
                 string pathjs = "phantom_videos.js";
 
-                Process proc = utils.DoLaunchCaptureProcess(pathjs, captureToCreate.converser.UserName, captureToCreate.converser.Business.Domain, captureToCreate.converser.Password, captureToCreate.GUID);
+                Process proc = utils.DoLaunchCaptureProcess(pathjs, captureToCreate.converser.UserName, captureToCreate.converser.Business.Domain, captureToCreate.converser.Password, captureToCreate.GUID, captureToCreate.WindowName);
 
                 while (ProcessExtensions.IsRunning(proc))
                 {
@@ -464,6 +464,39 @@ namespace vizzopWorker
                 utils.GrabaLogExcepcion(ex);
                 return false;
             }
+        }
+
+        private void LanzaYControlaProcesoWebLocations()
+        {
+
+            BackgroundWorker bw = new BackgroundWorker();
+
+            // this allows our worker to report progress during work
+            bw.WorkerReportsProgress = true;
+
+            // what to do in the background thread
+            bw.DoWork += new DoWorkEventHandler(
+            delegate(object o, DoWorkEventArgs args)
+            {
+                BackgroundWorker b = o as BackgroundWorker;
+                utils.LimpiaWebLocations();
+            });
+
+            // what to do when progress changed (update the progress bar for example)
+            bw.ProgressChanged += new ProgressChangedEventHandler(
+            delegate(object o, ProgressChangedEventArgs args)
+            {
+                //label1.Text = string.Format("{0}% Completed", args.ProgressPercentage);
+            });
+
+            // what to do when worker completes its task (notify the user)
+            bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(
+            delegate(object o, RunWorkerCompletedEventArgs args)
+            {
+                LanzaYControlaProcesoWebLocations();
+            });
+
+            bw.RunWorkerAsync();
         }
 
 

@@ -8,45 +8,7 @@ using System.Web.Mvc;
 using Microsoft.WindowsAzure.ServiceRuntime;
 using OpenTok;
 using vizzopWeb.Models;
-
-namespace vizzopWeb
-{
-
-    public class Thread_RequestCommSession
-    {
-
-        private vizzopContext db = new vizzopContext();
-        private Utils utils = new Utils();
-
-        public CommSession CommSession { get; set; }
-        public String Address { get; set; }
-
-        public Thread_RequestCommSession(CommSession commSession, String address)
-        {
-            this.CommSession = commSession;
-            this.Address = address;
-        }
-
-        public void DoThings()
-        {
-            try
-            {
-                OpenTokSDK opentok = new OpenTokSDK();
-                Dictionary<string, object> options = new Dictionary<string, object>();
-                options.Add(SessionPropertyConstants.P2P_PREFERENCE, "enabled");
-                string OpenTokSessionID = opentok.CreateSession(this.Address, options);
-                this.CommSession.OpenTokSessionID = OpenTokSessionID;
-            }
-            catch (Exception ex)
-            {
-                utils.GrabaLogExcepcion(ex);
-                this.CommSession.OpenTokSessionID = null;
-            }
-        }
-
-    }
-
-}
+using System.Threading.Tasks;
 
 namespace vizzopWeb.Controllers
 {
@@ -304,20 +266,38 @@ namespace vizzopWeb.Controllers
 
                 int _commsessionid = Convert.ToInt32(commsessionid);
 
-                var session = (from m in db.CommSessions
-                                   .Include("Client")
-                                   .Include("Client.Business")
-                                   .Include("Business")
-                                   .Include("Messages")
-                                   .Include("Agents")
-                                   .Include("Messages.To")
-                                   .Include("Messages.To.Business")
-                                   .Include("Messages.From")
-                                   .Include("Messages.From.Business")
+                CommSession session = null;
+                if (converser.Business.Domain.ToLowerInvariant() == "vizzop")
+                {
+                    session = (from m in db.CommSessions
+                                         .Include("Client")
+                                         .Include("Client.Business")
+                                         .Include("Business")
+                                         .Include("Messages")
+                                         .Include("Agents")
+                                         .Include("Messages.To")
+                                         .Include("Messages.To.Business")
+                                         .Include("Messages.From")
+                                         .Include("Messages.From.Business")
+                               where m.ID == _commsessionid
+                               select m).FirstOrDefault();
+                }
+                else
+                {
+                    session = (from m in db.CommSessions
+                                      .Include("Client")
+                                      .Include("Client.Business")
+                                      .Include("Business")
+                                      .Include("Messages")
+                                      .Include("Agents")
+                                      .Include("Messages.To")
+                                      .Include("Messages.To.Business")
+                                      .Include("Messages.From")
+                                      .Include("Messages.From.Business")
                                where m.Business.ID == converser.Business.ID
                                && m.ID == _commsessionid
                                select m).FirstOrDefault();
-
+                }
                 if (session == null)
                 {
                     return Json(false);
@@ -638,7 +618,6 @@ namespace vizzopWeb.Controllers
         {
             try
             {
-                utils = new Utils(db);
 
                 string sIP = utils.GetIP(HttpContext);
                 string language = utils.GetLang(HttpContext);
@@ -664,29 +643,30 @@ namespace vizzopWeb.Controllers
                                    select m).FirstOrDefault();
                 }
 
-                //Si no ha sido fructifera la búsqueda (porque no era un agente) buscamos una que ya exista para entrar ahí
-                commsession = (from m in db.CommSessions
-                                   .Include("Client")
-                                   .Include("Business")
-                                   .Include("Client.Business")
-                               where (m.Client.UserName == username) &&
-                               (m.Client.Password == password) &&
-                               (m.Client.Business.Domain == domain)
-                               select m).FirstOrDefault();
+                if (commsession == null)
+                {
+                    //Si no ha sido fructifera la búsqueda (porque no era un agente) buscamos una que ya exista para entrar ahí
+                    commsession = (from m in db.CommSessions
+                                       .Include("Client")
+                                       .Include("Business")
+                                       .Include("Client.Business")
+                                   where (m.Client.UserName == username) &&
+                                   (m.Client.Password == password) &&
+                                   (m.Client.Business.Domain == domain)
+                                   select m).FirstOrDefault();
+                }
 
                 if (commsession != null)
                 {
                     if ((commsession.Status == 2) || ((agent_username == null) && (agent_password == null) && (agent_domain == null)))
                     {
                         commsession.Status = 0;
+                        db.SaveChanges();
                     }
-                    db.SaveChanges();
                 }
-
-                //Si aun asi no encontramos nada....  creamos la sesion
-                if (commsession == null)
+                else
                 {
-
+                    //Si aun asi no encontramos nada....  creamos la sesion
                     commsession = new CommSession();
 
                     Converser converser = utils.GetConverserFromSystem(username, password, domain, db);
@@ -722,7 +702,9 @@ namespace vizzopWeb.Controllers
                         commsession.Agents = new List<Agent>();
                         var agent_to_put = (from m in db.Agents
                                             //where m.Converser.Business.ID == converser.Business.ID
-                                            where m.Converser.UserName == agent_username && m.Converser.Password == agent_password && m.Converser.Business.Domain == agent_domain
+                                            where m.Converser.UserName == agent_username &&
+                                            m.Converser.Password == agent_password &&
+                                            m.Converser.Business.Domain == agent_domain
                                             select m).FirstOrDefault();
                         commsession.Agents.Add(agent_to_put);
                     }
@@ -742,12 +724,16 @@ namespace vizzopWeb.Controllers
                     //db.Entry(commsession).State = EntityState.Modified;
                     db.SaveChanges();
 
-                    // Lanzamos el finalize del Request en otro hilo...
-                    Thread_RequestCommSession oThread = new Thread_RequestCommSession(commsession, sIP);
-                    Thread finalizeRequest = new Thread(oThread.DoThings);
-                    finalizeRequest.Priority = ThreadPriority.AboveNormal;
-                    finalizeRequest.Start();
 
+                    Task.Factory.StartNew(() =>
+                    {
+                        OpenTokSDK opentok = new OpenTokSDK();
+                        Dictionary<string, object> options = new Dictionary<string, object>();
+                        options.Add(SessionPropertyConstants.P2P_PREFERENCE, "enabled");
+                        string OpenTokSessionID = opentok.CreateSession(sIP, options);
+                        commsession.OpenTokSessionID = OpenTokSessionID;
+                        db.SaveChanges();
+                    });
                 }
                 return Json(commsession.ID);
             }
@@ -790,13 +776,13 @@ namespace vizzopWeb.Controllers
                     prayer.Business = business;
                     prayer.LastActive = DateTime.Now.ToUniversalTime();
                 }
-                    prayer.FullName = fullname;
-                    prayer.Email = email;
-                    prayer.LangISO = language;
-                    prayer.IP = sIP;
-                    prayer.UserAgent = useragent;
-                    db.SaveChanges();
-                
+                prayer.FullName = fullname;
+                prayer.Email = email;
+                prayer.LangISO = language;
+                prayer.IP = sIP;
+                prayer.UserAgent = useragent;
+                db.SaveChanges();
+
 
 
 

@@ -24,31 +24,9 @@ namespace vizzopWeb
 
             Thread.CurrentThread.Priority = ThreadPriority.Highest;
 
-            //context.Response.Write("true");
-            //context.Response.End();
-
             bool result = false;
             string Callback = context.Request.QueryString["callback"];
             context.Response.ContentType = "text/javascript";
-
-            /*
-            var found_origin = false;
-            foreach (var item in context.Response.Headers.AllKeys)
-            {
-                if (item == "Access-Control-Allow-Origin")
-                {
-                    found_origin = true;
-                    break;
-                }
-            }
-            if (found_origin == false)
-            {
-                context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
-            }
-            {
-                context.Response.Headers["Access-Control-Allow-Origin"] = "*";
-            }
-            */
 
             string ToArr = context.Request.Params["To"];
             foreach (var ToComplete in ToArr.Split(','))

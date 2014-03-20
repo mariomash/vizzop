@@ -294,6 +294,11 @@ namespace vizzopWeb
 
                             try
                             {
+                                if (messageaudit.Subject.StartsWith("$#_"))
+                                {
+                                    return;
+                                }
+
                                 db.MessageAudits.Add(messageaudit);
                                 db.SaveChanges();
                             }
@@ -492,7 +497,7 @@ namespace vizzopWeb.Controllers
 #else
         [RequireHttps]
 #endif
-        public ActionResult CheckExternal(string trackID, string UserName, string Password, string Domain, string MsgLastID, string url, string referrer, string callback, string SessionID, string CommSessionID, string MsgCueAudit)
+        public ActionResult CheckExternal(string trackID, string UserName, string Password, string Domain, string MsgLastID, string url, string referrer, string callback, string SessionID, string CommSessionID, string WindowName, string MsgCueAudit)
         {
 
             try
@@ -581,7 +586,7 @@ namespace vizzopWeb.Controllers
                         {
                             if ((url != null) && (referrer != null) && (converser != null))
                             {
-                                Status returnStatus = utils.TrackPageView(trackID, converser, url, referrer, language, useragent, sIP, headers, db);
+                                Status returnStatus = utils.TrackPageView(trackID, converser, url, referrer, language, useragent, sIP, headers, WindowName, db);
                                 if (returnStatus.Success == true)
                                 {
                                     Message returnmsg = new Message();
@@ -814,7 +819,7 @@ namespace vizzopWeb.Controllers
 #else
         [RequireHttps]
 #endif
-        public ActionResult CheckCaptureControl(string UserName, string Domain, string GUID, string callback)
+        public ActionResult CheckCaptureControl(string UserName, string Domain, string WindowName, string GUID, string callback)
         {
             try
             {
@@ -830,7 +835,7 @@ namespace vizzopWeb.Controllers
                 while ((sc_control == null) && (DateTime.Now < start_time.AddSeconds(25)))
                 {
                     //Thread.Sleep(TimeSpan.FromMilliseconds(50));
-                    string key = "screenshot_control_from_" + UserName + "@" + Domain;
+                    string key = "screenshot_control_from_" + UserName + "@" + Domain + "@" + WindowName;
                     object result = SingletonCache.Instance.Get(key);
                     if (result != null)
                     {
@@ -901,6 +906,7 @@ namespace vizzopWeb.Controllers
                         UserName = UserName,
                         Domain = Domain,
                         GUID = sc_control.ScreenCapture.GUID,
+                        WindowName = sc_control.ScreenCapture.WindowName,
                         Width = sc_control.ScreenCapture.Width,
                         Height = sc_control.ScreenCapture.Height,
                         ScrollTop = sc_control.ScreenCapture.ScrollTop,
@@ -991,7 +997,7 @@ namespace vizzopWeb.Controllers
 #else
         [RequireHttps]
 #endif
-        public ActionResult CheckNew(string UserName, string Password, string Domain, string callback)
+        public ActionResult CheckNew(string UserName, string Password, string Domain, string WindowName, string callback)
         {
             try
             {
@@ -1006,6 +1012,7 @@ namespace vizzopWeb.Controllers
                 if (converser == null) { return Json(false); }
 
                 //Y montamos la lista de mensajes que le vamos a devolver
+                List<Message> Messages = new List<Message>();
                 List<Message> messages = new List<Message>();
                 List<Message> returnmessages = new List<Message>();
 
@@ -1025,19 +1032,22 @@ namespace vizzopWeb.Controllers
                             //object result = SingletonCache.Instance.Get(key);
                             if (result != null)
                             {
-                                messages = (List<Message>)result;
+                                Messages = (List<Message>)result;
                             }
-                            List<Message> Messages = new List<Message>();
-                            SingletonCache.Instance.InsertWithLock(key, Messages, lockHandle);
 
-                            /*
-                            object result = SingletonCache.Instance.Get(key);
-                            if (result != null)
+                            foreach (var m in Messages)
                             {
-                                messages = (List<Message>)result;
-                                SingletonCache.Instance.Remove(key);
+                                if (m.WindowNamesCollected == null)
+                                {
+                                    m.WindowNamesCollected = new List<string>();
+                                }
+                                if (m.WindowNamesCollected.Contains(WindowName) == false)
+                                {
+                                    messages.Add(m);
+                                    m.WindowNamesCollected.Add(WindowName);
+                                }
                             }
-                             */
+                            SingletonCache.Instance.InsertWithLock(key, Messages, lockHandle);
                         }
                         catch (Exception ex__)
                         {
@@ -1095,7 +1105,6 @@ namespace vizzopWeb.Controllers
                     {
                         utils.GrabaLogExcepcion(ex_);
                     }
-                    Thread.Sleep(TimeSpan.FromMilliseconds(20));
                 }
 
                 if (returnmessages.Count > 0)
@@ -1113,46 +1122,6 @@ namespace vizzopWeb.Controllers
                 return Json(false);
             }
         }
-
-        /*
-        [ValidateInput(false)]
-        [JsonpFilter]
-        [RequireHttps]
-        public ActionResult Send(NewMessage newmessage, string setticketstate, string callback)
-        {
-            try
-            {
-
-                Utils utils = new Utils();
-                string lang = utils.GetLang(HttpContext);
-
-                string scheme = HttpContext.Request.Url.Scheme;
-                string domain = HttpContext.Request.Url.Host;
-                int port = HttpContext.Request.Url.Port;
-                try
-                {
-                    domain = RoleEnvironment.GetConfigurationSettingValue("Domain");
-                    port = Convert.ToInt32(RoleEnvironment.GetConfigurationSettingValue("Port"));
-                    scheme = RoleEnvironment.GetConfigurationSettingValue("Scheme");
-                }
-                catch (Exception ex) { utils.GrabaLog(Utils.NivelLog.info, ex.Message); }
-                string mainUrl = scheme + @"://" + domain + ":" + port;
-
-                // Lanzamos el msg en otro hilo...
-                Thread_SendMsg oThread = new Thread_SendMsg(newmessage, setticketstate, lang, mainUrl);
-                Thread rSend = new Thread(oThread.DoThings);
-                //rSend.Priority = ThreadPriority.AboveNormal;
-                rSend.Start();
-
-                return Json(true);
-            }
-            catch (Exception e)
-            {
-                utils.GrabaLogExcepcion(e);
-                return Json(false);
-            }
-        }
-        */
 
         [ValidateInput(false)]
         [JsonpFilter]

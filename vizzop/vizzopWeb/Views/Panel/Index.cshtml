@@ -65,16 +65,21 @@
                                                 <strong>@ViewBag.Chats1Week chats</strong> during last 7 days.
                                             </a>
                                         </li>
-                                        <li>
-                                            <a href="#" onclick="javascript:ShowTab('#analytics');">
-                                                <strong>@ViewBag.VisitsYesterday visits</strong> during last 24 hours.
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#" onclick="javascript:ShowTab('#analytics');">
-                                                <strong>@ViewBag.UniqueVisitsInterval unique visitors</strong> during last 7 days.
-                                            </a>
-                                        </li>
+
+                                        @if (converser.Business.ShowStatsPanel == true)
+                                        {
+                                            <li>
+                                                <a href="#" onclick="javascript:ShowTab('#analytics');">
+                                                    <strong>@ViewBag.VisitsYesterday visits</strong> during last 24 hours.
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#" onclick="javascript:ShowTab('#analytics');">
+                                                    <strong>@ViewBag.UniqueVisitsInterval unique visitors</strong> during last 7 days.
+                                                </a>
+                                            </li>
+                                        }
+
                                         <li><a href="@Url.Action("Index", "Agent")">Your account has a maximum of @converser.Business.MaxAgents agents.
                                         </a>
                                         </li>
@@ -163,12 +168,21 @@
         <div class="tab-pane" id="tickets">
             @{Html.RenderAction("Index", "CommSession", new { CommSession_filter = ViewBag.CommSession_filter });}
         </div>
-        <div class="tab-pane" id="analytics">
-            @{Html.RenderAction("Index", "Analytics");}
-        </div>
-        <div class="tab-pane" id="screenshots">
-            @{Html.RenderAction("Index", "Screenshot");}
-        </div>
+
+        @if (converser.Business.ShowStatsPanel == true)
+        {
+            <div class="tab-pane" id="analytics">
+                Html.RenderAction("Index", "Analytics")
+            </div>
+        }
+
+        @if (converser.Business.ShowVideosPanel == true)
+        {
+            <div class="tab-pane" id="screenshots">
+                Html.RenderAction("Index", "Screenshot")
+            </div>
+        }
+
         @if (converser.Agent.IsAdmin == true)
         {
             <div class="tab-pane" id="widget">
