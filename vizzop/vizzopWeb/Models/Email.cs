@@ -67,7 +67,6 @@ namespace vizzopWeb.Models
                 this._mailmessage.IsBodyHtml = true;
                 this._mailmessage.From = new MailAddress(this._message.From.Email);
                 this._mailmessage.To.Add(new MailAddress(this._message.To.Email));
-                this._mailmessage.Bcc.Add(new MailAddress(this._message.From.Email));
                 this._mailmessage.Subject = this._message.Subject;
                 this._mailmessage.Body = this._message.Content + utils.LocalizeLang("email_footer", this._message.Lang, null);
 
