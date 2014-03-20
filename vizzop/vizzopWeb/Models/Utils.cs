@@ -1460,7 +1460,7 @@ namespace vizzopWeb
             }
             catch (Exception ex)
             {
-                Utils utils = new Utils();
+                //Utils utils = new Utils();
                 GrabaLogExcepcion(ex);
             }
             return converser;

@@ -142,7 +142,7 @@
                     jVizzop(self._loading).show();
                     jVizzop(self._boxtextchat.inputZone).hide();
                     if ((jVizzop.trim(jVizzop(self._boxtextchat.inputTextArea).val()) != '') && (jVizzop(self.commentandclose).attr('disabled') != true)) {
-                        if (self._interlocutor.UserName != null) {
+                        if (self._interlocutor[0].UserName != null) {
                             var msg = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, self._interlocutor[0].UserName + '@' + self._interlocutor[0].Business.Domain, 'ticket', jVizzop(self._boxtextchat.inputTextArea).val(), self, self._commsessionid);
                             msg._commsessionid = self._commsessionid;
                             msg._selfticketstate = 'close';
@@ -184,7 +184,7 @@
                     jVizzop(self._loading).show();
                     jVizzop(self._boxtextchat.inputZone).hide();
                     if ((jVizzop.trim(jVizzop(self._boxtextchat.inputTextArea).val()) != '') && (jVizzop(self.justcomment).attr('disabled') != true)) {
-                        if (self._interlocutor.UserName != null) {
+                        if (self._interlocutor[0].UserName != null) {
                             var msg = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, self._interlocutor[0].UserName + '@' + self._interlocutor[0].Business.Domain, null, jVizzop(self._boxtextchat.inputTextArea).val(), self, self._commsessionid);
                             msg._commsessionid = self._commsessionid;
                             msg._selfticketstate = 'open';
@@ -224,7 +224,7 @@
                     jVizzop(self._loading).show();
                     jVizzop(self._boxtextchat.inputZone).hide();
                     if (jVizzop(self.justclose).attr('disabled') != true) {
-                        if (self._interlocutor.UserName != null) {
+                        if (self._interlocutor[0].UserName != null) {
                             var msg = new Message(vizzop.me.UserName + '@' + vizzop.me.Business.Domain, self._interlocutor[0].UserName + '@' + self._interlocutor[0].Business.Domain, null, null, self, self._commsessionid);
                             msg._commsessionid = self._commsessionid;
                             msg._selfticketstate = 'close';

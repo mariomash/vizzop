@@ -169,19 +169,19 @@
             @{Html.RenderAction("Index", "CommSession", new { CommSession_filter = ViewBag.CommSession_filter });}
         </div>
 
-        @if (converser.Business.ShowStatsPanel == true)
-        {
-            <div class="tab-pane" id="analytics">
-                Html.RenderAction("Index", "Analytics")
-            </div>
-        }
+        <div class="tab-pane" id="analytics">
+            @if (converser.Business.ShowStatsPanel == true)
+            {
+                Html.RenderAction("Index", "Analytics");
+            }
+        </div>
 
-        @if (converser.Business.ShowVideosPanel == true)
-        {
-            <div class="tab-pane" id="screenshots">
-                Html.RenderAction("Index", "Screenshot")
-            </div>
-        }
+        <div class="tab-pane" id="screenshots">
+            @if (converser.Business.ShowVideosPanel == true)
+            {
+                Html.RenderAction("Index", "Screenshot");
+            }
+        </div>
 
         @if (converser.Agent.IsAdmin == true)
         {
