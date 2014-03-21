@@ -13,30 +13,36 @@ using Microsoft.WindowsAzure.Storage.Blob;
 using vizzopWeb;
 using vizzopWeb.Models;
 using System.Collections.Generic;
+using System.Data.Entity.Validation;
 
 namespace vizzopWorker
 {
     public class WorkerRole : RoleEntryPoint
     {
-        private vizzopContext db = new vizzopContext();
+        //private vizzopContext db = new vizzopContext();
         private Utils utils = new Utils();
         private string tempPath;
 
         public override void Run()
         {
-            var localResource = RoleEnvironment.GetLocalResource("LocalImageProcessingTemp");
-            tempPath = localResource.RootPath;
+            try
+            {
+                var localResource = RoleEnvironment.GetLocalResource("LocalImageProcessingTemp");
+                tempPath = localResource.RootPath;
 
+            }
+            catch (Exception ex)
+            {
+                utils.GrabaLogExcepcion(ex);
+            }
             // This is a sample worker implementation. Replace with your logic.
             //Trace.TraceInformation("vizzopWorker entry point called", "Information");
             utils.GrabaLog(Utils.NivelLog.info, "vizzopWorker entry point called");
             LanzaYControlaProcesoFileScreenShots();
             LanzaYControlaProcesoPhantom();
-            LanzaYControlaProcesoWebLocations();
-#if DEBUG
-#else
+            LanzaYControlaProcesoLimpiaWebLocations();
             LanzaYControlaProcesoCreaVideos();
-#endif
+
             while (true)
             {
                 Thread.Sleep(TimeSpan.FromMilliseconds(1000));
@@ -61,10 +67,28 @@ namespace vizzopWorker
             public int count { get; set; }
         }
 
-        private void CreaVideos()
+        private void CreaVideos(vizzopContext _db)
         {
             try
             {
+                if (_db != null)
+                {
+                    utils.db = _db;
+                }
+
+                string CreateVideosSetting = "CreateVideosInRelease";
+#if DEBUG
+                CreateVideosSetting = "CreateVideosInDebug";
+#endif
+                bool CreateVideos = false;
+                CreateVideos = Convert.ToBoolean((from m in utils.db.Settings
+                                                  where m.Name == CreateVideosSetting
+                                                  select m).FirstOrDefault().Value);
+                if (CreateVideos == false)
+                {
+                    return;
+                }
+
                 //utils.GrabaLog(Utils.NivelLog.info, "Iniciando CreaVideos " + tempPath);
 
                 CloudStorageAccount storageAccount = CloudStorageAccount.Parse(CloudConfigurationManager.GetSetting("StorageConnectionString"));
@@ -110,7 +134,7 @@ namespace vizzopWorker
                 //DateTime dtFrom = DateTime.Now.ToUniversalTime().Subtract(TimeSpan.FromMinutes(2));
 
                 //IEnumerable<ScreenGroup> groups = new List<ScreenGroup>();
-                var groups = (from m in db.ScreenCaptures
+                var groups = (from m in utils.db.ScreenCaptures
                               /*where m.CreatedOn < dtFrom*/
                               group m by m.converser.ID into g
                               select new ScreenGroup()
@@ -128,7 +152,7 @@ namespace vizzopWorker
                         ScreenMovie sm = null;
 
                         Int32 intkey = Convert.ToInt32(g.Key);
-                        sm = (from m in db.ScreenMovies
+                        sm = (from m in utils.db.ScreenMovies
                               where m.converser.ID == intkey
                               select m).FirstOrDefault();
 
@@ -144,7 +168,7 @@ namespace vizzopWorker
                             }
                         }
 
-                        var captures = (from m in db.ScreenCaptures
+                        var captures = (from m in utils.db.ScreenCaptures
                                         where m.converser.ID == intkey && m.Blob != null
                                         orderby m.ID ascending
                                         select m).Take(10).ToList<ScreenCapture>();
@@ -204,7 +228,10 @@ namespace vizzopWorker
                                         while (captureToCreate.CreatedOn < NextImgDate)
                                         {
                                             CreateCaptureImage(captureToCreate, intkey.ToString() + "_" + counter);
-                                            captureToCreate.CreatedOn = captureToCreate.CreatedOn.AddMilliseconds(33.3);//250 es 4fps //33.3 milliseconds — the amount of time one frame lasts in 30fps video
+                                            captureToCreate.CreatedOn = captureToCreate.CreatedOn.AddMilliseconds(100);
+                                            //100 es 10fps video
+                                            //250 es 4fps video
+                                            //33.3 es 30fps video
                                             counter++;
                                         }
                                     }
@@ -212,56 +239,61 @@ namespace vizzopWorker
                             }
                             catch (Exception ex__)
                             {
-                                db.ScreenCaptures.Remove((from m in db.ScreenCaptures
-                                                          where m.ID == captures[i].ID
-                                                          select m).FirstOrDefault());
+                                utils.db.ScreenCaptures.Remove((from m in utils.db.ScreenCaptures
+                                                                where m.ID == captures[i].ID
+                                                                select m).FirstOrDefault());
                                 utils.GrabaLogExcepcion(ex__);
                             }
                         }
 
-                        if (File.Exists(tempPath + @"img\" + g.Key + "_0.png"))
+                        try
                         {
-                            if (ConvertAndUpload(g.Key.ToString()) == true)
+                            if (File.Exists(tempPath + @"img\" + g.Key + "_0.png"))
                             {
-                                if (sm == null)
+                                if (ConvertAndUpload(g.Key.ToString()) == true)
                                 {
-                                    sm = new ScreenMovie();
-                                    sm.CreatedOn = DateTime.Now;
-                                    db.ScreenMovies.Add(sm);
+                                    if (sm == null)
+                                    {
+                                        sm = new ScreenMovie();
+                                        sm.CreatedOn = DateTime.Now;
+                                        utils.db.ScreenMovies.Add(sm);
 
+                                    }
+                                    int _convid = captureToCreate.converser.ID;
+                                    sm.ModifiedOn = DateTime.Now;
+                                    sm.converser = (from m in utils.db.Conversers
+                                                    where m.ID == _convid
+                                                    select m).FirstOrDefault();
+                                    sm.LastFrameCreatedOn = captureToCreate.CreatedOn;
+                                    sm.LastFrameData = captureToCreate.Data;
+                                    sm.LastFrameHeight = captureToCreate.Height;
+                                    sm.LastFrameScrollLeft = captureToCreate.ScrollLeft;
+                                    sm.LastFrameScrollTop = captureToCreate.ScrollTop;
+                                    sm.LastFrameWidth = captureToCreate.Width;
+                                    sm.LastFrameUrl = captureToCreate.Url;
+                                    sm.ModifiedOn = sm.CreatedOn;
+                                    utils.db.SaveChanges();
                                 }
-                                int _convid = captureToCreate.converser.ID;
-                                sm.ModifiedOn = DateTime.Now;
-                                sm.converser = (from m in db.Conversers
-                                                where m.ID == _convid
-                                                select m).FirstOrDefault();
-                                sm.LastFrameCreatedOn = captureToCreate.CreatedOn;
-                                sm.LastFrameData = captureToCreate.Data;
-                                sm.LastFrameHeight = captureToCreate.Height;
-                                sm.LastFrameScrollLeft = captureToCreate.ScrollLeft;
-                                sm.LastFrameScrollTop = captureToCreate.ScrollTop;
-                                sm.LastFrameWidth = captureToCreate.Width;
-                                sm.LastFrameUrl = captureToCreate.Url;
-                                sm.ModifiedOn = sm.CreatedOn;
-
-                                db.SaveChanges();
-
                             }
+                        }
+                        catch (Exception ex__)
+                        {
+                            utils.GrabaLogExcepcion(ex__);
                         }
 
                         //Borramos incluso si falló...
                         foreach (var sc in captures)
                         {
                             var _id = sc.ID;
-                            var toRemove = (from m in db.ScreenCaptures
+                            var toRemove = (from m in utils.db.ScreenCaptures
                                             where m.ID == _id
                                             select m).FirstOrDefault();
                             if (toRemove != null)
                             {
-                                db.ScreenCaptures.Remove(toRemove);
+                                utils.db.ScreenCaptures.Remove(toRemove);
                             }
                         }
-                        db.SaveChanges();
+                        utils.db.SaveChanges();
 
                         foreach (var file in Directory.GetFiles(tempPath + @"img\"))
                         {
@@ -275,7 +307,7 @@ namespace vizzopWorker
                     }
                 }
 
-                db.SaveChanges();
+                utils.db.SaveChanges();
             }
             catch (Exception ex)
             {
@@ -391,7 +423,7 @@ namespace vizzopWorker
 
                 //-start_number 0 ffmpeg -i input_file.avi -codec:v libx264 -profile: high -preset slow -b:v 500k -maxrate 500k -bufsize 1000k -vf scale=-1:480 -threads 0 -codec:a libfdk_aac -b:a 128k output_file.mp4
                 //psi.Arguments = string.Format(@"-start_number 0 -r 25 -i {0} -codec:v libx264 -profile: high -preset slow -b:v 500k -maxrate 500k -bufsize 1000k -vf scale=-1:480 -threads 0 -codec:a libfdk_aac -b:a 128k -r 25 {1}", tempPath + @"img\" + inputFileName + "_%d.png", tempPath + @"videos\" + inputFileName + "_temp.mp4");//-s 640x360
-                psi.Arguments = string.Format(@" -framerate 4 -i " + tempPath + @"img\" + inputFileName + @"_%d.png -s:v 1280x720 -c:v libx264 -profile:v high -crf 23 -pix_fmt yuv420p -r 4 " + tempPath + @"videos\" + inputFileName + @"_temp.mp4");
+                psi.Arguments = string.Format(@" -framerate 10 -i " + tempPath + @"img\" + inputFileName + @"_%d.png -s:v 1280x720 -c:v libx264 -profile:v high -crf 23 -pix_fmt yuv420p -r 10 " + tempPath + @"videos\" + inputFileName + @"_temp.mp4");
                 //psi.Arguments = string.Format(@"-start_number 0 -r 25 -i {0} -y -b 1500k -vcodec libx264 -r 25 {1}", tempPath + @"img\" + inputFileName + "_%d.png", tempPath + @"videos\" + inputFileName + "_temp.mp4");//-s 640x360
                 psi.CreateNoWindow = true;
                 psi.ErrorDialog = false;
@@ -466,7 +498,7 @@ namespace vizzopWorker
             }
         }
 
-        private void LanzaYControlaProcesoWebLocations()
+        private void LanzaYControlaProcesoLimpiaWebLocations()
         {
 
             BackgroundWorker bw = new BackgroundWorker();
@@ -479,7 +511,7 @@ namespace vizzopWorker
             delegate(object o, DoWorkEventArgs args)
             {
                 BackgroundWorker b = o as BackgroundWorker;
-                utils.LimpiaWebLocations();
+                utils.LimpiaWebLocations(new vizzopContext());
             });
 
             // what to do when progress changed (update the progress bar for example)
@@ -493,16 +525,14 @@ namespace vizzopWorker
             bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(
             delegate(object o, RunWorkerCompletedEventArgs args)
             {
-                LanzaYControlaProcesoWebLocations();
+                LanzaYControlaProcesoLimpiaWebLocations();
             });
 
             bw.RunWorkerAsync();
         }
 
-
         private void LanzaYControlaProcesoCreaVideos()
         {
-
             BackgroundWorker bw = new BackgroundWorker();
 
             // this allows our worker to report progress during work
@@ -513,7 +543,7 @@ namespace vizzopWorker
             delegate(object o, DoWorkEventArgs args)
             {
                 BackgroundWorker b = o as BackgroundWorker;
-                CreaVideos();
+                CreaVideos(new vizzopContext());
             });
 
             // what to do when progress changed (update the progress bar for example)
@@ -527,6 +557,7 @@ namespace vizzopWorker
             bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(
             delegate(object o, RunWorkerCompletedEventArgs args)
             {
+                Thread.Sleep(TimeSpan.FromSeconds(1));
                 LanzaYControlaProcesoCreaVideos();
             });
 
@@ -583,7 +614,7 @@ namespace vizzopWorker
             delegate(object o, DoWorkEventArgs args)
             {
                 BackgroundWorker b = o as BackgroundWorker;
-                utils.LaunchCaptureProcesses();
+                utils.LaunchCaptureProcesses(new vizzopContext());
             });
 
             // what to do when progress changed (update the progress bar for example)

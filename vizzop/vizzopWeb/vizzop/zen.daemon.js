@@ -451,7 +451,6 @@ var Daemon = jVizzop.zs_Class.create({
             //vizzoplib.log("cargando porque " + vizzop.CommRequest_InCourse);
             jVizzop(self.controlBox._box).show();
 
-            //eso es 100 milisegundos (una decima de segundo)
             if ((vizzop.DaemonTiming_Steps % 1) == 0) {
                 self.sendNewMessages();
                 self.checkNewMessages();
@@ -469,14 +468,9 @@ var Daemon = jVizzop.zs_Class.create({
             if ((vizzop.DaemonTiming_Steps % 5) == 0) {
             }
 
-            //eso es un segundico
-            if ((vizzop.DaemonTiming_Steps % 10) == 0) {
+            if ((vizzop.DaemonTiming_Steps % vizzop.CheckExternalTiming) == 0) {
                 self.checkExternal();
                 self.sync_ChatList();
-                /*
-                var d = new Date();
-                vizzoplib.log("cada segundo" + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds() + ":" + d.getMilliseconds());
-                */
             }
 
             //eso son 10 segundicos
@@ -520,7 +514,6 @@ var Daemon = jVizzop.zs_Class.create({
             //Si ya tenemos datos como para trackear y checkear mensajes.. trackeamos nuestra posicion y checkeamos etc
             if (vizzop.me != null) {
 
-                //eso es 100 milisegundos (una decima de segundo)
                 if ((vizzop.DaemonTiming_Steps % 1) == 0) {
                     self.checkNewMessages();
                     self.sendNewMessages();
@@ -533,8 +526,7 @@ var Daemon = jVizzop.zs_Class.create({
                 if ((vizzop.DaemonTiming_Steps % 5) == 0) {
                 }
 
-                //Eso es un segundo
-                if ((vizzop.DaemonTiming_Steps % 10) == 0) {
+                if ((vizzop.DaemonTiming_Steps % vizzop.CheckExternalTiming) == 0) {
                     self.checkExternal();
                     vizzop.HtmlSend_ForceSendHtml = true;
                 }
@@ -582,7 +574,8 @@ var Daemon = jVizzop.zs_Class.create({
                     self.checkNewMessages();
                     self.sendNewMessages();
                 }
-                if ((vizzop.DaemonTiming_Steps % 100) == 0) {
+
+                if ((vizzop.DaemonTiming_Steps % vizzop.CheckExternalTiming) == 0) {
                     self.checkExternal();
                 }
             }

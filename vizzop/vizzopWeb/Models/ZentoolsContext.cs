@@ -32,6 +32,7 @@ namespace vizzopWeb.Models
         public DbSet<Isocode> Isocodes { get; set; }
         public DbSet<MessageAudit> MessageAudits { get; set; }
         public DbSet<BrowserFeature> BrowserFeatures { get; set; }
+        public DbSet<Setting> Settings { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

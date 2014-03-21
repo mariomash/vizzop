@@ -523,6 +523,14 @@ namespace vizzopWeb
                     BusinessHours = @"'" + business.BusinessHours + @"'";
                 }
 
+                string DaemonTiming = (from m in db.Settings
+                                       where m.Name == "JavascriptDaemonTiming"
+                                       select m).FirstOrDefault().Value;
+
+                string CheckExternalTiming = (from m in db.Settings
+                                              where m.Name == "JavascriptCheckExternalTiming"
+                                              select m).FirstOrDefault().Value;
+
                 string vizzop = @"
 var vizzop = {
     lang: '" + langiso + @"',
@@ -536,8 +544,9 @@ var vizzop = {
     Boxes: [],
     Messages: [],
     ApiKey: '" + business.ApiKey + @"',
-    DaemonTiming: 100,
+    DaemonTiming: " + DaemonTiming + @",
     DaemonTiming_Steps: new Number(0),
+    CheckExternalTiming: " + CheckExternalTiming + @",
     Daemon: null,
     store_engine: null,
     Tracking: null,

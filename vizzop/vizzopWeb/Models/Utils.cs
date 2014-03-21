@@ -1875,6 +1875,11 @@ namespace vizzopWeb
                     data = LZString.decompressFromBase64(data);
                 }
 
+                if ((data == null) || (data == ""))
+                {
+                    return false;
+                }
+
                 arrDict = new JavaScriptSerializer().Deserialize<List<Dictionary<string, object>>>(data);
                 if (arrDict.Count == 0)
                 {
@@ -2714,6 +2719,21 @@ namespace vizzopWeb
             {
                 Task TaskLog = Task.Factory.StartNew(() =>
                 {
+                    db = new vizzopContext();
+
+                    string CreateLogsSetting = "CreateLogsInRelease";
+#if DEBUG
+                    CreateLogsSetting = "CreateLogsInDebug";
+#endif
+                    bool CreateLogs = false;
+                    CreateLogs = Convert.ToBoolean((from m in db.Settings
+                                                    where m.Name == CreateLogsSetting
+                                                    select m).FirstOrDefault().Value);
+                    if (CreateLogs == false)
+                    {
+                        return;
+                    }
+
                     //Asi pillamos mas info de donde estamos realmente :)
                     System.Diagnostics.StackFrame Frame = new System.Diagnostics.StackFrame(1, false);
                     System.Reflection.MethodBase Method;
@@ -2746,24 +2766,49 @@ namespace vizzopWeb
 
         public void GrabaLogJavascript(string strLog)
         {
-            String strLog_WithRoute = "javascript/" + strLog;
-            NivelLog NLog = NivelLog.error;
-
-            switch (NLog)
+            try
             {
-                case NivelLog.info:
-                    GrabaAnalyticsLog(NLog, strLog_WithRoute);
-                    //Lo importante va a Syslog y a BD para posterior búsqueda-seguimiento
-                    GrabaDBLog(NLog, strLog_WithRoute);
-                    break;
-                case NivelLog.error:
-                    GrabaAnalyticsLog(NLog, strLog_WithRoute);
-                    //Los errores van a Syslog y a BD para posterior búsqueda-seguimiento
-                    GrabaDBLog(NLog, strLog_WithRoute);
-                    break;
+                Task TaskLog = Task.Factory.StartNew(() =>
+                {
+                    db = new vizzopContext();
+
+                    string CreateLogsSetting = "CreateLogsInRelease";
+#if DEBUG
+                    CreateLogsSetting = "CreateLogsInDebug";
+#endif
+                    bool CreateLogs = false;
+                    CreateLogs = Convert.ToBoolean((from m in db.Settings
+                                                    where m.Name == CreateLogsSetting
+                                                    select m).FirstOrDefault().Value);
+                    if (CreateLogs == false)
+                    {
+                        return;
+                    }
+
+                    String strLog_WithRoute = "javascript/" + strLog;
+                    NivelLog NLog = NivelLog.error;
+
+                    switch (NLog)
+                    {
+                        case NivelLog.info:
+                            GrabaAnalyticsLog(NLog, strLog_WithRoute);
+                            //Lo importante va a Syslog y a BD para posterior búsqueda-seguimiento
+                            GrabaDBLog(NLog, strLog_WithRoute);
+                            break;
+                        case NivelLog.error:
+                            GrabaAnalyticsLog(NLog, strLog_WithRoute);
+                            //Los errores van a Syslog y a BD para posterior búsqueda-seguimiento
+                            GrabaDBLog(NLog, strLog_WithRoute);
+                            break;
+                    }
+                    //Tó va a Syslog, y en caso de que no sea posible, Syslog se encarga de mandarlo a un TXT
+                    GrabaSYSLog(NLog, strLog_WithRoute);
+                });
             }
-            //Tó va a Syslog, y en caso de que no sea posible, Syslog se encarga de mandarlo a un TXT
-            GrabaSYSLog(NLog, strLog_WithRoute);
+            catch (Exception ex)
+            {
+
+            }
         }
 
         public void AddZenSession(Converser Converser, string SessionID)
@@ -3188,8 +3233,12 @@ namespace vizzopWeb
             }
         }
 
-        public void LaunchCaptureProcesses()
+        public void LaunchCaptureProcesses(vizzopContext _db)
         {
+            if (_db != null)
+            {
+                db = _db;
+            }
             //GrabaLog(Utils.NivelLog.info, "Iniciando LaunchCaptureProcesses");
             while (true)
             {
@@ -3358,17 +3407,35 @@ namespace vizzopWeb
             return converser;
         }
 
-        public void LimpiaWebLocations()
+        public void LimpiaWebLocations(vizzopContext _db)
         {
             try
             {
+
+                if (_db != null)
+                {
+                    db = _db;
+                }
+
+                string LimpiaWebLocationsSetting = "LimpiaWebLocationsInRelease";
+#if DEBUG
+                LimpiaWebLocationsSetting = "LimpiaWebLocationsInDebug";
+#endif
+                bool LimpiaWebLocations = false;
+                LimpiaWebLocations = Convert.ToBoolean((from m in db.Settings
+                                                        where m.Name == LimpiaWebLocationsSetting
+                                                        select m).FirstOrDefault().Value);
+                if (LimpiaWebLocations == false)
+                {
+                    return;
+                }
 
                 TimeZone localZone = TimeZone.CurrentTimeZone;
                 DateTime loctime = localZone.ToUniversalTime(DateTime.Now.AddSeconds(-60));
                 var to_move = (from m in db.WebLocations.Include("Converser").Include("Converser.Business")
                                where m.TimeStamp_Last < loctime
                                //&& m.Converser.Business.ID == _Converser.Business.ID
-                               select m).ToList();
+                               select m);//.ToList();
                 if (to_move != null)
                 {
                     foreach (var m in to_move)
@@ -3388,11 +3455,11 @@ namespace vizzopWeb
                             newloc.Headers = m.Headers;
                             newloc.WindowName = m.WindowName;
 
+                            db.WebLocations.Remove(m);
                             if (newloc.converser != null)
                             {
                                 db.WebLocations_History.Add(newloc);
                             }
-                            db.WebLocations.Remove(m);
                             db.SaveChanges();
                         }
                         catch (Exception _ex)

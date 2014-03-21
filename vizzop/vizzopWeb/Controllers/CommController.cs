@@ -16,9 +16,9 @@ namespace vizzopWeb.Controllers
     public class CommController : Controller
     {
 
-        private vizzopContext db = new vizzopContext();
+        //private vizzopContext db = new vizzopContext();
         private Utils utils = new Utils();
-
+        //private vizzopContext db = utils.db;
         /*
         [WebApiEnabled]
          */
@@ -32,7 +32,7 @@ namespace vizzopWeb.Controllers
         {
             try
             {
-                Converser converser = utils.GetConverserFromSystem(username, password, domain, db);
+                Converser converser = utils.GetConverserFromSystem(username, password, domain, utils.db);
                 if (converser == null)
                 {
                     return Json(false);
@@ -49,7 +49,7 @@ namespace vizzopWeb.Controllers
                     DateTime localTimeUTCIn = localZone.ToUniversalTime(DateTime.Now.AddMinutes(-60));
                     if (converser.Agent != null)
                     {
-                        var orig_sessions = (from m in db.CommSessions
+                        var orig_sessions = (from m in utils.db.CommSessions
                                                  .Include("Client")
                                                  .Include("Client.Business")
                                                  .Include("Business")
@@ -72,7 +72,7 @@ namespace vizzopWeb.Controllers
                     }
                     else
                     {
-                        var orig_sessions = (from m in db.CommSessions
+                        var orig_sessions = (from m in utils.db.CommSessions
                                                  .Include("Client")
                                                  .Include("Client.Business")
                                                  .Include("Business")
@@ -188,7 +188,7 @@ namespace vizzopWeb.Controllers
         {
             try
             {
-                Converser converser = utils.GetConverserFromSystem(UserName, Password, Domain, db);
+                Converser converser = utils.GetConverserFromSystem(UserName, Password, Domain, utils.db);
                 if (converser == null)
                 {
                     return Json(false);
@@ -203,7 +203,7 @@ namespace vizzopWeb.Controllers
                 if ((commsessionid != null) && (commsessionid != "null"))
                 {
                     int _commsessionid = Convert.ToInt32(commsessionid);
-                    session = (CommSession)(from m in db.CommSessions
+                    session = (CommSession)(from m in utils.db.CommSessions
                                                 .Include("Client")
                                                 .Include("Client.Business")
                                                 .Include("Business")
@@ -230,7 +230,7 @@ namespace vizzopWeb.Controllers
                     options.Add(SessionPropertyConstants.P2P_PREFERENCE, "enabled");
                     opentoksessionID = opentok.CreateSession(HttpContext.Request.ServerVariables["REMOTE_ADDR"], options);
                     session.OpenTokSessionID = opentoksessionID;
-                    db.SaveChanges();
+                    utils.db.SaveChanges();
                 }
 
                 string token = opentok.GenerateToken(opentoksessionID);
@@ -258,7 +258,7 @@ namespace vizzopWeb.Controllers
         {
             try
             {
-                Converser converser = utils.GetConverserFromSystem(UserName, Password, Domain, db);
+                Converser converser = utils.GetConverserFromSystem(UserName, Password, Domain, utils.db);
                 if (converser == null)
                 {
                     return Json(false);
@@ -269,7 +269,7 @@ namespace vizzopWeb.Controllers
                 CommSession session = null;
                 if (converser.Business.Domain.ToLowerInvariant() == "vizzop")
                 {
-                    session = (from m in db.CommSessions
+                    session = (from m in utils.db.CommSessions
                                          .Include("Client")
                                          .Include("Client.Business")
                                          .Include("Business")
@@ -284,7 +284,7 @@ namespace vizzopWeb.Controllers
                 }
                 else
                 {
-                    session = (from m in db.CommSessions
+                    session = (from m in utils.db.CommSessions
                                       .Include("Client")
                                       .Include("Client.Business")
                                       .Include("Business")
@@ -323,7 +323,7 @@ namespace vizzopWeb.Controllers
                 }
                 if (returnmessages.Count > 0)
                 {
-                    db.Database.ExecuteSqlCommand("UPDATE MESSAGES SET STATUS=1 WHERE COMMSESSION_ID=" + session.ID);
+                    utils.db.Database.ExecuteSqlCommand("UPDATE MESSAGES SET STATUS=1 WHERE COMMSESSION_ID=" + session.ID);
                 }
 
                 CommSession returnsession = new CommSession();
@@ -343,7 +343,7 @@ namespace vizzopWeb.Controllers
                 returnsession.LockedBy = new Converser();
                 if (session.LockedBy == null)
                 {
-                    db.Database.ExecuteSqlCommand("UPDATE COMMSESSIONS SET LOCKEDBY_ID=" + converser.ID + " WHERE ID=" + session.ID);
+                    utils.db.Database.ExecuteSqlCommand("UPDATE COMMSESSIONS SET LOCKEDBY_ID=" + converser.ID + " WHERE ID=" + session.ID);
                     returnsession.LockedBy.ID = converser.ID;
                     returnsession.LockedBy.UserName = converser.UserName;
                     returnsession.LockedBy.FullName = converser.FullName;
@@ -364,7 +364,7 @@ namespace vizzopWeb.Controllers
                 try
                 {
 
-                    var current_location = (from m in db.WebLocations
+                    var current_location = (from m in utils.db.WebLocations
                                             where m.Converser.ID == returnsession.Client.ID
                                             orderby m.ID
                                             select m).FirstOrDefault();
@@ -418,14 +418,14 @@ namespace vizzopWeb.Controllers
         {
             try
             {
-                Converser converser = utils.GetConverserFromSystem(username, password, domain, db);
+                Converser converser = utils.GetConverserFromSystem(username, password, domain, utils.db);
                 if (converser == null)
                 {
                     return Json(false);
                 }
 
                 int _commsessionid = Convert.ToInt32(commsessionid);
-                var commsession = (from m in db.CommSessions
+                var commsession = (from m in utils.db.CommSessions
                                        .Include("Business")
                                        .Include("Client")
                                        .Include("Client.Business")
@@ -447,7 +447,7 @@ namespace vizzopWeb.Controllers
                 commsession.Agents = new List<Agent>();
                 commsession.Agents.Add(converser.Agent);
                 commsession.Status = 1;
-                db.SaveChanges();
+                utils.db.SaveChanges();
 
                 //db.Database.ExecuteSqlCommand("UPDATE COMMSESSIONS SET STATUS=1 WHERE ID=" + commsession.ID);
 
@@ -470,14 +470,14 @@ namespace vizzopWeb.Controllers
         {
             try
             {
-                Converser converser = utils.GetConverserFromSystem(username, password, domain, db);
+                Converser converser = utils.GetConverserFromSystem(username, password, domain, utils.db);
                 if (converser == null)
                 {
                     return Json(false);
                 }
 
                 int _commsessionid = Convert.ToInt32(commsessionid);
-                var commsession = (from m in db.CommSessions
+                var commsession = (from m in utils.db.CommSessions
                                        .Include("Business")
                                        .Include("Client")
                                        .Include("Client.Business")
@@ -491,7 +491,7 @@ namespace vizzopWeb.Controllers
                     return Json(true);
                 }
 
-                var agent_to_pop = (from m in db.Agents.Include("Converser") //.Include("Converser.Business")
+                var agent_to_pop = (from m in utils.db.Agents.Include("Converser") //.Include("Converser.Business")
                                     where m.Converser.ID == converser.ID
                                     select m).FirstOrDefault();
 
@@ -500,7 +500,7 @@ namespace vizzopWeb.Controllers
                 {
                     commsession.Status = 2;
                 }
-                db.SaveChanges();
+                utils.db.SaveChanges();
                 return Json(true);
             }
             catch (Exception ex)
@@ -519,14 +519,14 @@ namespace vizzopWeb.Controllers
         {
             try
             {
-                Converser converser = utils.GetConverserFromSystem(username, password, domain, db);
+                Converser converser = utils.GetConverserFromSystem(username, password, domain, utils.db);
                 if (converser == null)
                 {
                     return Json(false);
                 }
 
                 int _commsessionid = Convert.ToInt32(commsessionid);
-                CommSession commsession = (from m in db.CommSessions
+                CommSession commsession = (from m in utils.db.CommSessions
                                                .Include("Business")
                                                .Include("Client")
                                                .Include("Client.Business")
@@ -539,7 +539,7 @@ namespace vizzopWeb.Controllers
 
                 if (commsession.ID == _commsessionid)
                 {
-                    db.Database.ExecuteSqlCommand("UPDATE COMMSESSIONS SET STATUS=3 WHERE ID=" + commsession.ID);
+                    utils.db.Database.ExecuteSqlCommand("UPDATE COMMSESSIONS SET STATUS=3 WHERE ID=" + commsession.ID);
 
                     //Al cliente
                     NewMessage newmessage = new NewMessage();
@@ -632,7 +632,7 @@ namespace vizzopWeb.Controllers
                 //Si ya sabemos todos los implicados...o sea que esto la inicia un agente... la intentamos buscar primero
                 if ((agent_username != null) && (agent_password != null) && (agent_domain != null))
                 {
-                    commsession = (from m in db.CommSessions
+                    commsession = (from m in utils.db.CommSessions
                                        .Include("Client")
                                        .Include("Business")
                                        .Include("Client.Business")
@@ -645,8 +645,8 @@ namespace vizzopWeb.Controllers
 
                 if (commsession == null)
                 {
-                    //Si no ha sido fructifera la búsqueda (porque no era un agente) buscamos una que ya exista para entrar ahí
-                    commsession = (from m in db.CommSessions
+                    //Si no ha sido fructifera la búsqueda o no era un agente buscamos una que ya exista para entrar ahí
+                    commsession = (from m in utils.db.CommSessions
                                        .Include("Client")
                                        .Include("Business")
                                        .Include("Client.Business")
@@ -661,7 +661,7 @@ namespace vizzopWeb.Controllers
                     if ((commsession.Status == 2) || ((agent_username == null) && (agent_password == null) && (agent_domain == null)))
                     {
                         commsession.Status = 0;
-                        db.SaveChanges();
+                        utils.db.SaveChanges();
                     }
                 }
                 else
@@ -669,7 +669,7 @@ namespace vizzopWeb.Controllers
                     //Si aun asi no encontramos nada....  creamos la sesion
                     commsession = new CommSession();
 
-                    Converser converser = utils.GetConverserFromSystem(username, password, domain, db);
+                    Converser converser = utils.GetConverserFromSystem(username, password, domain, utils.db);
                     if (converser == null)
                     {
                         return Json(false);
@@ -696,43 +696,43 @@ namespace vizzopWeb.Controllers
                      * Dado que no hay que empezar la rueda de "aceptamientos"
                      */
 
-                    if ((agent_username != null) && (agent_password != null) && (agent_domain != null))
-                    {
-                        commsession.Status = 1;
-                        commsession.Agents = new List<Agent>();
-                        var agent_to_put = (from m in db.Agents
-                                            //where m.Converser.Business.ID == converser.Business.ID
-                                            where m.Converser.UserName == agent_username &&
-                                            m.Converser.Password == agent_password &&
-                                            m.Converser.Business.Domain == agent_domain
-                                            select m).FirstOrDefault();
-                        commsession.Agents.Add(agent_to_put);
-                    }
-                    else
-                    {
 
-                        /* 
-                         * si es iniciada por cliente... 
-                         * metemos todos los agentes de este business que estén logados ahora mismo 
-                         * para ir eliminando conforme deniegan soporte
-                         */
-
-                        commsession.Agents = utils.GetActiveAgents(converser);
-                    }
-
-                    db.CommSessions.Add(commsession);
+                    utils.db.CommSessions.Add(commsession);
                     //db.Entry(commsession).State = EntityState.Modified;
-                    db.SaveChanges();
-
+                    utils.db.SaveChanges();
 
                     Task.Factory.StartNew(() =>
                     {
+                        if ((agent_username != null) && (agent_password != null) && (agent_domain != null))
+                        {
+                            commsession.Status = 1;
+                            commsession.Agents = new List<Agent>();
+                            var agent_to_put = (from m in utils.db.Agents
+                                                //where m.Converser.Business.ID == converser.Business.ID
+                                                where m.Converser.UserName == agent_username &&
+                                                m.Converser.Password == agent_password &&
+                                                m.Converser.Business.Domain == agent_domain
+                                                select m).FirstOrDefault();
+                            commsession.Agents.Add(agent_to_put);
+                        }
+                        else
+                        {
+
+                            /* 
+                             * si es iniciada por cliente... 
+                             * metemos todos los agentes de este business que estén logados ahora mismo 
+                             * para ir eliminando conforme deniegan soporte
+                             */
+
+                            commsession.Agents = utils.GetActiveAgents(converser);
+                        }
+
                         OpenTokSDK opentok = new OpenTokSDK();
                         Dictionary<string, object> options = new Dictionary<string, object>();
                         options.Add(SessionPropertyConstants.P2P_PREFERENCE, "enabled");
                         string OpenTokSessionID = opentok.CreateSession(sIP, options);
                         commsession.OpenTokSessionID = OpenTokSessionID;
-                        db.SaveChanges();
+                        utils.db.SaveChanges();
                     });
                 }
                 return Json(commsession.ID);
@@ -757,12 +757,12 @@ namespace vizzopWeb.Controllers
                 string language = utils.GetLang(HttpContext);
                 string useragent = HttpContext.Request.UserAgent;
 
-                var prayer = (from m in db.Conversers
+                var prayer = (from m in utils.db.Conversers
                                   .Include("Business")
                               where m.Email == email
                               select m).FirstOrDefault();
 
-                var business = (from m in db.Businesses
+                var business = (from m in utils.db.Businesses
                                 where m.ApiKey == apikey
                                 select m).FirstOrDefault();
 
@@ -770,7 +770,7 @@ namespace vizzopWeb.Controllers
                 {
                     prayer = new Converser();
                     prayer = utils.CreateConverserinDB(prayer);
-                    prayer = (from m in db.Conversers
+                    prayer = (from m in utils.db.Conversers
                               where m.ID == prayer.ID
                               select m).FirstOrDefault();
                     prayer.Business = business;
@@ -781,12 +781,12 @@ namespace vizzopWeb.Controllers
                 prayer.LangISO = language;
                 prayer.IP = sIP;
                 prayer.UserAgent = useragent;
-                db.SaveChanges();
+                utils.db.SaveChanges();
 
 
 
 
-                var business_agents = (from m in db.Conversers
+                var business_agents = (from m in utils.db.Conversers
                                        where m.Agent != null && m.Business.ID == business.ID
                                        select m);
 
@@ -807,8 +807,8 @@ namespace vizzopWeb.Controllers
                 commsession.Agents = agents;
                 commsession.Status = 0;
                 commsession.SessionType = "ticket";
-                db.CommSessions.Add(commsession);
-                db.SaveChanges();
+                utils.db.CommSessions.Add(commsession);
+                utils.db.SaveChanges();
 
                 /*
                 string usernames = "";
@@ -824,7 +824,7 @@ namespace vizzopWeb.Controllers
                              select m).FirstOrDefault();
                 */
 
-                var agent = (from m in db.Conversers
+                var agent = (from m in utils.db.Conversers
                              where m.Agent != null && m.Business.ApiKey == business.ApiKey
                              select m).FirstOrDefault();
 
@@ -834,7 +834,7 @@ namespace vizzopWeb.Controllers
                 newmessage.Lang = utils.GetLang(HttpContext);
                 newmessage.Subject = "ticket";
                 newmessage.Content = content.Replace(Environment.NewLine, null);
-                newmessage.db = db;
+                newmessage.db = utils.db;
                 newmessage.MessageType = "ticket";
                 Message message = new Message(newmessage);
 
@@ -851,12 +851,12 @@ namespace vizzopWeb.Controllers
                                where m.ID == message.ID
                                select m).FirstOrDefault();
                      */
-                    commsession = (from m in db.CommSessions
+                    commsession = (from m in utils.db.CommSessions
                                    where m.ID == commsession.ID
                                    select m).FirstOrDefault();
 
                     commsession.Messages.Add(message);
-                    db.SaveChanges();
+                    utils.db.SaveChanges();
 
                     string scheme = HttpContext.Request.Url.Scheme;
                     string domain = HttpContext.Request.Url.Host;
@@ -883,7 +883,7 @@ namespace vizzopWeb.Controllers
                     _email.withBcc = false;
                     _email.send();
 
-                    var vizzop_converser_agent = (from m in db.Conversers
+                    var vizzop_converser_agent = (from m in utils.db.Conversers
                                                   where m.Business.Email == "customer.service@vizzop.com" && m.Agent != null
                                                   select m).FirstOrDefault();
 
@@ -922,7 +922,7 @@ namespace vizzopWeb.Controllers
         {
             try
             {
-                utils = new Utils(db);
+                //utils = new Utils(db);
 
                 if ((requestcommsessionid == null) || (requestcommsessionid == "") || (username == null) || (password == null) || (domain == null))
                 {
@@ -938,7 +938,7 @@ namespace vizzopWeb.Controllers
                 if (converser != null)
                 {
                     converser.LastActive = DateTime.Now.ToUniversalTime();
-                    db.SaveChanges();
+                    utils.db.SaveChanges();
                 }
                 else
                 {
@@ -949,10 +949,10 @@ namespace vizzopWeb.Controllers
                  * Antes que nada... todas las sesiones viejas por aprobar se ponen a 2 (denegadas)
                  */
                 string strSQL = "UPDATE COMMSESSIONS SET STATUS=2 WHERE createdon < DATEADD(day,-1,CURRENT_TIMESTAMP);";
-                db.Database.ExecuteSqlCommand(strSQL);
+                utils.db.Database.ExecuteSqlCommand(strSQL);
 
                 //Buscamos la sesion que toca
-                var selected_session = (from m in db.CommSessions
+                var selected_session = (from m in utils.db.CommSessions
                                             .Include("Business")
                                             .Include("Client")
                                             .Include("Client.Business")
@@ -993,7 +993,7 @@ namespace vizzopWeb.Controllers
                             selected_session.Status = 0;
 
                             selected_session.Agents = utils.GetActiveAgents(converser);
-                            db.SaveChanges();
+                            utils.db.SaveChanges();
                             return Json(false);
                         }
                     }
@@ -1023,7 +1023,7 @@ namespace vizzopWeb.Controllers
 
                             selected_session.Agents = utils.GetActiveAgents(converser);
 
-                            db.SaveChanges();
+                            utils.db.SaveChanges();
                             return Json(false);
                         }
                         else
@@ -1035,7 +1035,7 @@ namespace vizzopWeb.Controllers
                                 // Y deberíamos dar 100 latigazos a los del Call Center
                                 selected_session.Status = 2;
                                 selected_session.Agents = new List<Agent>();
-                                db.SaveChanges();
+                                utils.db.SaveChanges();
                                 return Json("leave_message");
                             }
                             else
@@ -1047,7 +1047,7 @@ namespace vizzopWeb.Controllers
                                  */
 
                                 selected_session.Status = 0;
-                                db.SaveChanges();
+                                utils.db.SaveChanges();
                                 return Json(false);
                             }
                         }

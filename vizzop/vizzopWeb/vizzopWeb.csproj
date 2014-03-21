@@ -250,6 +250,7 @@
     <Compile Include="Models\ScreenCaptureControl.cs" />
     <Compile Include="Models\ScreenMovie.cs" />
     <Compile Include="Models\ServiceType.cs" />
+    <Compile Include="Models\Setting.cs" />
     <Compile Include="Models\Status.cs" />
     <Compile Include="Models\Tag.cs" />
     <Compile Include="Models\TextString.cs" />
