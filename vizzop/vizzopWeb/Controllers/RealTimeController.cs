@@ -600,11 +600,21 @@ namespace vizzopWeb.Controllers
                                     select m).OrderByDescending(z => z.TimeStamp_Last);
                 List<WebLocationDataTables> DefLocList = new List<WebLocationDataTables>();
 
+
+                string VizzopGetsAllRealtimeWebLocationsSetting = "VizzopGetsAllRealtimeWebLocationsInRelease";
 #if DEBUG
-                weblocations = (from m in weblocations
-                                where m.Converser.Business.ID == converser.Business.ID
-                                select m).OrderByDescending(z => z.TimeStamp_Last); //.ToList<WebLocation>();
+                VizzopGetsAllRealtimeWebLocationsSetting = "VizzopGetsAllRealtimeWebLocationsInDebug";
 #endif
+                bool VizzopGetsAllRealtimeWebLocations = false;
+                VizzopGetsAllRealtimeWebLocations = Convert.ToBoolean((from m in db.Settings
+                                                                where m.Name == VizzopGetsAllRealtimeWebLocationsSetting
+                                                        select m).FirstOrDefault().Value);
+                if (VizzopGetsAllRealtimeWebLocations == false)
+                {
+                    weblocations = (from m in weblocations
+                                    where m.Converser.Business.ID == converser.Business.ID
+                                    select m).OrderByDescending(z => z.TimeStamp_Last); //.ToList<WebLocation>();
+                }
 
                 if (converser.Business.Domain.ToLowerInvariant() != "vizzop")
                 {
