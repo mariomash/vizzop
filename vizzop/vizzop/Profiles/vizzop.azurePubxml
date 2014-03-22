@@ -6,7 +6,7 @@
     <AzureDeploymentLabel>vizzop 485 - fixin tickets</AzureDeploymentLabel>
     <AzureDeploymentReplacementMethod>DeleteAndCreate</AzureDeploymentReplacementMethod>
     <AzureSlot>Production</AzureSlot>
-    <AzureEnableRemoteDesktop>True</AzureEnableRemoteDesktop>
+    <AzureEnableRemoteDesktop>False</AzureEnableRemoteDesktop>
     <AzureEnableWebDeploy>False</AzureEnableWebDeploy>
     <AzureFallbackToDeleteAndRecreateIfUpgradeFails>False</AzureFallbackToDeleteAndRecreateIfUpgradeFails>
     <AzureHostedServiceLabel>vizzop</AzureHostedServiceLabel>

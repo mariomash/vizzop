@@ -12,7 +12,7 @@
     <AssemblyName>ZenChat</AssemblyName>
     <StartDevelopmentStorage>True</StartDevelopmentStorage>
     <Name>vizzop</Name>
-    <PackageEnableRemoteDebugger>False</PackageEnableRemoteDebugger>
+    <PackageEnableRemoteDebugger>True</PackageEnableRemoteDebugger>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -55,7 +55,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PublishProfile Include="Profiles\zentralizedStaging.azurePubxml" />
+    <PublishProfile Include="Profiles\vizzop.azurePubxml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\vizzopCache\vizzopCache.csproj">
