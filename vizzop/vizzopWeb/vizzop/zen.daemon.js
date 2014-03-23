@@ -1683,7 +1683,6 @@ var Daemon = jVizzop.zs_Class.create({
             } else {
                 var url = vizzop.mainURL + "/RealTime/TrackScreen";
                 msg.data = JSONVIZZOP.stringify(msg.data);
-
                 vizzop.HtmlSend_Data = [];
                 vizzop.HtmlSend_InCourse = jVizzop.ajax({
                     url: url,

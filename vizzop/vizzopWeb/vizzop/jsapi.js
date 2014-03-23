@@ -1078,7 +1078,7 @@ jVizzop(document).bind('ready.vizzop', function () {
         } catch (err) {
 
         }
-    }, 250);
+    }, vizzop.MutationWaitingMsTrigger);
 
     jVizzop(document).on('mousemove.vizzop', function (e) {
         try {

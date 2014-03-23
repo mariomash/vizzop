@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.Mvc;
 using Microsoft.WindowsAzure.ServiceRuntime;
 using vizzopWeb.Models;
+using System.Threading.Tasks;
 
 namespace vizzopWeb.Controllers
 {
@@ -362,8 +363,6 @@ namespace vizzopWeb.Controllers
                     CommSession CommSession = (from m in db.CommSessions
                                                    .Include("Client")
                                                    .Include("Business")
-                                                   .Include("Business.Conversers")
-                                                   .Include("Agents")
                                                where m.ID == id &&
                                                m.Client.UserName == from_username &&
                                                m.Client.Business.Domain == from_domain
@@ -427,8 +426,12 @@ namespace vizzopWeb.Controllers
                                                          select m).FirstOrDefault();
                         */
                         Email _email2 = new Email();
-                        string[] args2 = { CommSession.Client.Business.BusinessName, message.From.FullName, message.Content, url_host_port + Url.Action("Check", "CommSession", new { id = CommSession.ID, username = message.From.UserName }) };
-                        string business_lang = CommSession.Business.Conversers.FirstOrDefault().LangISO;
+                        string[] args2 = { CommSession.Client.Business.BusinessName, 
+                                                     message.From.FullName, message.Content, 
+                                                     url_host_port + Url.Action("Check", "CommSession", new { id = CommSession.ID, username = message.From.UserName }) 
+                                                 };
+
+                        string business_lang = agent_from.LangISO;
                         string _content2 = utils.LocalizeLang("email_ticket_newmessage_business_contents", business_lang, args2);
                         string _subject2 = utils.LocalizeLang("email_ticket_newmessage_business_subject", business_lang, args2);
                         _email2.message = new Message();

@@ -40,8 +40,8 @@
                                     <i>(from @Model.Business.BusinessName)</i> 
                                 }
                                 else
-                                { 
-                                    <i>(this is you)</i>
+                                {
+                                    /*<i>(this is you)</i>*/
                                 }
                             </span>
                             <div class="contents">
@@ -65,9 +65,10 @@
                     </div>
                     }
                     <div class="ticket_inputZone">
-                        @Html.TextArea("content", new { @class = "ticket_inputTextArea", @style = "display: inline-block; vertical-align: top;" })
+                        <h4 style="margin-top: 0 !important;">Answer Here</h4>
+                        @Html.TextArea("content", new { @class = "ticket_inputTextArea", @style = "display: inline-block; vertical-align: top;", @placeholder = "write here your comment..." })
                         <span style="display: inline-block; vertical-align: top; margin-left: 10px;">
-                            <input type="submit" value="Comment" class="vizzop-btn vizzop-btn-primary vizzop-btn-large" style="display: block; width: 100%;" />
+                            <input type="submit" value="Send" class="vizzop-btn vizzop-btn-primary vizzop-btn-large" style="display: block; width: 100%;" />
                         </span>
                     </div>
                 }
@@ -76,14 +77,14 @@
     </div>
 </div>
 
-<div style="border-top: solid 1px #eee; padding: 20px; background-color: white; text-align: center;">
+<div style="border-top: solid 1px #eee; padding: 20px; background-color: white; text-align: center; font-size: 12px;">
     <address>
-        <strong>Zentralized Ltd.</strong>
+        <strong>Powered by Zentralized Ltd.</strong>
         <br />
         145-157 St John Street
-                                        <br />
+        <br />
         London, EC1V 4PW
-                                        <br />
+        <br />
         <a href="mailto:customer.service@vizzop.com">customer.service@vizzop.com</a>
         <br />
         <br />

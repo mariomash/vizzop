@@ -20,7 +20,7 @@ namespace vizzopWorker
     public class WorkerRole : RoleEntryPoint
     {
         //private vizzopContext db = new vizzopContext();
-        private Utils utils = new Utils();
+        private Utils utils = new Utils(new vizzopContext());
         private string tempPath;
 
         public override void Run()
@@ -498,6 +498,71 @@ namespace vizzopWorker
             }
         }
 
+        private void LimpiaWebLocations()
+        {
+            try
+            {
+                vizzopContext db = new vizzopContext();
+
+                string LimpiaWebLocationsSetting = "LimpiaWebLocationsInRelease";
+#if DEBUG
+                LimpiaWebLocationsSetting = "LimpiaWebLocationsInDebug";
+#endif
+                bool LimpiaWebLocations = false;
+                LimpiaWebLocations = Convert.ToBoolean((from m in db.Settings
+                                                        where m.Name == LimpiaWebLocationsSetting
+                                                        select m).FirstOrDefault().Value);
+                if (LimpiaWebLocations == false)
+                {
+                    return;
+                }
+
+                TimeZone localZone = TimeZone.CurrentTimeZone;
+                DateTime loctime = localZone.ToUniversalTime(DateTime.Now.AddSeconds(-60));
+                var to_move = (from m in db.WebLocations.Include("Converser").Include("Converser.Business")
+                               where m.TimeStamp_Last < loctime
+                               //&& m.Converser.Business.ID == _Converser.Business.ID
+                               select m);//.ToList();
+                if (to_move != null)
+                {
+                    foreach (var m in to_move)
+                    {
+                        try
+                        {
+                            WebLocation_History newloc = new WebLocation_History();
+                            newloc.converser = m.Converser;
+                            newloc.Referrer = m.Referrer;
+                            newloc.TimeStamp_First = m.TimeStamp_First;
+                            newloc.TimeStamp_Last = m.TimeStamp_Last;
+                            newloc.IP = m.IP;
+                            newloc.Lang = m.Lang;
+                            newloc.UserAgent = m.UserAgent;
+                            newloc.Url = m.Url;
+                            newloc.Ubication = m.Ubication;
+                            newloc.Headers = m.Headers;
+                            newloc.WindowName = m.WindowName;
+
+                            db.WebLocations.Remove(m);
+                            if (newloc.converser != null)
+                            {
+                                db.WebLocations_History.Add(newloc);
+                            }
+                            db.SaveChanges();
+                        }
+                        catch (Exception _ex)
+                        {
+                            //GrabaLogExcepcion(_ex);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                utils.GrabaLogExcepcion(ex);
+            }
+            Thread.Sleep(TimeSpan.FromSeconds(1));
+        }
+
         private void LanzaYControlaProcesoLimpiaWebLocations()
         {
 
@@ -511,7 +576,7 @@ namespace vizzopWorker
             delegate(object o, DoWorkEventArgs args)
             {
                 BackgroundWorker b = o as BackgroundWorker;
-                utils.LimpiaWebLocations(new vizzopContext());
+                LimpiaWebLocations();
             });
 
             // what to do when progress changed (update the progress bar for example)

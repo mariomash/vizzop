@@ -22,8 +22,6 @@
       <Setting name="Microsoft.WindowsAzure.Plugins.Caching.ClientDiagnosticLevel" />
     </ConfigurationSettings>
     <Imports>
-      <Import moduleName="RemoteAccess" />
-      <Import moduleName="RemoteForwarder" />
       <Import moduleName="Diagnostics" />
     </Imports>
     <Certificates>
@@ -41,7 +39,6 @@
     <Runtime executionContext="elevated" />
     <Imports>
       <Import moduleName="Diagnostics" />
-      <Import moduleName="RemoteAccess" />
     </Imports>
     <LocalResources>
       <LocalStorage name="DiagnosticStore" cleanOnRoleRecycle="false" sizeInMB="20000" />
@@ -62,7 +59,6 @@
   <WorkerRole name="vizzopCache" vmsize="Small">
     <Imports>
       <Import moduleName="Diagnostics" />
-      <Import moduleName="RemoteAccess" />
       <Import moduleName="Caching" />
     </Imports>
     <LocalResources>

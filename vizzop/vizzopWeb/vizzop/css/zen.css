@@ -6740,7 +6740,7 @@ inse .zs_dialog .vizzop-btn-navbar {
     border: 1px solid #ccc !important;
         */
     display: block;
-    padding: 10px !important;
+    /*padding: 10px !important;*/
     background-color: #ffffff !important;
     margin-bottom: 10px !important;
 }
@@ -6761,10 +6761,13 @@ inse .zs_dialog .vizzop-btn-navbar {
 }
 
 .zs_dialog .boxtextticket .chat_msgZone .message .contents {
+    background-color: #FAFAFA;
     border-top: 1px solid #EEEEEE !important;
+    color: #000000;
+    font-family: courier;
     font-size: 15px !important;
-    margin: 10px 0 !important;
-    padding: 15px 0 0 !important;
+    margin: 0 !important;
+    padding: 15px !important;
 }
 
 .zs_dialog .chat_msgZone .message .resend {
@@ -6782,11 +6785,6 @@ inse .zs_dialog .vizzop-btn-navbar {
     float: left !important;
 }
 
-.zs_dialog .boxtextticket .chat_msgZone .message .timestamp {
-    width: auto !important;
-    float: none !important;
-}
-
 .zs_dialog .chat_msgZone .message .from {
     display: block;
     font-weight: bold !important;
@@ -6798,6 +6796,14 @@ inse .zs_dialog .vizzop-btn-navbar {
     color: black;
     font-size: 13px;
     margin-top: 7px;
+    display: inline-block !important;
+}
+
+.zs_dialog .boxtextticket .chat_msgZone .message .timestamp {
+    width: auto !important;
+    float: none !important;
+    display: inline-block !important;
+    font-size: 14px !important;
 }
 
 .zs_dialog .chat_inputZone {
@@ -6836,7 +6842,7 @@ inse .zs_dialog .vizzop-btn-navbar {
 }
 
 .zs_dialog .ticket_inputTextArea {
-    width: 400px !important;
+    width: 430px !important;
     height: 100px !important;
     padding: 5px !important;
     margin: 0 auto !important;

@@ -8,7 +8,7 @@
     <UseIISExpress>True</UseIISExpress>
     <PackageProfile>Cloud</PackageProfile>
     <PackageSolutionConfiguration>Release</PackageSolutionConfiguration>
-    <PackageEnableRemoteDesktop>True</PackageEnableRemoteDesktop>
+    <PackageEnableRemoteDesktop>False</PackageEnableRemoteDesktop>
     <DeploymentProfilingMode>Concurrency</DeploymentProfilingMode>
     <DeploymentEnableTierInteractionProfiling>False</DeploymentEnableTierInteractionProfiling>
     <WebRoleSkipLaunchInBrowser>vizzopWeb</WebRoleSkipLaunchInBrowser>

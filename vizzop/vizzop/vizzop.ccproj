@@ -12,7 +12,7 @@
     <AssemblyName>ZenChat</AssemblyName>
     <StartDevelopmentStorage>True</StartDevelopmentStorage>
     <Name>vizzop</Name>
-    <PackageEnableRemoteDebugger>True</PackageEnableRemoteDebugger>
+    <PackageEnableRemoteDebugger>False</PackageEnableRemoteDebugger>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

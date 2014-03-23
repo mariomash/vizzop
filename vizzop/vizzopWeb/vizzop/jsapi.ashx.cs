@@ -531,6 +531,11 @@ namespace vizzopWeb
                                               where m.Name == "JavascriptCheckExternalTiming"
                                               select m).FirstOrDefault().Value;
 
+                string MutationWaitingMsTrigger = (from m in db.Settings
+                                                   where m.Name == "JavascriptMutationWaitingMsTrigger"
+                                                   select m).FirstOrDefault().Value;
+
+
                 string vizzop = @"
 var vizzop = {
     lang: '" + langiso + @"',
@@ -546,6 +551,7 @@ var vizzop = {
     ApiKey: '" + business.ApiKey + @"',
     DaemonTiming: " + DaemonTiming + @",
     DaemonTiming_Steps: new Number(0),
+    MutationWaitingMsTrigger: " + MutationWaitingMsTrigger + @",
     CheckExternalTiming: " + CheckExternalTiming + @",
     Daemon: null,
     store_engine: null,
