@@ -39,7 +39,7 @@ namespace vizzopWeb
 
                 items.Add(new SelectListItem
                 {
-                    Text = "All Video",
+                    Text = "All Videos",
                     Value = "0"
                 });
                 items.Add(new SelectListItem
@@ -192,7 +192,7 @@ namespace vizzopWeb
                              };
                 */
 
-                List<ScreenMovie> MovieList = GetListOfMovies(from, to,secondvideolimit, converser);
+                List<ScreenMovie> MovieList = GetListOfMovies(from, to, secondvideolimit, converser);
 
                 if (MovieList.Count() > 0)
                 {
@@ -238,7 +238,7 @@ namespace vizzopWeb
                 dtTo = dtTo.AddHours(23).AddMinutes(59).AddSeconds(59).AddMilliseconds(999);
 
                 var tempList = (from w in db.ScreenMovies.Include("converser")
-                                where (w.CreatedOn >= dtFrom && w.CreatedOn <= dtTo && (w.CreatedOn - w.LastFrameCreatedOn).TotalSeconds > secondVideoLimit_double ) 
+                                where (w.CreatedOn >= dtFrom && w.CreatedOn <= dtTo && (w.CreatedOn - w.LastFrameCreatedOn).TotalSeconds > secondVideoLimit_double)
                                 select w);
 
                 //&& (w.Headers.Contains("'DNT':'1'") == false)
