@@ -255,12 +255,13 @@ namespace vizzopWorker
                                     if (sm == null)
                                     {
                                         sm = new ScreenMovie();
-                                        sm.CreatedOn = DateTime.Now;
+                                        sm.CreatedOn = DateTime.Now.ToUniversalTime();
                                         utils.db.ScreenMovies.Add(sm);
 
-                                    }
+                                    }                                    
+
                                     int _convid = captureToCreate.converser.ID;
-                                    sm.ModifiedOn = DateTime.Now;
+                                    sm.ModifiedOn = DateTime.Now.ToUniversalTime();
                                     sm.converser = (from m in utils.db.Conversers
                                                     where m.ID == _convid
                                                     select m).FirstOrDefault();
@@ -273,6 +274,7 @@ namespace vizzopWorker
                                     sm.LastFrameUrl = captureToCreate.Url;
                                     sm.ModifiedOn = sm.CreatedOn;
                                     utils.db.SaveChanges();
+
                                 }
                             }
                         }

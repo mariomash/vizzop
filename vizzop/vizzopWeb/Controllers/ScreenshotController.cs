@@ -19,7 +19,7 @@ namespace vizzopWeb
 #else
         [RequireHttps]
 #endif
-        public ActionResult Index()
+        public ActionResult Index(string videolength_filter)
         {
             if (HttpContext.Session == null)
             {
@@ -34,6 +34,43 @@ namespace vizzopWeb
                 }
                 converser.Business.Conversers = new List<Converser>();
                 ViewBag.converser = converser;
+
+                List<SelectListItem> items = new List<SelectListItem>();
+
+                items.Add(new SelectListItem
+                {
+                    Text = "All Video",
+                    Value = "0"
+                });
+                items.Add(new SelectListItem
+                {
+                    Text = "More than 10 seconds",
+                    Value = "10"
+                });
+                items.Add(new SelectListItem
+                {
+                    Text = "More than 30 seconds",
+                    Value = "30"
+                });
+                items.Add(new SelectListItem
+                {
+                    Text = "More than 1 minute",
+                    Value = "60"
+                });
+                if (videolength_filter == null)
+                {
+                    videolength_filter = "10";
+                }
+                foreach (SelectListItem item in items)
+                {
+                    if (item.Value == videolength_filter)
+                    {
+                        item.Selected = true;
+                        break;
+                    }
+                }
+
+                ViewBag.videolenghtfilter_items = items;
                 return View();
             }
             catch (Exception ex)
@@ -41,6 +78,7 @@ namespace vizzopWeb
                 utils.GrabaLogExcepcion(ex);
                 return View();
             }
+
         }
 
         private class ScreenMovieDTO
@@ -115,7 +153,7 @@ namespace vizzopWeb
 #else
         [RequireHttps]
 #endif
-        public ActionResult GetScreenshotJson(string dimension1, string dimension2, string from, string to)
+        public ActionResult GetScreenshotJson(string dimension1, string dimension2, string from, string to, string secondvideolimit)
         {
             Converser converser = new Converser();
             try
@@ -154,7 +192,7 @@ namespace vizzopWeb
                              };
                 */
 
-                List<ScreenMovie> MovieList = GetListOfMovies(from, to, converser);
+                List<ScreenMovie> MovieList = GetListOfMovies(from, to,secondvideolimit, converser);
 
                 if (MovieList.Count() > 0)
                 {
@@ -170,6 +208,7 @@ namespace vizzopWeb
                                     x.LastFrameHeight,
                                     x.ModifiedOn.ToString("o"),
                                     utils.GetPrettyDate(x.ModifiedOn),
+                                    (x.CreatedOn - x.LastFrameCreatedOn).TotalSeconds,
                                     @"https://vizzop.blob.core.windows.net/videos/" + x.converser.ID + @".mp4"
                                 })
                     }, JsonRequestBehavior.AllowGet);
@@ -187,18 +226,19 @@ namespace vizzopWeb
             }
         }
 
-        private List<ScreenMovie> GetListOfMovies(string from, string to, Converser converser)
+        private List<ScreenMovie> GetListOfMovies(string from, string to, string secondVideoLimit, Converser converser)
         {
             List<ScreenMovie> List = new List<ScreenMovie>();
             try
             {
 
+                double secondVideoLimit_double = Convert.ToDouble(secondVideoLimit);
                 DateTime dtFrom = DateTime.Parse(from);
                 DateTime dtTo = DateTime.Parse(to);
                 dtTo = dtTo.AddHours(23).AddMinutes(59).AddSeconds(59).AddMilliseconds(999);
 
                 var tempList = (from w in db.ScreenMovies.Include("converser")
-                                where (w.CreatedOn >= dtFrom && w.CreatedOn <= dtTo)
+                                where (w.CreatedOn >= dtFrom && w.CreatedOn <= dtTo && (w.CreatedOn - w.LastFrameCreatedOn).TotalSeconds > secondVideoLimit_double ) 
                                 select w);
 
                 //&& (w.Headers.Contains("'DNT':'1'") == false)

@@ -44,7 +44,8 @@
                             </div>
                         </div>
                     </span>
-
+                    <span style="vertical-align: middle; display: inline-block; margin: 0;">@Html.DropDownList("videolength_filter", (List<SelectListItem>)ViewBag.videolenghtfilter_items,
+new { onchange = "screenshot_updatetable();", @class = "input-large" })</span>
                     <span style="display: inline-block; vertical-align: top; margin-left: 2px; padding-bottom: 2px;">
                         <span style="vertical-align: middle" class="vizzop-btn vizzop-btn-primary" onclick="javascript:screenshot_updatetable();">reload data</span>
                     </span>
@@ -94,6 +95,7 @@
     function screenshot_updatetable() {
         if (screenshot_Reloading_InCourse == null) {
             $('#screenshotrangeDate').attr("disabled", "disabled");
+            $('#secondvideolimit').attr("disabled", "disabled");
             $("#ScreenshotReportResults").hide();
             $("#ScreenshotReportLoading").show();
             screenshot_oTable.screenshot_fnReloadAjax(getScreenshotURL(), function () { });
@@ -123,10 +125,11 @@
         var range = $('#screenshotdivrangeDate').DatePickerGetDate(true);
         var from = range[0];
         var to = range[1];
+        var secondvideolimit = $("#videolength_filter").val();
         $('#screenshot_title_from').text(from);
         $('#screenshot_title_to').text(to);
         $('#screenshotrangeDate').val(from + ' to ' + to);
-        return '../Screenshot/GetScreenshotJson?from=' + from + '&to=' + to;
+        return '../Screenshot/GetScreenshotJson?from=' + from + '&to=' + to + '&secondvideolimit=' + secondvideolimit;
     }
 
     $.fn.dataTableExt.oApi.screenshot_fnReloadAjax = function (oSettings, sNewSource, fnCallback, bStandingRedraw) {
@@ -154,6 +157,7 @@
             $("#ScreenshotReportLoading").hide();
             $("#ScreenshotReportResults").show();
             $('#screenshotrangeDate').removeAttr("disabled");
+            $('#secondvideolimit').removeAttr("disabled");
 
             if (json == false) {
                 $('#screenshot_no_visits').show();
