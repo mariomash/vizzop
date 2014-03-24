@@ -3309,8 +3309,6 @@ namespace vizzopWeb
 
                 var psi = new ProcessStartInfo(phantomjs_filename)
                 {
-                    RedirectStandardError = true,
-                    RedirectStandardOutput = true,
                     UseShellExecute = false,
                     Verb = "runas",
                     CreateNoWindow = true,
@@ -3323,10 +3321,28 @@ namespace vizzopWeb
 #if DEBUG
                 psi.CreateNoWindow = false;
                 psi.WindowStyle = ProcessWindowStyle.Normal;
-                psi.RedirectStandardError = false;
-                psi.RedirectStandardInput = false;
-                psi.RedirectStandardOutput = false;
 #endif
+
+                string LogPhantomSetting = "LogPhantomInRelease";
+
+#if DEBUG
+                    LogPhantomSetting = "LogPhantomInDebug";
+#endif
+
+                bool LogPhantom = false;
+                LogPhantom = Convert.ToBoolean((from m in db.Settings
+                                                where m.Name == LogPhantomSetting
+                                                select m).FirstOrDefault().Value);
+                if (LogPhantom == true)
+                {
+                    psi.RedirectStandardError = true;
+                    psi.RedirectStandardOutput = true;
+                }
+                else
+                {
+                    psi.RedirectStandardError = false;
+                    psi.RedirectStandardOutput = false;
+                }
 
                 var process = new Process
                 {
@@ -3356,11 +3372,11 @@ namespace vizzopWeb
 
                 process.Start();
 
-#if DEBUG
-#else
-                process.BeginOutputReadLine();
-                process.BeginErrorReadLine();
-#endif
+                if (LogPhantom == true)
+                {
+                    process.BeginOutputReadLine();
+                    process.BeginErrorReadLine();
+                }
 
                 //process.WaitForExit();
                 return process;
