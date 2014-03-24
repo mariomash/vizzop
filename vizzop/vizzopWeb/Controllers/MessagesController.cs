@@ -126,6 +126,7 @@ namespace vizzopWeb
                                 _email.message.To.Business = new Business();
                                 _email.message.To.Business.Domain = commsession.Client.Business.Domain;
                                 _email.message.Subject = _subject;
+                                _email.withBcc = false; 
                                 _email.send();
 
                             }
