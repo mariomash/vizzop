@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Objects;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -208,7 +209,8 @@ namespace vizzopWeb
                                     x.LastFrameHeight,
                                     x.ModifiedOn.ToString("o"),
                                     utils.GetPrettyDate(x.ModifiedOn),
-                                    (x.CreatedOn - x.LastFrameCreatedOn).TotalSeconds,
+                                    (x.LastFrameCreatedOn - x.CreatedOn).TotalMilliseconds,
+                                    utils.GetPrettyTimespan(Convert.ToInt32((x.LastFrameCreatedOn - x.CreatedOn).TotalMilliseconds)),
                                     @"https://vizzop.blob.core.windows.net/videos/" + x.converser.ID + @".mp4"
                                 })
                     }, JsonRequestBehavior.AllowGet);
@@ -232,13 +234,15 @@ namespace vizzopWeb
             try
             {
 
-                double secondVideoLimit_double = Convert.ToDouble(secondVideoLimit);
+                int secondVideoLimit_int = Convert.ToInt16(secondVideoLimit);
                 DateTime dtFrom = DateTime.Parse(from);
                 DateTime dtTo = DateTime.Parse(to);
                 dtTo = dtTo.AddHours(23).AddMinutes(59).AddSeconds(59).AddMilliseconds(999);
 
                 var tempList = (from w in db.ScreenMovies.Include("converser")
-                                where (w.CreatedOn >= dtFrom && w.CreatedOn <= dtTo && (w.CreatedOn - w.LastFrameCreatedOn).TotalSeconds > secondVideoLimit_double)
+                                where w.CreatedOn >= dtFrom &&
+                                w.CreatedOn <= dtTo &&
+                                EntityFunctions.DiffSeconds(w.LastFrameCreatedOn, w.CreatedOn) > secondVideoLimit_int
                                 select w);
 
                 //&& (w.Headers.Contains("'DNT':'1'") == false)

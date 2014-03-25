@@ -95,7 +95,7 @@ new { onchange = "screenshot_updatetable();", @class = "input-large" })</span>
     function screenshot_updatetable() {
         if (screenshot_Reloading_InCourse == null) {
             $('#screenshotrangeDate').attr("disabled", "disabled");
-            $('#secondvideolimit').attr("disabled", "disabled");
+            $('#videolength_filter').attr("disabled", "disabled");
             $("#ScreenshotReportResults").hide();
             $("#ScreenshotReportLoading").show();
             screenshot_oTable.screenshot_fnReloadAjax(getScreenshotURL(), function () { });
@@ -157,7 +157,7 @@ new { onchange = "screenshot_updatetable();", @class = "input-large" })</span>
             $("#ScreenshotReportLoading").hide();
             $("#ScreenshotReportResults").show();
             $('#screenshotrangeDate').removeAttr("disabled");
-            $('#secondvideolimit').removeAttr("disabled");
+            $('#videolength_filter').removeAttr("disabled");
 
             if (json == false) {
                 $('#screenshot_no_visits').show();
@@ -264,12 +264,18 @@ new { onchange = "screenshot_updatetable();", @class = "input-large" })</span>
                     "bSearchable": false, "bVisible": true, "sTitle": "Last Capture", "sType": "date", "iDataSort": 7, "sWidth": "100px"
                 },
                 {
+                    "bSearchable": false, "bVisible": false, "sTitle": "Duration in Seconds"
+                },
+                {
+                    "bSearchable": false, "bVisible": true, "sTitle": "Duration", "iDataSort": 7, "sWidth": "60px"
+                },
+                {
                     "bSearchable": false, "bVisible": true, "sTitle": "URL", "sWidth": "320px",
                     "fnRender": function (oObj) {
                         try {
                             if (oObj == null) { return ''; }
                             if (oObj.aData == null) { return ''; }
-                            return "<video width='320' height='240' controls><source src='" + oObj.aData[9] + "' type='video/mp4'></video>";
+                            return "<video width='320' height='240' controls><source src='" + oObj.aData[11] + "' type='video/mp4'></video>";
                         } catch (_err) {
                         }
                     }
