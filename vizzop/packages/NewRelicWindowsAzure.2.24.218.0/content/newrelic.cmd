@@ -1,12 +1,10 @@
-if "%EMULATED%"=="true" goto :EOF
-
 SETLOCAL EnableExtensions
 
 for /F "usebackq tokens=1,2 delims==" %%i in (`wmic os get LocalDateTime /VALUE 2^>NUL`) do if '.%%i.'=='.LocalDateTime.' set ldt=%%j
 set ldt=%ldt:~0,4%-%ldt:~4,2%-%ldt:~6,2% %ldt:~8,2%:%ldt:~10,2%:%ldt:~12,6%
 
 :: Update with your license key
-SET LICENSE_KEY=0247805c921cebe0f76fc61fefec0da836d175d6
+SET LICENSE_KEY=REPLACE_WITH_LICENSE_KEY
 
 SET NR_ERROR_LEVEL=0
 
@@ -81,6 +79,9 @@ GOTO:EOF
 	IF %ERRORLEVEL% EQU 0 (
 	  REM  The New Relic Server Monitor installed ok and does not need to be installed again.
 	  ECHO New Relic Server Monitor was installed successfully. >> "%RoleRoot%\nr_server.log" 2>&1
+
+	  NET STOP "New Relic Server Monitor Service"
+	  NET START "New Relic Server Monitor Service"
 
 	) ELSE (
 	  REM   An error occurred. Log the error to a separate log and exit with the error code.

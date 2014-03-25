@@ -116,7 +116,6 @@ namespace vizzopWeb.Models
             }
             catch (Exception ex)
             {
-                utils.GrabaLogExcepcion(ex);
                 return this.Insert(key, obj);
                 //return false;
             }

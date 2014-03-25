@@ -551,7 +551,7 @@ namespace vizzopWorker
                             }
                             db.SaveChanges();
                         }
-                        catch (Exception _ex)
+                        catch (Exception)
                         {
                             //GrabaLogExcepcion(_ex);
                         }

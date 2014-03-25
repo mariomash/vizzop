@@ -704,7 +704,7 @@ public class LZString
             // Send the output out to the main decompress function
             output = decompress(output);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return null;
         }
@@ -1683,7 +1683,7 @@ namespace vizzopWeb
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
             return base64String;
@@ -2242,9 +2242,22 @@ namespace vizzopWeb
                  */
 
                 new_screencapture.Blob = sc_control.CompleteHtml;
-                Thread_TrackScreenHelper oThread = new Thread_TrackScreenHelper(UserName, Password, Domain, new_screencapture);
-                Thread rHelper = new Thread(oThread.DoThings);
-                rHelper.Start();
+
+                string SaveScreenshotsInDbSetting = "SaveScreenshotsInDbInRelease";
+#if DEBUG
+                SaveScreenshotsInDbSetting = "SaveScreenshotsInDbInDebug";
+#endif
+                bool SaveScreenshotsInDb = false;
+                SaveScreenshotsInDb = Convert.ToBoolean((from m in db.Settings
+                                                         where m.Name == SaveScreenshotsInDbSetting
+                                                         select m).FirstOrDefault().Value);
+                if (SaveScreenshotsInDb == true)
+                {
+                    Task TaskLog = Task.Factory.StartNew(() =>
+                    {
+                        AddScreenCapturetoDb(UserName, Password, Domain, new_screencapture);
+                    });
+                }
 
             }
             catch (Exception ex)
@@ -2260,6 +2273,73 @@ namespace vizzopWeb
             }
 
             return true;
+        }
+
+        public void AddScreenCapturetoDb(string UserName, string Password, string Domain, ScreenCapture new_screencapture)
+        {
+            try
+            {
+
+                //Si ya existe la actualizamos
+                ScreenCapture sc = null;
+                sc = (from m in db.ScreenCaptures
+                      where m.GUID == new_screencapture.GUID
+                      select m).FirstOrDefault();
+
+                if (sc == null)
+                {
+                    Converser converser = GetConverserFromSystem(UserName, Password, Domain, db);
+                    if (converser == null)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        new_screencapture.converser = converser;
+                    }
+                    db.ScreenCaptures.Add(new_screencapture);
+                }
+                else
+                {
+                    if (sc.converser == null)
+                    {
+                        Converser converser = GetConverserFromSystem(UserName, Password, Domain, db);
+                        if (converser == null)
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            sc.converser = converser;
+                        }
+                    }
+
+                    sc.GUID = new_screencapture.GUID;
+                    sc.Headers = new_screencapture.Headers;
+                    sc.Height = new_screencapture.Height;
+                    sc.MouseX = new_screencapture.MouseX;
+                    sc.MouseY = new_screencapture.MouseY;
+                    sc.ScrollLeft = new_screencapture.ScrollLeft;
+                    sc.ScrollTop = new_screencapture.ScrollTop;
+                    sc.Url = new_screencapture.Url;
+                    sc.Width = new_screencapture.Width;
+                    sc.Blob = new_screencapture.Blob;
+                    sc.Data = new_screencapture.Data;
+                    sc.WindowName = new_screencapture.WindowName;
+                }
+                db.SaveChanges();
+
+                //string strSQL = "DELETE FROM SCREENCAPTURES WHERE createdon < DATEADD(minute,-10,CURRENT_TIMESTAMP);";
+
+                //Tendremos screeenshots de hasta hace dos días...
+                //string strSQL = "DELETE FROM SCREENCAPTURES WHERE createdon < DATEADD(day,-7,CURRENT_TIMESTAMP);";
+                //db.Database.ExecuteSqlCommand(strSQL);
+
+            }
+            catch (Exception _ex)
+            {
+                GrabaLogExcepcion(_ex);
+            }
         }
 
         public string unescape(string processedHtml)
@@ -2296,13 +2376,6 @@ namespace vizzopWeb
 
                 new_screencapture.converser = converser;
                 new_screencapture.AddToCache();
-
-                /*
-                // Lanzamos el Save en otro hilo...
-                Thread_TrackScreenHelper oThread = new Thread_TrackScreenHelper(username, password, domain, new_screencapture);
-                Thread rHelper = new Thread(oThread.DoThings);
-                rHelper.Start();
-                 */
 
                 return true;
 
@@ -2758,7 +2831,7 @@ namespace vizzopWeb
                     GrabaSYSLog(NLog, strLog_WithRoute);
                 });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
             }
@@ -2805,7 +2878,7 @@ namespace vizzopWeb
                     GrabaSYSLog(NLog, strLog_WithRoute);
                 });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
             }
@@ -3093,7 +3166,7 @@ namespace vizzopWeb
 
                             if (sc_control == null)
                             {
-                                GrabaLog(Utils.NivelLog.error, "sc_control is null: " + UserName + '@' + Domain + '@' + WindowName);
+                                //GrabaLog(Utils.NivelLog.error, "sc_control is null: " + UserName + '@' + Domain + '@' + WindowName);
                                 continue;
                             }
 
@@ -3131,7 +3204,7 @@ namespace vizzopWeb
                         }
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     //utils.GrabaLog(Utils.NivelLog.error, ex.Message);
                 }
@@ -3326,7 +3399,7 @@ namespace vizzopWeb
                 string LogPhantomSetting = "LogPhantomInRelease";
 
 #if DEBUG
-                    LogPhantomSetting = "LogPhantomInDebug";
+                LogPhantomSetting = "LogPhantomInDebug";
 #endif
 
                 bool LogPhantom = false;
@@ -3381,7 +3454,7 @@ namespace vizzopWeb
                 //process.WaitForExit();
                 return process;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //GrabaLog(Utils.NivelLog.error, ex.Message);
                 return null;

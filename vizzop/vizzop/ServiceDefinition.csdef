@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ServiceDefinition name="vizzop" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2013-10.2.2">
-  <WebRole name="vizzopWeb" vmsize="Small">
+  <WebRole name="vizzopWeb" vmsize="Large">
     <Sites>
       <Site name="Web">
         <Bindings>
@@ -33,9 +33,17 @@
     <Startup priority="-2">
       <Task commandLine="Microsoft.WindowsAzure.Caching\ClientPerfCountersInstaller.exe install" executionContext="elevated" taskType="simple" />
       <Task commandLine="Microsoft.WindowsAzure.Caching\ClientPerfCountersInstaller.exe install" executionContext="elevated" taskType="simple" />
+      <Task commandLine="newrelic.cmd" executionContext="elevated" taskType="simple">
+        <Environment>
+          <Variable name="EMULATED">
+            <RoleInstanceValue xpath="/RoleEnvironment/Deployment/@emulated" />
+          </Variable>
+          <Variable name="IsWorkerRole" value="false" />
+        </Environment>
+      </Task>
     </Startup>
   </WebRole>
-  <WorkerRole name="vizzopWorker" vmsize="Small">
+  <WorkerRole name="vizzopWorker" vmsize="Large">
     <Runtime executionContext="elevated" />
     <Imports>
       <Import moduleName="Diagnostics" />
@@ -54,6 +62,14 @@
     </ConfigurationSettings>
     <Startup priority="-2">
       <Task commandLine="Microsoft.WindowsAzure.Caching\ClientPerfCountersInstaller.exe install" executionContext="elevated" taskType="simple" />
+      <Task commandLine="newrelic.cmd" executionContext="elevated" taskType="simple">
+        <Environment>
+          <Variable name="EMULATED">
+            <RoleInstanceValue xpath="/RoleEnvironment/Deployment/@emulated" />
+          </Variable>
+          <Variable name="IsWorkerRole" value="true" />
+        </Environment>
+      </Task>
     </Startup>
   </WorkerRole>
   <WorkerRole name="vizzopCache" vmsize="Small">

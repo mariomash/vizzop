@@ -221,7 +221,7 @@ namespace vizzopWeb
                 }
                 //return Json(ScreenList);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //utils.GrabaLogExcepcion(ex);
                 return Json(null, JsonRequestBehavior.AllowGet);
