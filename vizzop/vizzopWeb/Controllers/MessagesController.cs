@@ -587,7 +587,7 @@ namespace vizzopWeb.Controllers
                         {
                             if ((url != null) && (referrer != null) && (converser != null))
                             {
-                                Status returnStatus = utils.TrackPageView(trackID, converser, url, referrer, language, useragent, sIP, headers, WindowName, db);
+                                Status returnStatus = utils.TrackPageView(trackID, converser, url, referrer, language, useragent, sIP, headers, WindowName);
                                 if (returnStatus.Success == true)
                                 {
                                     Message returnmsg = new Message();

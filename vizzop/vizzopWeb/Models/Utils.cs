@@ -2408,12 +2408,44 @@ namespace vizzopWeb
             }
         }
 
-        public Status TrackPageView(string trackID, Converser converser, string url, string referrer, string language, string useragent, string sIP, string headers, string windowname, vizzopContext db)
+        public Status TrackPageView(string trackID, Converser converser, string url, string referrer, string language, string useragent, string sIP, string headers, string windowname)
         {
+            /*
             if (db == null)
             {
                 db = new vizzopContext();
             }
+            */
+            /*
+            Task.Factory.StartNew(() =>
+            {
+                LimpiaWebLocations();
+            });
+            */
+            List<WebLocation> WebLocations = new List<WebLocation>();
+
+            string tag = "weblocation";
+            List<DataCacheTag> Tags = new List<DataCacheTag>();
+            Tags.Add(new DataCacheTag(tag));
+            object result = SingletonCache.Instance.GetByTag(tag);
+            if (result != null)
+            {
+                IEnumerable<KeyValuePair<string, object>> ObjectList = (IEnumerable<KeyValuePair<string, object>>)result;
+
+                foreach (var e in ObjectList)
+                {
+                    WebLocations.Add((WebLocation)e.Value);
+                }
+
+            }
+            /*
+            DataCacheLockHandle lockHandle;
+            object result = SingletonCache.Instance.GetWithLock(key, out lockHandle);
+            if (result != null)
+            {
+                WebLocations = (List<WebLocation>)result;
+            }
+            */
 
             try
             {
@@ -2437,9 +2469,9 @@ namespace vizzopWeb
                 DateTime loctime = localZone.ToUniversalTime(DateTime.Now);
                 if ((url != null) && (converser != null))
                 {
-
+                    /*
                     Utils utils = new Utils();
-
+                    */
                     /*
                     var pageview = (from m in DBContext.WebLocations.Include("Converser").Include("Converser.Business")
                                     where m.Converser.ID == converser.ID &&
@@ -2453,7 +2485,7 @@ namespace vizzopWeb
                         int _trackID = Convert.ToInt32(trackID);
                         if (_trackID != 0)
                         {
-                            weblocation = (from m in db.WebLocations
+                            weblocation = (from m in WebLocations
                                            where m.ID == _trackID &&
                                            m.Url == url
                                            select m).FirstOrDefault();
@@ -2466,7 +2498,7 @@ namespace vizzopWeb
                     if (weblocation != null)
                     {
                         weblocation.TimeStamp_Last = loctime;
-                        db.SaveChanges();
+                        //db.SaveChanges();
                     }
                     else
                     {
@@ -2475,7 +2507,12 @@ namespace vizzopWeb
                         if (language != null) { slang = language; }
 
                         weblocation = new WebLocation();
-                        weblocation.Converser = converser;
+                        weblocation.ID = RandNumber(0, 9999999);
+                        weblocation.ConverserId = converser.ID;
+                        weblocation.UserName = converser.UserName;
+                        weblocation.Password = converser.Password;
+                        weblocation.FullName = converser.FullName;
+                        weblocation.Domain = converser.Business.Domain;
                         weblocation.Referrer = referrer;
                         weblocation.TimeStamp_First = loctime;
                         weblocation.TimeStamp_Last = loctime.AddMilliseconds(1000);
@@ -2486,21 +2523,26 @@ namespace vizzopWeb
                         weblocation.Ubication = GetUbicationFromIP(sIP);
                         weblocation.Headers = headers;
                         weblocation.WindowName = windowname;
-                        db.WebLocations.Add(weblocation);
-                        db.SaveChanges();
+                        //WebLocations.Add(weblocation);
+                        //db.SaveChanges();
 
                     }
                     //return weblocation.ID;
+                    //SingletonCache.Instance.InsertWithLock(key, WebLocations, lockHandle);
+                    string key = tag + "_" + converser.UserName + @"@" + converser.Business.Domain + @"@" + windowname;
+                    SingletonCache.Instance.InsertWithTags(key, weblocation, Tags);
                     return new Status(true, weblocation.ID);
                 }
                 else
                 {
+                    //SingletonCache.Instance.UnLock(key, lockHandle);
                     return new Status(false, null);
                     //return null;
                 }
             }
             catch (Exception e)
             {
+                //SingletonCache.Instance.UnLock(key, lockHandle);
                 GrabaLogExcepcion(e);
                 GrabaLog(Utils.NivelLog.error, converser.UserName + @"_" + converser.Password + @"_" + converser.Business.Domain + @"_" + url + @"_" + referrer + @"_" + language + @"_" + useragent + @"_" + sIP);
                 //return null;
@@ -3565,6 +3607,104 @@ namespace vizzopWeb
                 return null;
             }
         }
+
+
+        public void LimpiaWebLocations()
+        {
+            List<WebLocation> WebLocations = new List<WebLocation>();
+
+            string tag = "weblocation";
+            List<DataCacheTag> Tags = new List<DataCacheTag>();
+            Tags.Add(new DataCacheTag(tag));
+            object result = SingletonCache.Instance.GetByTag(tag);
+            if (result != null)
+            {
+                IEnumerable<KeyValuePair<string, object>> ObjectList = (IEnumerable<KeyValuePair<string, object>>)result;
+                foreach (var e in ObjectList)
+                {
+                    WebLocations.Add((WebLocation)e.Value);
+                }
+
+            }
+
+            /*
+            string key = "weblocations";
+            DataCacheLockHandle lockHandle;
+            object result = SingletonCache.Instance.GetWithLock(key, out lockHandle);
+            if (result != null)
+            {
+                WebLocations = (List<WebLocation>)result;
+            }
+            */
+
+            try
+            {
+                vizzopContext db = new vizzopContext();
+
+                string LimpiaWebLocationsSetting = "LimpiaWebLocationsInRelease";
+#if DEBUG
+                LimpiaWebLocationsSetting = "LimpiaWebLocationsInDebug";
+#endif
+                bool LimpiaWebLocations = false;
+                LimpiaWebLocations = Convert.ToBoolean((from m in db.Settings
+                                                        where m.Name == LimpiaWebLocationsSetting
+                                                        select m).FirstOrDefault().Value);
+                if (LimpiaWebLocations == false)
+                {
+                    return;
+                }
+
+                TimeZone localZone = TimeZone.CurrentTimeZone;
+                DateTime loctime = localZone.ToUniversalTime(DateTime.Now.AddSeconds(-60));
+                var to_move = (from m in WebLocations
+                               where m.TimeStamp_Last < loctime
+                               select m).ToList();
+                if (to_move.Count > 0)
+                {
+                    for (int i = to_move.Count() - 1; i >= 0; i--)
+                    {
+                        try
+                        {
+                            WebLocation m = to_move[i];
+                            WebLocation_History newloc = new WebLocation_History();
+                            newloc.converser = (from j in db.Conversers
+                                                where j.ID == m.ConverserId
+                                                select j).FirstOrDefault();
+                            newloc.Referrer = m.Referrer;
+                            newloc.TimeStamp_First = m.TimeStamp_First;
+                            newloc.TimeStamp_Last = m.TimeStamp_Last;
+                            newloc.IP = m.IP;
+                            newloc.Lang = m.Lang;
+                            newloc.UserAgent = m.UserAgent;
+                            newloc.Url = m.Url;
+                            newloc.Ubication = m.Ubication;
+                            newloc.Headers = m.Headers;
+                            newloc.WindowName = m.WindowName;
+
+                            if (newloc.converser != null)
+                            {
+                                db.WebLocations_History.Add(newloc);
+                            }
+
+                            string key = @"weblocation" + "_" + m.UserName + @"@" + m.Domain + @"@" + m.WindowName; ;
+                            SingletonCache.Instance.Remove(key);
+                        }
+                        catch (Exception)
+                        {
+                            //GrabaLogExcepcion(_ex);
+                        }
+                    }
+                    db.SaveChanges();
+                    //SingletonCache.Instance.InsertWithLock(key, WebLocations, lockHandle);
+                }
+            }
+            catch (Exception ex)
+            {
+                //SingletonCache.Instance.UnLock(key, lockHandle);
+                GrabaLogExcepcion(ex);
+            }
+        }
+
     }
 
     public static class ProcessExtensions

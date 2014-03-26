@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.ApplicationServer.Caching;
+using System.Collections.Generic;
 
 namespace vizzopWeb.Models
 {
@@ -13,6 +14,7 @@ namespace vizzopWeb.Models
         private Utils utils = new Utils();
         private TimeSpan LockTimeout = TimeSpan.FromSeconds(5);
         private TimeSpan ObjTimeout = TimeSpan.FromHours(1);
+        private string region = @"vizzop";
         //private DataCacheLockHandle lockHandle;
 
         /*
@@ -27,6 +29,7 @@ namespace vizzopWeb.Models
             try
             {
                 _cache = _factory.GetDefaultCache();
+                _cache.CreateRegion(this.region);
             }
             catch (Exception ex)
             {
@@ -40,6 +43,20 @@ namespace vizzopWeb.Models
             try
             {
                 return _cache.Get(key);
+            }
+            catch (Exception ex)
+            {
+                //utils.GrabaLogExcepcion(ex);
+                return null;
+            }
+        }
+
+        public object GetByTag(string key)
+        {
+            try
+            {
+                DataCacheTag tag = new DataCacheTag(key);
+                return _cache.GetObjectsByTag(tag, region);
             }
             catch (Exception ex)
             {
@@ -96,6 +113,22 @@ namespace vizzopWeb.Models
             }
         }
 
+        public bool InsertWithTags(string key, object obj, List<DataCacheTag> tags)
+        {
+            try
+            {
+                if (obj != null)
+                {
+                    _cache.Put(key, obj, ObjTimeout, tags, region);
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                utils.GrabaLogExcepcion(ex);
+                return false;
+            }
+        }
 
         public bool InsertWithLock(string key, object obj, DataCacheLockHandle lockHandle)
         {

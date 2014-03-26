@@ -209,42 +209,6 @@ var Tracking = jVizzop.zs_Class.create({
             vizzoplib.log(err);
         }
     },
-    TrackPageExit: function (url) {
-        var self = this;
-        try {
-            if (vizzop.WSchat != null) {
-                vizzop.WSchat.close();
-            }
-            if (vizzop.Tracking_InCourse != null) {
-                return;
-            }
-            var msg = {
-                'username': self._username,
-                'password': self._password,
-                'domain': self._domain,
-                'url': url,
-                'trackID': self._id
-            };
-            url = vizzop.mainURL + "/RealTime/TrackPageExit";
-            vizzop.Tracking_InCourse = jVizzop.ajax({
-                url: url,
-                type: "POST",
-                data: msg,
-                dataType: "jsonp",
-                beforeSend: function (xhr) {
-                },
-                success: function (data) {
-                    vizzop.Tracking_InCourse = null;
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    vizzoplib.logAjax(url, msg, jqXHR);
-                    vizzop.Tracking_InCourse = null;
-                }
-            });
-        } catch (err) {
-            vizzoplib.log(err);
-        }
-    },
     TrackPageView: function (url, referrer) {
         var self = this;
         try {
@@ -500,7 +464,6 @@ var Daemon = jVizzop.zs_Class.create({
             if ((vizzop.Tracking == null) && (vizzop.me != null)) {
                 vizzop.Tracking = new Tracking(vizzop.me.UserName, vizzop.me.Password, vizzop.me.Business.Domain);
                 jVizzop(window).unload(function () {
-                    vizzop.Tracking.TrackPageExit(document.URL);
                 });
                 vizzop.Tracking.TrackPageView(document.URL, document.referrer);
                 self.checkExternal();

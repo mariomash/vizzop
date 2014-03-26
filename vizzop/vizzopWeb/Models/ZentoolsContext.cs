@@ -17,7 +17,7 @@ namespace vizzopWeb.Models
         public DbSet<Sale> Sales { get; set; }
         public DbSet<PasswordReset> PasswordResets { get; set; }
         public DbSet<Country> Countries { get; set; }
-        public DbSet<WebLocation> WebLocations { get; set; }
+        //public DbSet<WebLocation> WebLocations { get; set; }
         public DbSet<WebLocation_History> WebLocations_History { get; set; }
         public DbSet<ScreenCapture> ScreenCaptures { get; set; }
         public DbSet<ScreenMovie> ScreenMovies { get; set; }

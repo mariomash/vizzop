@@ -9,6 +9,7 @@ using Microsoft.WindowsAzure.ServiceRuntime;
 using OpenTok;
 using vizzopWeb.Models;
 using System.Threading.Tasks;
+using Microsoft.ApplicationServer.Caching;
 
 namespace vizzopWeb.Controllers
 {
@@ -364,8 +365,25 @@ namespace vizzopWeb.Controllers
                 try
                 {
 
-                    var current_location = (from m in utils.db.WebLocations
-                                            where m.Converser.ID == returnsession.Client.ID
+                    List<WebLocation> WebLocations = new List<WebLocation>();
+
+                    string tag = "weblocation";
+                    List<DataCacheTag> Tags = new List<DataCacheTag>();
+                    Tags.Add(new DataCacheTag(tag));
+                    object result = SingletonCache.Instance.GetByTag(tag);
+                    if (result != null)
+                    {
+                        IEnumerable<KeyValuePair<string, object>> ObjectList = (IEnumerable<KeyValuePair<string, object>>)result;
+
+                        foreach (var e in ObjectList)
+                        {
+                            WebLocations.Add((WebLocation)e.Value);
+                        }
+
+                    }
+
+                    var current_location = (from m in WebLocations
+                                            where m.ConverserId == returnsession.Client.ID
                                             orderby m.ID
                                             select m).FirstOrDefault();
 
@@ -380,10 +398,10 @@ namespace vizzopWeb.Controllers
                         returnlocation.UserAgent = current_location.UserAgent;
                         returnlocation.TimeStamp = current_location.TimeStamp_Last;
                         returnlocation.LastViewed = utils.GetPrettyDate(current_location.TimeStamp_Last).ToString();
-                        returnlocation.UserName = current_location.Converser.UserName;
-                        returnlocation.Domain = current_location.Converser.Business.Domain;
-                        returnlocation.Password = current_location.Converser.Password;
-                        returnlocation.FullName = current_location.Converser.FullName != null ? current_location.Converser.FullName : "Anonymous";
+                        returnlocation.UserName = current_location.UserName;
+                        returnlocation.Domain = current_location.Domain;
+                        returnlocation.Password = current_location.Password;
+                        returnlocation.FullName = current_location.FullName != null ? current_location.FullName : "Anonymous";
                     }
 
                 }
