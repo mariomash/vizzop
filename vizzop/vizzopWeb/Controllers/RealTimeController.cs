@@ -277,7 +277,6 @@ namespace vizzopWeb.Controllers
                  */
 
 
-
                 List<WebLocation> WebLocations = new List<WebLocation>();
 
                 string tag = "weblocation";

@@ -1429,18 +1429,18 @@ namespace vizzopWeb
             return GetConverserFromSystem(UserName, Password, Domain, null);
         }
 
-        public Converser GetConverserFromSystem(string UserName, string Password, string Domain, vizzopContext db)
+        public Converser GetConverserFromSystem(string UserName, string Password, string Domain, vizzopContext _db)
         {
             Converser converser = null;
 
             try
             {
-                if (db == null)
+                if (_db == null)
                 {
-                    db = new vizzopContext();
+                    _db = db;
                 }
 
-                converser = (from m in db.Conversers.Include("Business").Include("Agent")
+                converser = (from m in _db.Conversers.Include("Business").Include("Agent")
                              where m.UserName == UserName
                              && m.Password == Password
                              && m.Business.Domain == Domain
@@ -1456,7 +1456,7 @@ namespace vizzopWeb
                 DateTime loctimeUTC = localZone.ToUniversalTime(loctime);
                 converser.LastActive = loctimeUTC;
 
-                db.SaveChanges();
+                _db.SaveChanges();
             }
             catch (Exception ex)
             {
@@ -3348,12 +3348,8 @@ namespace vizzopWeb
             }
         }
 
-        public void LaunchCaptureProcesses(vizzopContext _db)
+        public void LaunchCaptureProcesses()
         {
-            if (_db != null)
-            {
-                db = _db;
-            }
             //GrabaLog(Utils.NivelLog.info, "Iniciando LaunchCaptureProcesses");
             while (true)
             {

@@ -617,7 +617,7 @@ namespace vizzopWorker
             delegate(object o, DoWorkEventArgs args)
             {
                 BackgroundWorker b = o as BackgroundWorker;
-                utils.LaunchCaptureProcesses(new vizzopContext());
+                utils.LaunchCaptureProcesses();
             });
 
             // what to do when progress changed (update the progress bar for example)
