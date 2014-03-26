@@ -314,9 +314,7 @@ namespace vizzopWorker
             }
             catch (Exception ex)
             {
-#if DEBUG
                 utils.GrabaLogExcepcion(ex);
-#endif
             }
         }
 
