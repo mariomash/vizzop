@@ -636,6 +636,7 @@ namespace vizzopWeb.Controllers
         {
             try
             {
+                utils.db = new vizzopContext();
 
                 string sIP = utils.GetIP(HttpContext);
                 string language = utils.GetLang(HttpContext);

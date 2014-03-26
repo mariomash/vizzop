@@ -31,9 +31,9 @@ namespace vizzopWeb.Models
                 _cache = _factory.GetDefaultCache();
                 _cache.CreateRegion(this.region);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                utils.GrabaLogExcepcion(ex);
+                //utils.GrabaLogExcepcion(ex);
                 _cache = null;
             }
         }
@@ -44,7 +44,7 @@ namespace vizzopWeb.Models
             {
                 return _cache.Get(key);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //utils.GrabaLogExcepcion(ex);
                 return null;
@@ -58,9 +58,8 @@ namespace vizzopWeb.Models
                 DataCacheTag tag = new DataCacheTag(key);
                 return _cache.GetObjectsByTag(tag, region);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                //utils.GrabaLogExcepcion(ex);
                 return null;
             }
         }
@@ -165,7 +164,7 @@ namespace vizzopWeb.Models
                 }
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //utils.GrabaLogExcepcion(ex);
                 return false;

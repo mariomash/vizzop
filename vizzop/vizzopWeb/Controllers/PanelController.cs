@@ -100,7 +100,7 @@ namespace vizzopWeb.Controllers
                     ViewBag.VisitsYesterday = (from w in db.WebLocations_History.Include("converser")
                                                where w.converser.Business.ID == converser.Business.ID
                                                && (w.TimeStamp_First.CompareTo(dtfrom) > 0)
-                                               select w).ToList<WebLocation_History>().Count;
+                                               select w).Count();
                     ViewBag.UniqueVisitsInterval = (from w in db.WebLocations_History.Include("converser")
                                                     where w.converser.Business.ID == converser.Business.ID
                                                     && (w.TimeStamp_First.CompareTo(dtfrom) > 0)

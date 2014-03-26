@@ -585,6 +585,7 @@ namespace vizzopWorker
             delegate(object o, DoWorkEventArgs args)
             {
                 BackgroundWorker b = o as BackgroundWorker;
+                Thread.CurrentThread.Priority = ThreadPriority.AboveNormal;
                 utils.LaunchScreenShotsFileControl();
             });
 

@@ -22,6 +22,8 @@
     prepareScreenShot: function () {
         try {
 
+            /*
+            * Esto era así hasta que los de amigo dijeron que iba lento
             //Le ponemos a todo un ID...
             jVizzop.each(jVizzop(':not([vizzop-id])').get(), function (idx, val) {
                 //Vamos a asegurarnos de que no hay mas elementos como este...
@@ -40,87 +42,29 @@
                 }
                 jVizzop(val).attr('vizzop-id', new_id);
             });
-            /*
-            if (jVizzop(':focus')) {
-                var attrToFind = "[vizzop-id='" + jVizzop(val).attr('vizzop-id') + "']";
-                var elem = jVizzop(vizzop.screenshot).find(attrToFind);
-                jVizzop(elem).attr('style', 'border: solid 2px blue !important; background-color: solid 2px #aaaaff !important;');
-            }
             */
-            /*
-            jVizzop.each(jVizzop('*').get(), function (idx, val) {
-                if (jVizzop(val).attr('vizzop-id')) {
-                } else {
-                    //Vamos a asegurarnos de que no hay mas elementos como este...
-                    var new_id = null;
-                    while (new_id == null) {
-                        new_id = vizzoplib.randomnumber();
 
-                        if (vizzop.IsInFrame == true) {
-                            new_id = window.frameElement.getAttribute("id") + '_' + new_id;
-                        }
+            /* Ponemos el focus donde toca*/
+            jVizzop("[vizzop-focus]").removeAttr("vizzop-focus");
+            jVizzop(':focus').attr('vizzop-focus', 'true');
 
-                        var attrToFind = "[vizzop-id='" + new_id + "']";
-                        if (jVizzop(attrToFind).length > 0) {
-                            new_id = null;
-                        }
-                    }
-                    jVizzop(val).attr('vizzop-id', new_id);
-                }
-                if (jVizzop(val).is(":focus")) {
-                    var attrToFind = "[vizzop-id='" + jVizzop(val).attr('vizzop-id') + "']";
-                    var elem = jVizzop(vizzop.screenshot).find(attrToFind);
-                    jVizzop(elem).attr('style', 'border: solid 2px blue !important; background-color: solid 2px #aaaaff !important;');
-                }
+            jVizzop('input').each(function () {
+                jVizzop(this).attr('value', jVizzop(this).val());
             });
-            */
+            jVizzop('textarea').each(function () {
+                jVizzop(this).attr('value', jVizzop(this).val());
+            });
+            jVizzop('select').each(function () {
+                jVizzop(this).attr('value', jVizzop(this).val());
+            });
 
             var screenshot = document.documentElement.cloneNode(true);
 
+            /*
             var attrToFind = "[vizzop-id='" + jVizzop(':focus').attr('vizzop-id') + "']";
-            var elem = jVizzop(screenshot).find(attrToFind);
+            */
+            var elem = jVizzop(screenshot).find("[vizzop-focus]");
             jVizzop(elem).attr('style', 'border: solid 2px blue !important; background-color: solid 2px #aaaaff !important; box-shadow: 0 0 5px rgba(0, 0, 255, 1) !important;');
-
-            //Vamos a recorrer todo metiendole el focus
-            /*
-            jVizzop.each(jVizzop('*').get(), function (idx, val) {
-                var attrToFind = "[vizzop-id='" + jVizzop(val).attr('vizzop-id') + "']";
-                var elem = jVizzop(screenshot).find(attrToFind);
-                if (jVizzop(val).is(":focus")) {
-                    jVizzop(elem).attr('style', 'border: solid 2px blue !important; background-color: solid 2px #aaaaff !important; box-shadow: 0 0 5px rgba(0, 0, 255, 1) !important;');
-                    return false;
-                }
-                //jVizzop(elem).makeAbsolute();
-            });
-            */
-
-            //Vamos a recorrer todo quitándonos todo lo que esté pasado el scroll..
-            /*
-            jVizzop.each(jVizzop('body').find('*').get(), function (idx, val) {
-                setZeroTimeout(function (val) {
-                    console.log(val);
-                    return function () {
-                        if (vizzoplib.isElementVisible(jVizzop(val)) == false) {
-                            console.log("este está más abajo " + jVizzop(val).attr('class'));
-                            var attrToFind = "[vizzop-id='" + jVizzop(val).attr('vizzop-id') + "']";
-                            var elem = jVizzop(screenshot).find(attrToFind);
-                            jVizzop(elem).remove();
-                        }
-                        //doSomethingHeavy(val);
-                    }
-                }(idx), 3);
-            });
-            */
-            //console.log(jVizzop(screenshot)[0].innerHTML);
-
-            /*
-            jVizzop(screenshot).find('img').each(function () {
-                jVizzop(this).attr('src', this.src);
-            });
-            jVizzop(screenshot).find('link').each(function () {
-                jVizzop(this).attr('src', this.src);
-            });
-            */
 
             jVizzop(screenshot).find('script').each(function () {
                 jVizzop(this).remove();
@@ -162,6 +106,8 @@
 
             //urlsToAbsolute(document.scripts);
             // 2. Duplicate entire document.
+            /*
+            * Esto era así hasta que los de amigo me dijeron que iba a trompicones...
             jVizzop('input').each(function () {
                 var attrToFind = "[vizzop-id='" + jVizzop(this).attr('vizzop-id') + "']";
                 jVizzop(screenshot).find(attrToFind).attr('value', jVizzop(this).val());
@@ -174,37 +120,13 @@
                 var attrToFind = "[vizzop-id='" + jVizzop(this).attr('vizzop-id') + "']";
                 jVizzop(screenshot).find(attrToFind).attr('value', jVizzop(this).val());
             });
+            */
 
             // Use <base> to make anchors and other relative links absolute.
             var b = document.createElement('base');
             b.href = document.location.protocol + '//' + location.host;
             var head = screenshot.querySelector('head');
             head.insertBefore(b, head.firstChild);
-            // 3. Screenshot should be readyonly, no scrolling, and no selections.
-            /*
-            screenshot.style.pointerEvents = 'none';
-            screenshot.style.overflow = 'hidden';
-            screenshot.style.webkitUserSelect = 'none';
-            screenshot.style.mozUserSelect = 'none';
-            screenshot.style.msUserSelect = 'none';
-            screenshot.style.oUserSelect = 'none';
-            screenshot.style.userSelect = 'none';
-            */
-            // 4. Preserve current x,y scroll position of this page. See addOnPageLoad_().
-            /*
-            screenshot.dataset.scrollX = window.scrollX;
-            screenshot.dataset.scrollY = window.scrollY;
-            */
-            // 4.5. When the screenshot loads (e.g. as ablob URL, as iframe.src, etc.),
-            // scroll it to the same location of this page. Do this by appending a
-            // window.onDOMContentLoaded listener which pulls out the saved scrollX/Y
-            // state from the DOM.
-            /*
-            var script = document.createElement('script');
-            script.textContent = '(' + addOnPageLoad_.toString() + ')();'; // self calling.
-            screenshot.querySelector('body').appendChild(script);
-            */
-            // 5. Create a new .html file from the cloned content.
             return screenshot;
         } catch (err) {
             vizzoplib.log(err);
