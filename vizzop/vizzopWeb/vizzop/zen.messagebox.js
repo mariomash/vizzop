@@ -166,6 +166,20 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
             self.checkSafePosition();
             self.positionBox(function () { jVizzop(self._box).show(); }, 'fast');
 
+
+            var title = data.Session.Client.ID + ' - ';
+            if (self._interlocutor[0] != null) {
+                if (self._interlocutor[0].FullName != "") {
+                    //title = LLang('chat_with', [self._interlocutor.FullName]);
+                    title += self._interlocutor[0].FullName;
+                } else {
+                    title += LLang('anon_client', []);
+                }
+            }
+
+            jVizzop(self._boxtitletext).html('<i class="vizzop-icon-user vizzop-icon-white"></i>&nbsp;<span style="display: inline-block; vertical-align: middle">' + title + "</span>");
+            self._title = title;
+
         } catch (err) {
             vizzoplib.log("Error prepareChatInfoSection" + "/" + err);
             self._chatinfo.html('');
@@ -808,10 +822,10 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                 self._nolist = false;
 
                 var title = "";
-                if (self._interlocutor != null) {
-                    if (self._interlocutor.FullName != "") {
+                if (self._interlocutor[0] != null) {
+                    if (self._interlocutor[0].FullName != "") {
                         //title = LLang('chat_with', [self._interlocutor.FullName]);
-                        title = self._interlocutor.FullName;
+                        title = self._interlocutor[0].FullName;
                     } else {
                         title = LLang('anon_client', []);
                     }

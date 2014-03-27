@@ -126,7 +126,7 @@ namespace vizzopWeb
                                 _email.message.To.Business = new Business();
                                 _email.message.To.Business.Domain = commsession.Client.Business.Domain;
                                 _email.message.Subject = _subject;
-                                _email.withBcc = false; 
+                                _email.withBcc = false;
                                 _email.send();
 
                             }
@@ -835,7 +835,6 @@ namespace vizzopWeb.Controllers
                 ScreenCaptureControl sc_control = null;
                 while ((sc_control == null) && (DateTime.Now < start_time.AddSeconds(25)))
                 {
-                    //Thread.Sleep(TimeSpan.FromMilliseconds(50));
                     string key = "screenshot_control_from_" + UserName + "@" + Domain + "@" + WindowName;
                     object result = SingletonCache.Instance.Get(key);
                     if (result != null)
@@ -849,6 +848,7 @@ namespace vizzopWeb.Controllers
                             }
                         }
                     }
+                    Thread.Sleep(TimeSpan.FromMilliseconds(50));
                 }
 
                 if (sc_control == null)
@@ -1106,6 +1106,7 @@ namespace vizzopWeb.Controllers
                     {
                         utils.GrabaLogExcepcion(ex_);
                     }
+                    Thread.Sleep(TimeSpan.FromMilliseconds(50));
                 }
 
                 if (returnmessages.Count > 0)

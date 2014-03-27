@@ -45,7 +45,7 @@ namespace vizzopWeb.Controllers
                 TimeZone localZone = TimeZone.CurrentTimeZone;
                 DateTime start_time = DateTime.Now;
 
-                while ((sessions.Count == 0) && (DateTime.Now < start_time.AddSeconds(15)))
+                while ((sessions.Count == 0) && (DateTime.Now < start_time.AddSeconds(25)))
                 {
                     TimeZone localZoneIn = TimeZone.CurrentTimeZone;
                     DateTime localTimeUTCIn = localZone.ToUniversalTime(DateTime.Now.AddMinutes(-60));
@@ -94,7 +94,7 @@ namespace vizzopWeb.Controllers
                             sessions = orig_sessions.ToList<CommSession>();
                         }
                     }
-                    Thread.Sleep(TimeSpan.FromMilliseconds(100));
+                    Thread.Sleep(TimeSpan.FromMilliseconds(50));
                 }
 
                 List<CommSession> returnsessions = new List<CommSession>();

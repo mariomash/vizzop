@@ -136,7 +136,7 @@ var Box = jVizzop.zs_Class.create({
                     jVizzop(self._box).css({ 'bottom': 'auto', 'right': 'auto' });
                 },
                 drag: function (event, ui) {
-                    self.checkSafePosition()
+                    //self.checkSafePosition()
                 },
                 stop: function (event, ui) {
                     self._preferredubication = null;

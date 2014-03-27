@@ -2667,6 +2667,7 @@
             -webkit-border-bottom-left-radius: 4px !important;
             -moz-border-radius-bottomleft: 4px !important;
             border-bottom-left-radius: 4px !important;
+            box-shadow: none;
         }
 
         .zs_dialog .vizzop-btn-group .vizzop-btn:last-child, .zs_dialog .vizzop-btn-group .dropdown-toggle {
@@ -6475,7 +6476,7 @@ inse .zs_dialog .vizzop-btn-navbar {
     height: 410px !important;
     margin: 10px !important;
         */
-    height: 100% !important;
+    height: 97% !important;
     margin: 0;
     overflow: visible !important;
     /*
