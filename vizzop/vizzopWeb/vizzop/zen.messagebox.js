@@ -163,6 +163,7 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
             self._col2.css('display', 'inline-block');
             self._chatinfo.html(all_info);
 
+            self.checkSafePosition();
             self.positionBox(function () { jVizzop(self._box).show(); }, 'fast');
 
         } catch (err) {
@@ -413,8 +414,9 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                                         jVizzop(item).remove();
                                     }
                                 });
-                                //self.checkSafePosition();
 
+                                self.checkSafePosition();
+                                
                                 self.positionBox(function () { jVizzop(self._box).show(); }, 'fast');
 
                                 if (self.slider_interlocutor_image.attr('value') == self.slider_interlocutor_image.attr('max')) {

@@ -363,9 +363,9 @@ var Box = jVizzop.zs_Class.create({
                     if ((size.h > jVizzop(box).outerHeight() + top) && (jVizzop(box).outerHeight() > 0)) {
                         top = Math.floor((size.h / 2) - (jVizzop(box).outerHeight() / 2));
                     }
-                    var left = new Number(20);
+                    var left = new Number(5);
                     if (size.w > jVizzop(box).outerWidth() + left) {
-                        left = Math.floor(((size.w / 2) - (jVizzop(box).outerWidth() / 2)))
+                        left = Math.floor(((size.w / 2) - (jVizzop(box).outerWidth() / 2))) - 6;
                     }
 
                     /*
@@ -495,7 +495,6 @@ var Box = jVizzop.zs_Class.create({
         var self = this;
         try {
             var box = self._box;
-
             var position = jVizzop(box).position();
             if (position.left < 0) {
                 box
