@@ -1499,8 +1499,16 @@ namespace vizzopWeb
             try
             {
                 //Formateando la imagen...
+                if ((sc.Data == null) || (sc.Data == ""))
+                {
+                    return null;
+                }
                 Byte[] bitmapData = new Byte[sc.Data.Length];
                 bitmapData = Convert.FromBase64String(FixBase64ForImage(sc.Data.Substring(sc.Data.IndexOf(',') + 1)));
+                if (bitmapData == null)
+                {
+                    return null;
+                }
                 System.IO.MemoryStream streamBitmap = new System.IO.MemoryStream(bitmapData);
                 bitImage = new Bitmap((Bitmap)Image.FromStream(streamBitmap));
 
@@ -1508,6 +1516,10 @@ namespace vizzopWeb
                 Rectangle cropRect = new Rectangle(0, 0, sc.Width, sc.Height);
                 int headerheight = 0;
                 int fontsize = Convert.ToInt32((sc.Height * 18) / 768);
+                if (fontsize == 0)
+                {
+                    return null;
+                }
                 Font MyFont = new Font(FontFamily.GenericSansSerif, fontsize, FontStyle.Regular, GraphicsUnit.World);
 
                 string text = "DATE: " + sc.CreatedOn.ToLocalTime().ToString("o") + " · URL: " + sc.Url;
@@ -2859,14 +2871,14 @@ namespace vizzopWeb
                     switch (NLog)
                     {
                         case NivelLog.info:
-                            GrabaAnalyticsLog(NLog, strLog_WithRoute);
+                            //GrabaAnalyticsLog(NLog, strLog_WithRoute);
                             //Lo importante va a Syslog y a BD para posterior búsqueda-seguimiento
                             GrabaDBLog(NLog, strLog_WithRoute);
                             break;
                         case NivelLog.error:
-                            GrabaAnalyticsLog(NLog, strLog_WithRoute);
                             //Los errores van a Syslog y a BD para posterior búsqueda-seguimiento
                             GrabaDBLog(NLog, strLog_WithRoute);
+                            GrabaAnalyticsLog(NLog, strLog_WithRoute);
                             break;
                     }
                     //Tó va a Syslog, y en caso de que no sea posible, Syslog se encarga de mandarlo a un TXT
@@ -2994,9 +3006,9 @@ namespace vizzopWeb
                 message = logtype + "/" + message;
                 GoogleAnalyticsDotNet.GoogleAnalyticsDotNet.SendTrackingRequest(google_analytics_key, message, null);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.Write(ex.Message);
+                //Console.Write(ex.Message);
             }
         }
 
@@ -3022,10 +3034,10 @@ namespace vizzopWeb
                 Debug.Write(strLog);
 #endif
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
-                String message = ex.Message;
+                //String message = ex.Message;
             }
         }
 
@@ -3399,6 +3411,18 @@ namespace vizzopWeb
         {
             try
             {
+
+                string LogPhantomSetting = "LogPhantomInRelease";
+
+#if DEBUG
+                LogPhantomSetting = "LogPhantomInDebug";
+#endif
+
+                bool LogPhantom = false;
+                LogPhantom = Convert.ToBoolean((from m in db.Settings
+                                                where m.Name == LogPhantomSetting
+                                                select m).FirstOrDefault().Value);
+
                 //GrabaLog(Utils.NivelLog.error, "Iniciando CreateAndAddHeadlessProcessToPool: " + QueueId.ToString());
 
                 string strPath = AppDomain.CurrentDomain.BaseDirectory + @"\img\";
@@ -3418,6 +3442,17 @@ namespace vizzopWeb
                 }
                 string mainURL = scheme + @"://" + strdomain + ":" + port;
 
+                string debug_args = "";
+#if DEBUG
+                debug_args = " --remote-debugger-port=9000 --remote-debugger-autorun=yes ";
+#endif
+
+                string strlogPhantom = "false";
+                if (LogPhantom == true)
+                {
+                    strlogPhantom = "true";
+                }
+
                 var psi = new ProcessStartInfo(phantomjs_filename)
                 {
                     UseShellExecute = false,
@@ -3425,7 +3460,7 @@ namespace vizzopWeb
                     CreateNoWindow = true,
                     WindowStyle = ProcessWindowStyle.Hidden,
                     WorkingDirectory = strPath,
-                    Arguments = @" --proxy-type=none --disk-cache=yes --web-security=no --ignore-ssl-errors=yes " + pathjs + @" " + mainURL + @" " + username + @" " + domain + @" " + password + @" " + GUID + @" " + windowname,
+                    Arguments = @" --proxy-type=none --disk-cache=yes  --web-security=no --ignore-ssl-errors=yes " + debug_args + pathjs + @" " + mainURL + @" " + username + @" " + domain + @" " + password + @" " + GUID + @" " + windowname + @" " + strlogPhantom,
                     ErrorDialog = false
                 };
 
@@ -3434,16 +3469,6 @@ namespace vizzopWeb
                 psi.WindowStyle = ProcessWindowStyle.Normal;
 #endif
 
-                string LogPhantomSetting = "LogPhantomInRelease";
-
-#if DEBUG
-                LogPhantomSetting = "LogPhantomInDebug";
-#endif
-
-                bool LogPhantom = false;
-                LogPhantom = Convert.ToBoolean((from m in db.Settings
-                                                where m.Name == LogPhantomSetting
-                                                select m).FirstOrDefault().Value);
                 if (LogPhantom == true)
                 {
                     psi.RedirectStandardError = true;
@@ -3466,7 +3491,7 @@ namespace vizzopWeb
                 {
                     if (e.Data != null)
                     {
-                        Logged += e.Data;
+                        Logged += e.Data + System.Environment.NewLine;
                     }
                 };
 
@@ -3637,6 +3662,10 @@ namespace vizzopWeb
             {
                 vizzopContext db = new vizzopContext();
 
+
+                /* Primero miramos si vamos limpiando...
+                 * 
+                 */
                 string LimpiaWebLocationsSetting = "LimpiaWebLocationsInRelease";
 #if DEBUG
                 LimpiaWebLocationsSetting = "LimpiaWebLocationsInDebug";
@@ -3650,8 +3679,9 @@ namespace vizzopWeb
                     return;
                 }
 
+
                 TimeZone localZone = TimeZone.CurrentTimeZone;
-                DateTime loctime = localZone.ToUniversalTime(DateTime.Now.AddSeconds(-60));
+                DateTime loctime = localZone.ToUniversalTime(DateTime.Now.AddSeconds(-1));
                 var to_move = (from m in WebLocations
                                where m.TimeStamp_Last < loctime
                                select m).ToList();
@@ -3662,26 +3692,46 @@ namespace vizzopWeb
                         try
                         {
                             WebLocation m = to_move[i];
-                            WebLocation_History newloc = new WebLocation_History();
-                            newloc.converser = (from j in db.Conversers
-                                                where j.ID == m.ConverserId
-                                                select j).FirstOrDefault();
-                            newloc.Referrer = m.Referrer;
-                            newloc.TimeStamp_First = m.TimeStamp_First;
-                            newloc.TimeStamp_Last = m.TimeStamp_Last;
-                            newloc.IP = m.IP;
-                            newloc.Lang = m.Lang;
-                            newloc.UserAgent = m.UserAgent;
-                            newloc.Url = m.Url;
-                            newloc.Ubication = m.Ubication;
-                            newloc.Headers = m.Headers;
-                            newloc.WindowName = m.WindowName;
+                            WebLocation_History newloc = null;
+                            newloc = (from wl in db.WebLocations_History
+                                      where wl.converser.ID == m.ConverserId
+                                      && wl.Referrer == m.Referrer
+                                      && wl.Url == m.Url
+                                      select wl).FirstOrDefault();
 
-                            if (newloc.converser != null)
+                            if (newloc == null)
                             {
-                                db.WebLocations_History.Add(newloc);
-                            }
+                                newloc = new WebLocation_History();
 
+                                newloc.converser = (from j in db.Conversers
+                                                    where j.ID == m.ConverserId
+                                                    select j).FirstOrDefault();
+                                newloc.Referrer = m.Referrer;
+                                newloc.TimeStamp_First = m.TimeStamp_First;
+                                newloc.TimeStamp_Last = m.TimeStamp_Last;
+                                newloc.IP = m.IP;
+                                newloc.Lang = m.Lang;
+                                newloc.UserAgent = m.UserAgent;
+                                newloc.Url = m.Url;
+                                newloc.Ubication = m.Ubication;
+                                newloc.Headers = m.Headers;
+                                newloc.WindowName = m.WindowName;
+
+                                if (newloc.converser != null)
+                                {
+                                    if (newloc.converser.Business.SaveWebLocationHistory == true)
+                                    {
+                                        db.WebLocations_History.Add(newloc);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                newloc.converser = (from j in db.Conversers
+                                                    where j.ID == m.ConverserId
+                                                    select j).FirstOrDefault();
+                                newloc.TimeStamp_Last = m.TimeStamp_Last;
+                            }
                             string key = @"weblocation" + "_" + m.UserName + @"@" + m.Domain + @"@" + m.WindowName; ;
                             SingletonCache.Instance.Remove(key);
                         }

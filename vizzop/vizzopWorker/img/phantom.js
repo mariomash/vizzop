@@ -1,6 +1,7 @@
 ﻿var args = require('system').args;
 
 var mainURL = null;
+var logphantom = false;
 
 if (args.length === 1) {
     //console.log('Try to pass some arguments when invoking this script!');
@@ -9,6 +10,9 @@ if (args.length === 1) {
     UserName = args[2];
     Domain = args[3];
     WindowName = args[4];
+    if (args[5] == "true") {
+        logphantom = true;
+    }
 }
 
 var page = require('webpage').create();
@@ -29,7 +33,10 @@ page.onCallback = function (param) {
         console.log(date + ' rendered: ' + param.filename);
 
     } else {
-        console.log(date + ' ' + param.log);
+
+        if (logphantom == true) {
+            console.log(date + ' ' + param.log);
+        }
     }
 }
 
@@ -41,6 +48,12 @@ page.onLoadFinished = function (status) {
             return;
         }
         counter++;
+
+        if (logphantom == true) {
+            page.onResourceRequested = function (request) {
+                console.log('Request ' + JSON.stringify(request, undefined, 4));
+            };
+        }
 
         page.evaluate(function (page, mainURL, UserName, Domain, WindowName) {
             var timerorders = window.setInterval(function () { GetOrders(page, mainURL, UserName, Domain, WindowName); }, 1);

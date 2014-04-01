@@ -29,6 +29,7 @@ namespace vizzopWeb.Models
             this.CompressHtmlData = false;
             this.ShowVideosPanel = false;
             this.ShowStatsPanel = false;
+            this.SaveWebLocationHistory = false;
         }
 
         [Key]
@@ -113,6 +114,8 @@ namespace vizzopWeb.Models
         public bool CompressHtmlData { get; set; }
         public bool ShowVideosPanel { get; set; }
         public bool ShowStatsPanel { get; set; }
+
+        public bool SaveWebLocationHistory { get; set; }
 
         public bool HideHelpOnStartup { get; set; }
 

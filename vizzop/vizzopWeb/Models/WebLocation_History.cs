@@ -7,7 +7,6 @@ namespace vizzopWeb.Models
     public class WebLocation_History
     {
 
-        [Display(Name = "Converser ID")]
         public int ID { get; set; }
 
         [Required]

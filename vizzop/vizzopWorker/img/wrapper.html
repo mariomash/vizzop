@@ -124,7 +124,7 @@
 
                         data = d;
 
-                        
+
                         if (lastData != null) {
                             if ((data.Html == lastData.Html) &&
                                 (data.Width == lastData.Width) &&
@@ -135,7 +135,7 @@
                                 return;
                             }
                         }
-                        
+
                         lastData = data;
 
                         window.callPhantom({
@@ -143,33 +143,62 @@
                         });
 
                         StartDate = new Date();
-                        var iFrame = null
-                        if ((data.Blob.length == 1) && (data.Blob[0][0] == 0)) {
-                            iFrame = document.getElementById("WrapperIframe");
-                            if (iFrame == null) {
-                                iFrame = CreateAndAddIframe();
-                                //iFrame.src = "data:text/html;charset=utf-8," + data.Html;
 
-                                var win = iFrame.contentWindow;
-                                win.document.open('text/html', 'replace');
-                                win.document.write(data.Html);
-                                win.document.close();
+                        var json = $.parseJSON(data.Blob);
 
-                            }
-                        } else {
-                            iFrame = document.getElementById("WrapperIframe");
-                            if (iFrame == null) {
-                                iFrame = CreateAndAddIframe();
-                            }
-                            //iFrame.src = "data:text/html;charset=utf-8," + data.Html;
-
+                        var iFrame = null;
+                        iFrame = document.getElementById("WrapperIframe");
+                        if (iFrame == null) {
+                            iFrame = CreateAndAddIframe();
                             var win = iFrame.contentWindow;
                             win.document.open('text/html', 'replace');
                             win.document.write(data.Html);
                             win.document.close();
-
+                        } else {
+                            if (json.length == 1) {
+                                if (json[0][0] == 1) {
+                                    var win = iFrame.contentWindow;
+                                    win.document.open('text/html', 'replace');
+                                    win.document.write(data.Html);
+                                    win.document.close();
+                                    //iFrame.contentWindow.document.body.innerHTML
+                                    //iFrame.src = "data:text/html;charset=utf-8," + data.Html;
+                                }
+                            } else {
+                                var win = iFrame.contentWindow;
+                                win.document.open('text/html', 'replace');
+                                win.document.write(data.Html);
+                                win.document.close();
+                            }
                         }
-
+                        /*
+                                                    var CompleteHtml = iFrame.contentWindow.document.body.innerHTML;
+                        
+                                                    for (var i = 0; i < json.length; i++) {
+                        
+                                                    var type = json[i][0];
+                                                    var contents = json[i][1];
+                        
+                        
+                                                    if (type == "1") {
+                                                        iFrame.contentWindow.document.body.innerHTML += contents;
+                                                    }
+                                                    else if (type == "-1") {
+                                                        if (CompleteHtml != null) {
+                                                            CompleteHtml = CompleteHtml.substr(contents);
+                                                        }
+                                                    else if (type == "0") {
+                                                        if (CompleteHtml != null) {
+                                                            if (new Number(contents) > CompleteHtml.length) {
+                                                                continue;
+                                                            }
+                                                            iFrame.contentWindow.document.body.innerHTML += CompleteHtml.substring(0, contents);
+                                                            CompleteHtml = CompleteHtml.substr(contents);
+                                                        }
+                                                    }
+                                                    //iFrame.src = "data:text/html;charset=utf-8," + data.Html;
+                                                    }
+                        */
                         $('#WrapperIframe')
                             .attr('width', data.Width)
                             .attr('height', data.Height)

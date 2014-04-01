@@ -133,7 +133,7 @@
                             </tbody>
                         </table>
                     </div>
-                    <div id="no_visits" class="" style="margin-top: 150px; text-align: center; display: none; width: 400px; margin: 100px auto 0;">
+                    <div id="analytics_no_visits" class="" style="margin-top: 150px; text-align: center; display: none; width: 400px; margin: 100px auto 0;">
                         <h4>No data found in the selected date range</h4>
                         <hr />
                         <p>Did you installed the vizzop script?</p>
@@ -407,7 +407,7 @@
             that.oApi._fnClearTable(oSettings);
             $('#analytics_table_wrapper').hide();
             $('#analytics_title').hide();
-            $('#no_visits').hide();
+            $('#analytics_no_visits').hide();
             $('#analytics_chart_holder').hide();
 
             //Got the data - add it to the table
@@ -421,7 +421,7 @@
                     $('#analytics_title').show();
                     $('#analytics_chart_holder').show();
                 } else {
-                    $('#no_visits').show();
+                    $('#analytics_no_visits').show();
                 }
 
                 for (var i = 0; i < aData.length; i++) {

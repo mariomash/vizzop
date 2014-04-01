@@ -82,6 +82,10 @@ namespace vizzopWeb.Controllers
                     sIP = sIP.Split(',')[0];
                     string[] languages = HttpContext.Request.UserLanguages;
                     string useragent = HttpContext.Request.UserAgent;
+                    if (windowname == null)
+                    {
+                        windowname = "";
+                    }
                     Status returnstatus = utils.TrackPageView(trackID, converser, url, referrer, languages[0], useragent, sIP, headers, windowname);
                     if (returnstatus.Success == true)
                     {
