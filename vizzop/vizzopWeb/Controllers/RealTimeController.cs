@@ -80,13 +80,17 @@ namespace vizzopWeb.Controllers
                     if (string.IsNullOrEmpty(sIP) == true) { sIP = HttpContext.Request.ServerVariables["REMOTE_ADDR"]; }
                     if (string.IsNullOrEmpty(sIP) == true) { utils.GrabaLog(Utils.NivelLog.error, "No IP to Track"); return Json(false); }
                     sIP = sIP.Split(',')[0];
+
                     string[] languages = HttpContext.Request.UserLanguages;
+                    string language = null;
+                    if (languages != null && languages.Length != 0) { language = languages[0].ToLowerInvariant().Trim(); }
+
                     string useragent = HttpContext.Request.UserAgent;
                     if (windowname == null)
                     {
                         windowname = "";
                     }
-                    Status returnstatus = utils.TrackPageView(trackID, converser, url, referrer, languages[0], useragent, sIP, headers, windowname);
+                    Status returnstatus = utils.TrackPageView(trackID, converser, url, referrer, language, useragent, sIP, headers, windowname);
                     if (returnstatus.Success == true)
                     {
                         return Json(returnstatus.Value.ToString());
