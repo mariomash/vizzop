@@ -22,61 +22,55 @@
     prepareScreenShot: function () {
         try {
 
-            /*
-            * Esto era así hasta que los de amigo dijeron que iba lento
             //Le ponemos a todo un ID...
-            jVizzop.each(jVizzop(':not([vizzop-id])').get(), function (idx, val) {
-                //Vamos a asegurarnos de que no hay mas elementos como este...
-                var new_id = null;
-                while (new_id == null) {
-                    new_id = vizzoplib.randomnumber();
+            if (vizzop.CreateZenId == true) {
+                jVizzop(':not([vizzop-id])').each(function () {
+                    var self = this, doBind = function () {
+                        //Vamos a asegurarnos de que no hay mas elementos como este...
+                        var new_id = null;
+                        while (new_id == null) {
+                            new_id = vizzoplib.randomnumber();
 
-                    if (vizzop.IsInFrame == true) {
-                        new_id = window.frameElement.getAttribute("id") + '_' + new_id;
-                    }
+                            if (vizzop.IsInFrame == true) {
+                                new_id = window.frameElement.getAttribute("id") + '_' + new_id;
+                            }
 
-                    var attrToFind = "[vizzop-id='" + new_id + "']";
-                    if (jVizzop(attrToFind).length > 0) {
-                        new_id = null;
-                    }
-                }
-                jVizzop(val).attr('vizzop-id', new_id);
-            });
-            */
+                            var attrToFind = "[vizzop-id='" + new_id + "']";
+                            if (jVizzop(attrToFind).length > 0) {
+                                new_id = null;
+                            }
+                        }
+                        jVizzop(self).attr('vizzop-id', new_id);
+                    };
+                    jVizzop.queue.add(doBind, this);
+                });
+            }
 
             /* Ponemos el focus donde toca*/
             jVizzop("[vizzop-focus]").removeAttr("vizzop-focus");
             jVizzop(':focus').attr('vizzop-focus', 'true');
 
             jVizzop('input').each(function () {
-                jVizzop(this).attr('value', jVizzop(this).val());
+                jVizzop(this).attr('vizzop-value', jVizzop(this).val());
             });
             jVizzop('textarea').each(function () {
-                jVizzop(this).attr('value', jVizzop(this).val());
+                jVizzop(this).attr('vizzop-value', jVizzop(this).val());
             });
             jVizzop('select').each(function () {
-                jVizzop(this).attr('value', jVizzop(this).val());
+                jVizzop(this).attr('vizzop-value', jVizzop(this).val());
             });
+            jVizzop('html').attr('vizzop-base', document.location.protocol + '//' + location.host);
+
+            return document.documentElement;
 
             var screenshot = document.documentElement.cloneNode(true);
-
-            /*
-            var attrToFind = "[vizzop-id='" + jVizzop(':focus').attr('vizzop-id') + "']";
-            */
+            
             var elem = jVizzop(screenshot).find("[vizzop-focus]");
             jVizzop(elem).attr('style', 'border: solid 2px blue !important; background-color: solid 2px #aaaaff !important; box-shadow: 0 0 5px rgba(0, 0, 255, 1) !important;');
 
             jVizzop(screenshot).find('script').each(function () {
                 jVizzop(this).remove();
             });
-
-            /*
-            if (vizzop.IsInFrame == true) {
-                jVizzop(screenshot).find('body').css('width', window.frameElement.getAttribute("width"));
-                jVizzop(screenshot).find('body').css('height', window.frameElement.getAttribute("height"));
-            }
-            */
-
             jVizzop(screenshot).find('iframe').each(function () {
                 //jVizzop(this).empty();
                 var contents = jVizzop(this).attr('value');
@@ -99,28 +93,9 @@
                 }
                 jVizzop(this).hide();
             });
-
             jVizzop(screenshot).find('noscript').each(function () {
                 jVizzop(this).remove();
             });
-
-            //urlsToAbsolute(document.scripts);
-            // 2. Duplicate entire document.
-            /*
-            * Esto era así hasta que los de amigo me dijeron que iba a trompicones...
-            jVizzop('input').each(function () {
-                var attrToFind = "[vizzop-id='" + jVizzop(this).attr('vizzop-id') + "']";
-                jVizzop(screenshot).find(attrToFind).attr('value', jVizzop(this).val());
-            });
-            jVizzop('textarea').each(function () {
-                var attrToFind = "[vizzop-id='" + jVizzop(this).attr('vizzop-id') + "']";
-                jVizzop(screenshot).find(attrToFind).attr('value', jVizzop(this).val());
-            });
-            jVizzop('select').each(function () {
-                var attrToFind = "[vizzop-id='" + jVizzop(this).attr('vizzop-id') + "']";
-                jVizzop(screenshot).find(attrToFind).attr('value', jVizzop(this).val());
-            });
-            */
 
             // Use <base> to make anchors and other relative links absolute.
             var b = document.createElement('base');
@@ -128,6 +103,7 @@
             var head = screenshot.querySelector('head');
             head.insertBefore(b, head.firstChild);
             return screenshot;
+
         } catch (err) {
             vizzoplib.log(err);
             return null;
@@ -143,7 +119,7 @@
             vizzop.screenshot = vizzoplib.prepareScreenShot();
             var current_html = vizzop.screenshot.outerHTML;
 
-            //current_html = escape(current_html);
+            //console.log(current_html);
 
             if (vizzop.HtmlSend_LastHtmlContents == null) {
                 vizzop.HtmlSend_LastHtmlContents = "";
@@ -431,6 +407,40 @@
 
 String.prototype.dateFromJSON = function () {
     return eval(this.replace(/\/Date\((\d+)\)\//gi, "new Date($1)"));
+};
+
+jVizzop.queue = {
+    _timer: null,
+    _queue: [],
+    add: function (fn, context, time) {
+        var setTimer = function (time) {
+            jVizzop.queue._timer = setTimeout(function () {
+                time = jVizzop.queue.add();
+                if (jVizzop.queue._queue.length) {
+                    setTimer(time);
+                }
+            }, time || 2);
+        }
+
+        if (fn) {
+            jVizzop.queue._queue.push([fn, context, time]);
+            if (jVizzop.queue._queue.length == 1) {
+                setTimer(time);
+            }
+            return;
+        }
+
+        var next = jVizzop.queue._queue.shift();
+        if (!next) {
+            return 0;
+        }
+        next[0].call(next[1] || window);
+        return next[2];
+    },
+    clear: function () {
+        clearTimeout(jVizzop.queue._timer);
+        jVizzop.queue._queue = [];
+    }
 };
 
 /**

@@ -326,10 +326,9 @@ namespace vizzopWeb.Controllers
 #if DEBUG
                 VizzopGetsAllRealtimeWebLocationsSetting = "VizzopGetsAllRealtimeWebLocationsInDebug";
 #endif
-                bool VizzopGetsAllRealtimeWebLocations = false;
-                VizzopGetsAllRealtimeWebLocations = Convert.ToBoolean((from m in db.Settings
-                                                                       where m.Name == VizzopGetsAllRealtimeWebLocationsSetting
-                                                                       select m).FirstOrDefault().Value);
+                bool VizzopGetsAllRealtimeWebLocations = Convert.ToBoolean((from m in db.Settings
+                                                                            where m.Name == VizzopGetsAllRealtimeWebLocationsSetting
+                                                                            select m).FirstOrDefault().Value);
 
                 foreach (WebLocation wl in WebLocations)
                 {

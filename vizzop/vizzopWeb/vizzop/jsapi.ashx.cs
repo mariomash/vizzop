@@ -535,6 +535,14 @@ namespace vizzopWeb
                                                    where m.Name == "JavascriptMutationWaitingMsTrigger"
                                                    select m).FirstOrDefault().Value;
 
+                string CreateZenIdSetting = "CreateZenIdInRelease";
+#if DEBUG
+                CreateZenIdSetting = "CreateZenIdInDebug";
+#endif
+                bool CreateZenId = Convert.ToBoolean((from m in db.Settings
+                                                      where m.Name == CreateZenIdSetting
+                                                      select m).FirstOrDefault().Value);
+
 
                 string vizzop = @"
 var vizzop = {
@@ -583,6 +591,7 @@ var vizzop = {
     AllowChatSockets: " + allowchatsockets + @",
     AllowScreenSockets: " + allowscreensockets + @",
     CompressHtmlData: " + compresshtmldata + @",
+    CreateZenId: " + CreateZenId.ToString().ToLowerInvariant() + @",
     ShowHelpButton: " + showhelpbutton + @",
     AuditMessages: " + auditmessages + @",
     SessionID: '" + context.Session.SessionID + @"',

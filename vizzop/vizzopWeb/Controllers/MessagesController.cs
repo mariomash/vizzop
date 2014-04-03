@@ -898,6 +898,30 @@ namespace vizzopWeb.Controllers
                     }
 
 
+                    var ScriptNodes = doc.DocumentNode.SelectNodes("//script");
+                    if (ScriptNodes != null)
+                    {
+                        foreach (HtmlNode script in ScriptNodes)
+                        {
+                            script.Remove();
+                        }
+                    }
+
+                    var vizzop_base = (from m in doc.DocumentNode.SelectSingleNode("//html").Attributes
+                                       where m.Name == "vizzop-base"
+                                       select m).FirstOrDefault();
+                    var head = doc.DocumentNode.SelectSingleNode("//head");
+                    var b = doc.CreateElement("base");
+                    b.Attributes.Add("href", vizzop_base.Value);
+                    head.InsertBefore(b, head.FirstChild);
+                    /*
+                    head.InsertBefore(b
+            var b = document.createElement('base');
+            b.href = document.location.protocol + '//' + location.host;
+            var head = screenshot.querySelector('head');
+            head.insertBefore(b, head.firstChild);
+                     */
+
                     sc_control.CompleteHtml = doc.DocumentNode.OuterHtml;
 
                     var toReturn = new
