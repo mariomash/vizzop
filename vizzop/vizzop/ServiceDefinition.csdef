@@ -43,7 +43,7 @@
       </Task>
     </Startup>
   </WebRole>
-  <WorkerRole name="vizzopWorker" vmsize="Large">
+  <WorkerRole name="vizzopWorker" vmsize="Medium">
     <Runtime executionContext="elevated" />
     <Imports>
       <Import moduleName="Diagnostics" />

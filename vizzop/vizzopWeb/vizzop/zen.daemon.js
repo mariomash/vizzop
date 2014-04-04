@@ -1467,8 +1467,6 @@ var Daemon = jVizzop.zs_Class.create({
                         //self.checkSendHtml(0.1);
                     }
                 } catch (_err) {
-
-                    console.log(v);
                     vizzoplib.log("parseNewMessages " + _err + " : " + v.Subject + " // " + v.Content);
                 }
             });
@@ -1593,28 +1591,12 @@ var Daemon = jVizzop.zs_Class.create({
                 }
             });
 
-            //solo mandamos lo que de tiempo a enviarse (lo ultimo que haya)
-            /*
-            while (vizzop.HtmlSend_Data.length > 1) {
-                vizzop.HtmlSend_Data.pop();
-            }
-            */
-            /*
-            if (vizzop.HtmlSend_Data[0].length == 1) {
-            }
-            */
-
-            /*
-            diffresult = LZString.compressToBase64(diffresult);
-            */
-
             var HtmlData = self.GetHtmlToSend();
 
             if (HtmlData == null) {
                 vizzop.HtmlSend_InCourse = null;
                 return;
             }
-
 
             vizzop.HtmlSend_LastHtmlSent = HtmlData;
 
@@ -1689,6 +1671,28 @@ var Daemon = jVizzop.zs_Class.create({
 
             var size = vizzoplib.getViewportSize();
 
+            if (vizzop.current_html == null) {
+                //Si vizzop.screenshot != null es que estamos trabajando en crear vizzop.current_html...
+                if (vizzop.screenshot == null) {
+                    vizzoplib.screenshotPage();
+                }
+                self.activateMutationObserver();
+                return null;
+            }
+
+            var objdiff = new diff_match_patch();
+            var diffresult = objdiff.diff_main(vizzop.HtmlSend_LastHtmlContents, vizzop.current_html);
+
+            for (var i in diffresult) {
+                var elem = diffresult[i];
+                if (elem[0] == 0) {
+                    //Sustituimos el texto por el número de caracteres que hay que saltarse...
+                    elem[1] = elem[1].length;
+                } else if (elem[0] == -1) {
+                    //Sustituimos el texto por el número de caracteres que hay que eliminar...
+                    elem[1] = elem[1].length;
+                }
+            }
             var toSend = {
                 'mx': vizzop.mouseXPos,
                 'my': vizzop.mouseYPos,
@@ -1699,7 +1703,7 @@ var Daemon = jVizzop.zs_Class.create({
                 'url': document.URL,
                 'date': DateUTC,
                 'img': null,
-                'blob': vizzoplib.screenshotPage(),
+                'blob': diffresult,
                 'windowname': window.name
             }
 
@@ -1728,6 +1732,10 @@ var Daemon = jVizzop.zs_Class.create({
                 }
             }
 
+            vizzop.HtmlSend_LastHtmlContents = vizzop.current_html;
+            vizzop.current_html = null;
+            vizzop.screenshot = null;
+
             if (enviarTienes == true) {
                 return toSend;
             } else {
@@ -1736,34 +1744,6 @@ var Daemon = jVizzop.zs_Class.create({
         } catch (err) {
             vizzoplib.log(err);
             self.activateMutationObserver();
-            return null;
-        }
-    },
-    getCurrentHtml: function () {
-        var self = this;
-        try {
-            //self._sharingscreen = true;
-
-            jVizzop.each(jVizzop('*').get(), function (idx, val) {
-                if (jVizzop(val).attr('zen-id')) {
-                } else {
-                    jVizzop(val).attr('zen-id', vizzoplib.randomnumber());
-                }
-            });
-
-            var html = "<html><head>" + jVizzop(document.head).html() + "</head><body>" + jVizzop(document.body).html() + "</body></html>";
-
-            var arr_current_html = LZW.compress(html);
-            html = "";
-            jVizzop(arr_current_html).each(function (idx, val) {
-                var val_ = val + "_";
-                html += val_;
-            });
-            html = html.substring(0, html.length - 1);
-
-            return html;
-        } catch (err) {
-            vizzoplib.log(err);
             return null;
         }
     },

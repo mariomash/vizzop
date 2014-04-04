@@ -910,10 +910,16 @@ namespace vizzopWeb.Controllers
                     var vizzop_base = (from m in doc.DocumentNode.SelectSingleNode("//html").Attributes
                                        where m.Name == "vizzop-base"
                                        select m).FirstOrDefault();
-                    var head = doc.DocumentNode.SelectSingleNode("//head");
-                    var b = doc.CreateElement("base");
-                    b.Attributes.Add("href", vizzop_base.Value);
-                    head.InsertBefore(b, head.FirstChild);
+                    if (vizzop_base != null)
+                    {
+                        var head = doc.DocumentNode.SelectSingleNode("//head");
+                        if (head != null)
+                        {
+                            var b = doc.CreateElement("base");
+                            b.Attributes.Add("href", vizzop_base.Value);
+                            head.InsertBefore(b, head.FirstChild);
+                        }
+                    }
                     /*
                     head.InsertBefore(b
             var b = document.createElement('base');

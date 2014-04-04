@@ -19,13 +19,15 @@
         return { w: d.body.clientWidth, h: d.body.clientHeight };
 
     },
-    prepareScreenShot: function () {
+    screenshotPage: function () {
         try {
 
             //Le ponemos a todo un ID...
             if (vizzop.CreateZenId == true) {
-                jVizzop(':not([vizzop-id])').each(function () {
+                var sinId = jVizzop(':not([vizzop-id])');
+                if (sinId.length > 0) {
                     var self = this, doBind = function () {
+                        sinId = jVizzop(':not([vizzop-id])');
                         //Vamos a asegurarnos de que no hay mas elementos como este...
                         var new_id = null;
                         while (new_id == null) {
@@ -39,16 +41,20 @@
                             if (jVizzop(attrToFind).length > 0) {
                                 new_id = null;
                             }
+                            jVizzop(sinId[0]).attr('vizzop-id', new_id);
                         }
-                        jVizzop(self).attr('vizzop-id', new_id);
+                        vizzoplib.screenshotPage();
                     };
                     jVizzop.queue.add(doBind, this);
-                });
+                    return null;
+                }
             }
 
             /* Ponemos el focus donde toca*/
             jVizzop("[vizzop-focus]").removeAttr("vizzop-focus");
             jVizzop(':focus').attr('vizzop-focus', 'true');
+
+            //jVizzop(':focus').attr('style', 'border: solid 2px blue !important; background-color: solid 2px #aaaaff !important; box-shadow: 0 0 5px rgba(0, 0, 255, 1) !important;');
 
             jVizzop('input').each(function () {
                 jVizzop(this).attr('vizzop-value', jVizzop(this).val());
@@ -61,16 +67,8 @@
             });
             jVizzop('html').attr('vizzop-base', document.location.protocol + '//' + location.host);
 
-            return document.documentElement;
+            /*
 
-            var screenshot = document.documentElement.cloneNode(true);
-            
-            var elem = jVizzop(screenshot).find("[vizzop-focus]");
-            jVizzop(elem).attr('style', 'border: solid 2px blue !important; background-color: solid 2px #aaaaff !important; box-shadow: 0 0 5px rgba(0, 0, 255, 1) !important;');
-
-            jVizzop(screenshot).find('script').each(function () {
-                jVizzop(this).remove();
-            });
             jVizzop(screenshot).find('iframe').each(function () {
                 //jVizzop(this).empty();
                 var contents = jVizzop(this).attr('value');
@@ -93,64 +91,35 @@
                 }
                 jVizzop(this).hide();
             });
-            jVizzop(screenshot).find('noscript').each(function () {
-                jVizzop(this).remove();
-            });
+            */
 
-            // Use <base> to make anchors and other relative links absolute.
-            var b = document.createElement('base');
-            b.href = document.location.protocol + '//' + location.host;
-            var head = screenshot.querySelector('head');
-            head.insertBefore(b, head.firstChild);
-            return screenshot;
+            vizzop.screenshot = document.documentElement;
 
-        } catch (err) {
-            vizzoplib.log(err);
-            return null;
-        }
-    },
-    screenshotPage: function () {
-        try {
-            // 1. Rewrite current doc's imgs, css, and script URLs to be absolute before
-            // we duplicate. This ensures no broken links when viewing the duplicate.
-            //urlsToAbsolute(document.images);
-            //urlsToAbsolute(document.querySelectorAll("link[rel='stylesheet']"));
-
-            vizzop.screenshot = vizzoplib.prepareScreenShot();
-            var current_html = vizzop.screenshot.outerHTML;
-
-            //console.log(current_html);
+            if ((typeof vizzop.current_html == 'undefined') || (vizzop.current_html == null)) {
+                if ((typeof vizzop.temp_current_html == 'undefined') || (vizzop.temp_current_html == null)) {
+                    vizzop.temp_current_html = vizzop.screenshot.outerHTML;
+                }
+                var SCRIPT_REGEX = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi;
+                vizzop.temp_current_html = vizzop.temp_current_html.replace(SCRIPT_REGEX, "");
+                if (SCRIPT_REGEX.test(vizzop.temp_current_html)) {
+                    var self = this, doBind = function () {
+                        vizzoplib.screenshotPage();
+                    };
+                    jVizzop.queue.add(doBind, this);
+                    return null;
+                } else {
+                    vizzop.current_html = vizzop.temp_current_html;
+                    vizzop.temp_current_html = null;
+                }
+            }
 
             if (vizzop.HtmlSend_LastHtmlContents == null) {
                 vizzop.HtmlSend_LastHtmlContents = "";
             }
 
-            var objdiff = new diff_match_patch();
-            //console.log(vizzop.HtmlSend_LastHtmlContents);
-            //console.log(current_html);
-            var diffresult = objdiff.diff_main(vizzop.HtmlSend_LastHtmlContents, current_html);
 
-            for (var i in diffresult) {
-                var elem = diffresult[i];
-                //console.log(elem[1]);
-                //console.log(elem[1].length);
-                if (elem[0] == 0) {
-                    //Sustituimos el texto por el número de caracteres que hay que saltarse...
-                    elem[1] = elem[1].length;
-                } else if (elem[0] == -1) {
-                    //Sustituimos el texto por el número de caracteres que hay que eliminar...
-                    elem[1] = elem[1].length;
-                }
-            }
-
-            //console.log(diffresult);
-
-            vizzop.HtmlSend_LastHtmlContents = current_html;
-
-            return diffresult;
         } catch (err) {
             vizzoplib.log(err);
-            return null;
         }
     },
     isElementVisibleHelper: function (el) {
@@ -193,7 +162,6 @@
             var ratio = width / height;
             var browserwidth = jVizzop(window).width() - 40;
             var newwidth = ratio * jVizzop(box._boxscreenshare).outerHeight();
-            //console.log(jVizzop(box._boxscreenshare).outerHeight());
             if ((newwidth + jVizzop(box._col1).outerWidth() + jVizzop(box._col2).outerWidth()) > browserwidth) {
                 newwidth = browserwidth - jVizzop(box._col1).outerWidth() - jVizzop(box._col2).outerWidth();
             }
@@ -382,15 +350,12 @@
     },
     ReceivedMessageFromIframe: function (evt) {
         try {
-            //console.log(evt);
             var json = jVizzop.parseJSON(evt.data);
-            //console.log(unescape(json.html));
             if (json.vizzop) {
                 if (json.vizzop == true) {
                     switch (json.mode) {
                         case 'html':
                             jVizzop('#' + json.id).attr('value', unescape(json.html)); //escape()
-                            //console.log(jVizzop('#' + json.id));
                             jVizzop(vizzop).trigger("mutated");
                             break;
                         case 'event':
@@ -1068,15 +1033,12 @@ jVizzop(document).bind('ready.vizzop', function () {
         var id = window.frameElement.getAttribute("id");
         var screenshot = vizzoplib.prepareScreenShot();
         var current_html = screenshot.outerHTML;
-        //console.log(current_html);
-        //document.documentElement.outerHTML
         var data = {
             mode: 'html',
             vizzop: true,
             id: id,
             html: escape(current_html)
         }
-        //console.log(data);
         top.postMessage(JSON.stringify(data), "*");
     }
 
