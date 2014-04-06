@@ -927,6 +927,30 @@ namespace vizzopWeb.Controllers
             var head = screenshot.querySelector('head');
             head.insertBefore(b, head.firstChild);
                      */
+                    //jVizzop(':focus')
+                    //vizzop-focus
+                    //var focusnodes = doc.DocumentNode.SelectNodes("//*[@vizzop-focus]");
+                    var focusnodes = (from m in doc.DocumentNode.Descendants()
+                                      where m.Attributes.Contains("vizzop-focus")
+                                      select m);
+                    if (focusnodes != null)
+                    {
+                        foreach (HtmlNode nodo in focusnodes)
+                        {
+                            HtmlAttribute attr = (from m in nodo.Attributes
+                                                  where m.Name == "style"
+                                                  select m).FirstOrDefault();
+                            var value = "border: solid 2px blue !important; background-color: solid 2px #aaaaff !important; box-shadow: 0 0 5px rgba(0, 0, 255, 1) !important;'";
+                            if (attr == null)
+                            {
+                                nodo.Attributes.Add("style", value);
+                            }
+                            else
+                            {
+                                attr.Value += value;
+                            }
+                        }
+                    }
 
                     sc_control.CompleteHtml = doc.DocumentNode.OuterHtml;
 

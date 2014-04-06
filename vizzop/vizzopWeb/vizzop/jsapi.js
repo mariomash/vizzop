@@ -19,9 +19,8 @@
         return { w: d.body.clientWidth, h: d.body.clientHeight };
 
     },
-    screenshotPage: function () {
+    colocaZenId: function () {
         try {
-
             //Le ponemos a todo un ID...
             if (vizzop.CreateZenId == true) {
                 var sinId = jVizzop(':not([vizzop-id])');
@@ -43,12 +42,19 @@
                             }
                             jVizzop(sinId[0]).attr('vizzop-id', new_id);
                         }
-                        vizzoplib.screenshotPage();
+                        vizzoplib.colocaZenId();
                     };
                     jVizzop.queue.add(doBind, this);
-                    return null;
                 }
             }
+        } catch (err) {
+            vizzoplib.log(err);
+        }
+    },
+    screenshotPage: function () {
+        try {
+
+            vizzoplib.colocaZenId();
 
             /* Ponemos el focus donde toca*/
             jVizzop("[vizzop-focus]").removeAttr("vizzop-focus");

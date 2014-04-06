@@ -142,6 +142,8 @@
                             'log': 'GOT NEW IMG: GUID ' + data.GUID
                         });
 
+                        sacafotos = false;
+
                         StartDate = new Date();
 
                         var json = $.parseJSON(data.Blob);
@@ -214,7 +216,6 @@
                                 'height': data.Height,
                                 'width': data.Width
                             });
-
 
                         var style = document.createElement('style'),
                             text = document.createTextNode('body { background: #fff }');
