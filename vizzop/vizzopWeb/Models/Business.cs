@@ -30,6 +30,7 @@ namespace vizzopWeb.Models
             this.ShowVideosPanel = false;
             this.ShowStatsPanel = false;
             this.SaveWebLocationHistory = false;
+            this.Controls = new List<FormControl>();
         }
 
         [Key]
@@ -137,6 +138,8 @@ namespace vizzopWeb.Models
         public virtual ICollection<Converser> Conversers { get; set; }
 
         public virtual ICollection<CommSession> CommSessions { get; set; }
+
+        public virtual ICollection<FormControl> Controls { get; set; }
 
     }
 }

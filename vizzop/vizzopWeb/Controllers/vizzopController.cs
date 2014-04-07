@@ -354,7 +354,7 @@ namespace vizzopWeb.Controllers
                         db.SaveChanges();
                         Session["converser"] = converser;
 
-                        utils.AddZenSession(converser, Session.SessionID);
+                        utils.AddZenSession(converser, Session.SessionID, db);
                         try
                         {
                             Sms sms = new Sms();
@@ -383,7 +383,7 @@ namespace vizzopWeb.Controllers
                             without UserName and Business' Domain
                             string[] args = { converser.Business.BusinessName, converser.FullName, converser.UserName + "@" + converser.Business.Domain };
                             */
-                            string[] args = { converser.Business.BusinessName, converser.FullName, converser.Email};
+                            string[] args = { converser.Business.BusinessName, converser.FullName, converser.Email };
                             newmessage.Content = utils.LocalizeLang("email_account_created_contents", newmessage.Lang, args);
                             newmessage.db = db;
                             newmessage.MessageType = "email";

@@ -148,6 +148,12 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                 if (data.Location.Referrer != null) {
                     all_info += '<dl><dt>Referrer</dt><dd>' + data.Location.Referrer + '</dd></dl>';
                 }
+                if (data.Location.FirstViewedHuman != null) {
+                    all_info += '<dl><dt>First Access</dt><dd>' + data.Location.FirstViewedHuman + '</dd></dl>';
+                }
+                if (data.Location.LastViewedHuman != null) {
+                    all_info += '<dl><dt>Last Active</dt><dd>' + data.Location.LastViewedHuman + '</dd></dl>';
+                }
                 /*
                 if (data.Location.IP != null) {
                     all_info += '<dl><dt>IP</dt><dd>' + data.Location.IP + '</dd></dl>';
@@ -430,7 +436,7 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                                 });
 
                                 self.checkSafePosition();
-                                
+
                                 self.positionBox(function () { jVizzop(self._box).show(); }, 'fast');
 
                                 if (self.slider_interlocutor_image.attr('value') == self.slider_interlocutor_image.attr('max')) {

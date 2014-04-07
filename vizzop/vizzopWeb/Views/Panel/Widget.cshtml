@@ -4,12 +4,12 @@
     vizzopWeb.Utils utils = new vizzopWeb.Utils();
 }
 <div class="content-header">
-    <h1>Widget Settings
+    <h1>System Settings
     </h1>
 </div>
 <div id="breadcrumb">
     <a class="tip-bottom"><i class="icon-home"></i>
-        <span style="vertical-align: middle;">Control Panel</span></a><a style="vertical-align: middle;" class="current">Widget Settings</a>
+        <span style="vertical-align: middle;">Control Panel</span></a><a style="vertical-align: middle;" class="current">System Settings</a>
 </div>
 <div class="container-fluid">
     <div class="row-fluid">
@@ -18,14 +18,19 @@
                 <span class="icon">
                     <i class="icon-th"></i>
                 </span>
-                <h5>Widget Settings</h5>
+                <h5>System Settings</h5>
             </div>
-            <h4>Widget Settings</h4>
-            <br />
-            <h5>General Options</h5>
             <div id="WidgetSettings">
                 <form class="widget-content form-vertical">
+                    <!--
+                    <ul class="nav nav-pills">
+                        <li class="active"><a href="#">General Options</a></li>
+                        <li><a href="#">Co-Browsing Behaviour</a></li>
+                        <li><a href="#">Widget Appearance</a></li>
+                    </ul>
+                    -->
                     <div style="clear: both;">
+                        <h5>General Options</h5>
                         <div class="control-group">
                             <div class="controls">
                                 <span style="display: inline-block; vertical-align: middle; margin-right: 5px;">
@@ -55,8 +60,55 @@
                         </div>
                     </div>
                     <hr />
-                    <div style="width: 420px; vertical-align: top; display: inline-block; border-right: solid 1px #ddd; padding-right: 20px;">
-                        <h5>Help Button Options</h5>
+                    <div style="clear: both;">
+                        <h5>Co-Browsing Behaviour</h5>
+                        <div>
+                            <strong>HTML controls excluded from recording</strong>. Add here the CSS selectors of the private controls, so their contents are changed into asterisks
+                        </div>
+                        <br />
+                        <div class="control-group">
+                            <div class="controls">
+                                <div>
+                                    <span style="display: inline-block; vertical-align: middle; margin-right: 5px;">
+                                        <input type="text" id="new_excluded" style="width: 238px;" />
+                                    </span>
+                                    <label for="new_excluded" style="display: inline-block; vertical-align: middle; margin: 0;">
+                                        <a class="vizzop-btn" onclick="javascript:Controls_Add_New();">add new</a>
+                                    </label>
+                                </div>
+                                <div style="margin-top: 5px;">
+                                    <span style="display: inline-block; vertical-align: top; margin-right: 5px;">
+                                        @{
+                                            var ControlsList = new List<string>();
+                                            foreach (var obj in Model.Controls)
+                                            {
+                                                ControlsList.Add(obj.Name);
+                                            }
+                                        }
+                                        @Html.ListBoxFor(model => model.Controls,
+                                    new MultiSelectList(ControlsList),
+                                    new
+                                    {
+                                        id = "Controls",
+                                        Multiple = "multiple",
+                                        Size = 10,
+                                        style = "width: 250px;"
+                                    })
+                                    </span>
+
+                                    <label for="Controls" style="display: inline-block; vertical-align: top; margin: 0;">
+                                        <div>
+                                            <a class="vizzop-btn vizzop-btn-warning" onclick="javascript:$('#Controls option:selected').remove();">remove selected</a>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <!--border-right: solid 1px #ddd; -->
+                    <div style="width: 420px; vertical-align: top; display: inline-block; padding-right: 20px;">
+                        <h5>Widget Appearance</h5>
                         <div style="width: 210px; display: inline-block; vertical-align: top;">
                             <div class="control-group">
                                 @Html.LabelFor(model => model.WidgetBackgroundColor, new { @class = "control-label" })
@@ -93,9 +145,9 @@
                     </div>
                     <div style="width: 300px; vertical-align: top; display: inline-block; padding-left: 20px;">
                         <div class="control-group-">
-                            <h5>Help Button Preview</h5>
+                            <h5>Preview</h5>
                         </div>
-                        <div style="width: 500px; height: 250px; background-color: #fafafa; position: relative; overflow: hidden; border: 1px solid #CCCCCC;">
+                        <div style="width: 500px; height: 250px; background-color: #fafafa; position: relative; overflow: hidden; border: 1px solid #DDD;">
                             <div style="width: 500px; position: absolute; bottom: 30px; left: 30px; top: auto; right: auto; text-align: justify; color: #bbbbbb;">
                                 <p>
                                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer volutpat fringilla ipsum. Curabitur facilisis nulla quis vulputate tincidunt. Aenean auctor libero libero, id interdum ipsum blandit non. Suspendisse mi tellus, suscipit et felis id, pulvinar feugiat mauris. Pellentesque scelerisque urna bibendum nisl feugiat pretium id non metus. Vestibulum laoreet justo id semper commodo. Nullam cursus convallis felis in tristique. Sed id lorem erat. Phasellus elementum risus at turpis suscipit, non accumsan nunc faucibus.
@@ -121,7 +173,9 @@
                     <div class="form-actions">
                         <div class="control-group-">
                             <a class="vizzop-btn vizzop-btn-primary" onclick="javascript:save_changes();">Save Changes</a>
+                            <!--
                             <a class="vizzop-btn" onclick="javascript:set_defaults();">Reset to Defaults</a>
+                                -->
                         </div>
                     </div>
                 </form>
@@ -140,6 +194,17 @@
     </div>
 </div>
 <script type="text/javascript">
+
+    function Controls_Add_New() {
+        var val = $('#new_excluded').val(); 
+        var existence = $('#Controls option[value="' + val + '"]'); 
+        if((val != null) && (val != '') && (existence.length < 1)) { 
+            var opt = $('<option></option>').text(val).val(val);
+            $('#Controls').prepend(opt);
+            $('#new_excluded').val('');
+        };
+    }
+
     var default_bg = '@Model.WidgetBackgroundColor';
     var default_fb = '@Model.WidgetForegroundColor';
     var default_border = '@Model.WidgetBorderColor';
@@ -214,9 +279,15 @@
     }
     function save_changes() {
         try {
-            $("WidgetSettings").hide();
-            $("WidgetLoading").show();
+            $("#WidgetSettings").hide();
+            $("#WidgetLoading").show();
             //vizzoplib.log(interlocutor);
+            var Controls = [];
+            $("#Controls option").each(function()
+            {
+                Controls.push($(this).val());
+            });
+
             var msg = {
                 'WidgetBackgroundColor': $('#WidgetBackgroundColor').val(),
                 'WidgetForegroundColor': $('#WidgetForegroundColor').val(),
@@ -224,7 +295,8 @@
                 'WidgetText': $('#WidgetText').val(),
                 'BusinessHours': $('#BusinessHours').val(),
                 'AllowJsApiLoading': $('#AllowJsApiLoading').is(':checked'),
-                'ShowHelpButton': $('#ShowHelpButton').is(':checked')
+                'ShowHelpButton': $('#ShowHelpButton').is(':checked'),
+                'Controls': JSON.stringify(Controls)
             };
             var url = "../Panel/SaveWidgetSettings";
             var post = jVizzop.ajax({
@@ -235,8 +307,8 @@
                 beforeSend: function (xhr) {
                 },
                 success: function (data) {
-                    $("WidgetSettings").show();
-                    $("WidgetLoading").hide();
+                    $("#WidgetSettings").show();
+                    $("#WidgetLoading").hide();
                     if (data == true) {
                         alert("changes saved");
                     } else {
@@ -244,8 +316,8 @@
                     }
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
-                    $("WidgetSettings").show();
-                    $("WidgetLoading").hide();
+                    $("#WidgetSettings").show();
+                    $("#WidgetLoading").hide();
                     vizzoplib.logAjax(url, msg, jqXHR);
                 }
             });

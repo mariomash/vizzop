@@ -83,6 +83,9 @@ namespace vizzopWeb
                     return;
                 }
 
+                //business.PrivateControls.Add("eoeo");
+                //db.SaveChanges();
+
                 string Me = "null";
                 string webname = "vizzop";
                 if (business.BusinessName != null) { webname = business.BusinessName; }
@@ -543,6 +546,14 @@ namespace vizzopWeb
                                                       where m.Name == CreateZenIdSetting
                                                       select m).FirstOrDefault().Value);
 
+                var ControlsList = new List<String>();
+                foreach (var obj in business.Controls)
+                {
+                    ControlsList.Add(obj.Name);
+                }
+
+                string Controls = oSerializer.Serialize(ControlsList);
+
 
                 string vizzop = @"
 var vizzop = {
@@ -603,7 +614,8 @@ var vizzop = {
     BusinessHours: " + BusinessHours + @",
     WSchat: null,
     WSscreen: null,
-    IsInFrame: false
+    IsInFrame: false,
+    Controls: " + Controls + @",
 };";
 
 

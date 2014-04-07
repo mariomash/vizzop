@@ -865,9 +865,9 @@ namespace vizzopWeb.Controllers
                     {
                         foreach (HtmlNode node in TextareaNodes)
                         {
-                            if (node.Attributes["value"] != null)
+                            if (node.Attributes["vizzop-value"] != null)
                             {
-                                var textnode = HtmlNode.CreateNode(node.Attributes["value"].Value);
+                                var textnode = HtmlNode.CreateNode(node.Attributes["vizzop-value"].Value);
                                 if (textnode != null)
                                 {
                                     node.AppendChild(textnode);
@@ -876,6 +876,24 @@ namespace vizzopWeb.Controllers
                         }
                     }
 
+                    var inputs = doc.DocumentNode.SelectNodes("//input");
+                    if (inputs != null)
+                    {
+                        foreach (HtmlNode node in inputs)
+                        {
+                            if (node.Attributes["vizzop-value"] != null)
+                            {
+                                if (node.Attributes.Contains("value") == false)
+                                {
+                                    node.Attributes.Add("value", node.Attributes["vizzop-value"].Value);
+                                }
+                                else
+                                {
+                                    node.Attributes["value"].Value = node.Attributes["vizzop-value"].Value;
+                                }
+                            }
+                        }
+                    }
 
                     var IframeNodes = doc.DocumentNode.SelectNodes("//iframe");
                     if (IframeNodes != null)

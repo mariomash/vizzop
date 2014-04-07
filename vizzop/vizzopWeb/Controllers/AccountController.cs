@@ -283,7 +283,7 @@ namespace vizzopWeb.Controllers
                     Utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/LogOnOK/" + logon.Email);
 
                     Session["converser"] = converser;
-                    utils.AddZenSession(converser, Session.SessionID);
+                    utils.AddZenSession(converser, Session.SessionID, db);
 
                     try
                     {

@@ -650,7 +650,7 @@
             "aoColumns": [
                 { "sTitle": "ID", "bSearchable": false, "bVisible": true, "bSortable": false, "sWidth": "35px" },
                 {
-                    "sTitle": "Screenshot", "bSortable": false, "bSearchable": false, "sWidth": "100px", "bVisible": true,
+                    "sTitle": "Screenshot", "bSortable": false, "bSearchable": false, "sWidth": "150px", "bVisible": true,
                     "fnRender": function (oObj) {
                         var imgSrc = "";
                         try {
@@ -660,9 +660,9 @@
                         } catch (_err) {
                         }
                         if ((imgSrc == null) || (imgSrc == '')) {
-                            return '<div style="position: relative; width: 90px; height: 90px;"></div>';
+                            return '<div style="position: relative; width: 140px; height: 90px;"></div>';
                         } else {
-                            return '<div style="position: relative; width: 90px; height: 90px;"><img src="' + imgSrc + '"/></div>';
+                            return '<div style="position: relative; width: 140px; height: 90px;"><img src="' + imgSrc + '"/></div>';
                         }
                     }
                 },
@@ -710,8 +710,10 @@
                     }
                 },
                 { "sTitle": "Referrer", "sWidth": "200px", "bVisible": false },
-                { "sTitle": "TimeStamp", "bSearchable": false, "bVisible": false, "bSortable": false },
-                { "sTitle": "Last Active", "bSearchable": false, "bSortable": false, "sWidth": "100px" },
+                { "sTitle": "First Access Machine", "bSearchable": false, "bVisible": false, "sType": "date" },
+                { "sTitle": "First Access", "bSearchable": false, "bVisible": true, "sType": "date", "iDataSort": 9, "sWidth": "100px" },
+                { "sTitle": "Last Active Machine", "bSearchable": false, "bVisible": false, "sType": "date" },
+                { "sTitle": "Last Active", "bSearchable": false, "bVisible": true, "sType": "date", "iDataSort": 11, "sWidth": "100px" },
                 { "sTitle": "Name", "bSearchable": false, "bVisible": false, "bSortable": false },
                 { "sTitle": "UserName", "bSearchable": false, "bVisible": false, "bSortable": false },
                 { "sTitle": "Domain", "bSearchable": false, "bVisible": false, "bSortable": false },
@@ -727,14 +729,14 @@
         //rt_updatetable();
         $("#realtime_table tbody tr").live("click", function (event) {
             var id = rt_oTable.fnGetData(this)[0];
-            var fullname = rt_oTable.fnGetData(this)[11];
+            var fullname = rt_oTable.fnGetData(this)[13];
             if (fullname == "-") {
                 fullname = '@utils.LocalizeLang("anon_client", utils.GetLang(Context), null)';
         }
-            var username = rt_oTable.fnGetData(this)[12];
-            var domain = rt_oTable.fnGetData(this)[13];
-            var password = rt_oTable.fnGetData(this)[14];
-            var windowname = rt_oTable.fnGetData(this)[15];
+            var username = rt_oTable.fnGetData(this)[14];
+            var domain = rt_oTable.fnGetData(this)[15];
+            var password = rt_oTable.fnGetData(this)[16];
+            var windowname = rt_oTable.fnGetData(this)[17];
             var scrwidth = rt_oTable.fnGetData(this)[2];
             //console.log(scrwidth);
             if (vizzop.Daemon != null) {

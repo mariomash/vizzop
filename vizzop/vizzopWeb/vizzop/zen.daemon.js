@@ -2050,8 +2050,6 @@ var Daemon = jVizzop.zs_Class.create({
 
                         //Lo dejamos bloqueado con esta petición... dado que ya tenemos lo que buscábamos
                         vizzop.CommRequest_InCourse = true;
-                        //self.GetAllMessagesFromInterlocutor(data.UserName, data.Business.Domain);
-                        //box.GetAllDetailsFromCommSession();
                         self.GetOpenTokSessionID(self._commsessionid);
                     } catch (err) {
                         vizzoplib.log(err);

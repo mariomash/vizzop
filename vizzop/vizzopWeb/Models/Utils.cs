@@ -1493,7 +1493,7 @@ namespace vizzopWeb
             return return_sc;
         }
 
-        public Bitmap PrepareScreenToReturn(ScreenCapture sc, string height, string width, bool withdata)
+        public Bitmap PrepareScreenToReturn(ScreenCapture sc, string width, string height, bool withdata)
         {
             Bitmap bitImage = null;
             try
@@ -1572,7 +1572,7 @@ namespace vizzopWeb
                 else
                 {
                     ThumbCreator thumb = new ThumbCreator();
-                    bitImage = thumb.Resize(target, Convert.ToInt16(height), Convert.ToInt16(width), ThumbCreator.VerticalAlign.Top, ThumbCreator.HorizontalAlign.Left);
+                    bitImage = thumb.Resize(target, Convert.ToInt16(height), Convert.ToInt16(width), ThumbCreator.VerticalAlign.Top, ThumbCreator.HorizontalAlign.Middle);
                 }
             }
             catch (Exception e)
@@ -2217,6 +2217,10 @@ namespace vizzopWeb
                     {
                         if (sc_control.CompleteHtml != null)
                         {
+                            if (Convert.ToInt32(contents) > sc_control.CompleteHtml.Length)
+                            {
+                                contents = sc_control.CompleteHtml.Length.ToString();
+                            }
                             sc_control.CompleteHtml = sc_control.CompleteHtml.Remove(0, Convert.ToInt32(contents));
                         }
                     }
@@ -2938,20 +2942,24 @@ namespace vizzopWeb
             }
         }
 
-        public void AddZenSession(Converser Converser, string SessionID)
+        public void AddZenSession(Converser Converser, string SessionID, vizzopContext _db)
         {
-            vizzopContext db = new vizzopContext();
+            if (_db == null)
+            {
+                _db = db;
+            }
+
             try
             {
-                var newconverser = (from m in db.Conversers
+                var newconverser = (from m in _db.Conversers
                                     where m.ID == Converser.ID
                                     select m).FirstOrDefault();
                 if (newconverser != null)
                 {
                     var newLoginAction = new LoginAction();
                     newLoginAction.Converser = newconverser;
-                    db.LoginActions.Add(newLoginAction);
-                    db.SaveChanges();
+                    _db.LoginActions.Add(newLoginAction);
+                    _db.SaveChanges();
                 }
             }
             catch (Exception e)
@@ -2960,18 +2968,18 @@ namespace vizzopWeb
             }
             try
             {
-                var ses = (from m in db.ZenSessions
+                var ses = (from m in _db.ZenSessions
                            where m.Converser.ID == Converser.ID
                            select m).FirstOrDefault();
                 if (ses != null)
                 {
                     ses.sessionID = SessionID;
                     ses.TimeStamp = DateTime.Now;
-                    db.SaveChanges();
+                    _db.SaveChanges();
                 }
                 else
                 {
-                    var newconverser = (from m in db.Conversers
+                    var newconverser = (from m in _db.Conversers
                                         where m.ID == Converser.ID
                                         select m).FirstOrDefault();
                     if (newconverser != null)
@@ -2980,8 +2988,8 @@ namespace vizzopWeb
                         newses.sessionID = SessionID;
                         newses.Converser = newconverser;
                         newses.TimeStamp = DateTime.Now;
-                        db.ZenSessions.Add(newses);
-                        db.SaveChanges();
+                        _db.ZenSessions.Add(newses);
+                        _db.SaveChanges();
                     }
                 }
             }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
 using vizzopWeb.Models;
 //using Microsoft.Web.Mvc.Resources;
 
@@ -126,7 +127,7 @@ namespace vizzopWeb.Controllers
 #else                    
         [RequireHttps]
 #endif
-        public ActionResult SaveWidgetSettings(string WidgetBackgroundColor, string WidgetForegroundColor, string WidgetBorderColor, string WidgetText, string BusinessHours, string AllowJsApiLoading, string ShowHelpButton)
+        public ActionResult SaveWidgetSettings(string WidgetBackgroundColor, string WidgetForegroundColor, string WidgetBorderColor, string WidgetText, string BusinessHours, string AllowJsApiLoading, string ShowHelpButton, string Controls)
         {
 
             Converser converser = new Converser();
@@ -175,6 +176,30 @@ namespace vizzopWeb.Controllers
                     if (ShowHelpButton != null)
                     {
                         business.ShowHelpButton = Convert.ToBoolean(ShowHelpButton);
+                    }
+
+                    business.Controls.Clear();
+                    if (Controls != null)
+                    {
+                        var arrControls = new JavaScriptSerializer().Deserialize<List<string>>(Controls);
+                        if (arrControls.Count > 0)
+                        {
+                            foreach (var str in arrControls)
+                            {
+                                var control = new FormControl();
+                                control.Name = str;
+                                business.Controls.Add(control);
+                                /*
+                                var existence = (from m in business.Controls
+                                                 where m.Name == str
+                                                 select m).FirstOrDefault();
+                                if (existence == null)
+                                {
+
+                                }
+                                 */
+                            }
+                        }
                     }
 
                     //db.Entry(converser).State = EntityState.Modified;
