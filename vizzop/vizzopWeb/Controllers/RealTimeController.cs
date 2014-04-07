@@ -355,8 +355,10 @@ namespace vizzopWeb.Controllers
                             loc.Lang = wl.Lang;
                             loc.Ubication = wl.Ubication;
                             loc.UserAgent = wl.UserAgent;
-                            loc.TimeStamp = wl.TimeStamp_Last;
-                            loc.LastViewed = utils.GetPrettyDate(wl.TimeStamp_Last).ToString();
+                            loc.FirstViewed = wl.TimeStamp_First;
+                            loc.FirstViewedHuman = utils.GetPrettyDate(wl.TimeStamp_First);
+                            loc.LastViewed = wl.TimeStamp_Last;
+                            loc.LastViewedHuman = utils.GetPrettyDate(wl.TimeStamp_Last).ToString();
                             loc.UserName = wl.UserName;
                             loc.Domain = wl.Domain;
                             loc.Password = wl.Password;
@@ -383,8 +385,10 @@ namespace vizzopWeb.Controllers
                         x.Ubication,
                         x.UserAgent,
                         x.Referrer, 
-                        x.TimeStamp.ToString(),
-                        x.LastViewed,
+                        x.FirstViewed.ToString("o"),
+                        x.FirstViewedHuman,
+                        x.LastViewed.ToString("o"),
+                        x.LastViewedHuman,
                         x.FullName,
                         x.UserName,
                         x.Domain,
@@ -395,11 +399,11 @@ namespace vizzopWeb.Controllers
 
                     foreach (var item in aaData)
                     {
-                        ScreenCapture sc = utils.GetScreenCapture(item[12], item[13], item[15]);
+                        ScreenCapture sc = utils.GetScreenCapture(item[14], item[15], item[17]);
                         if (sc != null)
                         {
                             item[1] = "data:image/jpg;base64," + utils.ImageToJpegBase64(
-                                utils.PrepareScreenToReturn(sc, "90", "90", false), 90L
+                                utils.PrepareScreenToReturn(sc, "140", "90", false), 90L
                                 );
                             item[2] = sc.Width.ToString();
                             item[3] = sc.Height.ToString();

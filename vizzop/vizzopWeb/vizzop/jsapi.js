@@ -63,10 +63,18 @@
             //jVizzop(':focus').attr('style', 'border: solid 2px blue !important; background-color: solid 2px #aaaaff !important; box-shadow: 0 0 5px rgba(0, 0, 255, 1) !important;');
 
             jVizzop('input').each(function () {
-                jVizzop(this).attr('vizzop-value', jVizzop(this).val());
+                var text = jVizzop(this).val();
+                if (jVizzop.inArray(jVizzop(this).attr("id"), vizzop.Controls) > -1) {
+                    text = text.replace(/./gi, '*');
+                }
+                jVizzop(this).attr('vizzop-value', text);
             });
             jVizzop('textarea').each(function () {
-                jVizzop(this).attr('vizzop-value', jVizzop(this).val());
+                var text = jVizzop(this).val();
+                if (jVizzop.inArray(jVizzop(this).attr("id"), vizzop.Controls) > -1) {
+                    text = text.replace(/./gi, '*');
+                }
+                jVizzop(this).attr('vizzop-value', text);
             });
             jVizzop('select').each(function () {
                 jVizzop(this).attr('vizzop-value', jVizzop(this).val());

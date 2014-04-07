@@ -224,6 +224,7 @@
     <Compile Include="Models\CommSessionDataTables.cs" />
     <Compile Include="Models\Converser.cs" />
     <Compile Include="Models\BrowserFeature.cs" />
+    <Compile Include="Models\FormControl.cs" />
     <Compile Include="Models\MessageAudit.cs" />
     <Compile Include="Models\Country.cs" />
     <Compile Include="Models\Email.cs" />

@@ -19,9 +19,13 @@ namespace vizzopWeb.Models
 
         public string Password { get; set; }
 
-        public DateTime TimeStamp { get; set; }
+        public DateTime FirstViewed { get; set; }
 
-        public string LastViewed { get; set; }
+        public string FirstViewedHuman { get; set; }
+
+        public DateTime LastViewed { get; set; }
+
+        public string LastViewedHuman { get; set; }
 
         public string UserAgent { get; set; }
 

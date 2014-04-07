@@ -397,8 +397,10 @@ namespace vizzopWeb.Controllers
                         returnlocation.Lang = current_location.Lang;
                         returnlocation.Ubication = current_location.Ubication;
                         returnlocation.UserAgent = current_location.UserAgent;
-                        returnlocation.TimeStamp = current_location.TimeStamp_Last;
-                        returnlocation.LastViewed = utils.GetPrettyDate(current_location.TimeStamp_Last).ToString();
+                        returnlocation.FirstViewed = current_location.TimeStamp_Last;
+                        returnlocation.FirstViewedHuman = utils.GetPrettyDate(current_location.TimeStamp_Last);
+                        returnlocation.LastViewed = current_location.TimeStamp_Last;
+                        returnlocation.LastViewedHuman = utils.GetPrettyDate(current_location.TimeStamp_Last).ToString();
                         returnlocation.UserName = current_location.UserName;
                         returnlocation.Domain = current_location.Domain;
                         returnlocation.Password = current_location.Password;
