@@ -111,21 +111,6 @@ namespace vizzopWeb.Models
                 this.utils = null;
                 string key = "screenshot_from_" + this.converser.UserName + "@" + this.converser.Business.Domain + "@" + this.WindowName;
 
-                Task.Factory.StartNew(() =>
-                {
-                    try
-                    {
-                        string keythumb = "thumbnail_from_" + this.converser.UserName + "@" + this.converser.Business.Domain + "@" + this.WindowName;
-                        string data = "data:image/jpg;base64," + utils.ImageToJpegBase64(utils.PrepareScreenToReturn(this, "140", "90", false), 90L);
-                        SingletonCache.Instance.Insert(keythumb, data);
-                    }
-                    catch (Exception __ex)
-                    {
-                        Utils _utils = new Utils();
-                        _utils.GrabaLogExcepcion(__ex);
-                    }
-                });
-
                 //SingletonCache.Instance.Insert(key + "_penultimate", SingletonCache.Instance.Get(key));
 
                 /*
@@ -174,7 +159,24 @@ namespace vizzopWeb.Models
                                         utils.GrabaLog(Utils.NivelLog.info, " Imagen ingresada a cache");
                     #endif
                     */
+
+                    Task.Factory.StartNew(() =>
+                    {
+                        Utils _utils = new Utils();
+                        try
+                        {
+                            string keythumb = "thumbnail_from_" + this.converser.UserName + "@" + this.converser.Business.Domain + "@" + this.WindowName;
+                            string data = "data:image/jpg;base64," + _utils.ImageToJpegBase64(_utils.PrepareScreenToReturn(this, "140", "90", false), 90L);
+                            SingletonCache.Instance.Insert(keythumb, data);
+                        }
+                        catch (Exception __ex)
+                        {
+                            _utils.GrabaLogExcepcion(__ex);
+                        }
+                    });
+
                     return SingletonCache.Instance.Insert(key, this);
+
                 }
 
                 return true;
