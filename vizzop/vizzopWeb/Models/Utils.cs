@@ -1631,12 +1631,40 @@ namespace vizzopWeb
             }
         }
 
+        public string GetScreenCaptureThumbnail(string UserName, string Domain, string WindowName)
+        {
+            string thumb = null;
+
+            try
+            {
+                /*
+                 * Nos traemos la fotico (si la hay)
+                 */
+                string key = "thumbnail_from_" + UserName + "@" + Domain + "@" + WindowName;
+                object result = SingletonCache.Instance.Get(key);
+                //object result = SingletonCache.Instance.GetWithLock(key, out lockHandle);
+
+                if (result != null)
+                {
+                    thumb = (string)result;
+                }
+
+            }
+            catch (Exception e)
+            {
+                GrabaLogExcepcion(e);
+            }
+
+            return thumb;
+        }
+
         public ScreenCapture GetScreenCapture(string UserName, string Domain, string WindowName)
         {
             ScreenCapture sc = null;
 
             try
             {
+                //Esto se ejecuta en segundo plano
                 CheckIfCaptureProcessMustBeAddedToSc_Control(UserName, Domain, WindowName);
 
                 /*
@@ -1934,6 +1962,7 @@ namespace vizzopWeb
 
                         ScreenCapture new_screencapture = new ScreenCapture();
 
+                        new_screencapture.ReceivedOn = DateTime.UtcNow;
                         new_screencapture.converser = converser;
                         new_screencapture.Headers = headers;
 
@@ -2030,7 +2059,7 @@ namespace vizzopWeb
                                 if (dict["date"].ToString() != "null")
                                 {
                                     //Se guarda como UTC
-                                    new_screencapture.CreatedOn = DateTime.Parse(dict["date"].ToString());
+                                    new_screencapture.CreatedOn = DateTime.Parse(dict["date"].ToString()).ToUniversalTime();
                                 }
                             }
                         }
@@ -3261,6 +3290,7 @@ namespace vizzopWeb
                             sc.Data = strBase64;
                             sc.Blob = sc_control.CompleteHtml;
                             sc.GUID = Guid.NewGuid().ToString();
+                            sc.PicturedOn = DateTime.UtcNow;
                             SaveScreenCapture(sc_control.UserName, sc_control.Password, sc_control.Domain, sc, null);
 
                         }

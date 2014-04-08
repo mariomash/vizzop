@@ -384,7 +384,7 @@ namespace vizzopWorker
             try
             {
 
-                Bitmap bitmap = utils.PrepareScreenToReturn(captureToCreate, null, "800", true);
+                Bitmap bitmap = utils.PrepareScreenToReturn(captureToCreate, "800", null, true);
                 //Bitmap bm3 = new Bitmap(bitmap);
 
                 MemoryStream MemStream = new MemoryStream();

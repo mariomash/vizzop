@@ -1667,7 +1667,10 @@ var Daemon = jVizzop.zs_Class.create({
             var sl = jVizzop(window).scrollLeft();
 
             DateUTC = new Date();
+            //DateUTC = DateUTC.toUTCString();
+            /*
             DateUTC.setHours(DateUTC.getHours() - DateUTC.getTimezoneOffset() / 60);
+            */
 
             var size = vizzoplib.getViewportSize();
 

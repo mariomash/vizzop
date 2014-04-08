@@ -422,7 +422,7 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                             }
                             */
                             self._boxscreenshareposition
-                                .text(data.CreatedOn + " - " + data.Url);
+                                .text(data.CreatedOn + " / " + data.ReceivedOn + " / " + data.PicturedOn + " / " + data.ServedOn + " : " + data.LatencyInMs + "ms");
 
                             vizzoplib.ResizeWidthLikeImg(self, data.Data, function resize(newwidth, newimg) {
                                 jVizzop(newimg)

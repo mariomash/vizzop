@@ -160,16 +160,21 @@ namespace vizzopWeb.Controllers
                 }
                 else
                 {
-
                     return Json(new
                     {
                         UserName = sc.converser.UserName,
                         Domain = sc.converser.Business.Domain,
                         WindowName = sc.WindowName,
                         GUID = sc.GUID,
-                        CreatedOn = sc.CreatedOn.ToLocalTime().ToString("G"),
+                        CreatedOn = sc.CreatedOn.ToString("HH:mm:ss:ff"),
+                        ReceivedOn = sc.ReceivedOn.ToString("HH:mm:ss:ff"),
+                        PicturedOn = sc.PicturedOn.ToString("HH:mm:ss:ff"),
+                        ServedOn = DateTime.UtcNow.ToString("HH:mm:ss:ff"),
+                        LatencyInMs = (DateTime.UtcNow.Subtract(sc.CreatedOn)).TotalMilliseconds,
                         Url = sc.Url,
-                        Data = "data:image/jpg;base64," + utils.ImageToJpegBase64(utils.PrepareScreenToReturn(sc, height, width, false), 90L)
+                        Data = "data:image/jpg;base64," + utils.ImageToJpegBase64(utils.PrepareScreenToReturn(sc, width, height, false), 60L),
+                        ScrollLeft = sc.ScrollLeft,
+                        ScrollTop = sc.ScrollTop
                     }, JsonRequestBehavior.AllowGet);
                 }
             }
@@ -210,7 +215,7 @@ namespace vizzopWeb.Controllers
                         GUID = sc.GUID,
                         CreatedOn = sc.CreatedOn.ToLocalTime().ToString("G"),
                         Url = sc.Url,
-                        Data = "data:image/jpg;base64," + utils.ImageToJpegBase64(utils.PrepareScreenToReturn(sc, height, width, false), 75L)
+                        Data = "data:image/jpg;base64," + utils.ImageToJpegBase64(utils.PrepareScreenToReturn(sc, width, height, false), 75L)
                     }, JsonRequestBehavior.AllowGet);
                 }
             }
@@ -399,12 +404,19 @@ namespace vizzopWeb.Controllers
 
                     foreach (var item in aaData)
                     {
+                        string thumb = utils.GetScreenCaptureThumbnail(item[14], item[15], item[17]);
+                        if (thumb != null)
+                        {
+                            item[1] = thumb;
+                        }
                         ScreenCapture sc = utils.GetScreenCapture(item[14], item[15], item[17]);
                         if (sc != null)
                         {
+                            /*
                             item[1] = "data:image/jpg;base64," + utils.ImageToJpegBase64(
                                 utils.PrepareScreenToReturn(sc, "140", "90", false), 90L
                                 );
+                             * */
                             item[2] = sc.Width.ToString();
                             item[3] = sc.Height.ToString();
                         }

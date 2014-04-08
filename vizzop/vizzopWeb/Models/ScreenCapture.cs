@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace vizzopWeb.Models
 {
@@ -63,6 +64,10 @@ namespace vizzopWeb.Models
         [Required]
         public DateTime CreatedOn { get; set; }
 
+        public DateTime ReceivedOn { get; set; }
+
+        public DateTime PicturedOn { get; set; }
+
         [Required]
         public string GUID { get; set; }
 
@@ -106,6 +111,20 @@ namespace vizzopWeb.Models
                 this.utils = null;
                 string key = "screenshot_from_" + this.converser.UserName + "@" + this.converser.Business.Domain + "@" + this.WindowName;
 
+                Task.Factory.StartNew(() =>
+                {
+                    try
+                    {
+                        string keythumb = "thumbnail_from_" + this.converser.UserName + "@" + this.converser.Business.Domain + "@" + this.WindowName;
+                        string data = "data:image/jpg;base64," + utils.ImageToJpegBase64(utils.PrepareScreenToReturn(this, "140", "90", false), 90L);
+                        SingletonCache.Instance.Insert(keythumb, data);
+                    }
+                    catch (Exception __ex)
+                    {
+                        Utils _utils = new Utils();
+                        _utils.GrabaLogExcepcion(__ex);
+                    }
+                });
 
                 //SingletonCache.Instance.Insert(key + "_penultimate", SingletonCache.Instance.Get(key));
 
