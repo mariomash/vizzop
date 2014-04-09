@@ -92,11 +92,11 @@
                     } else {
                         rt_tabledata = [];
                     }
-                    rt_Reloading_InCourse = null;
                     $('#RealtimeReportLoading').hide();
                     $('#RealtimeReportResults').show();
                     rt_updatetable();
                     //rt_drawchart();
+                    rt_Reloading_InCourse = null;
                     rt_Countdown();
                 },
                 error: function (jqXHR, textStatus, errorThrown) {

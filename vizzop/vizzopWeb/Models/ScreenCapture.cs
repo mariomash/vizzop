@@ -16,6 +16,8 @@ namespace vizzopWeb.Models
         {
             this.GUID = Guid.NewGuid().ToString();
             this.CreatedOn = DateTime.UtcNow;
+            this.ReceivedOn = DateTime.UtcNow;
+            this.PicturedOn = DateTime.UtcNow;
         }
 
         [NonSerialized]
@@ -166,7 +168,7 @@ namespace vizzopWeb.Models
                         try
                         {
                             string keythumb = "thumbnail_from_" + this.converser.UserName + "@" + this.converser.Business.Domain + "@" + this.WindowName;
-                            string data = "data:image/jpg;base64," + _utils.ImageToJpegBase64(_utils.PrepareScreenToReturn(this, "140", "90", false), 90L);
+                            string data = "data:image/jpg;base64," + _utils.ImageToJpegBase64(_utils.PrepareScreenToReturn(this, "140", "90", false), 40L);
                             SingletonCache.Instance.Insert(keythumb, data);
                         }
                         catch (Exception __ex)

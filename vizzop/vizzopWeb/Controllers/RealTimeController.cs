@@ -119,6 +119,78 @@ namespace vizzopWeb.Controllers
 #else
         [RequireHttps]
 #endif
+        public ActionResult GetScreenHtml(string UserName, string Domain, string WindowName, string guid)
+        {
+            try
+            {
+
+                ScreenCapture sc = null;
+                TimeZone localZone = TimeZone.CurrentTimeZone;
+                DateTime start_time = DateTime.Now;
+                Boolean CaptureCheck = false;
+                while (CaptureCheck == false)
+                {
+                    sc = utils.GetScreenCaptureHtml(UserName, Domain, WindowName);
+                    if (sc != null)
+                    {
+                        if ((sc.GUID != guid) || (DateTime.Now > start_time.AddSeconds(20)))
+                        {
+                            CaptureCheck = true;
+                        }
+                        else
+                        {
+                            Thread.Sleep(TimeSpan.FromMilliseconds(5));
+                        }
+                    }
+                    else
+                    {
+                        if (DateTime.Now > start_time.AddSeconds(20))
+                        {
+                            CaptureCheck = true;
+                        }
+                        else
+                        {
+                            Thread.Sleep(TimeSpan.FromMilliseconds(5));
+                        }
+                    }
+                }
+                if (sc == null)
+                {
+                    return Json(false);
+                }
+                else
+                {
+                    return Json(new
+                    {
+                        UserName = UserName,
+                        Domain = Domain,
+                        WindowName = sc.WindowName,
+                        GUID = sc.GUID,
+                        CreatedOn = sc.CreatedOn.ToString("HH:mm:ss:ff"),
+                        ReceivedOn = sc.ReceivedOn.ToString("HH:mm:ss:ff"),
+                        LatencyInMs = (DateTime.UtcNow - sc.CreatedOn).TotalSeconds,
+                        Url = sc.Url,
+                        Data = sc.Blob,
+                        ScrollLeft = sc.ScrollLeft,
+                        ScrollTop = sc.ScrollTop,
+                        Width = sc.Width,
+                        Height = sc.Height
+                    }, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                utils.GrabaLogExcepcion(ex);
+                return Json(null);
+            }
+        }
+
+        [JsonpFilter]
+        [AllowCrossSiteJson]
+#if DEBUG
+#else
+        [RequireHttps]
+#endif
         public ActionResult GetScreen(string UserName, string Domain, string WindowName, string height, string width, string guid)
         {
             try
@@ -170,11 +242,14 @@ namespace vizzopWeb.Controllers
                         ReceivedOn = sc.ReceivedOn.ToString("HH:mm:ss:ff"),
                         PicturedOn = sc.PicturedOn.ToString("HH:mm:ss:ff"),
                         ServedOn = DateTime.UtcNow.ToString("HH:mm:ss:ff"),
-                        LatencyInMs = (DateTime.UtcNow.Subtract(sc.CreatedOn)).TotalMilliseconds,
+                        LatencyInMs = (DateTime.UtcNow - sc.CreatedOn).TotalSeconds,
                         Url = sc.Url,
-                        Data = "data:image/jpg;base64," + utils.ImageToJpegBase64(utils.PrepareScreenToReturn(sc, width, height, false), 60L),
+                        Data = "data:image/jpg;base64," + sc.Data,
+                        //Data = "data:image/jpg;base64," + utils.ImageToJpegBase64(utils.PrepareScreenToReturn(sc, width, height, false), 60L),
                         ScrollLeft = sc.ScrollLeft,
-                        ScrollTop = sc.ScrollTop
+                        ScrollTop = sc.ScrollTop,
+                        Width = sc.Width,
+                        Height = sc.Height
                     }, JsonRequestBehavior.AllowGet);
                 }
             }
@@ -271,7 +346,12 @@ namespace vizzopWeb.Controllers
         {
             try
             {
-                Converser converser = utils.GetLoggedConverser(HttpContext.Session);
+                //Converser converser = utils.GetLoggedConverser(HttpContext.Session);
+                if (HttpContext.Session["converser"] == null)
+                {
+                    return null;
+                }
+                var converser = (Converser)HttpContext.Session["converser"];
                 try
                 {
                     if (converser == null)
@@ -306,27 +386,16 @@ namespace vizzopWeb.Controllers
                         WebLocations.Add((WebLocation)e.Value);
                     }
                 }
-                //WebLocations = WebLocations.OrderByDescending(o => o.TimeStamp_Last).ToList();
-
-                /*
-                string key = "weblocations";
-                object result = SingletonCache.Instance.Get(key);
-                if (result != null)
-                {
-                    WebLocations = (List<WebLocation>)result;
-                    WebLocations.OrderByDescending(o => o.TimeStamp_Last).ToList();
-                }
-                 */
 
                 TimeZone localZone = TimeZone.CurrentTimeZone;
-                DateTime loctime = localZone.ToUniversalTime(DateTime.Now.AddSeconds(-30));
+                DateTime loctime = localZone.ToUniversalTime(DateTime.Now.AddSeconds(-20));
                 WebLocations = (from m in WebLocations
                                 where m.TimeStamp_Last > loctime
                                 select m).OrderByDescending(z => z.TimeStamp_Last).ToList();
 
                 List<WebLocationDataTables> DefLocList = new List<WebLocationDataTables>();
 
-
+                /*
                 string VizzopGetsAllRealtimeWebLocationsSetting = "VizzopGetsAllRealtimeWebLocationsInRelease";
 #if DEBUG
                 VizzopGetsAllRealtimeWebLocationsSetting = "VizzopGetsAllRealtimeWebLocationsInDebug";
@@ -334,6 +403,8 @@ namespace vizzopWeb.Controllers
                 bool VizzopGetsAllRealtimeWebLocations = Convert.ToBoolean((from m in db.Settings
                                                                             where m.Name == VizzopGetsAllRealtimeWebLocationsSetting
                                                                             select m).FirstOrDefault().Value);
+                */
+                var VizzopGetsAllRealtimeWebLocations = true;
 
                 foreach (WebLocation wl in WebLocations)
                 {

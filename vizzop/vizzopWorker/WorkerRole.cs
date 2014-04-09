@@ -15,6 +15,7 @@ using vizzopWeb.Models;
 using System.Collections.Generic;
 using System.Data.Entity.Validation;
 using Microsoft.ApplicationServer.Caching;
+using System.Threading.Tasks;
 
 namespace vizzopWorker
 {
@@ -39,7 +40,14 @@ namespace vizzopWorker
             // This is a sample worker implementation. Replace with your logic.
             //Trace.TraceInformation("vizzopWorker entry point called", "Information");
             utils.GrabaLog(Utils.NivelLog.info, "vizzopWorker entry point called");
+
             LanzaYControlaProcesoFileScreenShots();
+            /*
+            Task TaskFile5 = Task.Factory.StartNew(() =>
+            {
+                LanzaYControlaProcesoFileScreenShots();
+            });
+            */
             LanzaYControlaProcesoPhantom();
             LanzaYControlaProcesoLimpiaWebLocations();
             LanzaYControlaProcesoCreaVideos();

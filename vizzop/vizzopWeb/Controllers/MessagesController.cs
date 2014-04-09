@@ -912,6 +912,10 @@ namespace vizzopWeb.Controllers
                                 }
                                  * */
                             }
+                            if (node.Attributes["src"] != null)
+                            {
+                                node.Attributes["src"].Value = null;
+                            }
                         }
                     }
 

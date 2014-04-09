@@ -146,6 +146,10 @@
 
                         StartDate = new Date();
 
+                        window.callPhantom({
+                            'log': data.Blob
+                        });
+
                         var json = $.parseJSON(data.Blob);
 
                         var iFrame = null;
@@ -157,15 +161,7 @@
                             win.document.write(data.Html);
                             win.document.close();
                         } else {
-                            if (json.length == 1) {
-                                if (json[0][0] == 1) {
-                                    var win = iFrame.contentWindow;
-                                    win.document.open('text/html', 'replace');
-                                    win.document.write(data.Html);
-                                    win.document.close();
-                                    //iFrame.contentWindow.document.body.innerHTML
-                                    //iFrame.src = "data:text/html;charset=utf-8," + data.Html;
-                                }
+                            if ((json.length == 1) && (json[0][0] == 0)) {
                             } else {
                                 var win = iFrame.contentWindow;
                                 win.document.open('text/html', 'replace');

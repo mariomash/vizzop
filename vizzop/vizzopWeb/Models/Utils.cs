@@ -1668,15 +1668,53 @@ namespace vizzopWeb
                 CheckIfCaptureProcessMustBeAddedToSc_Control(UserName, Domain, WindowName);
 
                 /*
+                string key = "screenshot_control_from_" + UserName + "@" + Domain + "@" + WindowName;
+                object result = SingletonCache.Instance.Get(key);
+                if (result != null)
+                {
+                    sc_control = (ScreenCaptureControl)result;
+                    sc = sc_control.ScreenCapture;
+                    sc.Blob = sc_control.CompleteHtml;
+                }
+                */
+
+                /*
                  * Nos traemos la fotico (si la hay)
+                 * y juntamos las dos cosas
                  */
                 string key = "screenshot_from_" + UserName + "@" + Domain + "@" + WindowName;
                 object result = SingletonCache.Instance.Get(key);
-                //object result = SingletonCache.Instance.GetWithLock(key, out lockHandle);
-
                 if (result != null)
                 {
                     sc = (ScreenCapture)result;
+                }
+
+            }
+            catch (Exception e)
+            {
+                GrabaLogExcepcion(e);
+            }
+
+            return sc;
+        }
+
+        public ScreenCapture GetScreenCaptureHtml(string UserName, string Domain, string WindowName)
+        {
+            ScreenCapture sc = null;
+            ScreenCaptureControl sc_control = null;
+
+            try
+            {
+                /*
+                 * Nos Traemos el HTML...
+                 */
+                string key = "screenshot_control_from_" + UserName + "@" + Domain + "@" + WindowName;
+                object result = SingletonCache.Instance.Get(key);
+                if (result != null)
+                {
+                    sc_control = (ScreenCaptureControl)result;
+                    sc = sc_control.ScreenCapture;
+                    sc.Blob = sc_control.CompleteHtml;
                 }
 
             }
@@ -2130,7 +2168,7 @@ namespace vizzopWeb
 
                         if (dict.ContainsKey("blob"))
                         {
-                            if ((dict["blob"] != null) && (dict["blob"].ToString() != "null"))
+                            if ((dict["blob"] != null) && (dict["blob"].ToString() != "null") && (new_screencapture.Data == null))
                             {
 
                                 string SerializedBlob = new JavaScriptSerializer().Serialize(dict["blob"]);
@@ -2285,7 +2323,6 @@ namespace vizzopWeb
                  * Lanzamos el Save en otro hilo... pero antes le mentemos el HTML que toca ya procesado.. 
                  * por aquello de generar luego los videos en otro proceso mañana o pasado ;-)
                  */
-
                 new_screencapture.Blob = sc_control.CompleteHtml;
 
                 string SaveScreenshotsInDbSetting = "SaveScreenshotsInDbInRelease";
@@ -2371,6 +2408,8 @@ namespace vizzopWeb
                     sc.Blob = new_screencapture.Blob;
                     sc.Data = new_screencapture.Data;
                     sc.WindowName = new_screencapture.WindowName;
+                    sc.PicturedOn = new_screencapture.PicturedOn;
+                    sc.ReceivedOn = new_screencapture.ReceivedOn;
                 }
                 db.SaveChanges();
 
@@ -3212,8 +3251,6 @@ namespace vizzopWeb
 
         public void LaunchScreenShotsFileControl()
         {
-
-            //GrabaLog(Utils.NivelLog.info, "Iniciando LaunchScreenShotsFileControl");
             while (true)
             {
                 try
@@ -3230,7 +3267,7 @@ namespace vizzopWeb
                         using (var stream = File.OpenRead(file))
                         using (var image = Image.FromStream(stream))
                         {
-                            strBase64 = ImageToJpegBase64(image, 100L);
+                            strBase64 = ImageToJpegBase64(image, 90L);
                         }
 
                         if (File.Exists(file))
@@ -3240,14 +3277,13 @@ namespace vizzopWeb
 
                         if (strBase64 != null)
                         {
-
                             string FileName = file.Split('\\')[file.Split('\\').Length - 1];
                             string UserName = FileName.Split('_')[0];
                             string Domain = FileName.Split('_')[1];
                             string WindowName = FileName.Split('_')[2];
                             string key = "screenshot_control_from_" + UserName + "@" + Domain + "@" + WindowName;
                             ScreenCaptureControl sc_control = null;
-                            //object result = SingletonCache.Instance.Get(key);
+
                             DataCacheLockHandle lockHandle;
                             object result = SingletonCache.Instance.GetWithLock(key, out lockHandle);
                             if (result != null)
@@ -3257,7 +3293,6 @@ namespace vizzopWeb
 
                             if (sc_control == null)
                             {
-                                //GrabaLog(Utils.NivelLog.error, "sc_control is null: " + UserName + '@' + Domain + '@' + WindowName);
                                 continue;
                             }
 
@@ -3269,22 +3304,6 @@ namespace vizzopWeb
                                 continue;
                             }
 
-                            //sc.GUID = Guid.NewGuid().ToString();
-                            /*
-                            if (sc.GUID == Guid)
-                            {
-                                sc.Data = strBase64;
-                                sc.Blob = sc_control.CompleteHtml;
-                            }
-                            */
-
-                            /*
-                            #if DEBUG
-                                                        GrabaLog(Utils.NivelLog.info, DateTime.Now.ToLongTimeString() + " Vamos a guardar la imagen");
-                            #endif
-                            */
-
-                            //SingletonCache.Instance.Insert(key, sc_control);
                             SingletonCache.Instance.InsertWithLock(key, sc_control, lockHandle);
 
                             sc.Data = strBase64;

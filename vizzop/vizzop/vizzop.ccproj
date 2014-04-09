@@ -44,17 +44,6 @@
     <Folder Include="vizzopWorkerContent\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="vizzopWebContent\diagnostics.wadcfg">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="vizzopCacheContent\diagnostics.wadcfg">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="vizzopWorkerContent\diagnostics.wadcfg">
-      <SubType>Content</SubType>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
     <PublishProfile Include="Profiles\vizzop.azurePubxml" />
   </ItemGroup>
   <ItemGroup>

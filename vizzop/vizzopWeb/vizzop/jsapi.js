@@ -51,6 +51,29 @@
             vizzoplib.log(err);
         }
     },
+    eliminaScripts: function () {
+        try {
+            if ((typeof vizzop.current_html == 'undefined') || (vizzop.current_html == null)) {
+                if ((typeof vizzop.temp_current_html == 'undefined') || (vizzop.temp_current_html == null)) {
+                    vizzop.temp_current_html = vizzop.screenshot.outerHTML;
+                }
+                var SCRIPT_REGEX = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi;
+                if (SCRIPT_REGEX.test(vizzop.temp_current_html)) {
+                    var self = this, doBind = function () {
+                        var SCRIPT_REGEX = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi;
+                        vizzop.temp_current_html = vizzop.temp_current_html.replace(SCRIPT_REGEX, "");
+                        vizzoplib.eliminaScripts();
+                    };
+                    jVizzop.queue.add(doBind, this);
+                } else {
+                    vizzop.current_html = vizzop.temp_current_html;
+                    vizzop.temp_current_html = null;
+                }
+            }
+        } catch (err) {
+            vizzoplib.log(err);
+        }
+    },
     screenshotPage: function () {
         try {
 
@@ -82,7 +105,6 @@
             jVizzop('html').attr('vizzop-base', document.location.protocol + '//' + location.host);
 
             /*
-
             jVizzop(screenshot).find('iframe').each(function () {
                 //jVizzop(this).empty();
                 var contents = jVizzop(this).attr('value');
@@ -108,29 +130,13 @@
             */
 
             vizzop.screenshot = document.documentElement;
-
-            if ((typeof vizzop.current_html == 'undefined') || (vizzop.current_html == null)) {
-                if ((typeof vizzop.temp_current_html == 'undefined') || (vizzop.temp_current_html == null)) {
-                    vizzop.temp_current_html = vizzop.screenshot.outerHTML;
-                }
-                var SCRIPT_REGEX = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi;
-                vizzop.temp_current_html = vizzop.temp_current_html.replace(SCRIPT_REGEX, "");
-                if (SCRIPT_REGEX.test(vizzop.temp_current_html)) {
-                    var self = this, doBind = function () {
-                        vizzoplib.screenshotPage();
-                    };
-                    jVizzop.queue.add(doBind, this);
-                    return null;
-                } else {
-                    vizzop.current_html = vizzop.temp_current_html;
-                    vizzop.temp_current_html = null;
-                }
-            }
+            vizzop.current_html = vizzop.screenshot.outerHTML;
 
             if (vizzop.HtmlSend_LastHtmlContents == null) {
                 vizzop.HtmlSend_LastHtmlContents = "";
             }
 
+            //vizzoplib.eliminaScripts();
 
         } catch (err) {
             vizzoplib.log(err);
@@ -983,6 +989,7 @@ jVizzop(document).bind('ready.vizzop', function () {
         vizzop.me.LastActive = vizzop.me.LastActive.dateFromJSON();
     }
 
+
     jVizzop(vizzop).on('mutated', function (e) {
         try {
             vizzop.HtmlSend_ForceSendHtml = true;
@@ -990,6 +997,7 @@ jVizzop(document).bind('ready.vizzop', function () {
 
         }
     }, vizzop.MutationWaitingMsTrigger);
+
 
     jVizzop(document).on('mousemove.vizzop', function (e) {
         try {
@@ -1011,6 +1019,7 @@ jVizzop(document).bind('ready.vizzop', function () {
         }
     }, 0);
 
+
     jVizzop(window).on('resize.vizzop', function (e) {
         try {
             jVizzop(vizzop).trigger("mutated");
@@ -1019,6 +1028,7 @@ jVizzop(document).bind('ready.vizzop', function () {
         }
     }, 0);
 
+    /*
     jVizzop('input').each(function () {
         var attrToFind = "[vizzop-id='" + jVizzop(this).attr('vizzop-id') + "']";
         jVizzop(vizzop.screenshot).find(attrToFind).attr('value', jVizzop(this).val());
@@ -1033,6 +1043,7 @@ jVizzop(document).bind('ready.vizzop', function () {
         var attrToFind = "[vizzop-id='" + jVizzop(this).attr('vizzop-id') + "']";
         jVizzop(vizzop.screenshot).find(attrToFind).attr('value', jVizzop(this).val());
     });
+    */
 
     if (vizzop.IsInFrame == false) {
         // Respecto a guardar los contenidos de un iframe y saltarse el cross-domain: se registra el Listener de evento "message" (en el jsapi) y cuando te llega uno de "vizzop" se mete $(message.data.id).attr('src', 'data:' + escape(message.data.html));

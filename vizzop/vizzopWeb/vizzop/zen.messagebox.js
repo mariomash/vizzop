@@ -261,6 +261,30 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                     .css('min-width', '200px')
                     .appendTo(self._col0);
 
+                /*
+                self._boxscreenshareHtmlWrapper = jVizzop('<div></div>')
+                    .addClass('boxscreenshareWrapper')
+                    .css({
+                        'min-width': '200px',
+                        'overflow': 'hidden',
+                        'width': '600px',
+                        'heigth': '480px'
+                    })
+                    .appendTo(self._col0);
+
+                self._boxscreenshareHtml = jVizzop('<iframe/>')
+                    .attr('frameborder', 0)
+                    .attr('noresize', true)
+                    .attr('scrolling', 'no')
+                    .css({
+                        'overflow': 'hidden',
+                        'border': 'none',
+                        'userSelect': 'none',
+                        'pointerEvents': 'none'
+                    })
+                    .appendTo(self._boxscreenshareHtmlWrapper);
+                */
+
                 self.interlocutor_mouse = new InterLocutorMouse(self._col0);
 
                 self.interlocutor_image = jVizzop('<center></center>')
@@ -353,11 +377,90 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                 self.button_AddScreenSharing.hide();
 
                 self.loadScreen();
+                //self.loadScreenHtml();
 
                 jVizzop(self._box).addClass('screenshare');
                 self.positionBox(function () { jVizzop(self._box).show(); }, 'fast');
             }
         } catch (err) { vizzoplib.log(err); }
+    },
+    loadScreenHtml: function () {
+        var self = this;
+        try {
+            if (jVizzop(self._box).hasClass('screenshare') != true) {
+                return false;
+            }
+            //console.vizzoplib.log(self.loadingScreen);
+            if (self.loadingScreenHtml != null) {
+                return false;
+            }
+
+            var url = null;
+            var msg = null;
+            /*
+            Si no tiene lista de imagenes primero cargamos la lista...
+            */
+
+            if (self.ScreenShotsHtml == null) {
+                self.ScreenShotsHtml = [];
+            }
+
+            url = vizzop.mainURL + "/RealTime/GetScreenHtml";
+
+            var guid = null;
+            if (self.ScreenShotsHtml.length > 0) {
+                guid = self.ScreenShotsHtml[self.ScreenShotsHtml.length - 1].GUID;
+            }
+            //var height = self._boxscreenshare.outerHeight();
+            var height = 480;
+            msg = {
+                'username': self._interlocutor[0].UserName,
+                'domain': self._interlocutor[0].Business.Domain,
+                'windowname': self._interlocutor[0].WindowName,
+                'guid': guid
+            };
+            self.loadingScreenHtml = jVizzop.ajax({
+                url: url,
+                type: "POST",
+                data: msg,
+                dataType: "jsonp",
+                beforeSend: function (xhr) {
+                },
+                success: function (data) {
+                    if (data != null) {
+                        if (data != false) {
+                            self._col0.css('display', 'inline-block');
+                            self.ScreenShotsHtml.push(data);
+                            var win = self._boxscreenshareHtml[0].contentWindow ? self._boxscreenshareHtml[0].contentWindow : self._boxscreenshareHtml[0].contentDocument.defaultView;
+                            win.document.open('text/html', 'replace');
+                            win.document.write(data.Data);
+                            win.document.close();
+                            win.scrollTo(data.ScrollLeft, data.ScrollTop);
+                            self._boxscreenshareHtml
+                                .attr('width', data.Width)
+                                .attr('height', data.Height)
+                                .css({
+                                    'height': data.Height,
+                                    'width': data.Width
+                                });
+
+                            self.positionBox(function () { jVizzop(self._box).show(); }, 'fast');
+                            self.checkSafePosition();
+
+                        }
+                    }
+                    self.loadingScreenHtml = null;
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    vizzoplib.log(url, msg, jqXHR);
+                    self.loadingScreenHtml = null;
+                }
+            });
+
+        } catch (err) {
+            vizzoplib.log(err);
+            loadingScreenHtml = null;
+        }
     },
     loadScreen: function () {
         var self = this;
@@ -387,7 +490,7 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                 guid = self.ScreenShots[self.ScreenShots.length - 1].GUID;
             }
             //var height = self._boxscreenshare.outerHeight();
-            var height = 485;
+            var height = 480;
             msg = {
                 'username': self._interlocutor[0].UserName,
                 'domain': self._interlocutor[0].Business.Domain,
@@ -422,7 +525,7 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                             }
                             */
                             self._boxscreenshareposition
-                                .text(data.CreatedOn + " / " + data.ReceivedOn + " / " + data.PicturedOn + " / " + data.ServedOn + " : " + data.LatencyInMs + "ms");
+                                .html("<strong>Client: </strong>" + data.CreatedOn + " · " + "<strong>Server: </strong>" + data.ReceivedOn + " · " + "<strong>Operator:</strong>" + data.ServedOn + " · " + "<strong>Latency: </strong>" + data.LatencyInMs + "ms");
 
                             vizzoplib.ResizeWidthLikeImg(self, data.Data, function resize(newwidth, newimg) {
                                 jVizzop(newimg)

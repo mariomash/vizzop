@@ -7,7 +7,6 @@
       <Setting name="Port" value="443" />
       <Setting name="Scheme" value="https" />
       <Setting name="WsScheme" value="wss" />
-      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=vizzop;AccountKey=t+HUSi6EdcIqkCgeyJY2yesdp+Ti+rgLYpOPDlwFpp49uNI/2sGeI5Fx1A+syOfZCe2C6rYPqIWb/83Zbo9nTQ==" />
       <Setting name="StorageConnectionString" value="DefaultEndpointsProtocol=https;AccountName=vizzop;AccountKey=t+HUSi6EdcIqkCgeyJY2yesdp+Ti+rgLYpOPDlwFpp49uNI/2sGeI5Fx1A+syOfZCe2C6rYPqIWb/83Zbo9nTQ==" />
       <Setting name="Microsoft.WindowsAzure.Plugins.Caching.ClientDiagnosticLevel" value="1" />
     </ConfigurationSettings>
@@ -18,7 +17,6 @@
   <Role name="vizzopWorker">
     <Instances count="1" />
     <ConfigurationSettings>
-      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=vizzop;AccountKey=t+HUSi6EdcIqkCgeyJY2yesdp+Ti+rgLYpOPDlwFpp49uNI/2sGeI5Fx1A+syOfZCe2C6rYPqIWb/83Zbo9nTQ==" />
       <Setting name="StorageConnectionString" value="DefaultEndpointsProtocol=https;AccountName=vizzop;AccountKey=t+HUSi6EdcIqkCgeyJY2yesdp+Ti+rgLYpOPDlwFpp49uNI/2sGeI5Fx1A+syOfZCe2C6rYPqIWb/83Zbo9nTQ==" />
       <Setting name="Domain" value="vizzop.com" />
       <Setting name="Port" value="443" />
@@ -32,7 +30,6 @@
   <Role name="vizzopCache">
     <Instances count="1" />
     <ConfigurationSettings>
-      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=vizzop;AccountKey=t+HUSi6EdcIqkCgeyJY2yesdp+Ti+rgLYpOPDlwFpp49uNI/2sGeI5Fx1A+syOfZCe2C6rYPqIWb/83Zbo9nTQ==" />
       <Setting name="Microsoft.WindowsAzure.Plugins.Caching.NamedCaches" value="{&quot;caches&quot;:[{&quot;name&quot;:&quot;default&quot;,&quot;policy&quot;:{&quot;eviction&quot;:{&quot;type&quot;:0},&quot;expiration&quot;:{&quot;defaultTTL&quot;:10,&quot;isExpirable&quot;:true,&quot;type&quot;:2},&quot;serverNotification&quot;:{&quot;isEnabled&quot;:false}},&quot;secondaries&quot;:0}]}" />
       <Setting name="Microsoft.WindowsAzure.Plugins.Caching.DiagnosticLevel" value="1" />
       <Setting name="Microsoft.WindowsAzure.Plugins.Caching.CacheSizePercentage" value="" />

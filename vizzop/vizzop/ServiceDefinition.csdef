@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ServiceDefinition name="vizzop" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2013-10.2.2">
-  <WebRole name="vizzopWeb" vmsize="Large">
+  <WebRole name="vizzopWeb" vmsize="Small">
     <Sites>
       <Site name="Web">
         <Bindings>
@@ -22,7 +22,6 @@
       <Setting name="Microsoft.WindowsAzure.Plugins.Caching.ClientDiagnosticLevel" />
     </ConfigurationSettings>
     <Imports>
-      <Import moduleName="Diagnostics" />
     </Imports>
     <Certificates>
       <Certificate name="vizzop.com" storeLocation="LocalMachine" storeName="My" />
@@ -43,10 +42,9 @@
       </Task>
     </Startup>
   </WebRole>
-  <WorkerRole name="vizzopWorker" vmsize="Medium">
+  <WorkerRole name="vizzopWorker" vmsize="Small">
     <Runtime executionContext="elevated" />
     <Imports>
-      <Import moduleName="Diagnostics" />
     </Imports>
     <LocalResources>
       <LocalStorage name="DiagnosticStore" cleanOnRoleRecycle="false" sizeInMB="20000" />
@@ -74,7 +72,6 @@
   </WorkerRole>
   <WorkerRole name="vizzopCache" vmsize="Small">
     <Imports>
-      <Import moduleName="Diagnostics" />
       <Import moduleName="Caching" />
     </Imports>
     <LocalResources>
