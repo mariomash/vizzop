@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ServiceDefinition name="vizzop" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2013-10.2.2">
-  <WebRole name="vizzopWeb" vmsize="Small">
+  <WebRole name="vizzopWeb" vmsize="Medium">
     <Sites>
       <Site name="Web">
         <Bindings>
@@ -42,7 +42,7 @@
       </Task>
     </Startup>
   </WebRole>
-  <WorkerRole name="vizzopWorker" vmsize="Small">
+  <WorkerRole name="vizzopWorker" vmsize="Large">
     <Runtime executionContext="elevated" />
     <Imports>
     </Imports>

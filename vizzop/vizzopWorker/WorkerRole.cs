@@ -140,11 +140,11 @@ namespace vizzopWorker
                     Directory.CreateDirectory(tempPath + @"img\");
                 }
 
-                //DateTime dtFrom = DateTime.Now.ToUniversalTime().Subtract(TimeSpan.FromMinutes(2));
+                DateTime dtFrom = DateTime.Now.ToUniversalTime().Subtract(TimeSpan.FromMinutes(2));
 
                 //IEnumerable<ScreenGroup> groups = new List<ScreenGroup>();
                 var groups = (from m in utils.db.ScreenCaptures
-                              /*where m.CreatedOn < dtFrom*/
+                              where m.CreatedOn < dtFrom
                               group m by m.converser.ID into g
                               select new ScreenGroup()
                               {
@@ -191,7 +191,7 @@ namespace vizzopWorker
                         if (sm != null)
                         {
                             captureToCreate = new ScreenCapture();
-                            captureToCreate.CreatedOn = sm.LastFrameCreatedOn;
+                            captureToCreate.CreatedOn = sm.LastFrameTimeStamp;
                             captureToCreate.Data = sm.LastFrameData;
                             captureToCreate.Height = sm.LastFrameHeight;
                             captureToCreate.Width = sm.LastFrameWidth;
@@ -265,6 +265,7 @@ namespace vizzopWorker
                                     {
                                         sm = new ScreenMovie();
                                         sm.CreatedOn = DateTime.Now.ToUniversalTime();
+                                        sm.FirstFrameTimeStamp = captureToCreate.CreatedOn;
                                         utils.db.ScreenMovies.Add(sm);
 
                                     }
@@ -274,14 +275,13 @@ namespace vizzopWorker
                                     sm.converser = (from m in utils.db.Conversers
                                                     where m.ID == _convid
                                                     select m).FirstOrDefault();
-                                    sm.LastFrameCreatedOn = captureToCreate.CreatedOn;
+                                    sm.LastFrameTimeStamp = captureToCreate.CreatedOn;
                                     sm.LastFrameData = captureToCreate.Data;
                                     sm.LastFrameHeight = captureToCreate.Height;
                                     sm.LastFrameScrollLeft = captureToCreate.ScrollLeft;
                                     sm.LastFrameScrollTop = captureToCreate.ScrollTop;
                                     sm.LastFrameWidth = captureToCreate.Width;
                                     sm.LastFrameUrl = captureToCreate.Url;
-                                    sm.ModifiedOn = sm.CreatedOn;
                                     utils.db.SaveChanges();
 
                                 }
@@ -392,7 +392,7 @@ namespace vizzopWorker
             try
             {
 
-                Bitmap bitmap = utils.PrepareScreenToReturn(captureToCreate, "800", null, true);
+                Bitmap bitmap = utils.PrepareScreenToReturn(captureToCreate, "800", "600", true);
                 //Bitmap bm3 = new Bitmap(bitmap);
 
                 MemoryStream MemStream = new MemoryStream();

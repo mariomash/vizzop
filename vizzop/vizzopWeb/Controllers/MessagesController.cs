@@ -857,124 +857,7 @@ namespace vizzopWeb.Controllers
                 }
                 else
                 {
-                    //Aqui ponemos un html arregladito arregladito con sus values y sus todo
-                    HtmlDocument doc = new HtmlDocument();
-                    doc.LoadHtml(sc_control.CompleteHtml);
-                    var TextareaNodes = doc.DocumentNode.SelectNodes("//textarea");
-                    if (TextareaNodes != null)
-                    {
-                        foreach (HtmlNode node in TextareaNodes)
-                        {
-                            if (node.Attributes["vizzop-value"] != null)
-                            {
-                                var textnode = HtmlNode.CreateNode(node.Attributes["vizzop-value"].Value);
-                                if (textnode != null)
-                                {
-                                    node.AppendChild(textnode);
-                                }
-                            }
-                        }
-                    }
-
-                    var inputs = doc.DocumentNode.SelectNodes("//input");
-                    if (inputs != null)
-                    {
-                        foreach (HtmlNode node in inputs)
-                        {
-                            if (node.Attributes["vizzop-value"] != null)
-                            {
-                                if (node.Attributes.Contains("value") == false)
-                                {
-                                    node.Attributes.Add("value", node.Attributes["vizzop-value"].Value);
-                                }
-                                else
-                                {
-                                    node.Attributes["value"].Value = node.Attributes["vizzop-value"].Value;
-                                }
-                            }
-                        }
-                    }
-
-                    var IframeNodes = doc.DocumentNode.SelectNodes("//iframe");
-                    if (IframeNodes != null)
-                    {
-                        foreach (HtmlNode node in IframeNodes)
-                        {
-                            if (node.Attributes["value"] != null)
-                            {
-                                node.Attributes["value"].Value = null;
-                                /*
-                                var textnode = HtmlNode.CreateNode(node.Attributes["value"].Value);
-                                if (textnode != null)
-                                {
-                                    node.Attributes["src"].Value = @"data:text/html;charset=utf-8," + node.Attributes["value"].Value; //escape(localS);";
-                                    //node.AppendChild(textnode);
-                                }
-                                 * */
-                            }
-                            if (node.Attributes["src"] != null)
-                            {
-                                node.Attributes["src"].Value = null;
-                            }
-                        }
-                    }
-
-
-                    var ScriptNodes = doc.DocumentNode.SelectNodes("//script");
-                    if (ScriptNodes != null)
-                    {
-                        foreach (HtmlNode script in ScriptNodes)
-                        {
-                            script.Remove();
-                        }
-                    }
-
-                    var vizzop_base = (from m in doc.DocumentNode.SelectSingleNode("//html").Attributes
-                                       where m.Name == "vizzop-base"
-                                       select m).FirstOrDefault();
-                    if (vizzop_base != null)
-                    {
-                        var head = doc.DocumentNode.SelectSingleNode("//head");
-                        if (head != null)
-                        {
-                            var b = doc.CreateElement("base");
-                            b.Attributes.Add("href", vizzop_base.Value);
-                            head.InsertBefore(b, head.FirstChild);
-                        }
-                    }
-                    /*
-                    head.InsertBefore(b
-            var b = document.createElement('base');
-            b.href = document.location.protocol + '//' + location.host;
-            var head = screenshot.querySelector('head');
-            head.insertBefore(b, head.firstChild);
-                     */
-                    //jVizzop(':focus')
-                    //vizzop-focus
-                    //var focusnodes = doc.DocumentNode.SelectNodes("//*[@vizzop-focus]");
-                    var focusnodes = (from m in doc.DocumentNode.Descendants()
-                                      where m.Attributes.Contains("vizzop-focus")
-                                      select m);
-                    if (focusnodes != null)
-                    {
-                        foreach (HtmlNode nodo in focusnodes)
-                        {
-                            HtmlAttribute attr = (from m in nodo.Attributes
-                                                  where m.Name == "style"
-                                                  select m).FirstOrDefault();
-                            var value = "border: solid 2px blue !important; background-color: solid 2px #aaaaff !important; box-shadow: 0 0 5px rgba(0, 0, 255, 1) !important;'";
-                            if (attr == null)
-                            {
-                                nodo.Attributes.Add("style", value);
-                            }
-                            else
-                            {
-                                attr.Value += value;
-                            }
-                        }
-                    }
-
-                    sc_control.CompleteHtml = doc.DocumentNode.OuterHtml;
+                    sc_control.CompleteHtml = utils.ScrubHTML(sc_control.CompleteHtml);
 
                     var toReturn = new
                     {
@@ -1040,7 +923,7 @@ namespace vizzopWeb.Controllers
                 {
                     var toReturn = new
                     {
-                        Html = sc.Blob,
+                        Html = utils.ScrubHTML(sc.Blob),
                         Width = sc.Width,
                         Height = sc.Height,
                         ScrollTop = sc.ScrollTop,

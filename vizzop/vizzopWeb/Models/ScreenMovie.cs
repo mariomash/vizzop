@@ -23,7 +23,10 @@ namespace vizzopWeb.Models
         public DateTime ModifiedOn { get; set; }
 
         [Required]
-        public DateTime LastFrameCreatedOn { get; set; }
+        public DateTime FirstFrameTimeStamp { get; set; }
+
+        [Required]
+        public DateTime LastFrameTimeStamp { get; set; }
 
         [Required]
         [Column(TypeName = "ntext")]

@@ -209,8 +209,8 @@ namespace vizzopWeb
                                     x.LastFrameHeight,
                                     x.ModifiedOn.ToString("o"),
                                     utils.GetPrettyDate(x.ModifiedOn),
-                                    (x.LastFrameCreatedOn - x.CreatedOn).TotalMilliseconds,
-                                    utils.GetPrettyTimespan(Convert.ToInt32((x.LastFrameCreatedOn - x.CreatedOn).TotalMilliseconds)),
+                                    (x.LastFrameTimeStamp - x.FirstFrameTimeStamp).TotalMilliseconds,
+                                    utils.GetPrettyTimespan(Convert.ToInt32((x.LastFrameTimeStamp - x.FirstFrameTimeStamp).TotalMilliseconds)),
                                     @"https://vizzop.blob.core.windows.net/videos/" + x.converser.ID + @".mp4"
                                 })
                     }, JsonRequestBehavior.AllowGet);
@@ -242,7 +242,7 @@ namespace vizzopWeb
                 var tempList = (from w in db.ScreenMovies.Include("converser")
                                 where w.CreatedOn >= dtFrom &&
                                 w.CreatedOn <= dtTo &&
-                                EntityFunctions.DiffSeconds(w.LastFrameCreatedOn, w.CreatedOn) > secondVideoLimit_int
+                                EntityFunctions.DiffSeconds(w.LastFrameTimeStamp, w.FirstFrameTimeStamp) > secondVideoLimit_int
                                 select w);
 
                 //&& (w.Headers.Contains("'DNT':'1'") == false)

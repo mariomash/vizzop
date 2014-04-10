@@ -388,7 +388,7 @@ namespace vizzopWeb.Controllers
                 }
 
                 TimeZone localZone = TimeZone.CurrentTimeZone;
-                DateTime loctime = localZone.ToUniversalTime(DateTime.Now.AddSeconds(-20));
+                DateTime loctime = localZone.ToUniversalTime(DateTime.Now.AddSeconds(-30));
                 WebLocations = (from m in WebLocations
                                 where m.TimeStamp_Last > loctime
                                 select m).OrderByDescending(z => z.TimeStamp_Last).ToList();

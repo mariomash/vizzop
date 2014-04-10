@@ -1835,94 +1835,132 @@ namespace vizzopWeb
 
         public string ScrubHTML(string html)
         {
-            HtmlDocument doc = new HtmlDocument();
-            doc.LoadHtml(html);
-
-            //Remove potentially harmful elements
-            HtmlNodeCollection nc = doc.DocumentNode.SelectNodes("//script|//iframe|//frameset|//frame|//applet|//object");
-            if (nc != null)
+            try
             {
-                foreach (HtmlNode node in nc)
+                //Aqui ponemos un html arregladito arregladito con sus values y sus todo
+                HtmlDocument doc = new HtmlDocument();
+                doc.LoadHtml(html);
+                var TextareaNodes = doc.DocumentNode.SelectNodes("//textarea");
+                if (TextareaNodes != null)
                 {
-                    node.ParentNode.RemoveChild(node, false);
-
-                }
-            }
-
-            /*
-            //remove hrefs to java/j/vbscript URLs
-            nc = doc.DocumentNode.SelectNodes("//a[starts-with(@href, 'javascript')]|//a[starts-with(@href, 'jscript')]|//a[starts-with(@href, 'vbscript')]");
-            if (nc != null)
-            {
-                foreach (HtmlNode node in nc)
-                {
-                    node.SetAttributeValue("href", "protected");
-                }
-            }
-            */
-
-            //remove hrefs
-            nc = doc.DocumentNode.SelectNodes("//a");
-            if (nc != null)
-            {
-                foreach (HtmlNode node in nc)
-                {
-                    //node.SetAttributeValue("href", "#");
-                    node.Attributes.Remove("href");
-                }
-            }
-
-            nc = doc.DocumentNode.SelectNodes("//form");
-            if (nc != null)
-            {
-                foreach (HtmlNode node in nc)
-                {
-                    //node.SetAttributeValue("href", "#");
-                    node.Attributes.Remove("action");
-                }
-            }
-
-            nc = doc.DocumentNode.SelectNodes("//input");
-            if (nc != null)
-            {
-                foreach (HtmlNode node in nc)
-                {
-                    if (node.Attributes["type"].Value.ToString().ToLowerInvariant() == "submit")
+                    foreach (HtmlNode node in TextareaNodes)
                     {
-                        //node.SetAttributeValue("href", "#");
-                        node.Attributes.Remove("type");
+                        if (node.Attributes["vizzop-value"] != null)
+                        {
+                            var textnode = HtmlNode.CreateNode(node.Attributes["vizzop-value"].Value);
+                            if (textnode != null)
+                            {
+                                node.AppendChild(textnode);
+                            }
+                        }
                     }
                 }
-            }
 
-            //remove img with refs to java/j/vbscript URLs
-            nc = doc.DocumentNode.SelectNodes("//img[starts-with(@src, 'javascript')]|//img[starts-with(@src, 'jscript')]|//img[starts-with(@src, 'vbscript')]");
-            if (nc != null)
-            {
-                foreach (HtmlNode node in nc)
+                var inputs = doc.DocumentNode.SelectNodes("//input");
+                if (inputs != null)
                 {
-                    node.SetAttributeValue("src", "protected");
+                    foreach (HtmlNode node in inputs)
+                    {
+                        if (node.Attributes["vizzop-value"] != null)
+                        {
+                            if (node.Attributes.Contains("value") == false)
+                            {
+                                node.Attributes.Add("value", node.Attributes["vizzop-value"].Value);
+                            }
+                            else
+                            {
+                                node.Attributes["value"].Value = node.Attributes["vizzop-value"].Value;
+                            }
+                        }
+                    }
                 }
-            }
 
-            //remove on<Event> handlers from all tags
-            nc = doc.DocumentNode.SelectNodes("//*[@onclick or @onmouseover or @onfocus or @onblur or @onmouseout or @ondoubleclick or @onload or @onunload]");
-            if (nc != null)
-            {
-                foreach (HtmlNode node in nc)
+                var IframeNodes = doc.DocumentNode.SelectNodes("//iframe");
+                if (IframeNodes != null)
                 {
-                    node.Attributes.Remove("onFocus");
-                    node.Attributes.Remove("onBlur");
-                    node.Attributes.Remove("onClick");
-                    node.Attributes.Remove("onMouseOver");
-                    node.Attributes.Remove("onMouseOut");
-                    node.Attributes.Remove("onDoubleClick");
-                    node.Attributes.Remove("onLoad");
-                    node.Attributes.Remove("onUnload");
+                    foreach (HtmlNode node in IframeNodes)
+                    {
+                        if (node.Attributes["value"] != null)
+                        {
+                            node.Attributes["value"].Value = null;
+                            /*
+                            var textnode = HtmlNode.CreateNode(node.Attributes["value"].Value);
+                            if (textnode != null)
+                            {
+                                node.Attributes["src"].Value = @"data:text/html;charset=utf-8," + node.Attributes["value"].Value; //escape(localS);";
+                                //node.AppendChild(textnode);
+                            }
+                             * */
+                        }
+                        if (node.Attributes["src"] != null)
+                        {
+                            node.Attributes["src"].Value = null;
+                        }
+                    }
                 }
-            }
 
-            return doc.DocumentNode.WriteTo();
+
+                var ScriptNodes = doc.DocumentNode.SelectNodes("//script");
+                if (ScriptNodes != null)
+                {
+                    foreach (HtmlNode script in ScriptNodes)
+                    {
+                        script.Remove();
+                    }
+                }
+
+                var vizzop_base = (from m in doc.DocumentNode.SelectSingleNode("//html").Attributes
+                                   where m.Name == "vizzop-base"
+                                   select m).FirstOrDefault();
+                if (vizzop_base != null)
+                {
+                    var head = doc.DocumentNode.SelectSingleNode("//head");
+                    if (head != null)
+                    {
+                        var b = doc.CreateElement("base");
+                        b.Attributes.Add("href", vizzop_base.Value);
+                        head.InsertBefore(b, head.FirstChild);
+                    }
+                }
+                /*
+                head.InsertBefore(b
+        var b = document.createElement('base');
+        b.href = document.location.protocol + '//' + location.host;
+        var head = screenshot.querySelector('head');
+        head.insertBefore(b, head.firstChild);
+                 */
+                //jVizzop(':focus')
+                //vizzop-focus
+                //var focusnodes = doc.DocumentNode.SelectNodes("//*[@vizzop-focus]");
+                var focusnodes = (from m in doc.DocumentNode.Descendants()
+                                  where m.Attributes.Contains("vizzop-focus")
+                                  select m);
+                if (focusnodes != null)
+                {
+                    foreach (HtmlNode nodo in focusnodes)
+                    {
+                        HtmlAttribute attr = (from m in nodo.Attributes
+                                              where m.Name == "style"
+                                              select m).FirstOrDefault();
+                        var value = "border: solid 2px blue !important; background-color: solid 2px #aaaaff !important; box-shadow: 0 0 5px rgba(0, 0, 255, 1) !important;'";
+                        if (attr == null)
+                        {
+                            nodo.Attributes.Add("style", value);
+                        }
+                        else
+                        {
+                            attr.Value += value;
+                        }
+                    }
+                }
+
+                return doc.DocumentNode.OuterHtml;
+            }
+            catch (Exception ex)
+            {
+                GrabaLogExcepcion(ex);
+                return "";
+            }
         }
 
         public bool TrackScreen(string username, string password, string domain, string data, string listeners, HttpContextBase context)
@@ -3500,15 +3538,21 @@ namespace vizzopWeb
                 string mainURL = scheme + @"://" + strdomain + ":" + port;
 
                 string debug_args = "";
+
+                /*
 #if DEBUG
                 debug_args = " --remote-debugger-port=9000 --remote-debugger-autorun=yes ";
 #endif
+                */
 
                 string strlogPhantom = "false";
                 if (LogPhantom == true)
                 {
                     strlogPhantom = "true";
                 }
+#if DEBUG
+                strlogPhantom = "true";
+#endif
 
                 var psi = new ProcessStartInfo(phantomjs_filename)
                 {

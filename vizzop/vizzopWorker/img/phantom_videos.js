@@ -10,6 +10,10 @@ if (args.length === 1) {
     Domain = args[3];
     Password = args[4];
     GUID = args[5];
+    WindowName = args[6];
+    if (args[7] == "true") {
+        logphantom = true;
+    }
 }
 
 var page = require('webpage').create();
@@ -25,11 +29,13 @@ page.onCallback = function (param) {
         param.filename = "captures_video/" + param.filename;
 
         page.render(param.filename);
-        //console.log(date + ' rendered: ' + param.filename);
+        console.log(date + ' rendered: ' + param.filename);
         phantom.exit();
 
     } else {
-        console.log(date + ' ' + param.log);
+        if (logphantom == true) {
+            console.log(date + ' ' + param.log);
+        }
     }
 }
 
@@ -41,7 +47,13 @@ page.onLoadFinished = function (status) {
             return;
         }
         counter++;
-        
+
+        if (logphantom == true) {
+            page.onResourceRequested = function (request) {
+                console.log('Request ' + JSON.stringify(request, undefined, 4));
+            };
+        }
+
         page.evaluate(function (page, mainURL, UserName, Domain, Password, GUID) {
 
             GetScreenCapture(page, mainURL, UserName, Domain, Password, GUID);
