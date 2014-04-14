@@ -33,6 +33,10 @@ namespace vizzopWeb.Controllers
                 {
                     return RedirectToAction("LogOn", "Account");
                 }
+                if (converser.Agent == null)
+                {
+                    return RedirectToAction("LogOn", "Account");
+                }
                 converser.Business.Conversers = new List<Converser>();
                 ViewBag.converser = converser;
             }

@@ -408,15 +408,20 @@
     function rt_updatetable() {
 
         var count = 0;
+        /*
         var temp_tabledata = clone(rt_tabledata);
         if (temp_tabledata != null) {
             if (temp_tabledata.length > 0) {
                 count = temp_tabledata.length;
             }
         }
+        */
+        if (rt_tabledata == null) {
+            return;
+        }
 
-        $('#people_count').text(count);
-        if (count == 0) {
+        $('#people_count').text(rt_tabledata.length);
+        if (rt_tabledata.length == 0) {
             $('#realtime_table_wrapper').hide();
             $('#chart_holder').hide();
             $('#realtime_graph').hide();
@@ -431,16 +436,25 @@
         }
 
         //Vamos a poner la Tabla a 0 y repintarla
+        rt_oTable.fnClearTable(false);
+        rt_oTable.fnAddData(rt_tabledata);
+        /*
+        for (var j = rt_tabledata.length - 1; j > -1; j--) {
+            rt_oTable.fnAddData(rt_tabledata[j]);
+        };
+        */
         //rt_oTable.fnClearTable(0);
+
+        /*
         var orig_tabledata = rt_oTable.fnGetData();
         //Y a pasar
         for (var i = orig_tabledata.length - 1; i > -1; i--) {
             var found = false;
             for (var j = temp_tabledata.length - 1; j > -1; j--) {
-                /*
-                * Si lo encontramos lo actualizamos.... lo eliminamos de temp_tabledata
-                * Y lo marcamos como encontrado
-                */
+                
+                //Si lo encontramos lo actualizamos.... lo eliminamos de temp_tabledata
+                //Y lo marcamos como encontrado
+                
                 var orig_userdomain = orig_tabledata[i][12] + orig_tabledata[i][13];
                 var new_userdomain = temp_tabledata[j][12] + temp_tabledata[j][13];
                 if (new_userdomain == orig_userdomain) {
@@ -474,161 +488,8 @@
         for (var j = temp_tabledata.length - 1; j > -1; j--) {
             rt_oTable.fnAddData(temp_tabledata[j]);
         };
-
-        //Y en otra pasada actualizamos las imagenes...
-        /*
-        orig_tabledata = rt_oTable.fnGetData();
-        for (var i = orig_tabledata.length - 1; i > -1; i--) {
-            try {
-                var username = orig_tabledata[i][11];
-                var domain = orig_tabledata[i][12];
-
-                var found = false;
-                for (var j = rt_imagereqs.length - 1; j > -1; j--) {
-                    if (rt_imagereqs[j].name == username + domain) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (found == true) {
-                    break;
-                }
-
-                var lastguid = '';
-                for (var j = rt_screenshots.length - 1; j > -1; j--) {
-                    if (rt_screenshots[j].attr('data-username') + rt_screenshots[j].attr('data-domain') == username + domain) {
-                        lastguid = rt_screenshots[j].attr('data-guid');
-                        break;
-                    }
-                }
-                var msg = {
-                    'username': username,
-                    'domain': domain,
-                    'height': 90,
-                    'width': 90,
-                    'guid': lastguid
-                };
-                //(msg);
-                var url = "../RealTime/GetScreen";
-                var reqdata = {
-                    name: username + domain,
-                    req: null
-                };
-                rt_imagereqs.push(reqdata);
-                //(rt_imagereqs);
-                reqdata.req = jVizzop.ajax({
-                    url: url,
-                    type: "POST",
-                    data: msg,
-                    dataType: "json",
-                    beforeSend: function (xhr) {
-                    },
-                    success: function (data) {
-
-                        //("reqs " + rt_imagereqs.length);
-                        //(data);
-                        if (data != null) {
-                            if (data != false) {
-                                //("reqs " + rt_imagereqs.length);
-                                for (var j = rt_imagereqs.length - 1; j > -1; j--) {
-                                    if (rt_imagereqs[j].name == data.UserName + data.Domain) {
-                                        rt_imagereqs.splice(j, 1);
-                                    }
-                                }
-
-                                var orig_tabledata = rt_oTable.fnGetData();
-                                var $div_to_update = null;
-                                //(orig_tabledata);
-                                for (var j = orig_tabledata.length - 1; j > -1; j--) {
-                                    try {
-                                        //(data.UserName + data.Domain + "==" + orig_tabledata[j][11] + orig_tabledata[j][12]);
-                                        if (data.UserName + data.Domain == orig_tabledata[j][11] + orig_tabledata[j][12]) {
-                                            var table = $(rt_oTable).find("tbody")[0];
-                                            var cell = table.rows[j].cells[0]; // This is a DOM "TD" element
-                                            //(cell);
-                                            $div_to_update = $(cell).find('div');
-                                        }
-                                    } catch (err) { }
-                                }
-                                //($div_to_update);
-                                if ($div_to_update != null) {
-                                    var img = $('<img src="' + data.Data + '"/>')
-                                        .addClass('realtime_screenshot')
-                                        .attr('data-guid', data.GUID)
-                                        .attr('data-username', data.UserName)
-                                        .attr('data-domain', data.Domain)
-                                        .load(function (event) {
-                                            var orig_tabledata = rt_oTable.fnGetData();
-                                            var $div_to_update = null;
-                                            for (var j = orig_tabledata.length - 1; j > -1; j--) {
-                                                try {
-                                                    if (data.UserName + data.Domain == orig_tabledata[j][11] + orig_tabledata[j][12]) {
-                                                        var table = $(rt_oTable).find("tbody")[0];
-                                                        var cell = table.rows[j].cells[0]; // This is a DOM "TD" element
-                                                        $div_to_update = $(cell).find('div');
-                                                        break;
-                                                    }
-                                                } catch (err) { }
-                                            }
-                                            if ($div_to_update != null) {
-                                                $div_to_update.append(this);
-                                                for (var j = rt_screenshots.length - 1; j > -1; j--) {
-                                                    var elem = $(rt_screenshots[j]);
-                                                    //(elem.attr('data-username') + elem.attr('data-domain') + "____" + $(this).attr('data-username') + $(this).attr('data-domain'));
-                                                    if (elem.attr('data-username') + elem.attr('data-domain') == $(this).attr('data-username') + $(this).attr('data-domain')) {
-                                                        //(elem.attr('data-guid') + "___" + $(this).attr('data-guid'));
-                                                        if (elem.attr('data-guid') != $(this).attr('data-guid')) {
-                                                            //("borrando");
-                                                            elem.remove();
-                                                            rt_screenshots.splice(j, 1);
-                                                            break;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        });
-
-                                    var found = false;
-                                    for (var j = rt_screenshots.length - 1; j > -1; j--) {
-                                        if (rt_screenshots[j].attr('data-username') + rt_screenshots[j].attr('data-domain') == username + domain) {
-                                            rt_screenshots[j] = img;
-                                            found = true;
-                                            break;
-                                        }
-                                    }
-                                    if (found == false) {
-                                        rt_screenshots.push(img);
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        vizzoplib.log(url, msg, jqXHR);
-                        for (var j = rt_imagereqs.length - 1; j > -1; j--) {
-                            if (rt_imagereqs[j].name == username + domain) {
-                                rt_imagereqs.splice(j, 1);
-                            }
-                        }
-                    }
-                });
-            } catch (err) {
-                //(err);
-            }
-        }
         */
 
-        //La cosa es... tras devolver la imagen y cargar la misma en la celda anterior, dentro del div que hay vamos metiendo lo que cargo y quitando el resto de imagenes.. para que no haya flicker
-        //En esta chorrada he perdido mas de 10 horas... ¿como? no se
-        /*
-        var onloadString = "var url = $(this).attr('src'); var style= $(this).attr('style');"
-        onloadString += "$(this).attr('onload', null).appendTo($(this).parent().prev().find('div')).show();";
-        onloadString += "$(this).parent().find('img').each(function (index, item) { if(item != this){ $(item).remove();} });";
-
-        var styleString = "display: none; position: absolute; top: 0; left: 0; height: 90px; width: 90px; -webkit-box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.275); -moz-box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.275); box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.275); background-position: cover;";
-
-        var newimg = '<img src="' + newURL + '" onload="' + onloadString + '" style="' + styleString + '"/>';;
-        */
         //rt_oTable.fnDraw();
     }
 
@@ -718,12 +579,7 @@
                 { "sTitle": "UserName", "bSearchable": false, "bVisible": false, "bSortable": false },
                 { "sTitle": "Domain", "bSearchable": false, "bVisible": false, "bSortable": false },
                 { "sTitle": "Password", "bSearchable": false, "bVisible": false, "bSortable": false },
-                { "sTitle": "WindowName", "bSearchable": false, "bVisible": false, "bSortable": false },
-                {
-                    "bSortable": false,
-                    "bSearchable": false,
-                    "bVisible": false
-                }
+                { "sTitle": "WindowName", "bSearchable": false, "bVisible": false, "bSortable": false }
             ]
         });
         //rt_updatetable();

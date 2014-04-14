@@ -379,26 +379,19 @@ namespace vizzopWeb.Controllers
                     return null;
                 }
                 var converser = (Converser)HttpContext.Session["converser"];
-                try
+                if (converser == null)
                 {
-                    if (converser == null)
-                    {
-                        return Json(null);
-                    }
+                    return Json(null);
                 }
-                catch (Exception ex)
+                if (converser.Agent == null)
                 {
-                    utils.GrabaLogExcepcion(ex);
                     return Json(null);
                 }
 
-                /*
-                    Thread_GetWebLocationsHelper oThread_GetWebLocationsHelper = new Thread_GetWebLocationsHelper(converser);
-                    oThread_GetWebLocationsHelper.DoThings();
-                 */
+                //List<WebLocation> WebLocations = new List<WebLocation>();
 
-
-                List<WebLocation> WebLocations = new List<WebLocation>();
+                TimeZone localZone = TimeZone.CurrentTimeZone;
+                DateTime loctime = localZone.ToUniversalTime(DateTime.Now.AddSeconds(-30));
 
                 string tag = "weblocation";
                 List<DataCacheTag> Tags = new List<DataCacheTag>();
@@ -406,114 +399,74 @@ namespace vizzopWeb.Controllers
                 object result = SingletonCache.Instance.GetByTag(tag);
                 if (result != null)
                 {
-                    IEnumerable<KeyValuePair<string, object>> ObjectList = (IEnumerable<KeyValuePair<string, object>>)result;
 
-                    foreach (var e in ObjectList)
+
+                    /*
+                    string VizzopGetsAllRealtimeWebLocationsSetting = "VizzopGetsAllRealtimeWebLocationsInRelease";
+    #if DEBUG
+                    VizzopGetsAllRealtimeWebLocationsSetting = "VizzopGetsAllRealtimeWebLocationsInDebug";
+    #endif
+                    bool VizzopGetsAllRealtimeWebLocations = Convert.ToBoolean((from m in db.Settings
+                                                                                where m.Name == VizzopGetsAllRealtimeWebLocationsSetting
+                                                                                select m).FirstOrDefault().Value);
+                    */
+                    var VizzopGetsAllRealtimeWebLocations = true;
+
+                    IEnumerable<KeyValuePair<string, object>> WebLocations = (IEnumerable<KeyValuePair<string, object>>)result;
+
+                    WebLocations = (from m in WebLocations
+                                    where ((WebLocation)m.Value).TimeStamp_Last > loctime
+                                    select m);
+
+                    if ((converser.Business.Domain.ToLowerInvariant() != "vizzop") || (VizzopGetsAllRealtimeWebLocations == false))
                     {
-                        WebLocations.Add((WebLocation)e.Value);
+                        WebLocations = (from m in WebLocations
+                                        where ((WebLocation)m.Value).Domain == converser.Business.Domain
+                                        select m);
                     }
-                }
 
-                TimeZone localZone = TimeZone.CurrentTimeZone;
-                DateTime loctime = localZone.ToUniversalTime(DateTime.Now.AddSeconds(-30));
-                WebLocations = (from m in WebLocations
-                                where m.TimeStamp_Last > loctime
-                                select m).OrderByDescending(z => z.TimeStamp_Last).ToList();
-
-                List<WebLocationDataTables> DefLocList = new List<WebLocationDataTables>();
-
-                /*
-                string VizzopGetsAllRealtimeWebLocationsSetting = "VizzopGetsAllRealtimeWebLocationsInRelease";
-#if DEBUG
-                VizzopGetsAllRealtimeWebLocationsSetting = "VizzopGetsAllRealtimeWebLocationsInDebug";
-#endif
-                bool VizzopGetsAllRealtimeWebLocations = Convert.ToBoolean((from m in db.Settings
-                                                                            where m.Name == VizzopGetsAllRealtimeWebLocationsSetting
-                                                                            select m).FirstOrDefault().Value);
-                */
-                var VizzopGetsAllRealtimeWebLocations = true;
-
-                foreach (WebLocation wl in WebLocations)
-                {
-                    try
+                    if (WebLocations.Count() > 0)
                     {
+                        var aaData = WebLocations.Select(x => new[] { 
+                        ((WebLocation)x.Value).ConverserId.ToString(), 
+                        ((WebLocation)x.Value).ThumbNail,
+                        ((WebLocation)x.Value).ScreenCapture == null ? null : ((WebLocation)x.Value).ScreenCapture.Width.ToString(),
+                        ((WebLocation)x.Value).ScreenCapture == null ? null : ((WebLocation)x.Value).ScreenCapture.Height.ToString(),
+                        ((WebLocation)x.Value).Url,
+                        ((WebLocation)x.Value).Lang,
+                        ((WebLocation)x.Value).Ubication,
+                        ((WebLocation)x.Value).UserAgent,
+                        ((WebLocation)x.Value).Referrer, 
+                        ((WebLocation)x.Value).TimeStamp_First.ToString("o"),
+                        utils.GetPrettyDate(((WebLocation)x.Value).TimeStamp_First),
+                        ((WebLocation)x.Value).TimeStamp_Last.ToString("o"),
+                        utils.GetPrettyDate(((WebLocation)x.Value).TimeStamp_Last),
+                        ((WebLocation)x.Value).FullName,
+                        ((WebLocation)x.Value).UserName,
+                        ((WebLocation)x.Value).Domain,
+                        ((WebLocation)x.Value).Password,
+                        ((WebLocation)x.Value).WindowName
+                        });
 
-                        //solo seguimos palante si es vizzop y el setting 
-                        if ((converser.Business.Domain.ToLowerInvariant() != "vizzop") || (VizzopGetsAllRealtimeWebLocations == false))
+                        /*
+                        foreach (var item in aaData)
                         {
-                            if (wl.Domain != converser.Business.Domain)
+                            ScreenCapture sc = utils.GetScreenCapture(item[14], item[15], item[17]);
+                            if (sc != null)
                             {
-                                continue;
+                                item[2] = sc.Width.ToString();
+                                item[3] = sc.Height.ToString();
                             }
                         }
+                        */
 
-                        //Solo añadimos los no duplicados...
-                        if (DefLocList.Any(m => m.WindowName == wl.WindowName) == false)
-                        {
-                            WebLocationDataTables loc = new WebLocationDataTables();
-                            loc.ConverserID = wl.ConverserId;
-                            loc.Url = wl.Url;
-                            loc.Referrer = wl.Referrer;
-                            loc.IP = wl.IP;
-                            loc.Lang = wl.Lang;
-                            loc.Ubication = wl.Ubication;
-                            loc.UserAgent = wl.UserAgent;
-                            loc.FirstViewed = wl.TimeStamp_First;
-                            loc.FirstViewedHuman = utils.GetPrettyDate(wl.TimeStamp_First);
-                            loc.LastViewed = wl.TimeStamp_Last;
-                            loc.LastViewedHuman = utils.GetPrettyDate(wl.TimeStamp_Last).ToString();
-                            loc.UserName = wl.UserName;
-                            loc.Domain = wl.Domain;
-                            loc.Password = wl.Password;
-                            loc.FullName = wl.FullName != null ? wl.FullName : "Anonymous";
-                            loc.WindowName = wl.WindowName;
-                            loc.ThumbNail = wl.ThumbNail;
-                            loc.ScreenCapture = wl.ScreenCapture;
-                            DefLocList.Add(loc);
-                        }
+                        return Json(aaData, JsonRequestBehavior.AllowGet);
+
                     }
-                    catch (Exception e)
+                    else
                     {
-                        utils.GrabaLogExcepcion(e);
+                        return Json(null);
                     }
-                }
-
-                if (DefLocList.Count > 0)
-                {
-                    var aaData = DefLocList.Select(x => new[] { 
-                        x.ConverserID.ToString(), 
-                        x.ThumbNail,
-                        null,
-                        null,
-                        x.Url,
-                        x.Lang,
-                        x.Ubication,
-                        x.UserAgent,
-                        x.Referrer, 
-                        x.FirstViewed.ToString("o"),
-                        x.FirstViewedHuman,
-                        x.LastViewed.ToString("o"),
-                        x.LastViewedHuman,
-                        x.FullName,
-                        x.UserName,
-                        x.Domain,
-                        x.Password,
-                        x.WindowName,
-                        ""
-                        }).ToList();
-
-                    foreach (var item in aaData)
-                    {
-                        ScreenCapture sc = utils.GetScreenCapture(item[14], item[15], item[17]);
-                        if (sc != null)
-                        {
-                            item[2] = sc.Width.ToString();
-                            item[3] = sc.Height.ToString();
-                        }
-                    }
-
-                    return Json(aaData, JsonRequestBehavior.AllowGet);
-
                 }
                 else
                 {

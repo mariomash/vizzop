@@ -34,11 +34,28 @@ namespace vizzopWeb.Controllers
         {
             try
             {
+
+                if (HttpContext.Session["converser"] == null)
+                {
+                    return null;
+                }
+                var converser = (Converser)HttpContext.Session["converser"];
+                if (converser == null)
+                {
+                    return Json(false);
+                }
+                if (converser.Agent == null)
+                {
+                    return Json(false);
+                }
+
+                /*
                 Converser converser = utils.GetConverserFromSystem(username, password, domain, db);
                 if (converser == null)
                 {
                     return Json(false);
                 }
+                */
 
                 List<CommSession> sessions = new List<CommSession>();
 
@@ -94,7 +111,7 @@ namespace vizzopWeb.Controllers
                             sessions = orig_sessions.ToList<CommSession>();
                         }
                     }
-                    Thread.Sleep(TimeSpan.FromMilliseconds(50));
+                    Thread.Sleep(TimeSpan.FromMilliseconds(1000));
                 }
 
                 List<CommSession> returnsessions = new List<CommSession>();

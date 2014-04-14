@@ -2528,22 +2528,33 @@ namespace vizzopWeb
                 if ((url != null) && (converser != null))
                 {
 
-
-                    List<WebLocation> WebLocations = new List<WebLocation>();
+                    //List<WebLocation> WebLocations = new List<WebLocation>();
                     string tag = "weblocation";
                     List<DataCacheTag> Tags = new List<DataCacheTag>();
                     Tags.Add(new DataCacheTag(tag));
                     object result = SingletonCache.Instance.GetByTag(tag);
                     if (result != null)
                     {
-                        IEnumerable<KeyValuePair<string, object>> ObjectList = (IEnumerable<KeyValuePair<string, object>>)result;
+                        IEnumerable<KeyValuePair<string, object>> WebLocations = (IEnumerable<KeyValuePair<string, object>>)result;
+                        /*
+                        var WebLocations = (from m in ObjectList
+                                            where ((WebLocation)m.Value).TimeStamp_Last > loctime
+                                            select m);
+                        */
+                        /*
                         foreach (var e in ObjectList)
                         {
                             WebLocations.Add((WebLocation)e.Value);
                         }
+                        */
 
-                    }
-
+                        var cacheWebLocation = (from m in WebLocations
+                                                where ((WebLocation)m.Value).UserName == converser.UserName &&
+                                                ((WebLocation)m.Value).Domain == converser.Business.Domain &&
+                                                ((WebLocation)m.Value).WindowName == windowname &&
+                                                ((WebLocation)m.Value).Url == url
+                                                select m).FirstOrDefault();
+                        /*
                     WebLocation weblocation = null;
                     weblocation = (from m in WebLocations
                                    where m.UserName == converser.UserName &&
@@ -2551,60 +2562,70 @@ namespace vizzopWeb
                                    m.WindowName == windowname &&
                                    m.Url == url
                                    select m).FirstOrDefault();
-                    /*
-                    string key = converser.UserName + @"@" + converser.Business.Domain + @"@" + windowname;
-                    DataCacheLockHandle lockHandle;
-                    object result = SingletonCache.Instance.GetWithLock(key, out lockHandle);
-                    if (result != null)
-                    {
-                        weblocation = (WebLocation)result;
-                    }
-                    */
-                    if (weblocation != null)
-                    {
-                        if ((weblocation.Url != url) || (weblocation.WindowName != windowname))
-                        {
-                            weblocation = null;
-                        }
-                    }
-                    if (weblocation != null)
-                    {
+                         * */
+                        /*
+                        string key = converser.UserName + @"@" + converser.Business.Domain + @"@" + windowname;
                         DataCacheLockHandle lockHandle;
-                        result = SingletonCache.Instance.GetWithLock(weblocation.Guid, out lockHandle);
+                        object result = SingletonCache.Instance.GetWithLock(key, out lockHandle);
                         if (result != null)
                         {
                             weblocation = (WebLocation)result;
                         }
-                        weblocation.TimeStamp_Last = loctime;
-                        SingletonCache.Instance.InsertWithLockAndTags(weblocation.Guid, weblocation, lockHandle, Tags);
+                        */
+                        WebLocation weblocation = null;
+                        if (cacheWebLocation.Value != null)
+                        {
+                            if ((((WebLocation)cacheWebLocation.Value).Url == url) && (((WebLocation)cacheWebLocation.Value).WindowName == windowname))
+                            {
+                                weblocation = (WebLocation)cacheWebLocation.Value;
+                            }
+                        }
+                        if (weblocation != null)
+                        {
+                            DataCacheLockHandle lockHandle;
+                            result = SingletonCache.Instance.GetWithLock(weblocation.Guid, out lockHandle);
+                            if (result != null)
+                            {
+                                weblocation = (WebLocation)result;
+                            }
+                            weblocation.TimeStamp_Last = loctime;
+                            SingletonCache.Instance.InsertWithLockAndTags(weblocation.Guid, weblocation, lockHandle, Tags);
+                        }
+                        else
+                        {
+                            string slang = "-";
+                            if (language != null) { slang = language; }
+
+                            weblocation = new WebLocation();
+                            weblocation.ConverserId = converser.ID;
+                            weblocation.UserName = converser.UserName;
+                            weblocation.Password = converser.Password;
+                            weblocation.FullName = converser.FullName;
+                            weblocation.Domain = converser.Business.Domain;
+                            weblocation.Referrer = referrer;
+                            weblocation.TimeStamp_First = loctime;
+                            weblocation.TimeStamp_Last = loctime;
+                            weblocation.UserAgent = useragent;
+                            weblocation.IP = sIP;
+                            weblocation.Lang = slang;
+                            weblocation.Url = url;
+                            weblocation.Ubication = GetUbicationFromIP(sIP);
+                            weblocation.Headers = headers;
+                            weblocation.WindowName = windowname;
+
+                            //SingletonCache.Instance.InsertWithLockAndTags(weblocation.Guid, weblocation, lockHandle, Tags);
+                            SingletonCache.Instance.InsertWithTags(weblocation.Guid, weblocation, Tags);
+                        }
+
+                        return new Status(true, null);
                     }
                     else
                     {
-                        string slang = "-";
-                        if (language != null) { slang = language; }
-
-                        weblocation = new WebLocation();
-                        weblocation.ConverserId = converser.ID;
-                        weblocation.UserName = converser.UserName;
-                        weblocation.Password = converser.Password;
-                        weblocation.FullName = converser.FullName;
-                        weblocation.Domain = converser.Business.Domain;
-                        weblocation.Referrer = referrer;
-                        weblocation.TimeStamp_First = loctime;
-                        weblocation.TimeStamp_Last = loctime;
-                        weblocation.UserAgent = useragent;
-                        weblocation.IP = sIP;
-                        weblocation.Lang = slang;
-                        weblocation.Url = url;
-                        weblocation.Ubication = GetUbicationFromIP(sIP);
-                        weblocation.Headers = headers;
-                        weblocation.WindowName = windowname;
-
-                        //SingletonCache.Instance.InsertWithLockAndTags(weblocation.Guid, weblocation, lockHandle, Tags);
-                        SingletonCache.Instance.InsertWithTags(weblocation.Guid, weblocation, Tags);
+                        //SingletonCache.Instance.UnLock(key, lockHandle);
+                        return new Status(false, "no url or converser");
+                        //return null;
                     }
 
-                    return new Status(true, null);
                 }
                 else
                 {

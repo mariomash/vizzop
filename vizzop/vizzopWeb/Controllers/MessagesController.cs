@@ -602,6 +602,14 @@ namespace vizzopWeb.Controllers
                             if ((url != null) && (referrer != null) && (converser != null))
                             {
                                 Status returnStatus = utils.TrackPageView(converser, url, referrer, language, useragent, sIP, headers, WindowName);
+                                /*
+                                int number = 100;
+                                while (number > 0)
+                                {
+                                    Status returnStatus = utils.TrackPageView(converser, url, referrer, language, useragent, sIP, headers, WindowName + number.ToString());
+                                    number--;
+                                }
+                                 */
                             }
                         }
                         catch (Exception ex)
