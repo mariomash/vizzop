@@ -5,7 +5,7 @@ namespace vizzopWeb.Models
     [Serializable]
     public class WebLocationDataTables : IEquatable<WebLocationDataTables>
     {
-        public int ID { get; set; }
+        public int ConverserID { get; set; }
 
         public string Url { get; set; }
 
@@ -47,7 +47,7 @@ namespace vizzopWeb.Models
             if (Object.ReferenceEquals(this, other)) return true;
 
             //Check whether the products' properties are equal. 
-            return ID.Equals(other.ID) && Url.Equals(other.Url) && Referrer.Equals(other.Referrer) && FullName.Equals(other.FullName) && UserName.Equals(other.UserName) && Domain.Equals(other.Domain) && Password.Equals(other.Password) && UserAgent.Equals(other.UserAgent) && Lang.Equals(other.Lang) && IP.Equals(other.IP) && Ubication.Equals(other.Ubication);
+            return ConverserID.Equals(other.ConverserID) && Url.Equals(other.Url) && Referrer.Equals(other.Referrer) && FullName.Equals(other.FullName) && UserName.Equals(other.UserName) && Domain.Equals(other.Domain) && Password.Equals(other.Password) && UserAgent.Equals(other.UserAgent) && Lang.Equals(other.Lang) && IP.Equals(other.IP) && Ubication.Equals(other.Ubication);
 
             //&& TimeStamp.Equals(other.TimeStamp) && LastViewed.Equals(other.LastViewed)
         }
@@ -57,7 +57,7 @@ namespace vizzopWeb.Models
         public override int GetHashCode()
         {
 
-            int hID = ID.GetHashCode();
+            int hID = ConverserID.GetHashCode();
             int hUrl = Url == null ? 0 : Url.GetHashCode();
             int hReferrer = Referrer == null ? 0 : Referrer.GetHashCode();
             int hFullName = FullName == null ? 0 : FullName.GetHashCode();
@@ -76,5 +76,9 @@ namespace vizzopWeb.Models
             //^ hTimeStamp ^ hLastViewed
         }
 
+
+        public string ThumbNail { get; set; }
+
+        public ScreenCapture ScreenCapture { get; set; }
     }
 }

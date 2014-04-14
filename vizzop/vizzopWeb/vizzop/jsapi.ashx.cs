@@ -16,8 +16,8 @@ namespace vizzopWeb
     /// <summary>
     /// Descripción breve de jsapi
     /// </summary>
-    [SessionState(System.Web.SessionState.SessionStateBehavior.ReadOnly)]
-    public class jsapi : IHttpHandler, IReadOnlySessionState
+    [SessionState(System.Web.SessionState.SessionStateBehavior.Required)]
+    public class jsapi : IHttpHandler, IRequiresSessionState
     {
         private vizzopContext db = new vizzopContext();
         private Utils utils = new Utils();
@@ -90,7 +90,6 @@ namespace vizzopWeb
                 string webname = "vizzop";
                 if (business.BusinessName != null) { webname = business.BusinessName; }
                 Converser converser = null;
-                string trackID = null;
 
                 if (Mode == "agent")
                 {
@@ -175,6 +174,8 @@ namespace vizzopWeb
                     }
                     if (converser != null)
                     {
+                        HttpContext.Current.Session["converser"] = converser;
+
                         string[] languages = context.Request.UserLanguages;
                         string language = null;
                         if (languages != null && languages.Length != 0) { language = languages[0].ToLowerInvariant().Trim(); }
@@ -203,11 +204,11 @@ namespace vizzopWeb
                             {
                                 urlreferrer = context.Request.UrlReferrer.AbsoluteUri;
                             }
-                            //Y trackeamos la visita.. solo para clientes!! si es la primera vez no habrá trackID... anyway siempre lo traemos
+                            //Y trackeamos la visita.. solo para clientes!!
                             /*
-                            Status returnStatus = utils.TrackPageView(trackID, converser, urlreferrer, "", language, useragent, sIP, headers, null, db);
+                            Status returnStatus = utils.TrackPageView(converser, context.Request.Url.AbsoluteUri, urlreferrer, language, useragent, sIP, headers, null);
                             var e = returnStatus;
-                             */
+                            */
                         }
 
                         Converser conv_me = new Converser();

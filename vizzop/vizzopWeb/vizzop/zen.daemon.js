@@ -203,7 +203,6 @@ var Tracking = jVizzop.zs_Class.create({
             this._username = username;
             this._password = password;
             this._domain = domain;
-            this._id = null;
             this._cue = [];
         } catch (err) {
             vizzoplib.log(err);
@@ -216,12 +215,8 @@ var Tracking = jVizzop.zs_Class.create({
                 return;
             }
             var msg = {
-                'username': self._username,
-                'password': self._password,
-                'domain': self._domain,
                 'url': url,
                 'referrer': referrer,
-                'trackID': self._id,
                 'windowname': window.name
             };
             url = vizzop.mainURL + "/RealTime/TrackPageView";
@@ -257,6 +252,7 @@ var Daemon = jVizzop.zs_Class.create({
         }
         var self = this;
         try {
+            vizzop.URL = document.URL;
             var l = vizzoplib.getLocation(document.URL);
 
             self.audioNewMessage = new Audio(
@@ -466,7 +462,7 @@ var Daemon = jVizzop.zs_Class.create({
                 vizzop.Tracking = new Tracking(vizzop.me.UserName, vizzop.me.Password, vizzop.me.Business.Domain);
                 jVizzop(window).unload(function () {
                 });
-                vizzop.Tracking.TrackPageView(document.URL, document.referrer);
+                vizzop.Tracking.TrackPageView(vizzop.URL, document.referrer);
                 self.checkExternal();
 
                 if (vizzop.AllowScreenCaptures == true) {
@@ -481,7 +477,7 @@ var Daemon = jVizzop.zs_Class.create({
                 if ((vizzop.DaemonTiming_Steps % 1) == 0) {
                     self.checkNewMessages();
                     self.sendNewMessages();
-                    
+
                     if (vizzop.AllowScreenCaptures == true) {
                         self.sendHtml();
                     }
@@ -1314,9 +1310,6 @@ var Daemon = jVizzop.zs_Class.create({
 
                     if (v.Subject.indexOf('$#_') > -1) {
                         switch (v.Subject) {
-                            case '$#_trackid':
-                                vizzop.Tracking._id = v.Content;
-                                break;
                             case '$#_startsession':
                                 //alert("eo");
                                 msgbox._commsessionid = v.Content;
@@ -1477,10 +1470,6 @@ var Daemon = jVizzop.zs_Class.create({
             if ((vizzop.MsgCheckExternal_InCourse != null) || (vizzop.me == null)) {
                 return;
             }
-            var _trackID = null;
-            if (vizzop.Tracking != null) {
-                _trackID = vizzop.Tracking._id;
-            }
             var _commmSessionID = null;
             if (self._commsessionid != null) {
                 _commmSessionID = self._commsessionid;
@@ -1493,15 +1482,11 @@ var Daemon = jVizzop.zs_Class.create({
             vizzop.MsgCueAudit = [];
 
             var msg = {
-                'UserName': vizzop.me.UserName,
-                'Password': vizzop.me.Password,
-                'Domain': vizzop.me.Business.Domain,
                 'MsgLastID': vizzop.MsgLastID,
-                'url': document.URL,
+                'url': vizzop.URL,
                 'referrer': document.referrer,
                 'CommSessionID': _commmSessionID,
                 'SessionID': vizzop.SessionID,
-                'trackID': _trackID,
                 'WindowName': window.name,
                 'MsgCueAudit': MsgCueAudit
             };
@@ -1698,7 +1683,7 @@ var Daemon = jVizzop.zs_Class.create({
                 'sl': jVizzop(window).scrollLeft(),
                 'w': size.w, /*jVizzop(window).width(),*/
                 'h': size.h, /*jVizzop(window).height(),*/
-                'url': document.URL,
+                'url': vizzop.URL,
                 'date': DateUTC,
                 'img': null,
                 'blob': diffresult,

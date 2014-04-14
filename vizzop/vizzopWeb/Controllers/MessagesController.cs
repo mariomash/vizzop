@@ -12,6 +12,7 @@ using Microsoft.ApplicationServer.Caching;
 using Microsoft.WindowsAzure.ServiceRuntime;
 using vizzopWeb.Models;
 using HtmlAgilityPack;
+using System.Threading.Tasks;
 
 namespace vizzopWeb
 {
@@ -498,7 +499,7 @@ namespace vizzopWeb.Controllers
 #else
         [RequireHttps]
 #endif
-        public ActionResult CheckExternal(string trackID, string UserName, string Password, string Domain, string MsgLastID, string url, string referrer, string callback, string SessionID, string CommSessionID, string WindowName, string MsgCueAudit)
+        public ActionResult CheckExternal(string MsgLastID, string url, string referrer, string callback, string SessionID, string CommSessionID, string WindowName, string MsgCueAudit)
         {
 
             try
@@ -513,11 +514,24 @@ namespace vizzopWeb.Controllers
                 //Y montamos la lista de mensajes que le vamos a devolver
                 List<Message> returnmessages = new List<Message>();
 
+
+                if (HttpContext.Session["converser"] == null)
+                {
+                    return null;
+                }
+                var converser = (Converser)HttpContext.Session["converser"];
+                if (converser == null)
+                {
+                    return Json(false);
+                }
+
+                /*
                 Converser converser = utils.GetConverserFromSystem(UserName, Password, Domain, db);
                 if (converser == null)
                 {
                     return Json(false);
                 }
+                */
 
                 //Solo Para agentes... permitimos una única sesion..
                 if ((converser.Agent != null) && (SessionID != null) && (SessionID != "null"))
@@ -580,40 +594,14 @@ namespace vizzopWeb.Controllers
                 {
                     sIP = sIP.Split(',')[0];
 
-                    //Y trackeamos la visita.. solo para clientes!! si es la primera vez no habrá trackID... anyway siempre lo traemos
+                    //Y trackeamos la visita.. solo para clientes!!
                     if (converser.Agent == null)
                     {
                         try
                         {
                             if ((url != null) && (referrer != null) && (converser != null))
                             {
-                                Status returnStatus = utils.TrackPageView(trackID, converser, url, referrer, language, useragent, sIP, headers, WindowName);
-                                if (returnStatus.Success == true)
-                                {
-                                    Message returnmsg = new Message();
-                                    returnmsg.From = new Converser();
-                                    returnmsg.From.ID = 0;
-                                    returnmsg.From.UserName = "vizzop";
-                                    returnmsg.From.FullName = "";
-                                    returnmsg.From.Password = null;
-                                    returnmsg.From.Business = new Business();
-                                    returnmsg.From.Business.Domain = "vizzop";
-                                    returnmsg.To = new Converser();
-                                    returnmsg.To.ID = converser.ID;
-                                    returnmsg.To.UserName = converser.UserName;
-                                    returnmsg.To.FullName = converser.FullName;
-                                    returnmsg.To.Password = null;
-                                    returnmsg.To.Business = new Business();
-                                    returnmsg.To.Business.Domain = converser.Business.Domain;
-                                    returnmsg.CommSession = new CommSession();
-                                    returnmsg.CommSession.ID = 0;
-                                    returnmsg.Content = returnStatus.Value.ToString();
-                                    returnmsg.Subject = "$#_trackid";
-                                    returnmsg.db = null;
-                                    returnmsg.utils = null;
-                                    //returnmsg = utils.TransformMessageToSerializedProof(returnmsg);
-                                    returnmessages.Add(returnmsg);
-                                }
+                                Status returnStatus = utils.TrackPageView(converser, url, referrer, language, useragent, sIP, headers, WindowName);
                             }
                         }
                         catch (Exception ex)
@@ -832,45 +820,67 @@ namespace vizzopWeb.Controllers
 
                 DateTime start_time = DateTime.Now;
 
-                ScreenCaptureControl sc_control = null;
-                while ((sc_control == null) && (DateTime.Now < start_time.AddSeconds(25)))
+                WebLocation weblocation = null;
+                while ((weblocation == null) && (DateTime.Now < start_time.AddSeconds(25)))
                 {
-                    string key = "screenshot_control_from_" + UserName + "@" + Domain + "@" + WindowName;
-                    object result = SingletonCache.Instance.Get(key);
+
+                    List<WebLocation> WebLocations = new List<WebLocation>();
+
+                    string tag = "weblocation";
+                    List<DataCacheTag> Tags = new List<DataCacheTag>();
+                    Tags.Add(new DataCacheTag(tag));
+                    object result = SingletonCache.Instance.GetByTag(tag);
                     if (result != null)
                     {
-                        sc_control = (ScreenCaptureControl)result;
-                        if (sc_control != null)
+                        IEnumerable<KeyValuePair<string, object>> ObjectList = (IEnumerable<KeyValuePair<string, object>>)result;
+
+                        foreach (var e in ObjectList)
                         {
-                            if ((sc_control.ScreenCapture == null) || (sc_control.ScreenCapture.GUID == GUID) || (sc_control.ScreenCapture.Blob == null))
-                            {
-                                sc_control = null;
-                            }
+                            WebLocations.Add((WebLocation)e.Value);
                         }
                     }
-                    Thread.Sleep(TimeSpan.FromMilliseconds(50));
+
+                    //TimeZone localZone = TimeZone.CurrentTimeZone;
+                    //DateTime loctime = localZone.ToUniversalTime(DateTime.Now.AddSeconds(-30));
+
+                    weblocation = (from m in WebLocations
+                                   //where m.TimeStamp_Last > loctime &&
+                                   where m.UserName == UserName &&
+                                   m.Domain == Domain &&
+                                   m.WindowName == WindowName
+                                   select m).OrderByDescending(m => m.TimeStamp_Last).FirstOrDefault();
+
+                    if (weblocation != null)
+                    {
+                        if ((weblocation.ScreenCapture.GUID == GUID) || (weblocation.ScreenCapture.Blob == null))
+                        {
+                            weblocation = null;
+                            Thread.Sleep(TimeSpan.FromMilliseconds(250));
+                        }
+                    }
+
                 }
 
-                if (sc_control == null)
+                if (weblocation == null)
                 {
                     return Json(false);
                 }
                 else
                 {
-                    sc_control.CompleteHtml = utils.ScrubHTML(sc_control.CompleteHtml);
+                    var CompleteHtml = utils.ScrubHTML(weblocation.CompleteHtml);
 
                     var toReturn = new
                     {
-                        Html = sc_control.CompleteHtml,
-                        Blob = sc_control.ScreenCapture.Blob,
+                        Html = CompleteHtml,
+                        Blob = weblocation.ScreenCapture.Blob,
                         UserName = UserName,
                         Domain = Domain,
-                        GUID = sc_control.ScreenCapture.GUID,
-                        WindowName = sc_control.ScreenCapture.WindowName,
-                        Width = sc_control.ScreenCapture.Width,
-                        Height = sc_control.ScreenCapture.Height,
-                        ScrollTop = sc_control.ScreenCapture.ScrollTop,
-                        ScrollLeft = sc_control.ScreenCapture.ScrollLeft
+                        GUID = weblocation.ScreenCapture.GUID,
+                        WindowName = weblocation.ScreenCapture.WindowName,
+                        Width = weblocation.ScreenCapture.Width,
+                        Height = weblocation.ScreenCapture.Height,
+                        ScrollTop = weblocation.ScreenCapture.ScrollTop,
+                        ScrollLeft = weblocation.ScreenCapture.ScrollLeft
                     };
 
                     /*
@@ -957,19 +967,31 @@ namespace vizzopWeb.Controllers
 #else
         [RequireHttps]
 #endif
-        public ActionResult CheckNew(string UserName, string Password, string Domain, string WindowName, string callback)
+        public ActionResult CheckNew(string WindowName, string callback)
         {
             try
             {
 
+                if (HttpContext.Session["converser"] == null)
+                {
+                    return null;
+                }
+                var converser = (Converser)HttpContext.Session["converser"];
+                if (converser == null)
+                {
+                    return Json(false);
+                }
+
+                /*
                 if ((UserName == null) || (Password == null) || (Domain == null))
                 {
                     return Json(false);
                 }
 
                 Converser converser = utils.GetConverserFromSystem(UserName, Password, Domain, db);
-
                 if (converser == null) { return Json(false); }
+                */
+
 
                 //Y montamos la lista de mensajes que le vamos a devolver
                 List<Message> Messages = new List<Message>();
@@ -984,7 +1006,7 @@ namespace vizzopWeb.Controllers
                     {
                         try
                         {
-                            string key = "messages_to_" + UserName + "@" + Domain;
+                            string key = "messages_to_" + converser.UserName + "@" + converser.Business.Domain;
 
 
                             DataCacheLockHandle lockHandle;

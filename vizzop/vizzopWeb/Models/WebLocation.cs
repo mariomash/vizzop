@@ -7,8 +7,16 @@ namespace vizzopWeb.Models
     public class WebLocation
     {
 
-        public int ID { get; set; }
+        public WebLocation()
+        {
+            this.MustGenerateScreenshot = false;
+            this.Guid = System.Guid.NewGuid().ToString();
+        }
 
+        /*
+        public int ID { get; set; }
+        */
+        public string Guid { get; set; }
         /*
         [Required]
         public virtual Converser Converser { get; set; }
@@ -60,5 +68,11 @@ namespace vizzopWeb.Models
         public DateTime TimeStamp_Last { get; set; }
 
         public string WindowName { get; set; }
+
+        public bool MustGenerateScreenshot { get; set; }
+        public string CaptureProcessId { get; set; }
+        public ScreenCapture ScreenCapture { get; set; }
+        public string ThumbNail { get; set; }
+        public string CompleteHtml { get; set; }
     }
 }

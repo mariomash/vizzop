@@ -245,12 +245,13 @@ namespace vizzopWeb.Controllers
             {
                 if (ModelState.IsValid)
                 {
-
+                    /*
                     if (Session["converser"] != null)
                     {
                         Session["converser"] = null;
                         return RedirectToAction("LogOn");
                     }
+                    */
 
                     if ((logon.Email == null) || (logon.Password == null))
                     {

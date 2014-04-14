@@ -385,12 +385,10 @@ namespace vizzopWeb.Controllers
 
                     var current_location = (from m in WebLocations
                                             where m.ConverserId == returnsession.Client.ID
-                                            orderby m.ID
                                             select m).FirstOrDefault();
 
                     if (current_location != null)
                     {
-                        returnlocation.ID = current_location.ID;
                         returnlocation.Url = current_location.Url;
                         returnlocation.Referrer = current_location.Referrer;
                         returnlocation.IP = current_location.IP;

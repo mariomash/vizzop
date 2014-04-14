@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using System.Web.SessionState;
 using System.Web.WebSockets;
@@ -16,7 +17,8 @@ namespace vizzopWeb.vizzop
     /// <summary>
     /// Summary description for Socket
     /// </summary>
-    public class Socket : IHttpHandler, IReadOnlySessionState
+    [SessionState(System.Web.SessionState.SessionStateBehavior.Required)]
+    public class Socket : IHttpHandler, IRequiresSessionState
     {
 
         private vizzopContext db = new vizzopContext();
@@ -38,11 +40,21 @@ namespace vizzopWeb.vizzop
         {
             try
             {
-                Thread.CurrentThread.Priority = ThreadPriority.Highest;
+                //Thread.CurrentThread.Priority = ThreadPriority.Highest;
 
                 receivedMessage += Encoding.UTF8.GetString(buffer.Array, 0, result.Count);
                 if (result.EndOfMessage == true)
                 {
+                    if (HttpContext.Current.Session["converser"] == null)
+                    {
+                        return;
+                    }
+                    var converser = (Converser)HttpContext.Current.Session["converser"];
+                    if (converser == null)
+                    {
+                        return;
+                    }
+
                     var dict = new JavaScriptSerializer().Deserialize<Dictionary<string, object>>(receivedMessage);
 
                     receivedMessage = null;
@@ -59,9 +71,7 @@ namespace vizzopWeb.vizzop
                             var wrapper = new HttpContextWrapper(HttpContext.Current);
 
                             utils.TrackScreen(
-                                dict["username"].ToString(),
-                                dict["password"].ToString(),
-                                dict["domain"].ToString(),
+                                converser,
                                 dict["data"].ToString(),
                                 dict["listeners"].ToString(),
                                 wrapper
@@ -277,7 +287,7 @@ namespace vizzopWeb.vizzop
                             break;
                         }
                     }
-                    catch (Exception _ex)
+                    catch (Exception)
                     {
                         //utils.GrabaLog(vizzopWeb.Utils.NivelLog.error, _ex.Message);
                         break;

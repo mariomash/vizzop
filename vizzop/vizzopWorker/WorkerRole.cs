@@ -41,20 +41,17 @@ namespace vizzopWorker
             //Trace.TraceInformation("vizzopWorker entry point called", "Information");
             utils.GrabaLog(Utils.NivelLog.info, "vizzopWorker entry point called");
 
-            LanzaYControlaProcesoFileScreenShots();
-            /*
-            Task TaskFile5 = Task.Factory.StartNew(() =>
-            {
-                LanzaYControlaProcesoFileScreenShots();
-            });
-            */
+#if DEBUG
+#else
+#endif
+
             LanzaYControlaProcesoPhantom();
             LanzaYControlaProcesoLimpiaWebLocations();
             LanzaYControlaProcesoCreaVideos();
 
             while (true)
             {
-                Thread.Sleep(TimeSpan.FromMilliseconds(1000));
+                Thread.Sleep(TimeSpan.FromMinutes(1));
             }
         }
 
@@ -521,6 +518,7 @@ namespace vizzopWorker
             {
                 BackgroundWorker b = o as BackgroundWorker;
                 utils.LimpiaWebLocations();
+                Thread.Sleep(TimeSpan.FromSeconds(3));
             });
 
             // what to do when progress changed (update the progress bar for example)
@@ -534,7 +532,6 @@ namespace vizzopWorker
             bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(
             delegate(object o, RunWorkerCompletedEventArgs args)
             {
-                Thread.Sleep(TimeSpan.FromSeconds(1));
                 LanzaYControlaProcesoLimpiaWebLocations();
             });
 
@@ -554,6 +551,7 @@ namespace vizzopWorker
             {
                 BackgroundWorker b = o as BackgroundWorker;
                 CreaVideos(new vizzopContext());
+                Thread.Sleep(TimeSpan.FromSeconds(3));
             });
 
             // what to do when progress changed (update the progress bar for example)
@@ -578,40 +576,6 @@ namespace vizzopWorker
          * Tema capturas...
          */
 
-        private void LanzaYControlaProcesoFileScreenShots()
-        {
-
-            BackgroundWorker bw = new BackgroundWorker();
-
-            // this allows our worker to report progress during work
-            bw.WorkerReportsProgress = true;
-
-            // what to do in the background thread
-            bw.DoWork += new DoWorkEventHandler(
-            delegate(object o, DoWorkEventArgs args)
-            {
-                BackgroundWorker b = o as BackgroundWorker;
-                Thread.CurrentThread.Priority = ThreadPriority.AboveNormal;
-                utils.LaunchScreenShotsFileControl();
-            });
-
-            // what to do when progress changed (update the progress bar for example)
-            bw.ProgressChanged += new ProgressChangedEventHandler(
-            delegate(object o, ProgressChangedEventArgs args)
-            {
-                //label1.Text = string.Format("{0}% Completed", args.ProgressPercentage);
-            });
-
-            // what to do when worker completes its task (notify the user)
-            bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(
-            delegate(object o, RunWorkerCompletedEventArgs args)
-            {
-                LanzaYControlaProcesoFileScreenShots();
-            });
-
-            bw.RunWorkerAsync();
-        }
-
         private void LanzaYControlaProcesoPhantom()
         {
 
@@ -625,7 +589,8 @@ namespace vizzopWorker
             delegate(object o, DoWorkEventArgs args)
             {
                 BackgroundWorker b = o as BackgroundWorker;
-                utils.LaunchCaptureProcesses();
+                utils.CheckIfCaptureProcessesHaveToBeStarted();
+                Thread.Sleep(TimeSpan.FromSeconds(3));
             });
 
             // what to do when progress changed (update the progress bar for example)

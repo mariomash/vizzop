@@ -22,7 +22,7 @@ namespace vizzopWeb
         public void ProcessRequest(HttpContext context)
         {
 
-            Thread.CurrentThread.Priority = ThreadPriority.Highest;
+            //Thread.CurrentThread.Priority = ThreadPriority.Highest;
 
             bool result = false;
             string Callback = context.Request.QueryString["callback"];

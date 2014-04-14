@@ -12,7 +12,7 @@ namespace vizzopWeb.Models
         private DataCacheFactory _factory = new DataCacheFactory();
         private DataCache _cache = new DataCache();
         private Utils utils = new Utils();
-        private TimeSpan LockTimeout = TimeSpan.FromSeconds(5);
+        private TimeSpan LockTimeout = TimeSpan.FromSeconds(55);
         private TimeSpan ObjTimeout = TimeSpan.FromHours(1);
         private string region = @"vizzop";
         //private DataCacheLockHandle lockHandle;
@@ -51,11 +51,11 @@ namespace vizzopWeb.Models
             }
         }
 
-        public object GetByTag(string key)
+        public object GetByTag(string _tag)
         {
             try
             {
-                DataCacheTag tag = new DataCacheTag(key);
+                DataCacheTag tag = new DataCacheTag(_tag);
                 return _cache.GetObjectsByTag(tag, region);
             }
             catch (Exception)
@@ -76,10 +76,13 @@ namespace vizzopWeb.Models
                     islocked = false;
                     try
                     {
-                        ObjCache = _cache.GetAndLock(key, LockTimeout, out lockHandle);
+                        ObjCache = _cache.GetAndLock(key, LockTimeout, out lockHandle, region);
                     }
                     catch (Exception _ex)
                     {
+                        /*
+                         || (_ex.Message.Contains(@"ErrorCode<ERRCA0006>:SubStatus<ES0001>:") == true))
+                         */
                         if (_ex.Message.Contains(@"ErrorCode<ERRCA0011>:SubStatus<ES0001>:") == true)
                         {
                             islocked = true;
@@ -101,7 +104,7 @@ namespace vizzopWeb.Models
             {
                 if (obj != null)
                 {
-                    _cache.Put(key, obj, ObjTimeout);
+                    _cache.Put(key, obj, ObjTimeout, region);
                 }
                 return true;
             }
@@ -137,7 +140,7 @@ namespace vizzopWeb.Models
                 {
                     if (lockHandle != null)
                     {
-                        _cache.PutAndUnlock(key, obj, lockHandle, ObjTimeout);
+                        _cache.PutAndUnlock(key, obj, lockHandle, ObjTimeout, region);
                     }
                     else
                     {
@@ -146,7 +149,7 @@ namespace vizzopWeb.Models
                 }
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return this.Insert(key, obj);
                 //return false;
@@ -154,13 +157,45 @@ namespace vizzopWeb.Models
         }
 
 
+        public bool InsertWithLockAndTags(string key, object obj, DataCacheLockHandle lockHandle, List<DataCacheTag> tags)
+        {
+            try
+            {
+                if (obj != null)
+                {
+                    if (lockHandle != null)
+                    {
+                        _cache.PutAndUnlock(key, obj, lockHandle, ObjTimeout, tags, region);
+                    }
+                    else
+                    {
+                        return this.InsertWithTags(key, obj, tags);
+                    }
+                }
+                return true;
+            }
+            catch (Exception)
+            {
+                try
+                {
+                    this.UnLock(key, lockHandle);
+                    return this.InsertWithTags(key, obj, tags);
+                }
+                catch (Exception ex)
+                {
+                    utils.GrabaLogExcepcion(ex);
+                    return false;
+                }
+            }
+        }
+
         public bool UnLock(string key, DataCacheLockHandle lockHandle)
         {
             try
             {
                 if (lockHandle != null)
                 {
-                    _cache.Unlock(key, lockHandle);
+                    _cache.Unlock(key, lockHandle, region);
                 }
                 return true;
             }
@@ -175,7 +210,7 @@ namespace vizzopWeb.Models
         {
             try
             {
-                _cache.Remove(key);
+                _cache.Remove(key, region);
             }
             catch (Exception ex)
             {

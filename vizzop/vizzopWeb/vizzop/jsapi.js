@@ -274,7 +274,11 @@
                     if (typeof name === "undefined") {
                         name = jVizzop(this).attr("name");
                     }
-                    var url = document.URL + '/focus_' + jVizzop(this).attr("name");
+                    var url = document.URL;
+                    if (typeof name !== "undefined") {
+                        url = url + '/focus_' + name;
+                    }
+                    vizzop.URL = url;
                     if (vizzop.IsInFrame == true) {
                         var data = {
                             mode: 'event',

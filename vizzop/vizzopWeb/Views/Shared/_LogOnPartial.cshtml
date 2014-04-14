@@ -3,7 +3,17 @@
     vizzopWeb.Utils utils = new vizzopWeb.Utils();
     var converser = utils.GetLoggedConverser(Session);
 
+    Boolean logged = false;
+
     if (converser != null)
+    {
+        if (converser.Agent != null)
+        {
+            logged = true;
+        }
+    }
+
+    if (logged == true)
     {
     <span style="vertical-align: middle; margin: 0 5px; display: inline-block; font-weight: normal; color: #ddd; font-size: 14px;">Logged In as <strong>@Html.Raw(converser.FullName) - @Html.Raw(converser.Business.BusinessName)</strong></span>
         if (ViewBag.LayoutPanelMode != true)

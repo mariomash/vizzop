@@ -55,18 +55,30 @@ namespace vizzopWeb.Controllers
 #else
         [RequireHttps]
 #endif
-        public ActionResult TrackPageView(string trackID, string username, string password, string domain, string url, string referrer, string windowname, string callback)
+        public ActionResult TrackPageView(string url, string referrer, string windowname, string callback)
         {
             try
             {
-                if ((url != null) && (username != null) && (password != null) && (domain != null))
+                if (url != null)
                 {
 
+                    if (HttpContext.Session["converser"] == null)
+                    {
+                        return null;
+                    }
+                    var converser = (Converser)HttpContext.Session["converser"];
+                    if (converser == null)
+                    {
+                        return Json(false);
+                    }
+
+                    /*
                     Converser converser = utils.GetConverserFromSystem(username, password, domain, db);
                     if (converser == null)
                     {
                         return Json(false);
                     }
+                    */
 
                     // If you want it formated in some other way.
                     var headers = "{";
@@ -91,10 +103,10 @@ namespace vizzopWeb.Controllers
                         windowname = "";
                     }
 
-                    Status returnstatus = utils.TrackPageView(trackID, converser, url, referrer, language, useragent, sIP, headers, windowname);
+                    Status returnstatus = utils.TrackPageView(converser, url, referrer, language, useragent, sIP, headers, windowname);
                     if (returnstatus.Success == true)
                     {
-                        return Json(returnstatus.Value.ToString());
+                        return Json(true);
                     }
                     else
                     {
@@ -309,18 +321,33 @@ namespace vizzopWeb.Controllers
 #else
         [RequireHttps]
 #endif
+        //public ActionResult TrackScreen(string data, string listeners)
         public ActionResult TrackScreen(string username, string password, string domain, string data, string listeners)
         {
             try
             {
-                Thread.CurrentThread.Priority = ThreadPriority.Highest;
+                var converser = utils.GetConverserFromSystem(username, password, domain, db);
+                if (converser == null)
+                {
+                    return Json(false);
+                }
+
+                /*
+                if (HttpContext.Session["converser"] == null)
+                {
+                    return null;
+                }
+                var converser = (Converser)HttpContext.Session["converser"];
+                if (converser == null)
+                {
+                    return Json(false);
+                }
+                */
                 /*
                 var wrapper = new HttpContextWrapper(HttpContext);
                 */
                 utils.TrackScreen(
-                    username,
-                    password,
-                    domain,
+                    converser,
                     data,
                     listeners,
                     HttpContext
@@ -424,7 +451,7 @@ namespace vizzopWeb.Controllers
                         if (DefLocList.Any(m => m.WindowName == wl.WindowName) == false)
                         {
                             WebLocationDataTables loc = new WebLocationDataTables();
-                            loc.ID = wl.ConverserId;
+                            loc.ConverserID = wl.ConverserId;
                             loc.Url = wl.Url;
                             loc.Referrer = wl.Referrer;
                             loc.IP = wl.IP;
@@ -440,6 +467,8 @@ namespace vizzopWeb.Controllers
                             loc.Password = wl.Password;
                             loc.FullName = wl.FullName != null ? wl.FullName : "Anonymous";
                             loc.WindowName = wl.WindowName;
+                            loc.ThumbNail = wl.ThumbNail;
+                            loc.ScreenCapture = wl.ScreenCapture;
                             DefLocList.Add(loc);
                         }
                     }
@@ -452,10 +481,10 @@ namespace vizzopWeb.Controllers
                 if (DefLocList.Count > 0)
                 {
                     var aaData = DefLocList.Select(x => new[] { 
-                        x.ID.ToString(), 
-                        "",
-                        "",
-                        "",
+                        x.ConverserID.ToString(), 
+                        x.ThumbNail,
+                        null,
+                        null,
                         x.Url,
                         x.Lang,
                         x.Ubication,
@@ -475,19 +504,9 @@ namespace vizzopWeb.Controllers
 
                     foreach (var item in aaData)
                     {
-                        string thumb = utils.GetScreenCaptureThumbnail(item[14], item[15], item[17]);
-                        if (thumb != null)
-                        {
-                            item[1] = thumb;
-                        }
                         ScreenCapture sc = utils.GetScreenCapture(item[14], item[15], item[17]);
                         if (sc != null)
                         {
-                            /*
-                            item[1] = "data:image/jpg;base64," + utils.ImageToJpegBase64(
-                                utils.PrepareScreenToReturn(sc, "140", "90", false), 90L
-                                );
-                             * */
                             item[2] = sc.Width.ToString();
                             item[3] = sc.Height.ToString();
                         }
