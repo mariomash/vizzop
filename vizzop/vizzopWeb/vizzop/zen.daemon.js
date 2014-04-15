@@ -289,7 +289,7 @@ var Daemon = jVizzop.zs_Class.create({
                         self.loginBox.fillBox_Login();
                     }
                     self.chatlistBox._boxtitletext.text(LLang('support_agents', null));
-                    self.chatlistBox._box.show();
+                    //self.chatlistBox._box.show();
                     self.controlBox._box.show();
                     vizzop.RunningDaemon = window.setInterval(function () { vizzop.Daemon.checkAgent(); }, vizzop.DaemonTiming);
                     break;
@@ -670,7 +670,7 @@ var Daemon = jVizzop.zs_Class.create({
                         vizzop.ChatListCheck_InCourse = null;
                         return;
                     }
-
+                    self.chatlistBox._box.show();
                     jVizzop.each(data, function (i, v) {
                         /*
                         if (v.UserName == vizzop.me.UserName) {

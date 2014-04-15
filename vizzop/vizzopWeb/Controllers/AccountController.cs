@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.ApplicationServer.Caching;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -283,9 +285,6 @@ namespace vizzopWeb.Controllers
 
                     Utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/LogOnOK/" + logon.Email);
 
-                    Session["converser"] = converser;
-                    utils.AddZenSession(converser, Session.SessionID, db);
-
                     try
                     {
                         converser.Active = true;
@@ -297,6 +296,9 @@ namespace vizzopWeb.Controllers
                         utils.GrabaLogExcepcion(_e);
                     }
 
+                    Session["converser"] = converser;
+                    utils.AddZenSession(converser, Session.SessionID, db);
+
                     if (Url.IsLocalUrl(returnUrl))
                     {
                         return Redirect(returnUrl);
@@ -305,6 +307,17 @@ namespace vizzopWeb.Controllers
                     {
                         if (converser.Agent != null)
                         {
+                            try
+                            {
+                                string tag = "agent";
+                                List<DataCacheTag> Tags = new List<DataCacheTag>();
+                                Tags.Add(new DataCacheTag(tag));
+                                SingletonCache.Instance.InsertWithTags(converser.UserName + @"@" + converser.Business.Domain, converser, Tags);
+                            }
+                            catch (Exception _e)
+                            {
+                                utils.GrabaLogExcepcion(_e);
+                            }
                             return RedirectToAction("Index", "Panel");
                         }
                         else

@@ -142,7 +142,7 @@ namespace GoogleAnalyticsDotNet
             {
                 using (HttpWebResponse response = (HttpWebResponse)((HttpWebRequest)result.AsyncState).EndGetResponse(result)) { }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //utils.GrabaLog(Utils.NivelLog.error, ex.Message);
             }

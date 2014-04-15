@@ -515,7 +515,7 @@ namespace vizzopWeb.Controllers
                 List<Message> returnmessages = new List<Message>();
 
 
-                if (HttpContext.Session["converser"] == null)
+                if (Session["converser"] == null)
                 {
                     return null;
                 }
@@ -525,6 +525,38 @@ namespace vizzopWeb.Controllers
                     return Json(false);
                 }
 
+                string _key = converser.UserName + @"@" + converser.Business.Domain;
+                string tag = "agent";
+                List<DataCacheTag> Tags = new List<DataCacheTag>();
+                Tags.Add(new DataCacheTag(tag));
+                DataCacheLockHandle lockHandle;
+                object result = SingletonCache.Instance.GetWithLock(_key, out lockHandle);
+                if (result != null)
+                {
+                    var agent = (Converser)result;
+                    agent.LastActive = DateTime.UtcNow;
+                    SingletonCache.Instance.InsertWithLockAndTags(_key, agent, lockHandle, Tags);
+                }
+
+
+                /*
+                string tag = "agent";
+                List<DataCacheTag> Tags = new List<DataCacheTag>();
+                Tags.Add(new DataCacheTag(tag));
+                object result = SingletonCache.Instance.GetByTag(tag);
+                if (result != null)
+                {
+                    IEnumerable<KeyValuePair<string, object>> Agents = (IEnumerable<KeyValuePair<string, object>>)result;
+                    var agent = (Converser)(from m in Agents
+                                            where ((Converser)m.Value).ID == converser.ID
+                                            select m).FirstOrDefault().Value;
+                }
+                */
+
+                /*
+                converser.LastActive = DateTime.UtcNow;
+                Session["converser"] = converser;
+                 * */
                 /*
                 Converser converser = utils.GetConverserFromSystem(UserName, Password, Domain, db);
                 if (converser == null)
@@ -634,12 +666,14 @@ namespace vizzopWeb.Controllers
                          * Encontrar todos los Agentes de este ApiKey...
                          * Si estan activos o no.. devuelvo un $#_activeagents o un $#_noactiveagents
                          */
+                        /*
                         var agents = (from m in db.Conversers
                                       where m.Business.ID == converser.Business.ID
                                       && m.Agent != null
                                       && m.LastActive > loctimeUTC_AvailableTimeout
                                       && m.Active == true
                                       select m).ToList<Converser>();
+                        */
 
                         Message agentsmsg = new Message();
                         agentsmsg.Content = null;
@@ -663,13 +697,24 @@ namespace vizzopWeb.Controllers
                         agentsmsg.CommSession = new CommSession();
                         agentsmsg.CommSession.ID = 0;
 
-                        if (agents.Count() > 0)
+                        tag = "agent";
+                        Tags = new List<DataCacheTag>();
+                        Tags.Add(new DataCacheTag(tag));
+                        result = SingletonCache.Instance.GetByTag(tag);
+                        if (result != null)
                         {
-                            agentsmsg.Subject = "$#_activeagents";
-                        }
-                        else
-                        {
-                            agentsmsg.Subject = "$#_noactiveagents";
+                            IEnumerable<KeyValuePair<string, object>> Agents = (IEnumerable<KeyValuePair<string, object>>)result;
+                            var agents = (from m in Agents
+                                          where ((Converser)m.Value).LastActive > loctimeUTC_AvailableTimeout
+                                          select m);
+                            if (agents.Count() > 0)
+                            {
+                                agentsmsg.Subject = "$#_activeagents";
+                            }
+                            else
+                            {
+                                agentsmsg.Subject = "$#_noactiveagents";
+                            }
                         }
 
                         //agentsmsg = utils.TransformMessageToSerializedProof(agentsmsg);
@@ -832,7 +877,7 @@ namespace vizzopWeb.Controllers
                 while ((weblocation == null) && (DateTime.Now < start_time.AddSeconds(25)))
                 {
 
-                    List<WebLocation> WebLocations = new List<WebLocation>();
+                    //List<WebLocation> WebLocations = new List<WebLocation>();
 
                     string tag = "weblocation";
                     List<DataCacheTag> Tags = new List<DataCacheTag>();
@@ -840,23 +885,20 @@ namespace vizzopWeb.Controllers
                     object result = SingletonCache.Instance.GetByTag(tag);
                     if (result != null)
                     {
-                        IEnumerable<KeyValuePair<string, object>> ObjectList = (IEnumerable<KeyValuePair<string, object>>)result;
+                        IEnumerable<KeyValuePair<string, object>> WebLocations = (IEnumerable<KeyValuePair<string, object>>)result;
 
-                        foreach (var e in ObjectList)
-                        {
-                            WebLocations.Add((WebLocation)e.Value);
-                        }
-                    }
+                        //TimeZone localZone = TimeZone.CurrentTimeZone;
+                        //DateTime loctime = localZone.ToUniversalTime(DateTime.Now.AddSeconds(-30));
 
-                    //TimeZone localZone = TimeZone.CurrentTimeZone;
-                    //DateTime loctime = localZone.ToUniversalTime(DateTime.Now.AddSeconds(-30));
-
-                    weblocation = (from m in WebLocations
+                        var obj = (from m in WebLocations
                                    //where m.TimeStamp_Last > loctime &&
-                                   where m.UserName == UserName &&
-                                   m.Domain == Domain &&
-                                   m.WindowName == WindowName
-                                   select m).OrderByDescending(m => m.TimeStamp_Last).FirstOrDefault();
+                                   where ((WebLocation)m.Value).UserName == UserName &&
+                                   ((WebLocation)m.Value).Domain == Domain &&
+                                   ((WebLocation)m.Value).WindowName == WindowName &&
+                                   ((WebLocation)m.Value).ScreenCapture != null
+                                   select m).OrderByDescending(m => ((WebLocation)m.Value).TimeStamp_Last).FirstOrDefault();
+                        weblocation = (WebLocation)obj.Value;
+                    }
 
                     if (weblocation != null)
                     {

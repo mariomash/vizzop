@@ -96,8 +96,6 @@
                     $('#RealtimeReportResults').show();
                     rt_updatetable();
                     //rt_drawchart();
-                    rt_Reloading_InCourse = null;
-                    rt_Countdown();
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     vizzoplib.logAjax(url, msg, jqXHR);
@@ -438,6 +436,8 @@
         //Vamos a poner la Tabla a 0 y repintarla
         rt_oTable.fnClearTable(false);
         rt_oTable.fnAddData(rt_tabledata);
+        rt_Reloading_InCourse = null;
+        rt_Countdown();
         /*
         for (var j = rt_tabledata.length - 1; j > -1; j--) {
             rt_oTable.fnAddData(rt_tabledata[j]);
@@ -506,8 +506,10 @@
             "bAutoWidth": false,
             'fnRowCallback': function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
                 $('td', nRow).addClass("clickable");
+
             },
-            "fnInitComplete": function (oSettings, json) { },
+            "fnInitComplete": function (oSettings, json) {
+            },
             "aoColumns": [
                 { "sTitle": "ID", "bSearchable": false, "bVisible": true, "bSortable": true, "sWidth": "35px" },
                 {
@@ -572,9 +574,9 @@
                 },
                 { "sTitle": "Referrer", "sWidth": "200px", "bVisible": false },
                 { "sTitle": "First Access Machine", "bSearchable": false, "bVisible": false, "sType": "date" },
-                { "sTitle": "First Access", "bSearchable": false, "bVisible": true, "sType": "date", "iDataSort": 9, "sWidth": "100px" },
+                { "sTitle": "First Access", "bSearchable": false, "bVisible": true, "sType": "date", "iDataSort": 9, "sWidth": "90px" },
                 { "sTitle": "Last Active Machine", "bSearchable": false, "bVisible": false, "sType": "date" },
-                { "sTitle": "Last Active", "bSearchable": false, "bVisible": false, "sType": "date", "iDataSort": 11, "sWidth": "100px" },
+                { "sTitle": "Last Active", "bSearchable": false, "bVisible": true, "sType": "date", "iDataSort": 11, "sWidth": "90px" },
                 { "sTitle": "Name", "bSearchable": false, "bVisible": false, "bSortable": false },
                 { "sTitle": "UserName", "bSearchable": false, "bVisible": false, "bSortable": false },
                 { "sTitle": "Domain", "bSearchable": false, "bVisible": false, "bSortable": false },

@@ -425,27 +425,37 @@ namespace vizzopWeb.Controllers
                                         select m);
                     }
 
-                    if (WebLocations.Count() > 0)
+                    var GroupedWebLocations = WebLocations.GroupBy(m => ((WebLocation)m.Value).ConverserId);
+
+                    if (GroupedWebLocations.Count() > 0)
                     {
-                        var aaData = WebLocations.Select(x => new[] { 
-                        ((WebLocation)x.Value).ConverserId.ToString(), 
-                        ((WebLocation)x.Value).ThumbNail,
-                        ((WebLocation)x.Value).ScreenCapture == null ? null : ((WebLocation)x.Value).ScreenCapture.Width.ToString(),
-                        ((WebLocation)x.Value).ScreenCapture == null ? null : ((WebLocation)x.Value).ScreenCapture.Height.ToString(),
-                        ((WebLocation)x.Value).Url,
-                        ((WebLocation)x.Value).Lang,
-                        ((WebLocation)x.Value).Ubication,
-                        ((WebLocation)x.Value).UserAgent,
-                        ((WebLocation)x.Value).Referrer, 
-                        ((WebLocation)x.Value).TimeStamp_First.ToString("o"),
-                        utils.GetPrettyDate(((WebLocation)x.Value).TimeStamp_First),
-                        ((WebLocation)x.Value).TimeStamp_Last.ToString("o"),
-                        utils.GetPrettyDate(((WebLocation)x.Value).TimeStamp_Last),
-                        ((WebLocation)x.Value).FullName,
-                        ((WebLocation)x.Value).UserName,
-                        ((WebLocation)x.Value).Domain,
-                        ((WebLocation)x.Value).Password,
-                        ((WebLocation)x.Value).WindowName
+                        List<WebLocation> _WebLocations = new List<WebLocation>();
+                        foreach (var Group in GroupedWebLocations)
+                        {
+                            var m = Group.OrderByDescending(x => ((WebLocation)x.Value).TimeStamp_Last).FirstOrDefault();
+                            _WebLocations.Add((WebLocation)m.Value);
+                        }
+
+
+                        var aaData = _WebLocations.Select(x => new[] { 
+                        x.ConverserId.ToString(), 
+                        x.ThumbNail,
+                        x.ScreenCapture == null ? null : x.ScreenCapture.Width.ToString(),
+                        x.ScreenCapture == null ? null : x.ScreenCapture.Height.ToString(),
+                        x.Url,
+                        x.Lang,
+                        x.Ubication,
+                        x.UserAgent,
+                        x.Referrer, 
+                        x.TimeStamp_First.ToString("o"),
+                        utils.GetPrettyDate(x.TimeStamp_First),
+                        x.TimeStamp_Last.ToString("o"),
+                        utils.GetPrettyDate(x.TimeStamp_Last),
+                        x.FullName,
+                        x.UserName,
+                        x.Domain,
+                        x.Password,
+                        x.WindowName
                         });
 
                         /*

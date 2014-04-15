@@ -334,7 +334,7 @@ namespace vizzopWorker
 
                 string pathjs = "phantom_videos.js";
 
-                Process proc = utils.DoLaunchCaptureProcess(pathjs, captureToCreate.converser.UserName, captureToCreate.converser.Business.Domain, captureToCreate.converser.Password, captureToCreate.GUID, captureToCreate.WindowName);
+                Process proc = utils.DoLaunchCaptureProcessVideos(pathjs, captureToCreate.converser.UserName, captureToCreate.converser.Business.Domain, captureToCreate.converser.Password, captureToCreate.GUID, captureToCreate.WindowName);
 
                 while (ProcessExtensions.IsRunning(proc))
                 {
@@ -590,7 +590,7 @@ namespace vizzopWorker
             {
                 BackgroundWorker b = o as BackgroundWorker;
                 utils.CheckIfCaptureProcessesHaveToBeStarted();
-                Thread.Sleep(TimeSpan.FromSeconds(3));
+                Thread.Sleep(TimeSpan.FromSeconds(1));
             });
 
             // what to do when progress changed (update the progress bar for example)

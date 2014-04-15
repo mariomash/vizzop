@@ -9,7 +9,7 @@ namespace vizzopWeb.Models
 
         public WebLocation()
         {
-            this.MustGenerateScreenshot = false;
+            this.MustGenerateScreenshot = true;
             this.Guid = System.Guid.NewGuid().ToString();
         }
 
