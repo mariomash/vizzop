@@ -3,7 +3,7 @@
   <PropertyGroup>
     <AzureCredentials>{"ServiceManagementEndpoint":"https:\/\/management.core.windows.net\/","SubscriptionId":"abddb5f9-a010-4df2-b1d1-41dbf83ca60f"}</AzureCredentials>
     <AzureDeleteDeploymentOnFailure>False</AzureDeleteDeploymentOnFailure>
-    <AzureDeploymentLabel>vizzop 524 - bottlenecks</AzureDeploymentLabel>
+    <AzureDeploymentLabel>vizzop 525 - bottlenecks</AzureDeploymentLabel>
     <AzureDeploymentReplacementMethod>BlastUpgrade</AzureDeploymentReplacementMethod>
     <AzureSlot>Production</AzureSlot>
     <AzureEnableRemoteDesktop>False</AzureEnableRemoteDesktop>
@@ -12,7 +12,7 @@
     <AzureHostedServiceLabel>vizzop</AzureHostedServiceLabel>
     <AzureHostedServiceName>vizzop</AzureHostedServiceName>
     <AzureEnableIntelliTrace>False</AzureEnableIntelliTrace>
-    <AzureEnableProfiling>False</AzureEnableProfiling>
+    <AzureEnableProfiling>True</AzureEnableProfiling>
     <AzureServiceConfiguration>Cloud</AzureServiceConfiguration>
     <AzureSolutionConfiguration>Release</AzureSolutionConfiguration>
     <AzureStorageAccountLabel>vizzop</AzureStorageAccountLabel>

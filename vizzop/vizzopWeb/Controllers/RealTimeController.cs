@@ -441,7 +441,14 @@ namespace vizzopWeb.Controllers
                                         select m);
                     }
 
-                    var GroupedWebLocations = WebLocations.GroupBy(m => ((WebLocation)m.Value).ConverserId);
+                    //var GroupedWebLocations = WebLocations.GroupBy(m => ((WebLocation)m.Value).ConverserId);
+
+                    var GroupedWebLocations = (from m in WebLocations
+                                               group m by new
+                                               {
+                                                   ((WebLocation)m.Value).ConverserId,
+                                                   ((WebLocation)m.Value).WindowName
+                                               });
 
                     if (GroupedWebLocations.Count() > 0)
                     {

@@ -874,6 +874,7 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult CheckCaptureControl(string UserName, string Domain, string WindowName, string GUID, string callback)
         {
+
             Utils utils = new Utils();
 
             try
@@ -887,39 +888,40 @@ namespace vizzopWeb.Controllers
                 DateTime start_time = DateTime.Now;
 
                 WebLocation weblocation = null;
+                /*
                 while ((weblocation == null) && (DateTime.Now < start_time.AddSeconds(25)))
                 {
+                }
+                */
 
-                    //List<WebLocation> WebLocations = new List<WebLocation>();
+                //List<WebLocation> WebLocations = new List<WebLocation>();
 
-                    string region = "weblocations";
-                    object result = SingletonCache.Instance.GetAllInRegion(region);
-                    if (result != null)
+                string region = "weblocations";
+                object result = SingletonCache.Instance.GetAllInRegion(region);
+                if (result != null)
+                {
+                    IEnumerable<KeyValuePair<string, object>> WebLocations = (IEnumerable<KeyValuePair<string, object>>)result;
+
+                    //TimeZone localZone = TimeZone.CurrentTimeZone;
+                    //DateTime loctime = localZone.ToUniversalTime(DateTime.Now.AddSeconds(-30));
+
+                    var obj = (from m in WebLocations
+                               //where m.TimeStamp_Last > loctime &&
+                               where ((WebLocation)m.Value).UserName == UserName &&
+                               ((WebLocation)m.Value).Domain == Domain &&
+                               ((WebLocation)m.Value).WindowName == WindowName &&
+                               ((WebLocation)m.Value).ScreenCapture != null
+                               select m).OrderByDescending(m => ((WebLocation)m.Value).TimeStamp_Last).FirstOrDefault();
+                    weblocation = (WebLocation)obj.Value;
+                }
+
+                if (weblocation != null)
+                {
+                    if ((weblocation.ScreenCapture.GUID == GUID) || (weblocation.ScreenCapture.Blob == null))
                     {
-                        IEnumerable<KeyValuePair<string, object>> WebLocations = (IEnumerable<KeyValuePair<string, object>>)result;
-
-                        //TimeZone localZone = TimeZone.CurrentTimeZone;
-                        //DateTime loctime = localZone.ToUniversalTime(DateTime.Now.AddSeconds(-30));
-
-                        var obj = (from m in WebLocations
-                                   //where m.TimeStamp_Last > loctime &&
-                                   where ((WebLocation)m.Value).UserName == UserName &&
-                                   ((WebLocation)m.Value).Domain == Domain &&
-                                   ((WebLocation)m.Value).WindowName == WindowName &&
-                                   ((WebLocation)m.Value).ScreenCapture != null
-                                   select m).OrderByDescending(m => ((WebLocation)m.Value).TimeStamp_Last).FirstOrDefault();
-                        weblocation = (WebLocation)obj.Value;
+                        weblocation = null;
+                        //Thread.Sleep(TimeSpan.FromMilliseconds(250));
                     }
-
-                    if (weblocation != null)
-                    {
-                        if ((weblocation.ScreenCapture.GUID == GUID) || (weblocation.ScreenCapture.Blob == null))
-                        {
-                            weblocation = null;
-                            Thread.Sleep(TimeSpan.FromMilliseconds(250));
-                        }
-                    }
-
                 }
 
                 if (weblocation == null)

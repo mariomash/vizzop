@@ -1885,17 +1885,23 @@ namespace vizzopWeb
                     }
                 }
 
-                var vizzop_base = (from m in doc.DocumentNode.SelectSingleNode("//html").Attributes
-                                   where m.Name == "vizzop-base"
-                                   select m).FirstOrDefault();
-                if (vizzop_base != null)
+                var SelectedHtmlNode = doc.DocumentNode.SelectSingleNode("//html");
+
+                if (SelectedHtmlNode != null)
                 {
-                    var head = doc.DocumentNode.SelectSingleNode("//head");
-                    if (head != null)
+                    var vizzop_base = (from m in SelectedHtmlNode.Attributes
+                                       where m.Name == "vizzop-base"
+                                       select m).FirstOrDefault();
+
+                    if (vizzop_base != null)
                     {
-                        var b = doc.CreateElement("base");
-                        b.Attributes.Add("href", vizzop_base.Value);
-                        head.InsertBefore(b, head.FirstChild);
+                        var head = doc.DocumentNode.SelectSingleNode("//head");
+                        if (head != null)
+                        {
+                            var b = doc.CreateElement("base");
+                            b.Attributes.Add("href", vizzop_base.Value);
+                            head.InsertBefore(b, head.FirstChild);
+                        }
                     }
                 }
                 /*
@@ -2310,15 +2316,16 @@ namespace vizzopWeb
 
                         new_screencapture.Blob = OriginalWebLocation.CompleteHtml;
 
-                        string SaveScreenshotsInDbSetting = "SaveScreenshotsInDbInRelease";
+
+                        string SaveScreenshotsSetting = "SaveScreenShotsInRelease";
 #if DEBUG
-                        SaveScreenshotsInDbSetting = "SaveScreenshotsInDbInDebug";
+                        SaveScreenshotsSetting = "SaveScreenShotsInDebug";
 #endif
-                        bool SaveScreenshotsInDb = false;
-                        SaveScreenshotsInDb = Convert.ToBoolean((from m in db.Settings
-                                                                 where m.Name == SaveScreenshotsInDbSetting
-                                                                 select m).FirstOrDefault().Value);
-                        if (SaveScreenshotsInDb == true)
+
+                        bool SaveScreenShots = false;
+                        SaveScreenShots = Convert.ToBoolean(CloudConfigurationManager.GetSetting(SaveScreenshotsSetting));
+
+                        if (SaveScreenShots == true)
                         {
                             Task TaskLog = Task.Factory.StartNew(() =>
                             {
@@ -2448,22 +2455,11 @@ namespace vizzopWeb
         {
             try
             {
-                if (url.Length > 3999)
-                {
-                    url = url.Substring(0, 3999);
-                }
-                if (referrer == null)
-                {
-                    referrer = "";
-                }
-                if (referrer.Length > 3999)
-                {
-                    referrer = referrer.Substring(0, 3999);
-                }
-                if (useragent.Length > 3999)
-                {
-                    useragent = useragent.Substring(0, 3999);
-                }
+                if (url.Length > 3999) { url = url.Substring(0, 3999); }
+                if (referrer == null) { referrer = ""; }
+                if (referrer.Length > 3999) { referrer = referrer.Substring(0, 3999); }
+                if (useragent.Length > 3999) { useragent = useragent.Substring(0, 3999); }
+
                 TimeZone localZone = TimeZone.CurrentTimeZone;
                 DateTime loctime = localZone.ToUniversalTime(DateTime.Now);
                 if ((url != null) && (converser != null))
@@ -2860,16 +2856,14 @@ namespace vizzopWeb
             {
                 Task TaskLog = Task.Factory.StartNew(() =>
                 {
-                    db = new vizzopContext();
-
                     string CreateLogsSetting = "CreateLogsInRelease";
 #if DEBUG
                     CreateLogsSetting = "CreateLogsInDebug";
 #endif
+
                     bool CreateLogs = false;
-                    CreateLogs = Convert.ToBoolean((from m in db.Settings
-                                                    where m.Name == CreateLogsSetting
-                                                    select m).FirstOrDefault().Value);
+                    CreateLogs = Convert.ToBoolean(CloudConfigurationManager.GetSetting(CreateLogsSetting));
+
                     if (CreateLogs == false)
                     {
                         return;
@@ -3143,6 +3137,7 @@ namespace vizzopWeb
             }
         }
 
+        /*
         public void CheckIfStartedCaptureProcessesAreStillRunning()
         {
             try
@@ -3199,6 +3194,7 @@ namespace vizzopWeb
                 GrabaLog(Utils.NivelLog.error, ex.Message);
             }
         }
+        */
 
         public void CheckIfCaptureProcessesHaveToBeStarted()
         {
@@ -3223,22 +3219,32 @@ namespace vizzopWeb
                                 ((WebLocation)m.Value).CaptureProcessId == null
                                 select m);
 
+                var GroupedWebLocations = (from m in WebLocations
+                                           group m by new
+                                           {
+                                               ((WebLocation)m.Value).ConverserId,
+                                               ((WebLocation)m.Value).WindowName
+                                           });
+
+                List<WebLocation> _WebLocations = new List<WebLocation>();
+
+                if (GroupedWebLocations.Count() > 0)
+                {
+                    foreach (var Group in GroupedWebLocations)
+                    {
+                        var m = Group.OrderBy(x => ((WebLocation)x.Value).TimeStamp_First).FirstOrDefault();
+                        _WebLocations.Add((WebLocation)m.Value);
+                    }
+                }
+
                 foreach (var m in WebLocations)
                 {
-                    var item = (WebLocation)m.Value;
-
-
-                    WebLocation weblocation = null;
-                    DataCacheLockHandle _lockHandle;
-                    string key = item.UserName + @"@" + item.Domain + @"@" + item.WindowName;
-                    object _result = SingletonCache.Instance.GetInRegionWithLock(key, region, out _lockHandle);
-                    if (_result != null)
+                    try
                     {
-                        weblocation = (WebLocation)_result;
-                    }
 
-                    if (weblocation != null)
-                    {
+                        var item = (WebLocation)m.Value;
+
+                        /*
                         // instanceIndex is begin from 0. The instanceIndex of the first instance is 0. 
                         string instanceId = RoleEnvironment.CurrentRoleInstance.Id;
                         int instanceIndex = 0;
@@ -3246,14 +3252,15 @@ namespace vizzopWeb
                         {
                             int.TryParse(instanceId.Substring(instanceId.LastIndexOf("_") + 1), out instanceIndex); // On compute emulator.
                         }
+                        */
 
-                        Process proc = DoLaunchCaptureProcessScreenCaptures("phantom.js", weblocation.UserName, weblocation.Domain, weblocation.WindowName);
-
-                        weblocation.CaptureProcessId = proc.Id.ToString();
-                        SingletonCache.Instance.InsertInRegionWithLock(key, weblocation, region, _lockHandle);
+                        Process proc = DoLaunchCaptureProcessScreenCaptures("phantom.js", item.UserName, item.Domain, item.WindowName);
 
                     }
-
+                    catch (Exception ex)
+                    {
+                        GrabaLog(Utils.NivelLog.error, ex.Message);
+                    }
                 }
             }
             catch (Exception ex)
@@ -3355,8 +3362,8 @@ namespace vizzopWeb
                                         WebLocation weblocation = null;
                                         string region = "weblocations";
                                         string key = username + @"@" + domain + @"@" + windowname;
-                                        DataCacheLockHandle _lockHandle;
-                                        object result = SingletonCache.Instance.GetInRegionWithLock(key, region, out _lockHandle);
+                                        DataCacheLockHandle lockHandle;
+                                        object result = SingletonCache.Instance.GetInRegionWithLock(key, region, out lockHandle);
                                         if (result != null)
                                         {
                                             weblocation = (WebLocation)result;
@@ -3379,7 +3386,7 @@ namespace vizzopWeb
                                         40L);
                                         weblocation.ThumbNail = ThumbNail;
 
-                                        SingletonCache.Instance.InsertInRegionWithLock(key, weblocation, region, _lockHandle);
+                                        SingletonCache.Instance.InsertInRegionWithLock(key, weblocation, region, lockHandle);
                                     }
                                 }
                             }
@@ -3399,8 +3406,8 @@ namespace vizzopWeb
                     WebLocation weblocation = null;
                     string region = "weblocations";
                     string key = username + @"@" + domain + @"@" + windowname;
-                    DataCacheLockHandle _lockHandle;
-                    object result = SingletonCache.Instance.GetInRegionWithLock(key, region, out _lockHandle);
+                    DataCacheLockHandle lockHandle;
+                    object result = SingletonCache.Instance.GetInRegionWithLock(key, region, out lockHandle);
                     if (result != null)
                     {
                         weblocation = (WebLocation)result;
@@ -3409,7 +3416,7 @@ namespace vizzopWeb
                     if (weblocation != null)
                     {
                         weblocation.CaptureProcessId = null;
-                        SingletonCache.Instance.InsertInRegionWithLock(key, weblocation, region, _lockHandle);
+                        SingletonCache.Instance.InsertInRegionWithLock(key, weblocation, region, lockHandle);
                     }
                     if (Logged != "")
                     {
@@ -3423,6 +3430,24 @@ namespace vizzopWeb
                 process.BeginErrorReadLine();
 
                 //process.WaitForExit();
+                if (process != null)
+                {
+                    string _region = "weblocations";
+                    WebLocation _weblocation = null;
+                    DataCacheLockHandle _lockHandle;
+                    string _key = username + @"@" + domain + @"@" + windowname;
+                    object _result = SingletonCache.Instance.GetInRegionWithLock(_key, _region, out _lockHandle);
+                    if (_result != null)
+                    {
+                        _weblocation = (WebLocation)_result;
+                    }
+
+                    if (_weblocation != null)
+                    {
+                        _weblocation.CaptureProcessId = process.Id.ToString();
+                        SingletonCache.Instance.InsertInRegionWithLock(_key, _weblocation, _region, _lockHandle);
+                    }
+                }
                 return process;
             }
             catch (Exception)
@@ -3644,8 +3669,6 @@ namespace vizzopWeb
 
             try
             {
-                vizzopContext db = new vizzopContext();
-
                 if (WebLocations == null)
                 {
                     return;
@@ -3660,6 +3683,8 @@ namespace vizzopWeb
                                select m);
                 if (to_move.Count() > 0)
                 {
+                    vizzopContext db = new vizzopContext();
+
                     string SaveWebLocationsSetting = "SaveWebLocationsInRelease";
 #if DEBUG
                     SaveWebLocationsSetting = "SaveWebLocationsInDebug";

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<ServiceConfiguration serviceName="vizzop" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="3" osVersion="*" schemaVersion="2013-10.2.2">
+<ServiceConfiguration serviceName="vizzop" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="3" osVersion="*" schemaVersion="2014-01.2.3">
   <Role name="vizzopWeb">
     <Instances count="1" />
     <ConfigurationSettings>
@@ -11,6 +11,9 @@
       <Setting name="Microsoft.WindowsAzure.Plugins.Caching.ClientDiagnosticLevel" value="1" />
       <Setting name="CreateLogsInRelease" value="false" />
       <Setting name="CreateLogsInDebug" value="true" />
+      <Setting name="SaveScreenShotsInRelease" value="false" />
+      <Setting name="SaveScreenShotsInDebug" value="false" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=vizzop;AccountKey=t+HUSi6EdcIqkCgeyJY2yesdp+Ti+rgLYpOPDlwFpp49uNI/2sGeI5Fx1A+syOfZCe2C6rYPqIWb/83Zbo9nTQ==" />
     </ConfigurationSettings>
     <Certificates>
       <Certificate name="vizzop.com" thumbprint="C2B2F4A2ADFD60296E8B35C55A0E5ED4594C595D" thumbprintAlgorithm="sha1" />
@@ -27,6 +30,9 @@
       <Setting name="CaptureProcessNumber" value="8" />
       <Setting name="CreateLogsInRelease" value="false" />
       <Setting name="CreateLogsInDebug" value="true" />
+      <Setting name="SaveScreenShotsInRelease" value="false" />
+      <Setting name="SaveScreenShotsInDebug" value="false" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=vizzop;AccountKey=t+HUSi6EdcIqkCgeyJY2yesdp+Ti+rgLYpOPDlwFpp49uNI/2sGeI5Fx1A+syOfZCe2C6rYPqIWb/83Zbo9nTQ==" />
     </ConfigurationSettings>
     <Certificates>
     </Certificates>
@@ -38,6 +44,7 @@
       <Setting name="Microsoft.WindowsAzure.Plugins.Caching.DiagnosticLevel" value="1" />
       <Setting name="Microsoft.WindowsAzure.Plugins.Caching.CacheSizePercentage" value="" />
       <Setting name="Microsoft.WindowsAzure.Plugins.Caching.ConfigStoreConnectionString" value="DefaultEndpointsProtocol=https;AccountName=vizzop;AccountKey=t+HUSi6EdcIqkCgeyJY2yesdp+Ti+rgLYpOPDlwFpp49uNI/2sGeI5Fx1A+syOfZCe2C6rYPqIWb/83Zbo9nTQ==" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=vizzop;AccountKey=t+HUSi6EdcIqkCgeyJY2yesdp+Ti+rgLYpOPDlwFpp49uNI/2sGeI5Fx1A+syOfZCe2C6rYPqIWb/83Zbo9nTQ==" />
     </ConfigurationSettings>
     <Certificates>
     </Certificates>
