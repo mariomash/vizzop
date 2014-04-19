@@ -71,9 +71,12 @@ namespace vizzopWeb.vizzop
                             var wrapper = new HttpContextWrapper(HttpContext.Current);
 
                             utils.TrackScreen(
-                                converser,
+                                converser.UserName,
+                                converser.Password,
+                                converser.Business.Domain,
                                 dict["data"].ToString(),
                                 dict["listeners"].ToString(),
+                                false,
                                 wrapper
                                 );
 

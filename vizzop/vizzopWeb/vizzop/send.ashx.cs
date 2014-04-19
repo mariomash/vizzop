@@ -16,12 +16,12 @@ namespace vizzopWeb
     public class send : IHttpHandler
     {
 
-        //private vizzopContext db = new vizzopContext();
-        private Utils utils = new Utils();
 
         public void ProcessRequest(HttpContext context)
         {
 
+            //private vizzopContext db = new vizzopContext();
+            Utils utils = new Utils();
             //Thread.CurrentThread.Priority = ThreadPriority.Highest;
 
             bool result = false;

@@ -20,8 +20,6 @@ namespace vizzopWeb
     public class Thread_SendMsg
     {
 
-        private vizzopContext db = new vizzopContext();
-        private Utils utils = new Utils();
 
         public Message message { get; set; }
         public NewMessage newmessage { get; set; }
@@ -45,17 +43,20 @@ namespace vizzopWeb
                     port = Convert.ToInt32(RoleEnvironment.GetConfigurationSettingValue("Port"));
                     scheme = RoleEnvironment.GetConfigurationSettingValue("Scheme");
                 }
-                catch (Exception ex) { utils.GrabaLog(Utils.NivelLog.info, ex.Message); }
+                catch (Exception) { }
                 this.mainUrl = scheme + @"://" + domain + ":" + port;
             }
         }
 
         public void DoThings()
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             try
             {
                 this.message = new Message(newmessage);
-                this.message.db = this.db;
+                this.message.db = db;
                 if (newmessage.commsessionid != null)
                 {
 
@@ -335,9 +336,6 @@ namespace vizzopWeb.Controllers
     [SessionState(System.Web.SessionState.SessionStateBehavior.ReadOnly)]
     public class MessagesController : Controller
     {
-        private vizzopContext db = new vizzopContext();
-        private Utils utils = new Utils();
-
         [JsonpFilter]
 #if DEBUG
 #else
@@ -345,6 +343,9 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult GetAllMessagesFromCommSession(string UserName, string Password, string domain, string commsessionid, string callback)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             try
             {
 
@@ -410,6 +411,9 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult GetAllMessagesFromInterlocutor(string UserName, string Password, string Domain, string Interlocutor_UserName, string Interlocutor_Domain, string callback)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             try
             {
                 /*
@@ -501,148 +505,342 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult CheckExternal(string MsgLastID, string url, string referrer, string callback, string SessionID, string CommSessionID, string WindowName, string MsgCueAudit)
         {
-
-            try
+            using (var db = new vizzopContext())
             {
-                if ((MsgCueAudit != "") && (MsgCueAudit != null))
+                Utils utils = new Utils(db);
+                try
                 {
-                    // Lanzamos el guardado de auditorias de mensaje en otro hilo...
-                    Thread_AuditMsg oThread = new Thread_AuditMsg(MsgCueAudit);
-                    Thread rCheck = new Thread(oThread.DoThings); //rCheck.Priority = ThreadPriority.Normal;
-                    rCheck.Start();
-                }
-                //Y montamos la lista de mensajes que le vamos a devolver
-                List<Message> returnmessages = new List<Message>();
-
-
-                if (Session["converser"] == null)
-                {
-                    return null;
-                }
-                var converser = (Converser)HttpContext.Session["converser"];
-                if (converser == null)
-                {
-                    return Json(false);
-                }
-
-                string _key = converser.UserName + @"@" + converser.Business.Domain;
-                string tag = "agent";
-                List<DataCacheTag> Tags = new List<DataCacheTag>();
-                Tags.Add(new DataCacheTag(tag));
-                DataCacheLockHandle lockHandle;
-                object result = SingletonCache.Instance.GetWithLock(_key, out lockHandle);
-                if (result != null)
-                {
-                    var agent = (Converser)result;
-                    agent.LastActive = DateTime.UtcNow;
-                    SingletonCache.Instance.InsertWithLockAndTags(_key, agent, lockHandle, Tags);
-                }
-
-
-                /*
-                string tag = "agent";
-                List<DataCacheTag> Tags = new List<DataCacheTag>();
-                Tags.Add(new DataCacheTag(tag));
-                object result = SingletonCache.Instance.GetByTag(tag);
-                if (result != null)
-                {
-                    IEnumerable<KeyValuePair<string, object>> Agents = (IEnumerable<KeyValuePair<string, object>>)result;
-                    var agent = (Converser)(from m in Agents
-                                            where ((Converser)m.Value).ID == converser.ID
-                                            select m).FirstOrDefault().Value;
-                }
-                */
-
-                /*
-                converser.LastActive = DateTime.UtcNow;
-                Session["converser"] = converser;
-                 * */
-                /*
-                Converser converser = utils.GetConverserFromSystem(UserName, Password, Domain, db);
-                if (converser == null)
-                {
-                    return Json(false);
-                }
-                */
-
-                //Solo Para agentes... permitimos una única sesion..
-                if ((converser.Agent != null) && (SessionID != null) && (SessionID != "null"))
-                {
-                    var ZenSession = (from m in db.ZenSessions
-                                      where m.Converser.UserName == converser.UserName
-                                      && m.Converser.Business.Domain == converser.Business.Domain
-                                      && m.sessionID == SessionID
-                                      select m).FirstOrDefault();
-                    if (ZenSession == null)
+                    if ((MsgCueAudit != "") && (MsgCueAudit != null))
                     {
-                        Message returnmsg = new Message();
-                        returnmsg.From = new Converser();
-                        returnmsg.From.ID = 0;
-                        returnmsg.From.UserName = "vizzop";
-                        returnmsg.From.FullName = "";
-                        returnmsg.From.Password = null;
-                        returnmsg.From.Business = new Business();
-                        returnmsg.From.Business.Domain = "vizzop";
-                        returnmsg.To = new Converser();
-                        returnmsg.To.ID = converser.ID;
-                        returnmsg.To.UserName = converser.UserName;
-                        returnmsg.To.FullName = converser.FullName;
-                        returnmsg.To.Password = null;
-                        returnmsg.To.Business = new Business();
-                        returnmsg.To.Business.Domain = converser.Business.Domain;
-                        returnmsg.Content = "";
-                        returnmsg.Subject = "$#_forcestartsession";
-                        returnmsg.db = null;
-                        returnmsg.utils = null;
-                        //returnmsg = utils.TransformMessageToSerializedProof(returnmsg);
-                        returnmessages.Add(returnmsg);
-
-                        return Json(returnmessages);
+                        // Lanzamos el guardado de auditorias de mensaje en otro hilo...
+                        Thread_AuditMsg oThread = new Thread_AuditMsg(MsgCueAudit);
+                        Thread rCheck = new Thread(oThread.DoThings); //rCheck.Priority = ThreadPriority.Normal;
+                        rCheck.Start();
                     }
-                }
+                    //Y montamos la lista de mensajes que le vamos a devolver
+                    List<Message> returnmessages = new List<Message>();
 
-                TimeZone localZone = TimeZone.CurrentTimeZone;
-                string[] languages = HttpContext.Request.UserLanguages;
-                string language = null;
-                if (languages != null && languages.Length != 0) { language = languages[0].ToLowerInvariant().Trim(); }
 
-                // If you want it formated in some other way.
-                var headers = "{";
-                foreach (var key in HttpContext.Request.Headers.AllKeys)
-                    headers += "'" + key + "':'" + Request.Headers[key] + "',";
-
-                headers = headers.TrimEnd(',') + "}";
-
-                string useragent = HttpContext.Request.UserAgent;
-
-                string sIP = HttpContext.Request.ServerVariables["HTTP_CLIENT_IP"];
-                if (string.IsNullOrEmpty(sIP) == true) { sIP = HttpContext.Request.ServerVariables["HTTP_X_FORWARDED_FOR"]; }
-                if (string.IsNullOrEmpty(sIP) == true) { sIP = HttpContext.Request.ServerVariables["REMOTE_ADDR"]; }
-                if (string.IsNullOrEmpty(sIP) == true)
-                {
-                    utils.GrabaLog(Utils.NivelLog.error, "No IP to Track");
-                }
-                else
-                {
-                    sIP = sIP.Split(',')[0];
-
-                    //Y trackeamos la visita.. solo para clientes!!
-                    if (converser.Agent == null)
+                    if (Session["converser"] == null)
                     {
+                        return null;
+                    }
+                    var converser = (Converser)HttpContext.Session["converser"];
+                    if (converser == null)
+                    {
+                        return Json(false);
+                    }
+
+                    /*
+                    string tag = "agent";
+                    List<DataCacheTag> Tags = new List<DataCacheTag>();
+                    Tags.Add(new DataCacheTag(tag));
+                    object result = SingletonCache.Instance.GetByTag(tag);
+                    if (result != null)
+                    {
+                        IEnumerable<KeyValuePair<string, object>> Agents = (IEnumerable<KeyValuePair<string, object>>)result;
+                        var agent = (Converser)(from m in Agents
+                                                where ((Converser)m.Value).ID == converser.ID
+                                                select m).FirstOrDefault().Value;
+                    }
+                    */
+
+                    /*
+                    converser.LastActive = DateTime.UtcNow;
+                    Session["converser"] = converser;
+                     * */
+                    /*
+                    Converser converser = utils.GetConverserFromSystem(UserName, Password, Domain, db);
+                    if (converser == null)
+                    {
+                        return Json(false);
+                    }
+                    */
+
+                    //Solo Para agentes... permitimos una única sesion..
+                    if ((converser.Agent != null) && (SessionID != null) && (SessionID != "null"))
+                    {
+
+                        /*
+                         * Activamos el agente si es que tiene que estar activado...
+                         */
+                        string _key = converser.UserName + @"@" + converser.Business.Domain;
+                        string tag = "agent";
+                        List<DataCacheTag> Tags = new List<DataCacheTag>();
+                        Tags.Add(new DataCacheTag(tag));
+                        DataCacheLockHandle lockHandle;
+                        object result = SingletonCache.Instance.GetWithLock(_key, out lockHandle);
+                        if (result != null)
+                        {
+                            var agent = (Converser)result;
+                            agent.LastActive = DateTime.UtcNow;
+                            SingletonCache.Instance.InsertWithLockAndTags(_key, agent, lockHandle, Tags);
+                        }
+
+                        var ZenSession = (from m in db.ZenSessions
+                                          where m.Converser.UserName == converser.UserName
+                                          && m.Converser.Business.Domain == converser.Business.Domain
+                                          && m.sessionID == SessionID
+                                          select m).FirstOrDefault();
+                        if (ZenSession == null)
+                        {
+                            Message returnmsg = new Message();
+                            returnmsg.From = new Converser();
+                            returnmsg.From.ID = 0;
+                            returnmsg.From.UserName = "vizzop";
+                            returnmsg.From.FullName = "";
+                            returnmsg.From.Password = null;
+                            returnmsg.From.Business = new Business();
+                            returnmsg.From.Business.Domain = "vizzop";
+                            returnmsg.To = new Converser();
+                            returnmsg.To.ID = converser.ID;
+                            returnmsg.To.UserName = converser.UserName;
+                            returnmsg.To.FullName = converser.FullName;
+                            returnmsg.To.Password = null;
+                            returnmsg.To.Business = new Business();
+                            returnmsg.To.Business.Domain = converser.Business.Domain;
+                            returnmsg.Content = "";
+                            returnmsg.Subject = "$#_forcestartsession";
+                            returnmsg.db = null;
+                            returnmsg.utils = null;
+                            //returnmsg = utils.TransformMessageToSerializedProof(returnmsg);
+                            returnmessages.Add(returnmsg);
+
+                            return Json(returnmessages);
+                        }
+                    }
+
+                    TimeZone localZone = TimeZone.CurrentTimeZone;
+                    string[] languages = HttpContext.Request.UserLanguages;
+                    string language = null;
+                    if (languages != null && languages.Length != 0) { language = languages[0].ToLowerInvariant().Trim(); }
+
+                    // If you want it formated in some other way.
+                    var headers = "{";
+                    foreach (var key in HttpContext.Request.Headers.AllKeys)
+                        headers += "'" + key + "':'" + Request.Headers[key] + "',";
+
+                    headers = headers.TrimEnd(',') + "}";
+
+                    string useragent = HttpContext.Request.UserAgent;
+
+                    string sIP = HttpContext.Request.ServerVariables["HTTP_CLIENT_IP"];
+                    if (string.IsNullOrEmpty(sIP) == true) { sIP = HttpContext.Request.ServerVariables["HTTP_X_FORWARDED_FOR"]; }
+                    if (string.IsNullOrEmpty(sIP) == true) { sIP = HttpContext.Request.ServerVariables["REMOTE_ADDR"]; }
+                    if (string.IsNullOrEmpty(sIP) == true)
+                    {
+                        utils.GrabaLog(Utils.NivelLog.error, "No IP to Track");
+                    }
+                    else
+                    {
+                        sIP = sIP.Split(',')[0];
+
+                        //Y trackeamos la visita.. solo para clientes!!
+                        if (converser.Agent == null)
+                        {
+                            try
+                            {
+                                if ((url != null) && (referrer != null) && (converser != null))
+                                {
+                                    Status returnStatus = utils.TrackPageView(converser, url, referrer, language, useragent, sIP, headers, WindowName);
+                                    /*
+                                    int number = 100;
+                                    while (number > 0)
+                                    {
+                                        Status returnStatus = utils.TrackPageView(converser, url, referrer, language, useragent, sIP, headers, WindowName + number.ToString());
+                                        number--;
+                                    }
+                                     */
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                utils.GrabaLogExcepcion(ex);
+                            }
+                        }
+
+                    }
+
+                    DateTime loctime = DateTime.Now.AddMinutes(-5);
+                    DateTime loctimeUTC = localZone.ToUniversalTime(loctime);
+
+                    DateTime loctime_AvailableTimeout = DateTime.Now.AddSeconds(-15);
+                    DateTime loctimeUTC_AvailableTimeout = localZone.ToUniversalTime(loctime_AvailableTimeout);
+
+                    try
+                    {
+                        if ((converser.Agent == null) && ((CommSessionID == null) || (CommSessionID == "null") || (CommSessionID == "")))
+                        {
+                            /*
+                             * Encontrar todos los Agentes de este ApiKey...
+                             * Si estan activos o no.. devuelvo un $#_activeagents o un $#_noactiveagents
+                             */
+                            /*
+                            var agents = (from m in db.Conversers
+                                          where m.Business.ID == converser.Business.ID
+                                          && m.Agent != null
+                                          && m.LastActive > loctimeUTC_AvailableTimeout
+                                          && m.Active == true
+                                          select m).ToList<Converser>();
+                            */
+
+                            Message agentsmsg = new Message();
+                            agentsmsg.Content = null;
+                            agentsmsg.From = new Converser();
+                            agentsmsg.From.ID = 0;
+                            agentsmsg.From.UserName = "vizzop";
+                            agentsmsg.From.FullName = "";
+                            agentsmsg.From.Password = null;
+                            agentsmsg.From.Business = new Business();
+                            agentsmsg.From.Business.Domain = "vizzop";
+                            agentsmsg.ID = 0;
+                            agentsmsg.To = new Converser();
+                            agentsmsg.To.ID = converser.ID;
+                            agentsmsg.To.UserName = converser.UserName;
+                            agentsmsg.To.FullName = converser.FullName;
+                            agentsmsg.To.Password = null;
+                            agentsmsg.To.Business = new Business();
+                            agentsmsg.To.Business.Domain = converser.Business.Domain;
+                            agentsmsg.ID = 0;
+                            agentsmsg.Status = 1;
+                            agentsmsg.CommSession = new CommSession();
+                            agentsmsg.CommSession.ID = 0;
+
+                            string tag = "agent";
+                            List<DataCacheTag> Tags = new List<DataCacheTag>();
+                            Tags.Add(new DataCacheTag(tag));
+                            object result = SingletonCache.Instance.GetByTag(tag);
+                            if (result != null)
+                            {
+                                IEnumerable<KeyValuePair<string, object>> Agents = (IEnumerable<KeyValuePair<string, object>>)result;
+                                var agents = (from m in Agents
+                                              where ((Converser)m.Value).LastActive > loctimeUTC_AvailableTimeout &&
+                                               ((Converser)m.Value).Business.ID > converser.Business.ID
+                                              select m);
+                                if (agents.Count() > 0)
+                                {
+                                    agentsmsg.Subject = "$#_activeagents";
+                                }
+                                else
+                                {
+                                    agentsmsg.Subject = "$#_noactiveagents";
+                                }
+                            }
+
+                            //agentsmsg = utils.TransformMessageToSerializedProof(agentsmsg);
+                            agentsmsg.db = null;
+                            agentsmsg.utils = null;
+
+                            returnmessages.Add(agentsmsg);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        utils.GrabaLogExcepcion(ex);
+                    }
+
+                    /* Encontrar todas las sesiones con este converser .. para available o no y dimensiones*/
+                    List<CommSession> sessiones_de_este_converser = new List<CommSession>();
+                    if (converser.Agent != null)
+                    {
+                        sessiones_de_este_converser = (from m in db.CommSessions
+                                                           .Include("Client")
+                                                           .Include("Client.Business")
+                                                           .Include("Business")
+                                                       where m.Agents.Any(j => j.Converser.UserName == converser.UserName && j.Converser.Business.Domain == converser.Business.Domain)
+                                                       && (m.Status == 1) //m.Status == 0 ||
+                                                       && m.Messages.Count > 0
+                                                       && m.Messages.Any(j => j.TimeStamp > loctimeUTC)
+                                                       select m).ToList<CommSession>();
+                    }
+                    else
+                    {
+                        if ((CommSessionID == null) || (CommSessionID == "null") || (CommSessionID == ""))
+                        {
+                            sessiones_de_este_converser = (from m in db.CommSessions
+                                                               .Include("Client")
+                                                               .Include("Client.Business")
+                                                               .Include("Business")
+                                                           where (m.Client.UserName == converser.UserName && m.Client.Business.Domain == converser.Business.Domain)
+                                                           && (m.Status == 1) //m.Status == 0 || 
+                                                           && m.Messages.Count > 0
+                                                           && m.Messages.Any(j => j.TimeStamp > loctimeUTC)
+                                                           select m).ToList<CommSession>();
+                        }
+                        else
+                        {
+                            int _CommSessionID = Convert.ToInt32(CommSessionID);
+                            sessiones_de_este_converser = (from m in db.CommSessions
+                                                           where m.ID == _CommSessionID
+                                                           select m).ToList<CommSession>();
+                        }
+                    }
+
+                    foreach (CommSession c in sessiones_de_este_converser)
+                    {
+                        string anon_client = utils.LocalizeLang("anon_client", language, null);
+
+                        //Ahora enviar un available o _notavailable segun el interlocutor esté inactivo más de X segundos 
                         try
                         {
-                            if ((url != null) && (referrer != null) && (converser != null))
+                            Converser interlocutor = new Converser();
+                            if (converser.Agent != null)
                             {
-                                Status returnStatus = utils.TrackPageView(converser, url, referrer, language, useragent, sIP, headers, WindowName);
-                                /*
-                                int number = 100;
-                                while (number > 0)
-                                {
-                                    Status returnStatus = utils.TrackPageView(converser, url, referrer, language, useragent, sIP, headers, WindowName + number.ToString());
-                                    number--;
-                                }
-                                 */
+                                interlocutor = c.Client;
                             }
+                            else
+                            {
+                                if (c.Agents.Count > 0)
+                                {
+                                    interlocutor = c.Agents.FirstOrDefault().Converser;
+                                }
+                            }
+                            if (interlocutor.UserName == null)
+                            {
+                                continue;
+                            }
+                            string fullname = anon_client;
+                            if (interlocutor.FullName != null)
+                            {
+                                fullname = interlocutor.FullName;
+                            }
+
+                            Message returnmsg = new Message();
+                            returnmsg.Content = null;
+                            returnmsg.From = new Converser();
+                            returnmsg.From.ID = interlocutor.ID;
+                            returnmsg.From.UserName = interlocutor.UserName;
+                            returnmsg.From.Business = new Business();
+                            returnmsg.From.Business.Domain = interlocutor.Business.Domain;
+                            returnmsg.From.FullName = fullname;
+                            returnmsg.From.Password = null;
+                            returnmsg.ID = 0;
+                            returnmsg.To = new Converser();
+                            returnmsg.To.ID = converser.ID;
+                            returnmsg.To.UserName = converser.UserName;
+                            returnmsg.To.Business = new Business();
+                            returnmsg.To.Business.Domain = converser.Business.Domain;
+                            returnmsg.To.FullName = converser.FullName;
+                            returnmsg.To.Password = null;
+                            returnmsg.ID = 0;
+                            returnmsg.Status = 1;
+                            returnmsg.CommSession = new CommSession();
+                            returnmsg.CommSession.ID = c.ID;
+
+                            if ((interlocutor.LastActive > loctimeUTC_AvailableTimeout) && (interlocutor.Active == true))
+                            {
+                                returnmsg.Subject = "$#_available";
+                            }
+                            else
+                            {
+                                returnmsg.Subject = "$#_notavailable";
+                            }
+
+                            returnmsg.db = null;
+                            returnmsg.utils = null;
+                            //returnmsg = utils.TransformMessageToSerializedProof(returnmsg);
+
+                            returnmessages.Add(returnmsg);
                         }
                         catch (Exception ex)
                         {
@@ -650,208 +848,21 @@ namespace vizzopWeb.Controllers
                         }
                     }
 
-                }
-
-                DateTime loctime = DateTime.Now.AddMinutes(-5);
-                DateTime loctimeUTC = localZone.ToUniversalTime(loctime);
-
-                DateTime loctime_AvailableTimeout = DateTime.Now.AddSeconds(-15);
-                DateTime loctimeUTC_AvailableTimeout = localZone.ToUniversalTime(loctime_AvailableTimeout);
-
-                try
-                {
-                    if ((converser.Agent == null) && ((CommSessionID == null) || (CommSessionID == "null") || (CommSessionID == "")))
+                    if (returnmessages.Count > 0)
                     {
-                        /*
-                         * Encontrar todos los Agentes de este ApiKey...
-                         * Si estan activos o no.. devuelvo un $#_activeagents o un $#_noactiveagents
-                         */
-                        /*
-                        var agents = (from m in db.Conversers
-                                      where m.Business.ID == converser.Business.ID
-                                      && m.Agent != null
-                                      && m.LastActive > loctimeUTC_AvailableTimeout
-                                      && m.Active == true
-                                      select m).ToList<Converser>();
-                        */
-
-                        Message agentsmsg = new Message();
-                        agentsmsg.Content = null;
-                        agentsmsg.From = new Converser();
-                        agentsmsg.From.ID = 0;
-                        agentsmsg.From.UserName = "vizzop";
-                        agentsmsg.From.FullName = "";
-                        agentsmsg.From.Password = null;
-                        agentsmsg.From.Business = new Business();
-                        agentsmsg.From.Business.Domain = "vizzop";
-                        agentsmsg.ID = 0;
-                        agentsmsg.To = new Converser();
-                        agentsmsg.To.ID = converser.ID;
-                        agentsmsg.To.UserName = converser.UserName;
-                        agentsmsg.To.FullName = converser.FullName;
-                        agentsmsg.To.Password = null;
-                        agentsmsg.To.Business = new Business();
-                        agentsmsg.To.Business.Domain = converser.Business.Domain;
-                        agentsmsg.ID = 0;
-                        agentsmsg.Status = 1;
-                        agentsmsg.CommSession = new CommSession();
-                        agentsmsg.CommSession.ID = 0;
-
-                        tag = "agent";
-                        Tags = new List<DataCacheTag>();
-                        Tags.Add(new DataCacheTag(tag));
-                        result = SingletonCache.Instance.GetByTag(tag);
-                        if (result != null)
-                        {
-                            IEnumerable<KeyValuePair<string, object>> Agents = (IEnumerable<KeyValuePair<string, object>>)result;
-                            var agents = (from m in Agents
-                                          where ((Converser)m.Value).LastActive > loctimeUTC_AvailableTimeout
-                                          select m);
-                            if (agents.Count() > 0)
-                            {
-                                agentsmsg.Subject = "$#_activeagents";
-                            }
-                            else
-                            {
-                                agentsmsg.Subject = "$#_noactiveagents";
-                            }
-                        }
-
-                        //agentsmsg = utils.TransformMessageToSerializedProof(agentsmsg);
-                        agentsmsg.db = null;
-                        agentsmsg.utils = null;
-
-                        returnmessages.Add(agentsmsg);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    utils.GrabaLogExcepcion(ex);
-                }
-
-                /* Encontrar todas las sesiones con este converser .. para available o no y dimensiones*/
-                List<CommSession> sessiones_de_este_converser = new List<CommSession>();
-                if (converser.Agent != null)
-                {
-                    sessiones_de_este_converser = (from m in db.CommSessions
-                                                       .Include("Client")
-                                                       .Include("Client.Business")
-                                                       .Include("Business")
-                                                   where m.Agents.Any(j => j.Converser.UserName == converser.UserName && j.Converser.Business.Domain == converser.Business.Domain)
-                                                   && (m.Status == 1) //m.Status == 0 ||
-                                                   && m.Messages.Count > 0
-                                                   && m.Messages.Any(j => j.TimeStamp > loctimeUTC)
-                                                   select m).ToList<CommSession>();
-                }
-                else
-                {
-                    if ((CommSessionID == null) || (CommSessionID == "null") || (CommSessionID == ""))
-                    {
-                        sessiones_de_este_converser = (from m in db.CommSessions
-                                                           .Include("Client")
-                                                           .Include("Client.Business")
-                                                           .Include("Business")
-                                                       where (m.Client.UserName == converser.UserName && m.Client.Business.Domain == converser.Business.Domain)
-                                                       && (m.Status == 1) //m.Status == 0 || 
-                                                       && m.Messages.Count > 0
-                                                       && m.Messages.Any(j => j.TimeStamp > loctimeUTC)
-                                                       select m).ToList<CommSession>();
+                        return Json(returnmessages);
                     }
                     else
                     {
-                        int _CommSessionID = Convert.ToInt32(CommSessionID);
-                        sessiones_de_este_converser = (from m in db.CommSessions
-                                                       where m.ID == _CommSessionID
-                                                       select m).ToList<CommSession>();
+                        return Json(false);
                     }
+
                 }
-
-                foreach (CommSession c in sessiones_de_este_converser)
+                catch (Exception e)
                 {
-                    string anon_client = utils.LocalizeLang("anon_client", language, null);
-
-                    //Ahora enviar un available o _notavailable segun el interlocutor esté inactivo más de X segundos 
-                    try
-                    {
-                        Converser interlocutor = new Converser();
-                        if (converser.Agent != null)
-                        {
-                            interlocutor = c.Client;
-                        }
-                        else
-                        {
-                            if (c.Agents.Count > 0)
-                            {
-                                interlocutor = c.Agents.FirstOrDefault().Converser;
-                            }
-                        }
-                        if (interlocutor.UserName == null)
-                        {
-                            continue;
-                        }
-                        string fullname = anon_client;
-                        if (interlocutor.FullName != null)
-                        {
-                            fullname = interlocutor.FullName;
-                        }
-
-                        Message returnmsg = new Message();
-                        returnmsg.Content = null;
-                        returnmsg.From = new Converser();
-                        returnmsg.From.ID = interlocutor.ID;
-                        returnmsg.From.UserName = interlocutor.UserName;
-                        returnmsg.From.Business = new Business();
-                        returnmsg.From.Business.Domain = interlocutor.Business.Domain;
-                        returnmsg.From.FullName = fullname;
-                        returnmsg.From.Password = null;
-                        returnmsg.ID = 0;
-                        returnmsg.To = new Converser();
-                        returnmsg.To.ID = converser.ID;
-                        returnmsg.To.UserName = converser.UserName;
-                        returnmsg.To.Business = new Business();
-                        returnmsg.To.Business.Domain = converser.Business.Domain;
-                        returnmsg.To.FullName = converser.FullName;
-                        returnmsg.To.Password = null;
-                        returnmsg.ID = 0;
-                        returnmsg.Status = 1;
-                        returnmsg.CommSession = new CommSession();
-                        returnmsg.CommSession.ID = c.ID;
-
-                        if ((interlocutor.LastActive > loctimeUTC_AvailableTimeout) && (interlocutor.Active == true))
-                        {
-                            returnmsg.Subject = "$#_available";
-                        }
-                        else
-                        {
-                            returnmsg.Subject = "$#_notavailable";
-                        }
-
-                        returnmsg.db = null;
-                        returnmsg.utils = null;
-                        //returnmsg = utils.TransformMessageToSerializedProof(returnmsg);
-
-                        returnmessages.Add(returnmsg);
-                    }
-                    catch (Exception ex)
-                    {
-                        utils.GrabaLogExcepcion(ex);
-                    }
-                }
-
-                if (returnmessages.Count > 0)
-                {
-                    return Json(returnmessages);
-                }
-                else
-                {
+                    utils.GrabaLogExcepcion(e);
                     return Json(false);
                 }
-
-            }
-            catch (Exception e)
-            {
-                utils.GrabaLogExcepcion(e);
-                return Json(false);
             }
         }
 
@@ -863,6 +874,8 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult CheckCaptureControl(string UserName, string Domain, string WindowName, string GUID, string callback)
         {
+            Utils utils = new Utils();
+
             try
             {
 
@@ -879,10 +892,8 @@ namespace vizzopWeb.Controllers
 
                     //List<WebLocation> WebLocations = new List<WebLocation>();
 
-                    string tag = "weblocation";
-                    List<DataCacheTag> Tags = new List<DataCacheTag>();
-                    Tags.Add(new DataCacheTag(tag));
-                    object result = SingletonCache.Instance.GetByTag(tag);
+                    string region = "weblocations";
+                    object result = SingletonCache.Instance.GetAllInRegion(region);
                     if (result != null)
                     {
                         IEnumerable<KeyValuePair<string, object>> WebLocations = (IEnumerable<KeyValuePair<string, object>>)result;
@@ -958,6 +969,9 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult GetScreenCaptureByGuid(string UserName, string Domain, string Password, string GUID, string callback)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             try
             {
 
@@ -966,7 +980,7 @@ namespace vizzopWeb.Controllers
                     return Json(false);
                 }
 
-                Converser converser = utils.GetConverserFromSystem(UserName, Password, Domain, db);
+                Converser converser = utils.GetConverserFromSystem(UserName, Password, Domain);
                 if (converser == null)
                 {
                     return Json(false);
@@ -1019,6 +1033,8 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult CheckNew(string WindowName, string callback)
         {
+            Utils utils = new Utils();
+
             try
             {
 
@@ -1164,6 +1180,9 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult SendNewReview(string UserName, string Password, string Domain, string newReviewComment, string newReviewRating, string callback)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             try
             {
                 if ((UserName == null) || (Password == null) || (Domain == null) || (newReviewComment == null) || (newReviewRating == null))
@@ -1171,7 +1190,7 @@ namespace vizzopWeb.Controllers
                     return Json(false);
                 }
 
-                Converser converser = utils.GetConverserFromSystem(UserName, Password, Domain, db);
+                Converser converser = utils.GetConverserFromSystem(UserName, Password, Domain);
 
                 if (converser == null) { return Json(false); }
 
@@ -1245,7 +1264,6 @@ namespace vizzopWeb.Controllers
 
         protected override void Dispose(bool disposing)
         {
-            db.Dispose();
             base.Dispose(disposing);
         }
     }

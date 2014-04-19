@@ -9,7 +9,7 @@
     <PackageProfile>Cloud</PackageProfile>
     <PackageSolutionConfiguration>Release</PackageSolutionConfiguration>
     <PackageEnableRemoteDesktop>False</PackageEnableRemoteDesktop>
-    <DeploymentProfilingMode>Concurrency</DeploymentProfilingMode>
+    <DeploymentProfilingMode>Sampling</DeploymentProfilingMode>
     <DeploymentEnableTierInteractionProfiling>False</DeploymentEnableTierInteractionProfiling>
     <WebRoleSkipLaunchInBrowser>vizzopWeb</WebRoleSkipLaunchInBrowser>
   </PropertyGroup>

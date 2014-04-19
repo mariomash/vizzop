@@ -10,13 +10,14 @@ namespace vizzopWeb.Models
         public WebLocation()
         {
             this.MustGenerateScreenshot = true;
-            this.Guid = System.Guid.NewGuid().ToString();
         }
 
         /*
         public int ID { get; set; }
         */
+        /*
         public string Guid { get; set; }
+         */
         /*
         [Required]
         public virtual Converser Converser { get; set; }

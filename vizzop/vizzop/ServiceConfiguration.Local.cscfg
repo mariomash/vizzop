@@ -12,6 +12,8 @@
       <Setting name="WsScheme" value="wss" />
       <Setting name="StorageConnectionString" value="DefaultEndpointsProtocol=https;AccountName=vizzop;AccountKey=t+HUSi6EdcIqkCgeyJY2yesdp+Ti+rgLYpOPDlwFpp49uNI/2sGeI5Fx1A+syOfZCe2C6rYPqIWb/83Zbo9nTQ==" />
       <Setting name="Microsoft.WindowsAzure.Plugins.Caching.ClientDiagnosticLevel" value="1" />
+      <Setting name="CreateLogsInRelease" value="false" />
+      <Setting name="CreateLogsInDebug" value="true" />
     </ConfigurationSettings>
     <Certificates>
       <Certificate name="vizzop.com" thumbprint="C2B2F4A2ADFD60296E8B35C55A0E5ED4594C595D" thumbprintAlgorithm="sha1" />
@@ -26,6 +28,8 @@
       <Setting name="Scheme" value="https" />
       <Setting name="Microsoft.WindowsAzure.Plugins.Caching.ClientDiagnosticLevel" value="1" />
       <Setting name="CaptureProcessNumber" value="8" />
+      <Setting name="CreateLogsInRelease" value="false" />
+      <Setting name="CreateLogsInDebug" value="true" />
     </ConfigurationSettings>
     <Certificates>
     </Certificates>

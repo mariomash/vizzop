@@ -13,15 +13,15 @@ namespace vizzopWeb
     {
         // GET: /Screenshot/
 
-        private vizzopContext db = new vizzopContext();
-        private Utils utils = new Utils();
-
 #if DEBUG
 #else
         [RequireHttps]
 #endif
         public ActionResult Index(string videolength_filter)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             if (HttpContext.Session == null)
             {
                 return RedirectToAction("LogOn", "Account");
@@ -100,6 +100,9 @@ namespace vizzopWeb
 #endif
         public ActionResult GetScreenshotJsonByConverser(string username, string domain)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             Converser converser = new Converser();
             try
             {
@@ -156,6 +159,9 @@ namespace vizzopWeb
 #endif
         public ActionResult GetScreenshotJson(string dimension1, string dimension2, string from, string to, string secondvideolimit)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             Converser converser = new Converser();
             try
             {
@@ -230,6 +236,9 @@ namespace vizzopWeb
 
         private List<ScreenMovie> GetListOfMovies(string from, string to, string secondVideoLimit, Converser converser)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             List<ScreenMovie> List = new List<ScreenMovie>();
             try
             {

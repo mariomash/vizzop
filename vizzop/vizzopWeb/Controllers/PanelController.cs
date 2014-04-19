@@ -11,8 +11,6 @@ namespace vizzopWeb.Controllers
 {
     public class PanelController : Controller
     {
-        private vizzopContext db = new vizzopContext();
-        private Utils utils = new Utils();
 
 #if DEBUG
 #else                    
@@ -20,6 +18,9 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult Index(string commsession_filter)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             ViewBag.LayoutPanelMode = true;
             Converser converser = new Converser();
             if (HttpContext.Session == null)
@@ -28,7 +29,7 @@ namespace vizzopWeb.Controllers
             }
             try
             {
-                converser = utils.GetLoggedConverser(HttpContext.Session, db);
+                converser = utils.GetLoggedConverser(HttpContext.Session);
                 if (converser == null)
                 {
                     return RedirectToAction("LogOn", "Account");
@@ -133,6 +134,9 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult SaveWidgetSettings(string WidgetBackgroundColor, string WidgetForegroundColor, string WidgetBorderColor, string WidgetText, string BusinessHours, string AllowJsApiLoading, string ShowHelpButton, string Controls)
         {
+            
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
 
             Converser converser = new Converser();
             try
@@ -143,7 +147,7 @@ namespace vizzopWeb.Controllers
                 }
                 try
                 {
-                    converser = utils.GetLoggedConverser(HttpContext.Session, db);
+                    converser = utils.GetLoggedConverser(HttpContext.Session);
                     if (converser == null)
                     {
                         return RedirectToAction("LogOn", "Account");
@@ -233,6 +237,9 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult EditBusiness()
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             ViewBag.LayoutPanelMode = true;
             ViewBag.LayoutSubPanelMode = true;
             if (HttpContext.Session == null)
@@ -241,11 +248,12 @@ namespace vizzopWeb.Controllers
             }
             try
             {
-                Converser converser = utils.GetLoggedConverser(HttpContext.Session, db);
+                Converser converser = utils.GetLoggedConverser(HttpContext.Session);
                 if (converser == null)
                 {
                     return RedirectToAction("LogOn", "Account");
                 }
+
                 converser.Business.Conversers = new List<Converser>();
                 ViewBag.converser = converser;
 
@@ -283,6 +291,9 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult EditBusiness(Newbusiness NewAccount)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             ViewBag.LayoutPanelMode = true;
             ViewBag.LayoutSubPanelMode = true;
             if (HttpContext.Session == null)
@@ -293,7 +304,7 @@ namespace vizzopWeb.Controllers
             {
                 //vizzopContext _db = new vizzopContext();
 
-                Converser converser = utils.GetLoggedConverser(HttpContext.Session, db);
+                Converser converser = utils.GetLoggedConverser(HttpContext.Session);
                 if (converser == null)
                 {
                     return RedirectToAction("LogOn", "Account");
@@ -351,13 +362,16 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult Widget()
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             if (HttpContext.Session == null)
             {
                 return RedirectToAction("LogOn", "Account");
             }
             try
             {
-                Converser converser = utils.GetLoggedConverser(HttpContext.Session, db);
+                Converser converser = utils.GetLoggedConverser(HttpContext.Session);
                 if (converser == null)
                 {
                     return RedirectToAction("LogOn", "Account");

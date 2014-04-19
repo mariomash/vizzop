@@ -11,8 +11,6 @@ namespace vizzopWeb.Controllers
 {
     public class AccountController : Controller
     {
-        private vizzopContext db = new vizzopContext();
-        private Utils utils = new Utils();
 
 #if DEBUG
 #else                    
@@ -40,6 +38,9 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult PasswordReset(string key)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             try
             {
                 var passwordreset = (from m in db.PasswordResets
@@ -69,6 +70,9 @@ namespace vizzopWeb.Controllers
         public ActionResult PasswordReset(PasswordReset newpasswordreset)
         {
 
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             try
             {
                 if (ModelState.IsValid)
@@ -85,19 +89,19 @@ namespace vizzopWeb.Controllers
                      When the Email attribute has been created,
                      we should change passwordreset.UserName to passwordreset.Email
                      */
-                    Converser converser = utils.GetConverserFromSystemWithEmailAndBusinessId(passwordreset.UserName, passwordreset.Business.ID, db);
+                    Converser converser = utils.GetConverserFromSystemWithEmailAndBusinessId(passwordreset.UserName, passwordreset.Business.ID);
 
                     if (converser != null)
                     {
                         converser.Password = newpasswordreset.Password;
                         db.SaveChanges();
 
-                        Utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/PasswordResetOK/" + passwordreset.UserName);
+                        utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/PasswordResetOK/" + passwordreset.UserName);
                     }
                     else
                     {
 
-                        Utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/PasswordResetNotOK/" + passwordreset.UserName);
+                        utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/PasswordResetNotOK/" + passwordreset.UserName);
                     }
 
                     LogOn logon = new LogOn();
@@ -107,7 +111,7 @@ namespace vizzopWeb.Controllers
                     db.PasswordResets.Remove(passwordreset);
                     db.SaveChanges();
 
-                    Utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/PasswordResetOK/" + passwordreset.UserName);
+                    utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/PasswordResetOK/" + passwordreset.UserName);
 
                     return this.LogOn(logon, null, null, null);
                 }
@@ -131,6 +135,9 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult Reminder(string email)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             try
             {
 
@@ -140,7 +147,7 @@ namespace vizzopWeb.Controllers
 
                 if (converser == null)
                 {
-                    Utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/ReminderNotOK/" + email);
+                    utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/ReminderNotOK/" + email);
 
                     ViewBag.errors = "No account associated with this e-mail";
                     return View();
@@ -183,7 +190,7 @@ namespace vizzopWeb.Controllers
                 if (result == false)
                 {
                     ViewBag.errors = "Error. Please try again";
-                    Utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/ReminderOK/" + email);
+                    utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/ReminderOK/" + email);
                     return View();
                 }
                 else
@@ -204,9 +211,12 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult LogOff()
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             try
             {
-                Converser converser = utils.GetLoggedConverser(HttpContext.Session, db);
+                Converser converser = utils.GetLoggedConverser(HttpContext.Session);
                 if (converser != null)
                 {
                     Session["converser"] = null;
@@ -243,6 +253,9 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult LogOn(LogOn logon, string returnUrl, string Email, string Password)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             try
             {
                 if (ModelState.IsValid)
@@ -274,16 +287,16 @@ namespace vizzopWeb.Controllers
                     logon.Email = logon.Email.Trim();
                     logon.Password = logon.Password.Trim();
 
-                    Converser converser = utils.GetConverserFromSystem(logon.Email, logon.Password, db);
+                    Converser converser = utils.GetConverserFromSystem(logon.Email, logon.Password);
 
                     if (converser == null)
                     {
-                        Utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/LogOnNotOK/" + logon.Email);
+                        utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/LogOnNotOK/" + logon.Email);
                         ViewBag.errors = "Combination of email/password not found";
                         return View();
                     }
 
-                    Utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/LogOnOK/" + logon.Email);
+                    utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/LogOnOK/" + logon.Email);
 
                     try
                     {
@@ -297,7 +310,7 @@ namespace vizzopWeb.Controllers
                     }
 
                     Session["converser"] = converser;
-                    utils.AddZenSession(converser, Session.SessionID, db);
+                    utils.AddZenSession(converser, Session.SessionID);
 
                     if (Url.IsLocalUrl(returnUrl))
                     {

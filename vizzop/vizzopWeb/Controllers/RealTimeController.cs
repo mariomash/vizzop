@@ -18,8 +18,6 @@ namespace vizzopWeb.Controllers
     public class RealTimeController : Controller
     {
 
-        private vizzopContext db = new vizzopContext();
-        private Utils utils = new Utils();
 
 #if DEBUG
 #else
@@ -27,25 +25,30 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult Index()
         {
-            if (HttpContext.Session == null)
+            using (var db = new vizzopContext())
             {
-                return RedirectToAction("LogOn", "Account");
-            }
-            try
-            {
-                Converser converser = utils.GetLoggedConverser(HttpContext.Session);
-                if (converser == null)
+                Utils utils = new Utils(db);
+
+                if (HttpContext.Session == null)
                 {
                     return RedirectToAction("LogOn", "Account");
                 }
-                converser.Business.Conversers = new List<Converser>();
-                ViewBag.converser = converser;
-                return View();
-            }
-            catch (Exception ex)
-            {
-                utils.GrabaLogExcepcion(ex);
-                return View();
+                try
+                {
+                    Converser converser = utils.GetLoggedConverser(HttpContext.Session);
+                    if (converser == null)
+                    {
+                        return RedirectToAction("LogOn", "Account");
+                    }
+                    converser.Business.Conversers = new List<Converser>();
+                    ViewBag.converser = converser;
+                    return View();
+                }
+                catch (Exception ex)
+                {
+                    utils.GrabaLogExcepcion(ex);
+                    return View();
+                }
             }
         }
 
@@ -57,6 +60,8 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult TrackPageView(string url, string referrer, string windowname, string callback)
         {
+            Utils utils = new Utils();
+
             try
             {
                 if (url != null)
@@ -133,6 +138,8 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult GetScreenHtml(string UserName, string Domain, string WindowName, string guid)
         {
+            Utils utils = new Utils();
+
             try
             {
 
@@ -205,6 +212,8 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult GetScreen(string UserName, string Domain, string WindowName, string height, string width, string guid)
         {
+            Utils utils = new Utils();
+
             try
             {
 
@@ -281,35 +290,40 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult GetScreenByGUID(string UserName, string Domain, string height, string width, string guid)
         {
-            try
+            using (var db = new vizzopContext())
             {
+                Utils utils = new Utils(db);
 
-                ScreenCapture sc = null;
-                TimeZone localZone = TimeZone.CurrentTimeZone;
-                DateTime start_time = DateTime.Now;
-                sc = utils.GetScreenCaptureByGUID(UserName, Domain, guid);
-                if (sc == null)
-                {
-                    return Json(false);
-                }
-                else
+                try
                 {
 
-                    return Json(new
+                    ScreenCapture sc = null;
+                    TimeZone localZone = TimeZone.CurrentTimeZone;
+                    DateTime start_time = DateTime.Now;
+                    sc = utils.GetScreenCaptureByGUID(UserName, Domain, guid);
+                    if (sc == null)
                     {
-                        UserName = sc.converser.UserName,
-                        Domain = sc.converser.Business.Domain,
-                        GUID = sc.GUID,
-                        CreatedOn = sc.CreatedOn.ToLocalTime().ToString("G"),
-                        Url = sc.Url,
-                        Data = "data:image/jpg;base64," + utils.ImageToJpegBase64(utils.PrepareScreenToReturn(sc, width, height, false), 75L)
-                    }, JsonRequestBehavior.AllowGet);
+                        return Json(false);
+                    }
+                    else
+                    {
+
+                        return Json(new
+                        {
+                            UserName = sc.converser.UserName,
+                            Domain = sc.converser.Business.Domain,
+                            GUID = sc.GUID,
+                            CreatedOn = sc.CreatedOn.ToLocalTime().ToString("G"),
+                            Url = sc.Url,
+                            Data = "data:image/jpg;base64," + utils.ImageToJpegBase64(utils.PrepareScreenToReturn(sc, width, height, false), 75L)
+                        }, JsonRequestBehavior.AllowGet);
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                utils.GrabaLogExcepcion(ex);
-                return Json(null);
+                catch (Exception ex)
+                {
+                    utils.GrabaLogExcepcion(ex);
+                    return Json(null);
+                }
             }
         }
 
@@ -324,13 +338,10 @@ namespace vizzopWeb.Controllers
         //public ActionResult TrackScreen(string data, string listeners)
         public ActionResult TrackScreen(string username, string password, string domain, string data, string listeners)
         {
+            Utils utils = new Utils();
+
             try
             {
-                var converser = utils.GetConverserFromSystem(username, password, domain, db);
-                if (converser == null)
-                {
-                    return Json(false);
-                }
 
                 /*
                 if (HttpContext.Session["converser"] == null)
@@ -347,9 +358,12 @@ namespace vizzopWeb.Controllers
                 var wrapper = new HttpContextWrapper(HttpContext);
                 */
                 utils.TrackScreen(
-                    converser,
+                    username,
+                    password,
+                    domain,
                     data,
                     listeners,
+                    false,
                     HttpContext
                     );
                 return Json(true);
@@ -362,8 +376,6 @@ namespace vizzopWeb.Controllers
             }
         }
 
-
-
         [JsonpFilter]
 #if DEBUG
 #else
@@ -371,6 +383,8 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult GetWebLocationsJson()
         {
+            Utils utils = new Utils();
+
             try
             {
                 //Converser converser = utils.GetLoggedConverser(HttpContext.Session);
@@ -393,13 +407,15 @@ namespace vizzopWeb.Controllers
                 TimeZone localZone = TimeZone.CurrentTimeZone;
                 DateTime loctime = localZone.ToUniversalTime(DateTime.Now.AddSeconds(-30));
 
-                string tag = "weblocation";
+                string region = "weblocations";
+                /*
                 List<DataCacheTag> Tags = new List<DataCacheTag>();
                 Tags.Add(new DataCacheTag(tag));
-                object result = SingletonCache.Instance.GetByTag(tag);
+                object result = SingletonCache.Instance.GetByTag(tag);*/
+
+                object result = SingletonCache.Instance.GetAllInRegion(region);
                 if (result != null)
                 {
-
 
                     /*
                     string VizzopGetsAllRealtimeWebLocationsSetting = "VizzopGetsAllRealtimeWebLocationsInRelease";

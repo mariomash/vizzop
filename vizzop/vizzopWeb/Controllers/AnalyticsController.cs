@@ -15,9 +15,6 @@ namespace vizzopWeb.Controllers
         //
         // GET: /Analytics/
 
-        private vizzopContext db = new vizzopContext();
-        private Utils utils = new Utils();
-
 
         [JsonpFilter]
 #if DEBUG
@@ -26,19 +23,22 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult GetAnalyticsGraphJson(string dimension1, string dimension2, string from, string to)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             Converser converser = new Converser();
             try
             {
                 if (HttpContext.Session == null)
                 {
-                    return RedirectToAction("LogOn", "Account");
+                    return Json(false);
                 }
                 try
                 {
                     converser = utils.GetLoggedConverser(HttpContext.Session);
                     if (converser == null)
                     {
-                        return RedirectToAction("LogOn", "Account");
+                        return Json(false);
                     }
                     converser.Business.Conversers = new List<Converser>();
                     ViewBag.converser = converser;
@@ -177,6 +177,7 @@ namespace vizzopWeb.Controllers
         }
         private Object EstandarizaIndex(AnalyticsGroup group, string dimension, int indice)
         {
+            Utils utils = new Utils();
             try
             {
                 Object key = null;
@@ -209,6 +210,7 @@ namespace vizzopWeb.Controllers
         }
         private Object EstandarizaKey(AnalyticsGroup group, string dimension, int indice)
         {
+            Utils utils = new Utils();
             try
             {
                 Object key = null;
@@ -256,6 +258,8 @@ namespace vizzopWeb.Controllers
         }
         private List<WebLocation_History> GetAnalyticsData(string from, string to, Converser converser)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
             try
             {
                 DateTime dtFrom = DateTime.Parse(from);
@@ -284,6 +288,7 @@ namespace vizzopWeb.Controllers
         }
         private IList<IEnumerable<AnalyticsGroup>> ReGroupAnalyticsData(string dimension, IEnumerable<AnalyticsGroup> groups, List<WebLocation_History> original_list)
         {
+            Utils utils = new Utils();
             try
             {
                 IList<IEnumerable<AnalyticsGroup>> groups2 = new List<IEnumerable<AnalyticsGroup>>();
@@ -431,6 +436,7 @@ namespace vizzopWeb.Controllers
         }
         private IEnumerable<AnalyticsGroup> GroupAnalyticsData(string dimension, List<WebLocation_History> original_list)
         {
+            Utils utils = new Utils();
             try
             {
                 IEnumerable<AnalyticsGroup> groups = null;
@@ -545,6 +551,7 @@ namespace vizzopWeb.Controllers
         }
         private List<AnalyticsReturn> ProcessAnalyticsData(string dimension1, string dimension2, IEnumerable<AnalyticsGroup> groups, List<WebLocation_History> original_list)
         {
+            Utils utils = new Utils();
             try
             {
                 var ReturnList = new List<AnalyticsReturn>();
@@ -618,19 +625,21 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult GetAnalyticsJson(string dimension1, string dimension2, string from, string to)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
             Converser converser = new Converser();
             try
             {
                 if (HttpContext.Session == null)
                 {
-                    return RedirectToAction("LogOn", "Account");
+                    return Json(false);
                 }
                 try
                 {
                     converser = utils.GetLoggedConverser(HttpContext.Session);
                     if (converser == null)
                     {
-                        return RedirectToAction("LogOn", "Account");
+                        return Json(false);
                     }
                     converser.Business.Conversers = new List<Converser>();
                     ViewBag.converser = converser;
@@ -672,6 +681,9 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult Index()
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             if (HttpContext.Session == null)
             {
                 return RedirectToAction("LogOn", "Account");

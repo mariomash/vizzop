@@ -12,15 +12,14 @@ namespace vizzopWeb.Controllers
     public class AuditController : Controller
     {
 
-        private vizzopContext db = new vizzopContext();
-        private Utils utils = new Utils();
-
 #if DEBUG
 #else
         [RequireHttps]
 #endif
         public ActionResult Index()
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
             if (HttpContext.Session == null)
             {
                 return RedirectToAction("LogOn", "Account");

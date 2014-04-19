@@ -10,15 +10,15 @@ namespace vizzopWeb.Controllers
     [SessionState(System.Web.SessionState.SessionStateBehavior.ReadOnly)]
     public class LogController : Controller
     {
-        private vizzopContext db = new vizzopContext();
-        private Utils utils = new Utils();
-
 #if DEBUG
 #else                    
         [RequireHttps]
 #endif
         public ActionResult Index()
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             ViewBag.LayoutPanelMode = true;
             if (HttpContext.Session == null)
             {
@@ -58,6 +58,7 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult SaveFromAjax(String text, string callback)
         {
+            Utils utils = new Utils();
             //text = Request.ServerVariables["REMOTE_ADDR"] + " : " + text;
             utils.GrabaLogJavascript(text);
             return Json(true);
@@ -71,6 +72,9 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult Details(int id)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             ViewBag.LayoutPanelMode = true;
             if (HttpContext.Session == null)
             {
@@ -104,7 +108,6 @@ namespace vizzopWeb.Controllers
 
         protected override void Dispose(bool disposing)
         {
-            db.Dispose();
             base.Dispose(disposing);
         }
     }

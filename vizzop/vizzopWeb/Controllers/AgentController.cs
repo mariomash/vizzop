@@ -11,8 +11,6 @@ namespace vizzopWeb.Controllers
     [SessionState(System.Web.SessionState.SessionStateBehavior.ReadOnly)]
     public class AgentController : Controller
     {
-        private vizzopContext db = new vizzopContext();
-        private Utils utils = new Utils();
 
 #if DEBUG
 #else                    
@@ -20,6 +18,8 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult Index()
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
             ViewBag.LayoutPanelMode = true;
             ViewBag.LayoutSubPanelMode = true;
             if (HttpContext.Session == null)
@@ -28,7 +28,7 @@ namespace vizzopWeb.Controllers
             }
             try
             {
-                Converser converser = utils.GetLoggedConverser(HttpContext.Session, db);
+                Converser converser = utils.GetLoggedConverser(HttpContext.Session);
                 if (converser == null)
                 {
                     return RedirectToAction("LogOn", "Account");
@@ -49,6 +49,8 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult Panel()
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
             ViewBag.LayoutPanelMode = true;
             if (HttpContext.Session == null)
             {
@@ -82,6 +84,8 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult BuyAgent()
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
             ViewBag.LayoutPanelMode = true;
             ViewBag.LayoutSubPanelMode = true;
             if (HttpContext.Session == null)
@@ -90,7 +94,7 @@ namespace vizzopWeb.Controllers
             }
             try
             {
-                Converser converser = utils.GetLoggedConverser(HttpContext.Session, db);
+                Converser converser = utils.GetLoggedConverser(HttpContext.Session);
                 if (converser == null)
                 {
                     return RedirectToAction("LogOn", "Account");
@@ -156,6 +160,8 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult Create()
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
             ViewBag.LayoutPanelMode = true;
             ViewBag.LayoutSubPanelMode = true;
             if (HttpContext.Session == null)
@@ -164,7 +170,7 @@ namespace vizzopWeb.Controllers
             }
             try
             {
-                Converser converser = utils.GetLoggedConverser(HttpContext.Session, db);
+                Converser converser = utils.GetLoggedConverser(HttpContext.Session);
                 if (converser == null)
                 {
                     return RedirectToAction("LogOn", "Account");
@@ -201,6 +207,8 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult Create(NewAgent newAgent)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
             ViewBag.LayoutPanelMode = true;
             ViewBag.LayoutSubPanelMode = true;
             if (HttpContext.Session == null)
@@ -209,7 +217,7 @@ namespace vizzopWeb.Controllers
             }
             try
             {
-                Converser converser = utils.GetLoggedConverser(HttpContext.Session, db);
+                Converser converser = utils.GetLoggedConverser(HttpContext.Session);
                 if (converser == null)
                 {
                     return RedirectToAction("LogOn", "Account");
@@ -348,6 +356,8 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult Edit(int id)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
             ViewBag.LayoutPanelMode = true;
             ViewBag.LayoutSubPanelMode = true;
             if (HttpContext.Session == null)
@@ -356,7 +366,7 @@ namespace vizzopWeb.Controllers
             }
             try
             {
-                Converser converser = utils.GetLoggedConverser(HttpContext.Session, db);
+                Converser converser = utils.GetLoggedConverser(HttpContext.Session);
                 if (converser == null)
                 {
                     return RedirectToAction("LogOn", "Account");
@@ -413,6 +423,8 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult Edit(NewAgent newAgent)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
             ViewBag.LayoutPanelMode = true;
             ViewBag.LayoutSubPanelMode = true;
             if (HttpContext.Session == null)
@@ -421,7 +433,7 @@ namespace vizzopWeb.Controllers
             }
             try
             {
-                Converser converser = utils.GetLoggedConverser(HttpContext.Session, db);
+                Converser converser = utils.GetLoggedConverser(HttpContext.Session);
                 if (converser == null)
                 {
                     return RedirectToAction("LogOn", "Account");
@@ -464,7 +476,7 @@ namespace vizzopWeb.Controllers
                     /*
                     return Redirect(Url.RouteUrl(new { controller = "Panel", action = "Index" }) + "#agents");
                      * */
-                    Utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/EditedAgentOK/" + agent.Converser.UserName + "@" + agent.Converser.Business.Domain);
+                    utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/EditedAgentOK/" + agent.Converser.UserName + "@" + agent.Converser.Business.Domain);
                     string data_saved = utils.LocalizeLang("data_saved", utils.GetLang(HttpContext), null);
                     return RedirectToAction("Index", "Agent", new { popupmsg = data_saved });
                 }
@@ -486,6 +498,8 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult DeleteConfirmed(int id)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
             ViewBag.LayoutPanelMode = true;
             ViewBag.LayoutSubPanelMode = true;
             if (HttpContext.Session == null)
@@ -494,7 +508,7 @@ namespace vizzopWeb.Controllers
             }
             try
             {
-                Converser converser = utils.GetLoggedConverser(HttpContext.Session, db);
+                Converser converser = utils.GetLoggedConverser(HttpContext.Session);
                 if (converser == null)
                 {
                     return RedirectToAction("LogOn", "Account");
@@ -560,7 +574,6 @@ namespace vizzopWeb.Controllers
 
         protected override void Dispose(bool disposing)
         {
-            db.Dispose();
             base.Dispose(disposing);
         }
     }

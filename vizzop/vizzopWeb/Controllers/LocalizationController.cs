@@ -10,16 +10,16 @@ namespace vizzopWeb.Controllers
 {
     public class LocalizationController : Controller
     {
-        private vizzopContext db = new vizzopContext();
-        private Utils utils = new Utils();
-        //
-        // GET: /Localization/
+
 #if DEBUG
 #else                    
         [RequireHttps]
 #endif
         public ActionResult Index()
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             ViewBag.LayoutPanelMode = true;
             if (HttpContext.Session == null)
             {
@@ -27,7 +27,7 @@ namespace vizzopWeb.Controllers
             }
             try
             {
-                Converser converser = utils.GetLoggedConverser(HttpContext.Session, db);
+                Converser converser = utils.GetLoggedConverser(HttpContext.Session);
                 if (converser == null)
                 {
                     return RedirectToAction("LogOn", "Account");
@@ -58,6 +58,9 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult GetLocalizationJson()
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             Converser converser = new Converser();
             try
             {
@@ -67,7 +70,7 @@ namespace vizzopWeb.Controllers
                 }
                 try
                 {
-                    converser = utils.GetLoggedConverser(HttpContext.Session, db);
+                    converser = utils.GetLoggedConverser(HttpContext.Session);
                     if (converser == null)
                     {
                         return RedirectToAction("LogOn", "Account");
@@ -117,6 +120,9 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult GetTextStringDetails(string id)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             Converser converser = new Converser();
             try
             {
@@ -126,7 +132,7 @@ namespace vizzopWeb.Controllers
                 }
                 try
                 {
-                    converser = utils.GetLoggedConverser(HttpContext.Session, db);
+                    converser = utils.GetLoggedConverser(HttpContext.Session);
                     if (converser == null)
                     {
                         return RedirectToAction("LogOn", "Account");
@@ -171,6 +177,9 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult SaveTextString(string reference, string text, string langisocode, string id)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             Converser converser = new Converser();
             try
             {
@@ -180,7 +189,7 @@ namespace vizzopWeb.Controllers
                 }
                 try
                 {
-                    converser = utils.GetLoggedConverser(HttpContext.Session, db);
+                    converser = utils.GetLoggedConverser(HttpContext.Session);
                     if (converser == null)
                     {
                         return Json(false);
@@ -242,6 +251,9 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult DeleteTextString(string id)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             Converser converser = new Converser();
             try
             {
@@ -251,7 +263,7 @@ namespace vizzopWeb.Controllers
                 }
                 try
                 {
-                    converser = utils.GetLoggedConverser(HttpContext.Session, db);
+                    converser = utils.GetLoggedConverser(HttpContext.Session);
                     if (converser == null)
                     {
                         return Json(false);
@@ -306,6 +318,9 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult GetIsoCodes()
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             try
             {
                 var isocodes = (from m in db.Isocodes
@@ -322,7 +337,6 @@ namespace vizzopWeb.Controllers
 
         protected override void Dispose(bool disposing)
         {
-            db.Dispose();
             base.Dispose(disposing);
         }
     }

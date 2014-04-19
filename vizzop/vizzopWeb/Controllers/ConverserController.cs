@@ -11,9 +11,7 @@ namespace vizzopWeb.Controllers
     [SessionState(System.Web.SessionState.SessionStateBehavior.ReadOnly)]
     public class ConverserController : Controller
     {
-        private vizzopContext db = new vizzopContext();
-        private Utils utils = new Utils();
-
+        
         [JsonpFilter]
 #if DEBUG
 #else                    
@@ -21,6 +19,9 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult checkLogin(string username, string password, string callback)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             try
             {
                 if (ModelState.IsValid)
@@ -67,6 +68,9 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult GetNew(string FullName, string apikey)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             try
             {
                 if (ModelState.IsValid)
@@ -140,11 +144,14 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult ChangeStatus(string UserName, string Status, string Password, string Domain, string callback)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             try
             {
                 if (ModelState.IsValid)
                 {
-                    Converser converser = utils.GetConverserFromSystem(UserName, Password, Domain, db);
+                    Converser converser = utils.GetConverserFromSystem(UserName, Password, Domain);
                     if (converser == null)
                     {
                         return Json(false);
@@ -189,11 +196,14 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult ChangeName(string UserName, string FullName, string Password, string Domain, string callback)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             try
             {
                 if (ModelState.IsValid)
                 {
-                    Converser converser = utils.GetConverserFromSystem(UserName, Password, Domain, db);
+                    Converser converser = utils.GetConverserFromSystem(UserName, Password, Domain);
                     if (converser == null)
                     {
                         return Json(false);
@@ -239,10 +249,13 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult GetConversersToChat(string password, string username, string domain, string callback)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             try
             {
 
-                Converser converser = utils.GetConverserFromSystem(username, password, domain, db);
+                Converser converser = utils.GetConverserFromSystem(username, password, domain);
                 if (converser == null)
                 {
                     return Json(false);
@@ -301,7 +314,6 @@ namespace vizzopWeb.Controllers
 
         protected override void Dispose(bool disposing)
         {
-            db.Dispose();
             base.Dispose(disposing);
         }
     }

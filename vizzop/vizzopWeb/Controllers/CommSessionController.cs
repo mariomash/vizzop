@@ -13,9 +13,7 @@ namespace vizzopWeb.Controllers
     [SessionState(System.Web.SessionState.SessionStateBehavior.ReadOnly)]
     public class CommSessionController : Controller
     {
-        private vizzopContext db = new vizzopContext();
-        private Utils utils = new Utils();
-
+        
         [JsonpFilter]
 #if DEBUG
 #else
@@ -23,6 +21,9 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult GetCommSessionsJson(string CommSession_filter)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             Converser converser = new Converser();
             try
             {
@@ -236,6 +237,9 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult Index(string CommSession_filter)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             ViewBag.LayoutPanelMode = true;
             Converser converser = new Converser();
             try
@@ -332,6 +336,9 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult Check(int id, string username, string domain)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             //CommSession CommSession = db.CommSessions.Find(id);
             CommSession CommSession = (from m in db.CommSessions
                                            .Include("Client")
@@ -356,6 +363,9 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult ClientComment(int id, string from_username, string from_domain, string content)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             try
             {
                 if (ModelState.IsValid)
@@ -454,7 +464,6 @@ namespace vizzopWeb.Controllers
 
         protected override void Dispose(bool disposing)
         {
-            db.Dispose();
             base.Dispose(disposing);
         }
     }

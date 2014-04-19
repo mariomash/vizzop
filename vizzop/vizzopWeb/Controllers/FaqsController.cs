@@ -12,15 +12,15 @@ namespace vizzopWeb.Controllers
     public class FaqsController : Controller
     {
 
-        private vizzopContext db = new vizzopContext();
-        private Utils utils = new Utils();
-
 #if DEBUG
 #else                    
         [RequireHttps]
 #endif
         public ActionResult Index()
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             if (HttpContext.Session == null)
             {
                 return RedirectToAction("LogOn", "Account");
@@ -50,6 +50,9 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult GetFaqsJson()
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             Converser converser = new Converser();
             try
             {
@@ -109,6 +112,9 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult GetFaqDetails(string id)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             Converser converser = new Converser();
             try
             {
@@ -187,6 +193,9 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult SaveFaq(string question, string answer, string langisocode, string id)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             Converser converser = new Converser();
             try
             {
@@ -277,6 +286,9 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult DeleteFaqDetails(string id, string lang)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             Converser converser = new Converser();
             try
             {

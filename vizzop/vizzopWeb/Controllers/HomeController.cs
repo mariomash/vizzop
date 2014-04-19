@@ -9,9 +9,6 @@ namespace vizzopWeb.Controllers
 {
     public class HomeController : Controller
     {
-        vizzopContext db = new vizzopContext();
-        private Utils utils = new Utils();
-
 #if DEBUG
 #else                    
         [RequireHttps]
@@ -20,22 +17,8 @@ namespace vizzopWeb.Controllers
         [OutputCache(Duration = 3600, VaryByParam = "none")]
         public ActionResult Index(bool force = false)
         {
-            /*
-            try
-            {
-                var list = (from m in db.WebLocations_History.Include("Converser")
-                            select m);
-                foreach (WebLocation_History loc in list)
-                {
-                    loc.Ubication = utils.GetUbicationFromIP(loc.IP);
-                }
-                db.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                utils.GrabaLogExcepcion(ex);
-            }
-            */
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
 
             try
             {
@@ -75,6 +58,9 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult ErrorPage(string panelmode)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             if (panelmode == "true")
             {
                 try

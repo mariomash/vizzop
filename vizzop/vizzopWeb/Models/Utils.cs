@@ -28,6 +28,7 @@ using System.Web.WebSockets;
 using Microsoft.WindowsAzure.ServiceRuntime;
 using System.ComponentModel;
 using Newtonsoft.Json;
+using Microsoft.WindowsAzure;
 
 
 public class LZString
@@ -1008,7 +1009,7 @@ namespace vizzopWeb
 
     public class Utils
     {
-        public vizzopContext db = null;
+        public vizzopContext db;
 
         public static string google_analytics_key = "UA-29363897-1";
 
@@ -1026,7 +1027,7 @@ namespace vizzopWeb
 
         public Utils()
         {
-            db = new vizzopContext();
+            //db = new vizzopContext();
         }
 
         public string vendornumber = "2084568";
@@ -1095,8 +1096,10 @@ namespace vizzopWeb
         {
             try
             {
-                vizzopContext db = new vizzopContext();
-
+                if (db == null)
+                {
+                    db = new vizzopContext();
+                }
                 //Aseguremonos de que no hay APIKEYs repetidas...
                 var guid = Guid.NewGuid().ToString();
                 while ((from m in db.Conversers
@@ -1329,6 +1332,11 @@ namespace vizzopWeb
         {
             try
             {
+                if (db == null)
+                {
+                    db = new vizzopContext();
+                }
+
                 int convertedMeetingSessionID = Convert.ToInt16(MeetingSessionID);
                 MeetingSession meetingSession = (from m in db.MeetingSessions
                                                      .Include("Business")
@@ -1348,7 +1356,6 @@ namespace vizzopWeb
 
         public Converser GetLoggedConverser(HttpSessionStateBase session)
         {
-            vizzopContext _db = new vizzopContext();
             try
             {
                 if (session["converser"] == null)
@@ -1356,8 +1363,8 @@ namespace vizzopWeb
                     return null;
                 }
                 var _converser = (Converser)session["converser"];
-                Converser converser = GetConverserFromSystem(_converser.UserName, _converser.Password, _converser.Business.Domain);
-                return converser;
+                //Converser converser = GetConverserFromSystem(_converser.UserName, _converser.Password, _converser.Business.Domain);
+                return _converser;
             }
             catch (System.Exception ex)
             {
@@ -1366,37 +1373,18 @@ namespace vizzopWeb
             }
         }
 
-        public Converser GetLoggedConverser(HttpSessionStateBase session, vizzopContext DBContext)
+        public Converser GetConverserFromSystem(string Email, string Password)
         {
-            vizzopContext _db = new vizzopContext();
-            try
-            {
-                if (session["converser"] == null)
-                {
-                    return null;
-                }
-                var _converser = (Converser)session["converser"];
-                Converser converser = GetConverserFromSystem(_converser.UserName, _converser.Password, _converser.Business.Domain, DBContext);
-                return converser;
-            }
-            catch (System.Exception ex)
-            {
-                GrabaLogExcepcion(ex);
-                return null;
-            }
-        }
 
-        public Converser GetConverserFromSystem(string Email, string Password, vizzopContext db)
-        {
+            if (db == null)
+            {
+                db = new vizzopContext();
+            }
+
             Converser converser = null;
 
             try
             {
-                if (db == null)
-                {
-                    db = new vizzopContext();
-                }
-
 
                 converser = (from m in db.Conversers.Include("Business").Include("Agent")
                              where m.Email == Email
@@ -1426,21 +1414,17 @@ namespace vizzopWeb
 
         public Converser GetConverserFromSystem(string UserName, string Password, string Domain)
         {
-            return GetConverserFromSystem(UserName, Password, Domain, null);
-        }
+            if (db == null)
+            {
+                db = new vizzopContext();
+            }
 
-        public Converser GetConverserFromSystem(string UserName, string Password, string Domain, vizzopContext _db)
-        {
             Converser converser = null;
 
             try
             {
-                if (_db == null)
-                {
-                    _db = db;
-                }
 
-                converser = (from m in _db.Conversers.Include("Business").Include("Agent")
+                converser = (from m in db.Conversers.Include("Business").Include("Agent")
                              where m.UserName == UserName
                              && m.Password == Password
                              && m.Business.Domain == Domain
@@ -1456,7 +1440,7 @@ namespace vizzopWeb
                 DateTime loctimeUTC = localZone.ToUniversalTime(loctime);
                 converser.LastActive = loctimeUTC;
 
-                _db.SaveChanges();
+                db.SaveChanges();
             }
             catch (Exception ex)
             {
@@ -1665,43 +1649,22 @@ namespace vizzopWeb
 
             try
             {
-
-                List<WebLocation> WebLocations = new List<WebLocation>();
-                string tag = "weblocation";
-                List<DataCacheTag> Tags = new List<DataCacheTag>();
-                Tags.Add(new DataCacheTag(tag));
-                object result = SingletonCache.Instance.GetByTag(tag);
-                if (result != null)
-                {
-                    IEnumerable<KeyValuePair<string, object>> ObjectList = (IEnumerable<KeyValuePair<string, object>>)result;
-                    foreach (var e in ObjectList)
-                    {
-                        WebLocations.Add((WebLocation)e.Value);
-                    }
-
-                }
+                string key = UserName + @"@" + Domain + @"@" + WindowName;
+                string region = "weblocations";
 
                 WebLocation weblocation = null;
-                weblocation = (from m in WebLocations
-                               where m.UserName == UserName &&
-                               m.Domain == Domain &&
-                               m.WindowName == WindowName
-                               select m).OrderByDescending(m => m.TimeStamp_Last).FirstOrDefault();
-
                 DataCacheLockHandle lockHandle;
-                result = SingletonCache.Instance.GetWithLock(weblocation.Guid, out lockHandle);
+                object result = SingletonCache.Instance.GetInRegionWithLock(key, region, out lockHandle);
                 if (result != null)
                 {
                     weblocation = (WebLocation)result;
                 }
-
                 weblocation.MustGenerateScreenshot = true;
                 if (weblocation.ScreenCapture != null)
                 {
                     sc = weblocation.ScreenCapture;
                 }
-
-                SingletonCache.Instance.InsertWithLockAndTags(weblocation.Guid, weblocation, lockHandle, Tags);
+                SingletonCache.Instance.InsertInRegionWithLock(key, weblocation, region, lockHandle);
             }
             catch (Exception e)
             {
@@ -1976,12 +1939,12 @@ namespace vizzopWeb
             }
         }
 
-        public bool TrackScreen(Converser converser, string data, string listeners, HttpContextBase context)
+        public bool TrackScreen(string UserName, string Password, string Domain, string data, string listeners, bool CompressHtmlData, HttpContextBase context)
         {
             try
             {
 
-                if (converser == null)
+                if ((UserName == null) || (Password == null) || (Domain == null))
                 {
                     return false;
                 }
@@ -1998,7 +1961,7 @@ namespace vizzopWeb
 
                 List<Dictionary<string, object>> arrDict = null;
 
-                if (converser.Business.CompressHtmlData == true)
+                if (CompressHtmlData == true)
                 {
                     data = LZString.decompressFromBase64(data);
                 }
@@ -2189,6 +2152,7 @@ namespace vizzopWeb
                                 listenersArr = listeners.Split(',').ToList<String>();
                             }
                         }
+                        /*
                         if (listenersArr.Count == 0)
                         {
                             foreach (Agent agent in GetActiveAgents(converser))
@@ -2207,7 +2171,7 @@ namespace vizzopWeb
                             var message = new Message(newmessage);
                             message.AddToCache();
                         }
-
+                        */
                         if (dict.ContainsKey("windowname"))
                         {
                             if ((dict["windowname"] != null) && (dict["windowname"].ToString() != "null"))
@@ -2232,34 +2196,15 @@ namespace vizzopWeb
                             new_screencapture.Data = "";
                         }
 
-                        /*
-                         * Al trackear pantalla también hay que meterselo a todos con el mismo windowname...
-                         */
                         WebLocation OriginalWebLocation = null;
 
-                        string _tag = "weblocation";
-                        List<DataCacheTag> _Tags = new List<DataCacheTag>();
-                        _Tags.Add(new DataCacheTag(_tag));
-                        object _result = SingletonCache.Instance.GetByTag(_tag);
+                        string _region = "weblocations";
+                        string _key = UserName + @"@" + Domain + @"@" + new_screencapture.WindowName;
+                        DataCacheLockHandle _lockHandle;
+                        object _result = SingletonCache.Instance.GetInRegionWithLock(_key, _region, out _lockHandle);
                         if (_result != null)
                         {
-                            var _WebLocations = (IEnumerable<KeyValuePair<string, object>>)_result;
-                            if (_WebLocations != null)
-                            {
-                                _WebLocations = (from xx in _WebLocations
-                                                 where ((WebLocation)xx.Value).UserName == converser.UserName &&
-                                                 ((WebLocation)xx.Value).Domain == converser.Business.Domain &&
-                                                 ((WebLocation)xx.Value).WindowName == new_screencapture.WindowName
-                                                 select xx);
-
-                                if (_WebLocations != null)
-                                {
-                                    /* Preparamos de la que copiaremos todo el resto... */
-                                    var _weblocation = (from m in _WebLocations
-                                                        select m).OrderBy(x => ((WebLocation)x.Value).TimeStamp_First).FirstOrDefault();
-                                    OriginalWebLocation = (WebLocation)_weblocation.Value;
-                                }
-                            }
+                            OriginalWebLocation = (WebLocation)_result;
                         }
 
                         TimeZone localZone = TimeZone.CurrentTimeZone;
@@ -2273,14 +2218,14 @@ namespace vizzopWeb
                             OriginalWebLocation.IP = sIP;
                             OriginalWebLocation.Ubication = GetUbicationFromIP(sIP);
                             OriginalWebLocation.Headers = headers;
-                            OriginalWebLocation.ConverserId = converser.ID;
-                            OriginalWebLocation.UserName = converser.UserName;
-                            OriginalWebLocation.Password = converser.Password;
-                            OriginalWebLocation.FullName = converser.FullName;
-                            OriginalWebLocation.Domain = converser.Business.Domain;
+                            OriginalWebLocation.ConverserId = 0;
+                            OriginalWebLocation.UserName = UserName;
+                            OriginalWebLocation.Password = Password;
+                            OriginalWebLocation.FullName = null;
+                            OriginalWebLocation.Domain = Domain;
                             OriginalWebLocation.WindowName = new_screencapture.WindowName;
-                            //La guardamos en cache a falta de meter el resto de datos (abajo lo haremos)
-                            SingletonCache.Instance.InsertWithTags(OriginalWebLocation.Guid, OriginalWebLocation, _Tags);
+
+                            SingletonCache.Instance.InsertInRegion(_key, OriginalWebLocation, _region);
                         }
 
                         ArrayList ArrBlob = (ArrayList)dict["blob"];
@@ -2348,51 +2293,20 @@ namespace vizzopWeb
                         /*
                          * Estas son las tres cosas que cambian en realidad... lo anterior es en caso de es crear
                          */
-
+                        /*
+                        _result = SingletonCache.Instance.GetInRegionWithLock(_key, _region, out _lockHandle);
+                        if (_result != null)
+                        {
+                            OriginalWebLocation = (WebLocation)_result;
+                        }
+                         * */
+                        OriginalWebLocation.Url = new_screencapture.Url;
                         OriginalWebLocation.TimeStamp_Last = loctime;
                         OriginalWebLocation.CompleteHtml = processedHtml;
                         OriginalWebLocation.ScreenCapture = new_screencapture;
+                        SingletonCache.Instance.InsertInRegionWithLock(_key, OriginalWebLocation, _region, _lockHandle);
 
-                        /*
-                         * Vamos a recorrer todo otra vez y asignar las tres cosas que cambian en realidad
-                         */
-
-                        _result = SingletonCache.Instance.GetByTag(_tag);
-                        if (_result != null)
-                        {
-                            var _WebLocations = (IEnumerable<KeyValuePair<string, object>>)_result;
-                            if (_WebLocations != null)
-                            {
-                                _WebLocations = (from xx in _WebLocations
-                                                 where ((WebLocation)xx.Value).UserName == converser.UserName &&
-                                                 ((WebLocation)xx.Value).Domain == converser.Business.Domain &&
-                                                 ((WebLocation)xx.Value).WindowName == new_screencapture.WindowName
-                                                 select xx);
-
-                                if (_WebLocations != null)
-                                {
-                                    foreach (var _xx in _WebLocations)
-                                    {
-                                        var _item = (WebLocation)_xx.Value;
-                                        DataCacheLockHandle _lockHandle;
-                                        object result = SingletonCache.Instance.GetWithLock(_item.Guid, out _lockHandle);
-                                        if (result != null)
-                                        {
-                                            var wl = (WebLocation)result;
-                                            if (wl != null)
-                                            {
-                                                wl.TimeStamp_Last = loctime;
-                                                wl.CompleteHtml = processedHtml;
-                                                wl.ScreenCapture = new_screencapture;
-                                                SingletonCache.Instance.InsertWithLockAndTags(_item.Guid, wl, _lockHandle, _Tags);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-
+                        //Y ahora a la DB
 
                         new_screencapture.Blob = OriginalWebLocation.CompleteHtml;
 
@@ -2408,7 +2322,7 @@ namespace vizzopWeb
                         {
                             Task TaskLog = Task.Factory.StartNew(() =>
                             {
-                                AddScreenCapturetoDb(new_screencapture, converser.UserName, converser.Business.Domain, converser.Password);
+                                AddScreenCapturetoDb(new_screencapture, UserName, Domain, Password);
                             });
                         }
 
@@ -2438,6 +2352,11 @@ namespace vizzopWeb
 
         public void AddScreenCapturetoDb(ScreenCapture new_screencapture, string UserName, string Domain, string Password)
         {
+            if (db == null)
+            {
+                db = new vizzopContext();
+            }
+
             try
             {
                 //Si ya existe la actualizamos
@@ -2550,76 +2469,48 @@ namespace vizzopWeb
                 if ((url != null) && (converser != null))
                 {
 
-                    //List<WebLocation> WebLocations = new List<WebLocation>();
-                    string tag = "weblocation";
-                    List<DataCacheTag> Tags = new List<DataCacheTag>();
-                    Tags.Add(new DataCacheTag(tag));
-                    object result = SingletonCache.Instance.GetByTag(tag);
+                    string region = "weblocations";
+                    string key = converser.UserName + @"@" + converser.Business.Domain + @"@" + windowname;
+                    DataCacheLockHandle _lockHandle;
+                    object result = SingletonCache.Instance.GetInRegionWithLock(key, region, out _lockHandle);
+
+                    WebLocation weblocation = null;
                     if (result != null)
                     {
-                        IEnumerable<KeyValuePair<string, object>> WebLocations = (IEnumerable<KeyValuePair<string, object>>)result;
-
-                        var cacheWebLocation = (from m in WebLocations
-                                                where ((WebLocation)m.Value).UserName == converser.UserName &&
-                                                ((WebLocation)m.Value).Domain == converser.Business.Domain &&
-                                                ((WebLocation)m.Value).WindowName == windowname &&
-                                                ((WebLocation)m.Value).Url == url
-                                                select m).FirstOrDefault();
-
-                        WebLocation weblocation = null;
-                        if (cacheWebLocation.Value != null)
-                        {
-                            if ((((WebLocation)cacheWebLocation.Value).Url == url) && (((WebLocation)cacheWebLocation.Value).WindowName == windowname))
-                            {
-                                weblocation = (WebLocation)cacheWebLocation.Value;
-                            }
-                        }
-                        if (weblocation != null)
-                        {
-                            DataCacheLockHandle lockHandle;
-                            result = SingletonCache.Instance.GetWithLock(weblocation.Guid, out lockHandle);
-                            if (result != null)
-                            {
-                                weblocation = (WebLocation)result;
-
-                                weblocation.TimeStamp_Last = loctime;
-
-                                SingletonCache.Instance.InsertWithLockAndTags(weblocation.Guid, weblocation, lockHandle, Tags);
-                            }
-                        }
-                        else
-                        {
-                            string slang = "-";
-                            if (language != null) { slang = language; }
-
-                            weblocation = new WebLocation();
-                            weblocation.ConverserId = converser.ID;
-                            weblocation.UserName = converser.UserName;
-                            weblocation.Password = converser.Password;
-                            weblocation.FullName = converser.FullName;
-                            weblocation.Domain = converser.Business.Domain;
-                            weblocation.Referrer = referrer;
-                            weblocation.TimeStamp_First = loctime;
-                            weblocation.TimeStamp_Last = loctime;
-                            weblocation.UserAgent = useragent;
-                            weblocation.IP = sIP;
-                            weblocation.Lang = slang;
-                            weblocation.Url = url;
-                            weblocation.Ubication = GetUbicationFromIP(sIP);
-                            weblocation.Headers = headers;
-                            weblocation.WindowName = windowname;
-
-                            SingletonCache.Instance.InsertWithTags(weblocation.Guid, weblocation, Tags);
-                        }
-
-                        return new Status(true, null);
+                        weblocation = (WebLocation)result;
+                    }
+                    if (weblocation != null)
+                    {
+                        weblocation.Url = url;
+                        weblocation.TimeStamp_Last = loctime;
+                        SingletonCache.Instance.InsertInRegion(key, weblocation, region);
                     }
                     else
                     {
-                        //SingletonCache.Instance.UnLock(key, lockHandle);
-                        return new Status(false, "no url or converser");
+                        string slang = "-";
+                        if (language != null) { slang = language; }
+
+                        weblocation = new WebLocation();
+                        weblocation.ConverserId = converser.ID;
+                        weblocation.UserName = converser.UserName;
+                        weblocation.Password = converser.Password;
+                        weblocation.FullName = converser.FullName;
+                        weblocation.Domain = converser.Business.Domain;
+                        weblocation.Referrer = referrer;
+                        weblocation.TimeStamp_First = loctime;
+                        weblocation.TimeStamp_Last = loctime;
+                        weblocation.UserAgent = useragent;
+                        weblocation.IP = sIP;
+                        weblocation.Lang = slang;
+                        weblocation.Url = url;
+                        weblocation.Ubication = GetUbicationFromIP(sIP);
+                        weblocation.Headers = headers;
+                        weblocation.WindowName = windowname;
+
+                        SingletonCache.Instance.InsertInRegionWithLock(key, weblocation, region, _lockHandle);
                     }
 
+                    return new Status(true, null);
                 }
                 else
                 {
@@ -2920,16 +2811,14 @@ namespace vizzopWeb
             {
                 Task TaskLog = Task.Factory.StartNew(() =>
                 {
-                    db = new vizzopContext();
-
                     string CreateLogsSetting = "CreateLogsInRelease";
 #if DEBUG
                     CreateLogsSetting = "CreateLogsInDebug";
 #endif
+
                     bool CreateLogs = false;
-                    CreateLogs = Convert.ToBoolean((from m in db.Settings
-                                                    where m.Name == CreateLogsSetting
-                                                    select m).FirstOrDefault().Value);
+                    CreateLogs = Convert.ToBoolean(CloudConfigurationManager.GetSetting(CreateLogsSetting));
+
                     if (CreateLogs == false)
                     {
                         return;
@@ -3012,24 +2901,25 @@ namespace vizzopWeb
             }
         }
 
-        public void AddZenSession(Converser Converser, string SessionID, vizzopContext _db)
+        public void AddZenSession(Converser Converser, string SessionID)
         {
-            if (_db == null)
+
+            if (db == null)
             {
-                _db = db;
+                db = new vizzopContext();
             }
 
             try
             {
-                var newconverser = (from m in _db.Conversers
+                var newconverser = (from m in db.Conversers
                                     where m.ID == Converser.ID
                                     select m).FirstOrDefault();
                 if (newconverser != null)
                 {
                     var newLoginAction = new LoginAction();
                     newLoginAction.Converser = newconverser;
-                    _db.LoginActions.Add(newLoginAction);
-                    _db.SaveChanges();
+                    db.LoginActions.Add(newLoginAction);
+                    db.SaveChanges();
                 }
             }
             catch (Exception e)
@@ -3038,18 +2928,18 @@ namespace vizzopWeb
             }
             try
             {
-                var ses = (from m in _db.ZenSessions
+                var ses = (from m in db.ZenSessions
                            where m.Converser.ID == Converser.ID
                            select m).FirstOrDefault();
                 if (ses != null)
                 {
                     ses.sessionID = SessionID;
                     ses.TimeStamp = DateTime.Now;
-                    _db.SaveChanges();
+                    db.SaveChanges();
                 }
                 else
                 {
-                    var newconverser = (from m in _db.Conversers
+                    var newconverser = (from m in db.Conversers
                                         where m.ID == Converser.ID
                                         select m).FirstOrDefault();
                     if (newconverser != null)
@@ -3058,8 +2948,8 @@ namespace vizzopWeb
                         newses.sessionID = SessionID;
                         newses.Converser = newconverser;
                         newses.TimeStamp = DateTime.Now;
-                        _db.ZenSessions.Add(newses);
-                        _db.SaveChanges();
+                        db.ZenSessions.Add(newses);
+                        db.SaveChanges();
                     }
                 }
             }
@@ -3069,7 +2959,7 @@ namespace vizzopWeb
             }
         }
 
-        public static void GrabaAnalyticsLog(NivelLog NLog, string message)
+        public void GrabaAnalyticsLog(NivelLog NLog, string message)
         {
             try
             {
@@ -3322,74 +3212,32 @@ namespace vizzopWeb
                  * porque no voy a lanzar un proceso para cada weblocation, dado que hay Focus y cosas asi...
                  */
 
-                string tag = "weblocation";
-                List<DataCacheTag> Tags = new List<DataCacheTag>();
-                Tags.Add(new DataCacheTag(tag));
-                object result = SingletonCache.Instance.GetByTag(tag);
-                if (result == null)
-                {
-                    return;
-                }
-
+                string region = "weblocations";
+                object result = SingletonCache.Instance.GetAllInRegion(region);
+                if (result == null) { return; }
                 var WebLocations = (IEnumerable<KeyValuePair<string, object>>)result;
+                if (WebLocations == null) { return; }
 
-                //TimeZone localZone = TimeZone.CurrentTimeZone;
-                //DateTime loctime = localZone.ToUniversalTime(DateTime.Now.AddSeconds(-30));
+                WebLocations = (from m in WebLocations
+                                where ((WebLocation)m.Value).MustGenerateScreenshot == true &&
+                                ((WebLocation)m.Value).CaptureProcessId == null
+                                select m);
 
-                if (WebLocations == null)
+                foreach (var m in WebLocations)
                 {
-                    return;
-                }
-
-                //where m.TimeStamp_Last > loctime &&
-                /*
-                where ((WebLocation)m.Value).CaptureProcessId == null &&
-                ((WebLocation)m.Value).ScreenCapture != null
-                 */
-                /*
-                var GroupedWebLocations = (from m in WebLocations
-                                           where ((WebLocation)m.Value).MustGenerateScreenshot == true
-                                           select m).GroupBy(m => ((WebLocation)m.Value).ConverserId);
-                 */
-                var GroupedWebLocations =
-                    (from m in WebLocations
-                     where ((WebLocation)m.Value).MustGenerateScreenshot == true &&
-                     ((WebLocation)m.Value).CaptureProcessId == null
-                     group m by new
-                     {
-                         ((WebLocation)m.Value).ConverserId,
-                         ((WebLocation)m.Value).WindowName
-                     });
-                //into mcs;
-                /*
-                select new ConsolidatedChild()
-                {
-                    ConverserId = mcs.Key.ConverserId,
-                    WindowName = mcs.Key.WindowName,
-                    Children = mcs.ToList(),
-                };
-                */
-                if (GroupedWebLocations == null)
-                {
-                    return;
-                }
-
-                foreach (var Group in GroupedWebLocations)
-                {
-                    var m = Group.OrderBy(x => ((WebLocation)x.Value).TimeStamp_First).FirstOrDefault();
-
                     var item = (WebLocation)m.Value;
 
 
-                    WebLocation wl = null;
+                    WebLocation weblocation = null;
                     DataCacheLockHandle _lockHandle;
-                    result = SingletonCache.Instance.GetWithLock(item.Guid, out _lockHandle);
-                    if (result != null)
+                    string key = item.UserName + @"@" + item.Domain + @"@" + item.WindowName;
+                    object _result = SingletonCache.Instance.GetInRegionWithLock(key, region, out _lockHandle);
+                    if (_result != null)
                     {
-                        wl = (WebLocation)result;
+                        weblocation = (WebLocation)_result;
                     }
 
-                    if (wl != null)
+                    if (weblocation != null)
                     {
                         // instanceIndex is begin from 0. The instanceIndex of the first instance is 0. 
                         string instanceId = RoleEnvironment.CurrentRoleInstance.Id;
@@ -3399,10 +3247,10 @@ namespace vizzopWeb
                             int.TryParse(instanceId.Substring(instanceId.LastIndexOf("_") + 1), out instanceIndex); // On compute emulator.
                         }
 
-                        Process proc = DoLaunchCaptureProcessScreenCaptures("phantom.js", wl.UserName, wl.Domain, wl.Guid, wl.WindowName);
+                        Process proc = DoLaunchCaptureProcessScreenCaptures("phantom.js", weblocation.UserName, weblocation.Domain, weblocation.WindowName);
 
-                        wl.CaptureProcessId = proc.Id.ToString();
-                        SingletonCache.Instance.InsertWithLockAndTags(wl.Guid, wl, _lockHandle, Tags);
+                        weblocation.CaptureProcessId = proc.Id.ToString();
+                        SingletonCache.Instance.InsertInRegionWithLock(key, weblocation, region, _lockHandle);
 
                     }
 
@@ -3414,7 +3262,7 @@ namespace vizzopWeb
             }
         }
 
-        public Process DoLaunchCaptureProcessScreenCaptures(string pathjs, string username, string domain, string GUID, string windowname)
+        public Process DoLaunchCaptureProcessScreenCaptures(string pathjs, string username, string domain, string windowname)
         {
             try
             {
@@ -3504,74 +3352,36 @@ namespace vizzopWeb
                                     if (strBase64 != null)
                                     {
 
-                                        string _tag = "weblocation";
-                                        List<DataCacheTag> _Tags = new List<DataCacheTag>();
-                                        _Tags.Add(new DataCacheTag(_tag));
-                                        object _result = SingletonCache.Instance.GetByTag(_tag);
-                                        if (_result == null)
-                                        {
-                                            return;
-                                        }
-                                        var _WebLocations = (IEnumerable<KeyValuePair<string, object>>)_result;
-                                        if (_WebLocations == null)
-                                        {
-                                            return;
-                                        }
-                                        _WebLocations = (from xx in _WebLocations
-                                                         where ((WebLocation)xx.Value).UserName == username &&
-                                                         ((WebLocation)xx.Value).Domain == domain &&
-                                                         ((WebLocation)xx.Value).WindowName == windowname
-                                                         select xx);
-                                        if (_WebLocations == null)
-                                        {
-                                            return;
-                                        }
-
-                                        string ThumbNail = null;
-                                        ScreenCapture sc = null;
+                                        WebLocation weblocation = null;
+                                        string region = "weblocations";
+                                        string key = username + @"@" + domain + @"@" + windowname;
                                         DataCacheLockHandle _lockHandle;
-                                        foreach (var _xx in _WebLocations)
+                                        object result = SingletonCache.Instance.GetInRegionWithLock(key, region, out _lockHandle);
+                                        if (result != null)
                                         {
-                                            var _item = (WebLocation)_xx.Value;
-                                            WebLocation wl = null;
-                                            _result = SingletonCache.Instance.GetWithLock(_item.Guid, out _lockHandle);
-                                            if (_result != null)
-                                            {
-                                                wl = (WebLocation)_result;
-                                            }
-                                            if (wl == null)
-                                            {
-                                                continue;
-                                            }
-
-                                            if (sc == null)
-                                            {
-                                                sc = wl.ScreenCapture;
-                                                sc.Data = strBase64;
-                                                sc.GUID = Guid.NewGuid().ToString();
-                                                sc.PicturedOn = DateTime.UtcNow;
-                                            }
-                                            wl.ScreenCapture = sc;
-
-                                            if (ThumbNail == null)
-                                            {
-                                                ThumbNail = "data:image/jpg;base64," + ImageToJpegBase64(
-                                                PrepareScreenToReturn(
-                                                    wl.ScreenCapture,
-                                                    "140",
-                                                    "90",
-                                                    false),
-                                                40L);
-                                            }
-                                            wl.ThumbNail = ThumbNail;
-                                            //wl.ScreenCapture.Blob = weblocation.CompleteHtml;
-
-                                            SingletonCache.Instance.InsertWithLockAndTags(wl.Guid, wl, _lockHandle, _Tags);
-
+                                            weblocation = (WebLocation)result;
                                         }
+                                        if (weblocation == null)
+                                        {
+                                            return;
+                                        }
+
+                                        weblocation.ScreenCapture.Data = strBase64;
+                                        weblocation.ScreenCapture.GUID = Guid.NewGuid().ToString();
+                                        weblocation.ScreenCapture.PicturedOn = DateTime.UtcNow;
+
+                                        string ThumbNail = "data:image/jpg;base64," + ImageToJpegBase64(
+                                        PrepareScreenToReturn(
+                                            weblocation.ScreenCapture,
+                                            "140",
+                                            "90",
+                                            false),
+                                        40L);
+                                        weblocation.ThumbNail = ThumbNail;
+
+                                        SingletonCache.Instance.InsertInRegionWithLock(key, weblocation, region, _lockHandle);
                                     }
                                 }
-
                             }
                             catch (Exception)
                             {
@@ -3586,23 +3396,21 @@ namespace vizzopWeb
                 process.OutputDataReceived += (sender, e) => actionWrite(sender, e);
                 process.Exited += (sender, e) =>
                 {
-                    string _tag = "weblocation";
-                    List<DataCacheTag> _Tags = new List<DataCacheTag>();
-                    _Tags.Add(new DataCacheTag(_tag));
-                    WebLocation wl = null;
+                    WebLocation weblocation = null;
+                    string region = "weblocations";
+                    string key = username + @"@" + domain + @"@" + windowname;
                     DataCacheLockHandle _lockHandle;
-                    object result = SingletonCache.Instance.GetWithLock(GUID, out _lockHandle);
+                    object result = SingletonCache.Instance.GetInRegionWithLock(key, region, out _lockHandle);
                     if (result != null)
                     {
-                        wl = (WebLocation)result;
+                        weblocation = (WebLocation)result;
                     }
 
-                    if (wl != null)
+                    if (weblocation != null)
                     {
-                        wl.CaptureProcessId = null;
-                        SingletonCache.Instance.InsertWithLockAndTags(GUID, wl, _lockHandle, _Tags);
+                        weblocation.CaptureProcessId = null;
+                        SingletonCache.Instance.InsertInRegionWithLock(key, weblocation, region, _lockHandle);
                     }
-                    //Debug.WriteLine("Process exited with exit code " + process.ExitCode.ToString());
                     if (Logged != "")
                     {
                         GrabaLog(Utils.NivelLog.info, Logged);
@@ -3717,16 +3525,17 @@ namespace vizzopWeb
                 return null;
             }
         }
-        internal Converser GetConverserFromSystemWithEmailAndBusinessId(string Email, int id, vizzopContext db)
+        internal Converser GetConverserFromSystemWithEmailAndBusinessId(string Email, int id)
         {
+
+            if (db == null)
+            {
+                db = new vizzopContext();
+            }
 
             Converser converser = null;
             try
             {
-                if (db == null)
-                {
-                    db = new vizzopContext();
-                }
 
                 converser = (from m in db.Conversers.Include("Business").Include("Agent")
                              where m.Email == Email
@@ -3826,10 +3635,8 @@ namespace vizzopWeb
         public void LimpiaWebLocations()
         {
             IEnumerable<KeyValuePair<string, object>> WebLocations = null;
-            string tag = "weblocation";
-            List<DataCacheTag> Tags = new List<DataCacheTag>();
-            Tags.Add(new DataCacheTag(tag));
-            object result = SingletonCache.Instance.GetByTag(tag);
+            string region = "weblocations";
+            object result = SingletonCache.Instance.GetAllInRegion(region);
             if (result != null)
             {
                 WebLocations = (IEnumerable<KeyValuePair<string, object>>)result;
@@ -3912,7 +3719,8 @@ namespace vizzopWeb
                                     newloc.TimeStamp_Last = m.TimeStamp_Last;
                                 }
                             }
-                            SingletonCache.Instance.Remove(m.Guid);
+                            string key = m.UserName + @"@" + m.Domain + @"@" + m.WindowName;
+                            SingletonCache.Instance.RemoveInRegion(key, region);
                         }
                         catch (Exception) { }
                     }

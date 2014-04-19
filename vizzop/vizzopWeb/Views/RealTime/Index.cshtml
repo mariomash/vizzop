@@ -405,15 +405,6 @@
 
     function rt_updatetable() {
 
-        var count = 0;
-        /*
-        var temp_tabledata = clone(rt_tabledata);
-        if (temp_tabledata != null) {
-            if (temp_tabledata.length > 0) {
-                count = temp_tabledata.length;
-            }
-        }
-        */
         if (rt_tabledata == null) {
             return;
         }
@@ -438,59 +429,6 @@
         rt_oTable.fnAddData(rt_tabledata);
         rt_Reloading_InCourse = null;
         rt_Countdown();
-        /*
-        for (var j = rt_tabledata.length - 1; j > -1; j--) {
-            rt_oTable.fnAddData(rt_tabledata[j]);
-        };
-        */
-        //rt_oTable.fnClearTable(0);
-
-        /*
-        var orig_tabledata = rt_oTable.fnGetData();
-        //Y a pasar
-        for (var i = orig_tabledata.length - 1; i > -1; i--) {
-            var found = false;
-            for (var j = temp_tabledata.length - 1; j > -1; j--) {
-                
-                //Si lo encontramos lo actualizamos.... lo eliminamos de temp_tabledata
-                //Y lo marcamos como encontrado
-                
-                var orig_userdomain = orig_tabledata[i][12] + orig_tabledata[i][13];
-                var new_userdomain = temp_tabledata[j][12] + temp_tabledata[j][13];
-                if (new_userdomain == orig_userdomain) {
-                    rt_oTable.fnUpdate(temp_tabledata[j][0], i, 0);
-                    rt_oTable.fnUpdate(temp_tabledata[j][1], i, 1);
-                    rt_oTable.fnUpdate(temp_tabledata[j][2], i, 2);
-                    rt_oTable.fnUpdate(temp_tabledata[j][3], i, 3);
-                    rt_oTable.fnUpdate(temp_tabledata[j][4], i, 4);
-                    rt_oTable.fnUpdate(temp_tabledata[j][5], i, 5);
-                    rt_oTable.fnUpdate(temp_tabledata[j][6], i, 6);
-                    rt_oTable.fnUpdate(temp_tabledata[j][7], i, 7);
-                    rt_oTable.fnUpdate(temp_tabledata[j][8], i, 8);
-                    rt_oTable.fnUpdate(temp_tabledata[j][9], i, 9);
-                    rt_oTable.fnUpdate(temp_tabledata[j][10], i, 10);
-                    rt_oTable.fnUpdate(temp_tabledata[j][11], i, 11);
-                    rt_oTable.fnUpdate(temp_tabledata[j][12], i, 12);
-                    rt_oTable.fnUpdate(temp_tabledata[j][13], i, 13);
-                    rt_oTable.fnUpdate(temp_tabledata[j][14], i, 14);
-                    rt_oTable.fnUpdate(temp_tabledata[j][15], i, 15);
-                    temp_tabledata.splice(j, 1);
-                    found = true;
-                    break;
-                }
-            }
-            if (found == false) {
-                rt_oTable.fnDeleteRow(i);
-            }
-        }
-
-        //Y en otra pasada agregamos el resto
-        for (var j = temp_tabledata.length - 1; j > -1; j--) {
-            rt_oTable.fnAddData(temp_tabledata[j]);
-        };
-        */
-
-        //rt_oTable.fnDraw();
     }
 
     $(document).ready(function () {
@@ -537,7 +475,17 @@
                 {
                     "sTitle": "Browser", "sWidth": "120px",
                     "fnRender": function (oObj) {
-                        var useragent_toCompare = oObj.aData[7].toLowerCase();
+                        var useragent_toCompare = '';
+                        try {
+                            if (oObj == null) { return ''; }
+                            if (oObj.aData == null) { return ''; }
+                            useragent_toCompare = oObj.aData[7];
+                        } catch (_err) {
+                        }
+                        if ((useragent_toCompare == null) || (useragent_toCompare == '')) {
+                            return '';
+                        }
+
                         var useragent = "";
 
                         if (useragent_toCompare.indexOf("windows") > -1) {

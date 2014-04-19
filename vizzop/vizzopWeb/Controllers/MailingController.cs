@@ -11,15 +11,16 @@ namespace vizzopWeb.Controllers
     [SessionState(System.Web.SessionState.SessionStateBehavior.ReadOnly)]
     public class MailingController : Controller
     {
-        private vizzopContext db = new vizzopContext();
-        private Utils utils = new Utils();
-
+        
 #if DEBUG
 #else                    
         [RequireHttps]
 #endif
         public ActionResult Index()
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             if (HttpContext.Session == null)
             {
                 return RedirectToAction("LogOn", "Account");
@@ -48,6 +49,9 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult GetQueueJson()
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             Converser converser = new Converser();
             try
             {
@@ -104,6 +108,9 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult SendMail(int id)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             try
             {
                 var message = (from m in db.Messages

@@ -11,9 +11,7 @@ namespace vizzopWeb.Controllers
 
     public class vizzopController : Controller
     {
-        vizzopContext db = new vizzopContext();
-        private Utils utils = new Utils();
-
+        
 #if DEBUG
 #else
         [RequireHttps]
@@ -70,6 +68,9 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult UpgradeVersions()
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             if (HttpContext.Session == null)
             {
                 return RedirectToAction("LogOn", "Account");
@@ -104,6 +105,9 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult Upgrade(string SelectedOption)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             ViewBag.LayoutPanelMode = true;
             if (HttpContext.Session == null)
             {
@@ -163,6 +167,9 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult Create(string SelectedOption)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             try
             {
                 //Session["Option"] = SelectedOption;
@@ -196,9 +203,11 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult Create(NewvizzopAccount NewAccount)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             try
             {
-                Utils utils = new Utils();
 
                 var ServiceTypes = from m in db.ServiceTypes
                                    where m.Type == "version"
@@ -214,7 +223,7 @@ namespace vizzopWeb.Controllers
                                             select m).FirstOrDefault();
                     if (business_byemail != null)
                     {
-                        Utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/Create/Error/Repeated Email");
+                        utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/Create/Error/Repeated Email");
                         ViewBag.errors = "<p>There's already a client with this e-mail, please try with another one</p>";
                         return View(NewAccount);
                     }
@@ -228,7 +237,7 @@ namespace vizzopWeb.Controllers
                                                select m).FirstOrDefault();
                     if (converser_byuserame != null)
                     {
-                        Utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/Create/Error - Repeated Client");
+                        utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/Create/Error - Repeated Client");
                         ViewBag.errors = "<p>There's already a client with this username, please try another one</p>";
                         return View(NewAccount);
                     }
@@ -314,7 +323,7 @@ namespace vizzopWeb.Controllers
 
                     if (business == null)
                     {
-                        Utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/Create/Error/Data Error");
+                        utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/Create/Error/Data Error");
                         ViewBag.errors = "<p>There was an error with your data, please try again</p>";
                         return View(NewAccount);
                     }
@@ -341,7 +350,7 @@ namespace vizzopWeb.Controllers
 
                     if (sale == null)
                     {
-                        Utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/Create/Error/No Sale/" + hash);
+                        utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/Create/Error/No Sale/" + hash);
                         ViewBag.errors = "<p>There was an error with your data, please try again</p>";
                         return View(NewAccount);
                     }
@@ -354,7 +363,7 @@ namespace vizzopWeb.Controllers
                         db.SaveChanges();
                         Session["converser"] = converser;
 
-                        utils.AddZenSession(converser, Session.SessionID, db);
+                        utils.AddZenSession(converser, Session.SessionID);
                         try
                         {
                             Sms sms = new Sms();
@@ -401,13 +410,13 @@ namespace vizzopWeb.Controllers
                             utils.GrabaLogExcepcion(_ex);
                         }
 
-                        Utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/Create/OK/Created - " + converser.UserName + "@" + converser.Business.Domain);
+                        utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/Create/OK/Created - " + converser.UserName + "@" + converser.Business.Domain);
                         return RedirectToAction("Done");
                     }
                     // El resto no se tocan... son las de 2checkout e irán creciendo en lugar de sustituirse
                     else
                     {
-                        Utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/Create/RedirectionToSendPay/" + converser.UserName + "@" + converser.Business.Domain);
+                        utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/Create/RedirectionToSendPay/" + converser.UserName + "@" + converser.Business.Domain);
                         return RedirectToAction("SendPay", new { id = sale.ID });
                     }
                 }
@@ -419,7 +428,7 @@ namespace vizzopWeb.Controllers
             catch (System.Exception ex)
             {
                 utils.GrabaLogExcepcion(ex);
-                Utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/Create/Error Saving User/");
+                utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/Create/Error Saving User/");
                 ViewBag.errors = "Error saving your user, please check your data and try again";
                 return View(NewAccount);
             }
@@ -431,18 +440,21 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult SendPay(string id, string panelmode)
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             try
             {
                 Int32 _id = Convert.ToInt32(id);
                 var sale = db.Sales.Find(_id);
                 if (sale == null)
                 {
-                    Utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/SendPay/Error/Sale == null/" + id);
+                    utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/SendPay/Error/Sale == null/" + id);
                     return RedirectToAction("ErrorPage", "Home");
                 }
                 if (sale.Payed == true)
                 {
-                    Utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/SendPay/Error/Sale payed already/" + id);
+                    utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/SendPay/Error/Sale payed already/" + id);
                     return RedirectToAction("ErrorPage", "Home");
                 }
                 ViewBag.Sale = sale;
@@ -450,15 +462,14 @@ namespace vizzopWeb.Controllers
                 {
                     if (HttpContext.Session == null)
                     {
-                        Utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/SendPay/Error/session == null/" + id);
+                        utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/SendPay/Error/session == null/" + id);
                         return RedirectToAction("LogOn", "Account");
                     }
                     //Primero que cargue el converser...
-                    Utils utils = new Utils();
                     Converser converser = utils.GetLoggedConverser(HttpContext.Session);
                     if (converser == null)
                     {
-                        Utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/SendPay/Error/Converser == null/" + id);
+                        utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/SendPay/Error/Converser == null/" + id);
                         return RedirectToAction("LogOn", "Account");
                     }
                     converser.Business.Conversers = new List<Converser>();
@@ -471,7 +482,7 @@ namespace vizzopWeb.Controllers
             catch (Exception ex)
             {
                 utils.GrabaLogExcepcion(ex);
-                Utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/SendPay/Error/Generic/" + id);
+                utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/SendPay/Error/Generic/" + id);
                 return RedirectToAction("ErrorPage", "Home", new { panelmode = panelmode });
             }
         }
@@ -484,6 +495,8 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult Done()
         {
+            Utils utils = new Utils();
+
             try
             {
                 return View();
@@ -491,7 +504,7 @@ namespace vizzopWeb.Controllers
             catch (Exception ex)
             {
                 utils.GrabaLogExcepcion(ex);
-                Utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/Done/Error");
+                utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/Done/Error");
                 return RedirectToAction("ErrorPage", "Home");
             }
         }
@@ -504,6 +517,8 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult Ok()
         {
+            Utils utils = new Utils();
+
             try
             {
                 return View();
@@ -511,7 +526,7 @@ namespace vizzopWeb.Controllers
             catch (Exception ex)
             {
                 utils.GrabaLogExcepcion(ex);
-                Utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/Done/Error");
+                utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/Done/Error");
                 return RedirectToAction("ErrorPage", "Home");
             }
         }
@@ -522,13 +537,16 @@ namespace vizzopWeb.Controllers
 #endif
         public ActionResult ReturnPay()
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             try
             {
                 utils.GrabaLog(Utils.NivelLog.error, utils.SacaParamsContext(HttpContext));
                 if (Request["key"] == null)
                 {
                     utils.GrabaLog(Utils.NivelLog.error, "No Key to continue after Payment...");
-                    Utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/ReturnPay/Error/No key to continue after payment/");
+                    utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/ReturnPay/Error/No key to continue after payment/");
                     return RedirectToAction("ErrorPage", "Home");
                 }
 
@@ -548,7 +566,7 @@ namespace vizzopWeb.Controllers
                 if (sale == null)
                 {
                     utils.GrabaLog(Utils.NivelLog.error, "No Sale found after Payment...");
-                    Utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/ReturnPay/Error/No Sale found after Payment/" + id);
+                    utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/ReturnPay/Error/No Sale found after Payment/" + id);
                     return RedirectToAction("ErrorPage", "Home");
                 }
 
@@ -602,13 +620,13 @@ namespace vizzopWeb.Controllers
                         db.SaveChanges();
                         return RedirectToAction("ok");
                 }
-                Utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/ReturnPay/Error/No Case Error/" + id);
+                utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/ReturnPay/Error/No Case Error/" + id);
                 return RedirectToAction("ErrorPage", "Home");
             }
             catch (Exception ex)
             {
                 utils.GrabaLogExcepcion(ex);
-                Utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/ReturnPay/Error/Generic/");
+                utils.GrabaAnalyticsLog(Utils.NivelLog.info, "Account/ReturnPay/Error/Generic/");
                 return RedirectToAction("ErrorPage", "Home");
             }
         }

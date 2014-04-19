@@ -414,7 +414,7 @@ var Daemon = jVizzop.zs_Class.create({
             if ((vizzop.DaemonTiming_Steps % 1) == 0) {
                 self.sendNewMessages();
                 self.checkNewMessages();
-                //self.checkCommSessions();
+                self.checkCommSessions();
                 jVizzop.each(vizzop.Boxes, function (index, foundbox) {
                     if ((typeof foundbox._interlocutor != "undefined") && (foundbox._interlocutor != null)) {
                         if (foundbox._interlocutor.length > 0) {
@@ -431,7 +431,7 @@ var Daemon = jVizzop.zs_Class.create({
 
             if ((vizzop.DaemonTiming_Steps % vizzop.CheckExternalTiming) == 0) {
                 self.checkExternal();
-                //self.sync_ChatList();
+                self.sync_ChatList();
             }
 
             //eso son 10 segundicos

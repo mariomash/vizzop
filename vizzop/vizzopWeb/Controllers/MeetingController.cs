@@ -7,15 +7,16 @@ namespace vizzopWeb.Controllers
 {
     public class MeetingController : Controller
     {
-        private vizzopContext db = new vizzopContext();
-        private Utils utils = new Utils();
-
+        
 #if DEBUG
 #else                    
         [RequireHttps]
 #endif
         public ActionResult Index()
         {
+            vizzopContext db = new vizzopContext();
+            Utils utils = new Utils(db);
+
             var _business = (from m in db.Businesses
                              where m.Email == "customer.service@vizzop.com"
                              select m).FirstOrDefault();
