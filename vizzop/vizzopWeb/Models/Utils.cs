@@ -1396,10 +1396,7 @@ namespace vizzopWeb
                     return null;
                 }
 
-                TimeZone localZone = TimeZone.CurrentTimeZone;
-                DateTime loctime = DateTime.Now;
-                DateTime loctimeUTC = localZone.ToUniversalTime(loctime);
-                converser.LastActive = loctimeUTC;
+                converser.LastActive = DateTime.UtcNow;
 
                 db.SaveChanges();
             }
@@ -1435,10 +1432,7 @@ namespace vizzopWeb
                     return null;
                 }
 
-                TimeZone localZone = TimeZone.CurrentTimeZone;
-                DateTime loctime = DateTime.Now;
-                DateTime loctimeUTC = localZone.ToUniversalTime(loctime);
-                converser.LastActive = loctimeUTC;
+                converser.LastActive = DateTime.UtcNow;
 
                 db.SaveChanges();
             }

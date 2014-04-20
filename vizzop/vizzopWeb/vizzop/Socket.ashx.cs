@@ -10,6 +10,7 @@ using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using System.Web.SessionState;
 using System.Web.WebSockets;
+using Microsoft.Web.WebSockets;
 using vizzopWeb.Models;
 
 namespace vizzopWeb.vizzop
@@ -21,21 +22,18 @@ namespace vizzopWeb.vizzop
     public class Socket : IHttpHandler, IRequiresSessionState
     {
 
-        private vizzopContext db = new vizzopContext();
-        private Utils utils = new Utils();
-        private string receivedMessage = null;
-
         public void ProcessRequest(HttpContext context)
         {
-            if (context.IsWebSocketRequest)
+            if (context.IsWebSocketRequest || context.IsWebSocketRequestUpgrading)
             {
-                //context.AcceptWebSocketRequest(new WebSocketHandler());
-                context.AcceptWebSocketRequest(Process);
+                context.AcceptWebSocketRequest(new VizzopWebSocket(HttpContext.Current));
+                //context.AcceptWebSocketRequest(Process);
             }
         }
 
         public bool IsReusable { get { return false; } }
 
+        /*
         private void ProcessReceived(WebSocketReceiveResult result, ArraySegment<byte> buffer, AspNetWebSocketContext context)
         {
             try
@@ -113,13 +111,6 @@ namespace vizzopWeb.vizzop
                                 string _status = dict.ContainsKey("_status") == false ? "" : dict["_status"] == null ? null : dict["_status"].ToString();
 
                                 string TimeStamp = DateTime.UtcNow.ToString("o");
-                                /*
-                                dict.ContainsKey("TimeStamp") == false ? "" : dict["TimeStamp"] == null ? null : dict["TimeStamp"].ToString();
-                            if ((TimeStamp == null) || (TimeStamp == "null") && (TimeStamp == ""))
-                            {
-                                TimeStamp = DateTime.UtcNow.ToString("o");
-                            }
-                                */
 
                                 string TimeStampSenderSending = dict.ContainsKey("TimeStampSenderSending") == false ? "" : dict["TimeStampSenderSending"] == null ? null : dict["TimeStampSenderSending"].ToString();
                                 if ((TimeStampSenderSending == null) || (TimeStampSenderSending == "null") && (TimeStampSenderSending == ""))
@@ -169,106 +160,6 @@ namespace vizzopWeb.vizzop
 
         }
 
-        /*
-        private string ProcessToSend(WebSocketReceiveResult result, ArraySegment<byte> buffer, AspNetWebSocketContext context)
-        {
-            if (converser == null)
-            {
-                return null;
-            }
-            try
-            {
-                //Y montamos la lista de mensajes que le vamos a devolver
-                List<Message> messages = new List<Message>();
-                List<Message> returnmessages = new List<Message>();
-
-                string lang = utils.GetLang(context);
-                DateTime start_time = DateTime.Now;
-                try
-                {
-                    string key = "messages_to_" + converser.UserName + "@" + converser.Business.Domain;
-                    object cacheresult = SingletonCache.Instance.Get(key);
-                    if (cacheresult != null)
-                    {
-                        messages = (List<Message>)cacheresult;
-                        SingletonCache.Instance.Remove(key);
-                    }
-                }
-                catch (Exception ex__)
-                {
-                    utils.GrabaLogExcepcion(ex__);
-                }
-                foreach (Message m in messages)
-                {
-                    try
-                    {
-                        if (m.From == null)
-                        {
-                            if ((m.From_UserName != null) && (m.From_Domain != null))
-                            {
-                                m.From = new Converser();
-                                m.From.UserName = m.From_UserName;
-                                m.From.FullName = m.From_FullName;
-                                m.From.Business = new Business();
-                                m.From.Business.Domain = m.From_Domain;
-                            }
-                        }
-                        if (m.To == null)
-                        {
-                            if ((m.To_UserName != null) && (m.To_Domain != null))
-                            {
-                                m.To = new Converser();
-                                m.To.UserName = m.To_UserName;
-                                m.To.Business = new Business();
-                                m.To.Business.Domain = m.To_Domain;
-                            }
-                        }
-                        if (m.From.FullName == null)
-                        {
-                            string[] args = { m.From.IP };
-                            m.From.FullName = utils.LocalizeLang("client", lang, args);
-                        }
-                        m.From.Password = null;
-                        m.To.Password = null;
-
-                        //Ponemos esto en el momento de hoy...luego lo arrastraremos
-                        m.TimeStampSrvSending = DateTime.Now.ToUniversalTime();
-
-                        returnmessages.Add(utils.TransformMessageToSerializedProof(m));
-                    }
-                    catch (Exception ex__)
-                    {
-                        utils.GrabaLogExcepcion(ex__);
-                    }
-                }
-
-                if (returnmessages.Count > 0)
-                {
-                    JavaScriptSerializer serializer = new JavaScriptSerializer();
-                    string ser = null;
-                    try
-                    {
-                        ser = serializer.Serialize(returnmessages);
-                    }
-                    catch (Exception _ex)
-                    {
-                        utils.GrabaLogExcepcion(_ex);
-                    }
-                    return ser;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                utils.GrabaLogExcepcion(ex);
-                return null;
-            }
-        }
-        */
-
         private async Task Process(AspNetWebSocketContext context)
         {
             try
@@ -302,5 +193,7 @@ namespace vizzopWeb.vizzop
                 utils.GrabaLogExcepcion(ex);
             }
         }
+        */
+
     }
 }

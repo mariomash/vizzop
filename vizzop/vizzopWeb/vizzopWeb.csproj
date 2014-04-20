@@ -78,6 +78,9 @@
     <Reference Include="Microsoft.Web.DistributedCache, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.WindowsAzure.Caching.2.3.1.0\lib\net40-full\Microsoft.Web.DistributedCache.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.WebSockets">
+      <HintPath>..\packages\Microsoft.WebSockets.0.2.3\lib\net45\Microsoft.WebSockets.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.WindowsAzure.Configuration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.WindowsAzure.ConfigurationManager.2.0.3\lib\net40\Microsoft.WindowsAzure.Configuration.dll</HintPath>
     </Reference>
@@ -259,6 +262,10 @@
     <Compile Include="Scripts\scriptloader.ashx.cs">
       <DependentUpon>scriptloader.ashx</DependentUpon>
     </Compile>
+    <Compile Include="vizzop\Socket.ashx.cs">
+      <DependentUpon>Socket.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="vizzop\VizzopWebSocket.cs" />
     <Compile Include="WebRole.cs" />
     <Compile Include="vizzop\Audit.ashx.cs">
       <DependentUpon>Audit.ashx</DependentUpon>
@@ -268,9 +275,6 @@
     </Compile>
     <Compile Include="vizzop\send.ashx.cs">
       <DependentUpon>send.ashx</DependentUpon>
-    </Compile>
-    <Compile Include="vizzop\Socket.ashx.cs">
-      <DependentUpon>Socket.ashx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -848,10 +852,10 @@
     <Content Include="Views\Screenshot\Index.cshtml" />
     <Content Include="Views\Audit\Index.cshtml" />
     <Content Include="vizzop\Audit.ashx" />
-    <Content Include="vizzop\Socket.ashx" />
     <Content Include="vizzop\data\vizzop_ringing.ogg" />
     <Content Include="Views\vizzop\Es.cshtml" />
     <Content Include="Views\CRM\Index.cshtml" />
+    <Content Include="vizzop\Socket.ashx" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -301,7 +301,7 @@ namespace vizzopWeb.Controllers
                     try
                     {
                         converser.Active = true;
-                        converser.LastActive = DateTime.Now.ToUniversalTime();
+                        converser.LastActive = DateTime.UtcNow;
                         db.SaveChanges();
                     }
                     catch (Exception _e)
@@ -322,10 +322,8 @@ namespace vizzopWeb.Controllers
                         {
                             try
                             {
-                                string tag = "agent";
-                                List<DataCacheTag> Tags = new List<DataCacheTag>();
-                                Tags.Add(new DataCacheTag(tag));
-                                SingletonCache.Instance.InsertWithTags(converser.UserName + @"@" + converser.Business.Domain, converser, Tags);
+                                string region = "agents";
+                                SingletonCache.Instance.InsertInRegion(converser.UserName + @"@" + converser.Business.Domain, converser, region);
                             }
                             catch (Exception _e)
                             {

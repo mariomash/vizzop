@@ -774,42 +774,46 @@ namespace vizzopWeb.Controllers
 
                         Task.Factory.StartNew(() =>
                         {
-                            try
+                            using (var _db = new vizzopContext())
                             {
-                                if ((agent_username != null) && (agent_password != null) && (agent_domain != null))
+                                try
                                 {
-                                    commsession.Status = 1;
-                                    commsession.Agents = new List<Agent>();
-                                    var agent_to_put = (from m in db.Agents
-                                                        //where m.Converser.Business.ID == converser.Business.ID
-                                                        where m.Converser.UserName == agent_username &&
-                                                        m.Converser.Password == agent_password &&
-                                                        m.Converser.Business.Domain == agent_domain
-                                                        select m).FirstOrDefault();
-                                    commsession.Agents.Add(agent_to_put);
+                                    Utils _utils = new Utils(_db);
+                                    if ((agent_username != null) && (agent_password != null) && (agent_domain != null))
+                                    {
+                                        commsession.Status = 1;
+                                        commsession.Agents = new List<Agent>();
+                                        var agent_to_put = (from m in _db.Agents
+                                                            //where m.Converser.Business.ID == converser.Business.ID
+                                                            where m.Converser.UserName == agent_username &&
+                                                            m.Converser.Password == agent_password &&
+                                                            m.Converser.Business.Domain == agent_domain
+                                                            select m).FirstOrDefault();
+                                        commsession.Agents.Add(agent_to_put);
+                                    }
+                                    else
+                                    {
+
+                                        /* 
+                                         * si es iniciada por cliente... 
+                                         * metemos todos los agentes de este business que estén logados ahora mismo 
+                                         * para ir eliminando conforme deniegan soporte
+                                         */
+
+                                        commsession.Agents = _utils.GetActiveAgents(converser);
+                                    }
+
+                                    OpenTokSDK opentok = new OpenTokSDK();
+                                    Dictionary<string, object> options = new Dictionary<string, object>();
+                                    options.Add(SessionPropertyConstants.P2P_PREFERENCE, "enabled");
+                                    string OpenTokSessionID = opentok.CreateSession(sIP, options);
+                                    commsession.OpenTokSessionID = OpenTokSessionID;
+                                    db.SaveChanges();
                                 }
-                                else
+                                catch (Exception _ex)
                                 {
-
-                                    /* 
-                                     * si es iniciada por cliente... 
-                                     * metemos todos los agentes de este business que estén logados ahora mismo 
-                                     * para ir eliminando conforme deniegan soporte
-                                     */
-
-                                    commsession.Agents = utils.GetActiveAgents(converser);
+                                    utils.GrabaLogExcepcion(_ex);
                                 }
-
-                                OpenTokSDK opentok = new OpenTokSDK();
-                                Dictionary<string, object> options = new Dictionary<string, object>();
-                                options.Add(SessionPropertyConstants.P2P_PREFERENCE, "enabled");
-                                string OpenTokSessionID = opentok.CreateSession(sIP, options);
-                                commsession.OpenTokSessionID = OpenTokSessionID;
-                                db.SaveChanges();
-                            }
-                            catch (Exception _ex)
-                            {
-                                utils.GrabaLogExcepcion(_ex);
                             }
                         });
                     }

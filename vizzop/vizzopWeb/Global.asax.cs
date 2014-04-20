@@ -53,11 +53,8 @@ namespace vizzopWeb
                     Response.Cookies.Add(cookie);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-#if DEBUG
-                utils.GrabaLogExcepcion(ex);
-#endif
             }
         }
 

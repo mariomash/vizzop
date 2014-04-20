@@ -520,7 +520,6 @@ namespace vizzopWeb.Controllers
                     //Y montamos la lista de mensajes que le vamos a devolver
                     List<Message> returnmessages = new List<Message>();
 
-
                     if (Session["converser"] == null)
                     {
                         return null;
@@ -531,32 +530,6 @@ namespace vizzopWeb.Controllers
                         return Json(false);
                     }
 
-                    /*
-                    string tag = "agent";
-                    List<DataCacheTag> Tags = new List<DataCacheTag>();
-                    Tags.Add(new DataCacheTag(tag));
-                    object result = SingletonCache.Instance.GetByTag(tag);
-                    if (result != null)
-                    {
-                        IEnumerable<KeyValuePair<string, object>> Agents = (IEnumerable<KeyValuePair<string, object>>)result;
-                        var agent = (Converser)(from m in Agents
-                                                where ((Converser)m.Value).ID == converser.ID
-                                                select m).FirstOrDefault().Value;
-                    }
-                    */
-
-                    /*
-                    converser.LastActive = DateTime.UtcNow;
-                    Session["converser"] = converser;
-                     * */
-                    /*
-                    Converser converser = utils.GetConverserFromSystem(UserName, Password, Domain, db);
-                    if (converser == null)
-                    {
-                        return Json(false);
-                    }
-                    */
-
                     //Solo Para agentes... permitimos una única sesion..
                     if ((converser.Agent != null) && (SessionID != null) && (SessionID != "null"))
                     {
@@ -565,16 +538,14 @@ namespace vizzopWeb.Controllers
                          * Activamos el agente si es que tiene que estar activado...
                          */
                         string _key = converser.UserName + @"@" + converser.Business.Domain;
-                        string tag = "agent";
-                        List<DataCacheTag> Tags = new List<DataCacheTag>();
-                        Tags.Add(new DataCacheTag(tag));
-                        DataCacheLockHandle lockHandle;
-                        object result = SingletonCache.Instance.GetWithLock(_key, out lockHandle);
+                        string _region = "agents";
+                        DataCacheLockHandle _lockHandle;
+                        object result = SingletonCache.Instance.GetInRegionWithLock(_key, _region, out _lockHandle);
                         if (result != null)
                         {
                             var agent = (Converser)result;
                             agent.LastActive = DateTime.UtcNow;
-                            SingletonCache.Instance.InsertWithLockAndTags(_key, agent, lockHandle, Tags);
+                            SingletonCache.Instance.InsertInRegionWithLock(_key, agent, _region, _lockHandle);
                         }
 
                         var ZenSession = (from m in db.ZenSessions
@@ -661,11 +632,8 @@ namespace vizzopWeb.Controllers
 
                     }
 
-                    DateTime loctime = DateTime.Now.AddMinutes(-5);
-                    DateTime loctimeUTC = localZone.ToUniversalTime(loctime);
 
-                    DateTime loctime_AvailableTimeout = DateTime.Now.AddSeconds(-15);
-                    DateTime loctimeUTC_AvailableTimeout = localZone.ToUniversalTime(loctime_AvailableTimeout);
+                    DateTime AvailableTimeout = DateTime.UtcNow.AddSeconds(-15);
 
                     try
                     {
@@ -706,15 +674,13 @@ namespace vizzopWeb.Controllers
                             agentsmsg.CommSession = new CommSession();
                             agentsmsg.CommSession.ID = 0;
 
-                            string tag = "agent";
-                            List<DataCacheTag> Tags = new List<DataCacheTag>();
-                            Tags.Add(new DataCacheTag(tag));
-                            object result = SingletonCache.Instance.GetByTag(tag);
+                            string region = "agents";
+                            object result = SingletonCache.Instance.GetAllInRegion(region);
                             if (result != null)
                             {
                                 IEnumerable<KeyValuePair<string, object>> Agents = (IEnumerable<KeyValuePair<string, object>>)result;
                                 var agents = (from m in Agents
-                                              where ((Converser)m.Value).LastActive > loctimeUTC_AvailableTimeout &&
+                                              where ((Converser)m.Value).LastActive > AvailableTimeout &&
                                                ((Converser)m.Value).Business.ID > converser.Business.ID
                                               select m);
                                 if (agents.Count() > 0)
@@ -750,7 +716,7 @@ namespace vizzopWeb.Controllers
                                                        where m.Agents.Any(j => j.Converser.UserName == converser.UserName && j.Converser.Business.Domain == converser.Business.Domain)
                                                        && (m.Status == 1) //m.Status == 0 ||
                                                        && m.Messages.Count > 0
-                                                       && m.Messages.Any(j => j.TimeStamp > loctimeUTC)
+                                                       && m.Messages.Any(j => j.TimeStamp > DateTime.UtcNow)
                                                        select m).ToList<CommSession>();
                     }
                     else
@@ -764,7 +730,7 @@ namespace vizzopWeb.Controllers
                                                            where (m.Client.UserName == converser.UserName && m.Client.Business.Domain == converser.Business.Domain)
                                                            && (m.Status == 1) //m.Status == 0 || 
                                                            && m.Messages.Count > 0
-                                                           && m.Messages.Any(j => j.TimeStamp > loctimeUTC)
+                                                           && m.Messages.Any(j => j.TimeStamp > DateTime.UtcNow)
                                                            select m).ToList<CommSession>();
                         }
                         else
@@ -827,7 +793,7 @@ namespace vizzopWeb.Controllers
                             returnmsg.CommSession = new CommSession();
                             returnmsg.CommSession.ID = c.ID;
 
-                            if ((interlocutor.LastActive > loctimeUTC_AvailableTimeout) && (interlocutor.Active == true))
+                            if ((interlocutor.LastActive > AvailableTimeout) && (interlocutor.Active == true))
                             {
                                 returnmsg.Subject = "$#_available";
                             }
