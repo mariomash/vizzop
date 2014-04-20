@@ -265,7 +265,6 @@
     <Compile Include="vizzop\Socket.ashx.cs">
       <DependentUpon>Socket.ashx</DependentUpon>
     </Compile>
-    <Compile Include="vizzop\VizzopWebSocket.cs" />
     <Compile Include="WebRole.cs" />
     <Compile Include="vizzop\Audit.ashx.cs">
       <DependentUpon>Audit.ashx</DependentUpon>

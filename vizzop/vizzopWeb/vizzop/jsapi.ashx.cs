@@ -615,7 +615,6 @@ var vizzop = {
     WidgetText: " + WidgetText + @",
     BusinessHours: " + BusinessHours + @",
     WSchat: null,
-    WSscreen: null,
     IsInFrame: false,
     Controls: " + Controls + @",
 };";

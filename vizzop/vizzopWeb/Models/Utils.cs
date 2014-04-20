@@ -1939,7 +1939,7 @@ namespace vizzopWeb
             }
         }
 
-        public bool TrackScreen(string UserName, string Password, string Domain, string data, string listeners, bool CompressHtmlData, HttpContextBase context)
+        public bool TrackScreen(string UserName, string Password, string Domain, object data, string listeners, bool CompressHtmlData, HttpContextBase context)
         {
             try
             {
@@ -1949,7 +1949,7 @@ namespace vizzopWeb
                     return false;
                 }
 
-                if ((data == null) || (data == ""))
+                if (data == null)
                 {
                     return false;
                 }
@@ -1959,36 +1959,35 @@ namespace vizzopWeb
                  * O bien enviamos un solo diff sin array
                  */
 
-                List<Dictionary<string, object>> arrDict = null;
+                List<Dictionary<string, object>> arrDict = new List<Dictionary<string, object>>();
 
-                if (CompressHtmlData == true)
+                if (data.GetType() == typeof(string))
                 {
-                    data = LZString.decompressFromBase64(data);
-                }
-
-                if ((data == null) || (data == ""))
-                {
-                    return false;
-                }
-
-                arrDict = new JavaScriptSerializer().Deserialize<List<Dictionary<string, object>>>(data);
-                if (arrDict.Count == 0)
-                {
-                    Dictionary<string, object> dict = null;
-                    dict = new JavaScriptSerializer().Deserialize<Dictionary<string, object>>(data);
-                    if (dict != null)
+                    string _data = (string)data;
+                    if (CompressHtmlData == true)
                     {
-                        arrDict.Add(dict);
+                        _data = LZString.decompressFromBase64(_data);
+                    }
+                    if ((data == null) || (_data == ""))
+                    {
+                        return false;
+                    }
+                    arrDict = new JavaScriptSerializer().Deserialize<List<Dictionary<string, object>>>(_data);
+                    if (arrDict.Count == 0)
+                    {
+                        Dictionary<string, object> dict = null;
+                        dict = new JavaScriptSerializer().Deserialize<Dictionary<string, object>>(_data);
+                        if (dict != null)
+                        {
+                            arrDict.Add(dict);
+                        }
                     }
                 }
-
-                if (listeners != null)
+                else
                 {
-                    if ((listeners == "null") || (listeners.IndexOf("@") < 0))
-                    {
-                        listeners = null;
-                    }
+                    arrDict.Add((Dictionary<string, object>)data);
                 }
+
                 if (arrDict == null)
                 {
                     GrabaLog(Utils.NivelLog.error, "Error DeSerializing TrackScreen: " + data);
@@ -2014,7 +2013,8 @@ namespace vizzopWeb
                         ScreenCapture new_screencapture = new ScreenCapture();
 
                         new_screencapture.ReceivedOn = DateTime.UtcNow;
-                        //new_screencapture.converser = converser;
+                        Converser converser = GetConverserFromSystem(UserName, Password, Domain);
+                        new_screencapture.converser = converser;
                         new_screencapture.Headers = headers;
 
                         if (dict.ContainsKey("st"))
@@ -2147,12 +2147,15 @@ namespace vizzopWeb
                         List<String> listenersArr = new List<String>();
                         if (listeners != null)
                         {
-                            if ((listeners != "") && (listeners != "null"))
+                            if (listeners != null)
                             {
-                                listenersArr = listeners.Split(',').ToList<String>();
+                                if ((listeners != "") && (listeners != "null"))
+                                {
+                                    listenersArr = ((string)listeners).Split(',').ToList<String>();
+                                }
                             }
                         }
-                        /*
+
                         if (listenersArr.Count == 0)
                         {
                             foreach (Agent agent in GetActiveAgents(converser))
@@ -2171,7 +2174,7 @@ namespace vizzopWeb
                             var message = new Message(newmessage);
                             message.AddToCache();
                         }
-                        */
+
                         if (dict.ContainsKey("windowname"))
                         {
                             if ((dict["windowname"] != null) && (dict["windowname"].ToString() != "null"))
@@ -2218,11 +2221,11 @@ namespace vizzopWeb
                             OriginalWebLocation.IP = sIP;
                             OriginalWebLocation.Ubication = GetUbicationFromIP(sIP);
                             OriginalWebLocation.Headers = headers;
-                            OriginalWebLocation.ConverserId = 0;
-                            OriginalWebLocation.UserName = UserName;
-                            OriginalWebLocation.Password = Password;
-                            OriginalWebLocation.FullName = null;
-                            OriginalWebLocation.Domain = Domain;
+                            OriginalWebLocation.ConverserId = converser.ID;
+                            OriginalWebLocation.UserName = converser.UserName;
+                            OriginalWebLocation.Password = converser.Password;
+                            OriginalWebLocation.FullName = converser.FullName;
+                            OriginalWebLocation.Domain = converser.Business.Domain;
                             OriginalWebLocation.WindowName = new_screencapture.WindowName;
 
                             SingletonCache.Instance.InsertInRegion(_key, OriginalWebLocation, _region);

@@ -10,7 +10,6 @@ using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using System.Web.SessionState;
 using System.Web.WebSockets;
-using Microsoft.Web.WebSockets;
 using vizzopWeb.Models;
 
 namespace vizzopWeb.vizzop
@@ -22,178 +21,163 @@ namespace vizzopWeb.vizzop
     public class Socket : IHttpHandler, IRequiresSessionState
     {
 
+        private vizzopContext db = new vizzopContext();
+        private Utils utils = new Utils();
+        private string receivedMessage = null;
+
         public void ProcessRequest(HttpContext context)
         {
-            if (context.IsWebSocketRequest || context.IsWebSocketRequestUpgrading)
+            if (context.IsWebSocketRequest)
             {
-                context.AcceptWebSocketRequest(new VizzopWebSocket(HttpContext.Current));
-                //context.AcceptWebSocketRequest(Process);
+                //context.AcceptWebSocketRequest(new WebSocketHandler());
+                context.AcceptWebSocketRequest(ProcessWSChat);
             }
         }
 
         public bool IsReusable { get { return false; } }
 
-        /*
-        private void ProcessReceived(WebSocketReceiveResult result, ArraySegment<byte> buffer, AspNetWebSocketContext context)
+        private async Task ProcessWSChat(AspNetWebSocketContext context)
         {
-            try
+            WebSocket socket = context.WebSocket;
+
+            while (
+                (true) &&
+                ((socket.State == WebSocketState.Connecting) || (socket.State == WebSocketState.Open))
+                )
             {
-                //Thread.CurrentThread.Priority = ThreadPriority.Highest;
-
-                receivedMessage += Encoding.UTF8.GetString(buffer.Array, 0, result.Count);
-                if (result.EndOfMessage == true)
+                try
                 {
-                    if (HttpContext.Current.Session["converser"] == null)
+                    //Thread.CurrentThread.Priority = ThreadPriority.Highest;
+                    ArraySegment<byte> buffer = new ArraySegment<byte>(new byte[1024]);
+                    WebSocketReceiveResult result = await socket.ReceiveAsync(buffer, CancellationToken.None);
+
+                    if (socket.State == WebSocketState.Open)
                     {
-                        return;
-                    }
-                    var converser = (Converser)HttpContext.Current.Session["converser"];
-                    if (converser == null)
-                    {
-                        return;
-                    }
+                        /*
+                        var userMessage = DateTime.Now.ToLongTimeString();
+                        buffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(userMessage));
+                        await socket.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
+                         * */
 
-                    var dict = new JavaScriptSerializer().Deserialize<Dictionary<string, object>>(receivedMessage);
+                        receivedMessage += Encoding.UTF8.GetString(buffer.Array, 0, result.Count);
+                        //string receivedMessage = Encoding.UTF8.GetString(buffer.Array, 0, result.Count);
 
-                    receivedMessage = null;
+                        if (result.EndOfMessage == true)
+                        {
 
-                    string MessageType = dict.ContainsKey("messagetype") == false ? null : dict["messagetype"] == null ? null : dict["messagetype"].ToString();
-                    switch (MessageType)
-                    {
-                        case "Screen":
-                            vizzopWeb.Controllers.RealTimeController rt = new vizzopWeb.Controllers.RealTimeController();
+                            var dict = new JavaScriptSerializer().Deserialize<Dictionary<string, object>>(receivedMessage);
 
+                            receivedMessage = null;
 
-                            //var serializedData = new JavaScriptSerializer().Serialize(dict["data"]);
-
-                            var wrapper = new HttpContextWrapper(HttpContext.Current);
-
-                            utils.TrackScreen(
-                                converser.UserName,
-                                converser.Password,
-                                converser.Business.Domain,
-                                dict["data"].ToString(),
-                                dict["listeners"].ToString(),
-                                false,
-                                wrapper
-                                );
-
-                            break;
-                        case "Plain":
-
-                            string ToArr = dict.ContainsKey("To") == false ? "" : dict["To"] == null ? null : dict["To"].ToString();
-                            foreach (var ToComplete in ToArr.Split(','))
+                            string MessageType = dict.ContainsKey("messagetype") == false ? null : dict["messagetype"] == null ? null : dict["messagetype"].ToString();
+                            switch (MessageType)
                             {
-                                string To = ToComplete;
-                                if (To.Contains("::"))
-                                {
-                                    To = ToComplete.Split(new string[] { "::" }, StringSplitOptions.None)[1].ToString();
-                                }
-                                string From = dict.ContainsKey("From") == false ? "" : dict["From"] == null ? null : dict["From"].ToString();
+                                case "Screen":
+                                    //vizzopWeb.Controllers.RealTimeController rt = new vizzopWeb.Controllers.RealTimeController();
+                                    //var serializedData = new JavaScriptSerializer().Serialize(dict["data"]);
 
-                                string From_FullName = dict.ContainsKey("From_FullName") == false ? "" : dict["From_FullName"] == null ? null : dict["From_FullName"].ToString();
-                                if ((From_FullName == "null") || (From_FullName == ""))
-                                {
-                                    From_FullName = null;
-                                }
+                                    var wrapper = new HttpContextWrapper(HttpContext.Current);
 
-                                string Subject = dict.ContainsKey("Subject") == false ? "" : dict["Subject"] == null ? null : dict["Subject"].ToString();
-                                string Content = dict.ContainsKey("Content") == false ? "" : dict["Content"] == null ? null : dict["Content"].ToString();
-                                string _clientid = dict.ContainsKey("_clientid") == false ? "" : dict["_clientid"] == null ? null : dict["_clientid"].ToString();
+                                    utils.TrackScreen(
+                                        dict["username"].ToString(),
+                                        dict["password"].ToString(),
+                                        dict["domain"].ToString(),
+                                        dict["data"],
+                                        dict["listeners"].ToString(),
+                                        false,
+                                        wrapper
+                                        );
 
-                                if ((_clientid == null) || (_clientid == "null") && (_clientid == ""))
-                                {
-                                    DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-                                    TimeSpan diff = DateTime.Now.ToUniversalTime() - origin;
-                                    _clientid = Math.Floor(diff.TotalSeconds).ToString();
-                                }
+                                    break;
+                                case "Plain":
 
-                                string _status = dict.ContainsKey("_status") == false ? "" : dict["_status"] == null ? null : dict["_status"].ToString();
+                                    string ToArr = dict.ContainsKey("To") == false ? "" : dict["To"] == null ? null : dict["To"].ToString();
+                                    foreach (var ToComplete in ToArr.Split(','))
+                                    {
+                                        string To = ToComplete;
+                                        if (To.Contains("::"))
+                                        {
+                                            To = ToComplete.Split(new string[] { "::" }, StringSplitOptions.None)[1].ToString();
+                                        }
+                                        string From = dict.ContainsKey("From") == false ? "" : dict["From"] == null ? null : dict["From"].ToString();
 
-                                string TimeStamp = DateTime.UtcNow.ToString("o");
+                                        string From_FullName = dict.ContainsKey("From_FullName") == false ? "" : dict["From_FullName"] == null ? null : dict["From_FullName"].ToString();
+                                        if ((From_FullName == "null") || (From_FullName == ""))
+                                        {
+                                            From_FullName = null;
+                                        }
 
-                                string TimeStampSenderSending = dict.ContainsKey("TimeStampSenderSending") == false ? "" : dict["TimeStampSenderSending"] == null ? null : dict["TimeStampSenderSending"].ToString();
-                                if ((TimeStampSenderSending == null) || (TimeStampSenderSending == "null") && (TimeStampSenderSending == ""))
-                                {
-                                    TimeStampSenderSending = DateTime.UtcNow.ToString("o");
-                                }
+                                        string Subject = dict.ContainsKey("Subject") == false ? "" : dict["Subject"] == null ? null : dict["Subject"].ToString();
+                                        string Content = dict.ContainsKey("Content") == false ? "" : dict["Content"] == null ? null : dict["Content"].ToString();
+                                        string _clientid = dict.ContainsKey("_clientid") == false ? "" : dict["_clientid"] == null ? null : dict["_clientid"].ToString();
 
-                                string commsessionid = dict.ContainsKey("commsessionid") == false ? "" : dict["commsessionid"] == null ? null : dict["commsessionid"].ToString();
-                                string SetTicketState = dict.ContainsKey("SetTicketState") == false ? "" : dict["SetTicketState"] == null ? null : dict["SetTicketState"].ToString();
+                                        if ((_clientid == null) || (_clientid == "null") && (_clientid == ""))
+                                        {
+                                            DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+                                            TimeSpan diff = DateTime.Now.ToUniversalTime() - origin;
+                                            _clientid = Math.Floor(diff.TotalSeconds).ToString();
+                                        }
 
-                                string lang = utils.GetLang(context);
+                                        string _status = dict.ContainsKey("_status") == false ? "" : dict["_status"] == null ? null : dict["_status"].ToString();
 
-                                Content = Content.Replace(Environment.NewLine, null);
+                                        string TimeStamp = DateTime.UtcNow.ToString("o");
+                                        /*
+                                        dict.ContainsKey("TimeStamp") == false ? "" : dict["TimeStamp"] == null ? null : dict["TimeStamp"].ToString();
+                                    if ((TimeStamp == null) || (TimeStamp == "null") && (TimeStamp == ""))
+                                    {
+                                        TimeStamp = DateTime.UtcNow.ToString("o");
+                                    }
+                                        */
 
-                                NewMessage newmessage = new NewMessage();
-                                newmessage.From = From;
-                                newmessage.From_FullName = From_FullName;
-                                newmessage.To = To;
-                                newmessage.CC = ToArr;
-                                newmessage.Subject = Subject;
-                                newmessage.Content = Content;
-                                newmessage._clientid = _clientid;
-                                newmessage._status = _status;
-                                newmessage.TimeStamp = TimeStamp;
-                                newmessage.TimeStampSenderSending = TimeStampSenderSending;
-                                newmessage.TimeStampSrvAccepted = DateTime.Now.ToUniversalTime();
-                                newmessage.commsessionid = commsessionid;
-                                newmessage.Lang = lang;
-                                newmessage.MessageType = "chat";
+                                        string TimeStampSenderSending = dict.ContainsKey("TimeStampSenderSending") == false ? "" : dict["TimeStampSenderSending"] == null ? null : dict["TimeStampSenderSending"].ToString();
+                                        if ((TimeStampSenderSending == null) || (TimeStampSenderSending == "null") && (TimeStampSenderSending == ""))
+                                        {
+                                            TimeStampSenderSending = DateTime.UtcNow.ToString("o");
+                                        }
 
-                                bool sent = utils.SendMessage(newmessage, SetTicketState);
+                                        string commsessionid = dict.ContainsKey("commsessionid") == false ? "" : dict["commsessionid"] == null ? null : dict["commsessionid"].ToString();
+                                        string SetTicketState = dict.ContainsKey("SetTicketState") == false ? "" : dict["SetTicketState"] == null ? null : dict["SetTicketState"].ToString();
 
-                                if (sent == false)
-                                {
-                                    utils.GrabaLog(vizzopWeb.Utils.NivelLog.error, "Msg Not Sent : " + newmessage.Subject + "," + newmessage.Content);
-                                }
+                                        string lang = utils.GetLang(context);
+
+                                        Content = Content.Replace(Environment.NewLine, null);
+
+                                        NewMessage newmessage = new NewMessage();
+                                        newmessage.From = From;
+                                        newmessage.From_FullName = From_FullName;
+                                        newmessage.To = To;
+                                        newmessage.CC = ToArr;
+                                        newmessage.Subject = Subject;
+                                        newmessage.Content = Content;
+                                        newmessage._clientid = _clientid;
+                                        newmessage._status = _status;
+                                        newmessage.TimeStamp = TimeStamp;
+                                        newmessage.TimeStampSenderSending = TimeStampSenderSending;
+                                        newmessage.TimeStampSrvAccepted = DateTime.Now.ToUniversalTime();
+                                        newmessage.commsessionid = commsessionid;
+                                        newmessage.Lang = lang;
+                                        newmessage.MessageType = "chat";
+
+                                        bool sent = utils.SendMessage(newmessage, SetTicketState);
+
+                                        if (sent == false)
+                                        {
+                                            utils.GrabaLog(vizzopWeb.Utils.NivelLog.error, "Msg Not Sent : " + newmessage.Subject + "," + newmessage.Content);
+                                        }
+                                    }
+                                    break;
                             }
-                            break;
+                        }
                     }
+
                 }
-            }
-            catch (Exception ex)
-            {
-                utils.GrabaLogExcepcion(ex);
-                receivedMessage = null;
-            }
-
-        }
-
-        private async Task Process(AspNetWebSocketContext context)
-        {
-            try
-            {
-                WebSocket socket = context.WebSocket;
-
-                while (true)
+                catch (Exception)
                 {
-                    try
-                    {
-                        ArraySegment<byte> buffer = new ArraySegment<byte>(new byte[4096]);
-                        WebSocketReceiveResult result = await socket.ReceiveAsync(buffer, CancellationToken.None);
-                        if (socket.State == WebSocketState.Open)
-                        {
-                            ProcessReceived(result, buffer, context);
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        //utils.GrabaLog(vizzopWeb.Utils.NivelLog.error, _ex.Message);
-                        break;
-                    }
+                    //utils.GrabaLogExcepcion(ex);
+                    receivedMessage = null;
                 }
             }
-            catch (Exception ex)
-            {
-                utils.GrabaLogExcepcion(ex);
-            }
         }
-        */
 
     }
 }

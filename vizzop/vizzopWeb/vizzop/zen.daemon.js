@@ -357,16 +357,23 @@ var Daemon = jVizzop.zs_Class.create({
     openWebSockets: function (callback) {
         var self = this;
         vizzop.WSchat = null;
-        vizzop.WSscreen = null;
         try {
-            if ((typeof (WebSocket) === "function") && (vizzop.AllowChatSockets === true)) {
+            if ((typeof (WebSocket) === "function") && ((vizzop.AllowChatSockets === true) || (vizzop.AllowScreenSockets === true))) {
                 var url = vizzop.wsURL + "/vizzop/Socket.ashx";
                 vizzop.WSchat = new WebSocket(url);
                 vizzop.WSchat.onopen = function () {
-                    vizzop.Daemon.sendNewMessages();
+                    if (vizzop.AllowChatSockets === true) {
+                        vizzop.Daemon.sendNewMessages();
+                    }
+                    if (vizzop.AllowScreenSockets === true) {
+                        vizzop.HtmlSend_ForceSendHtml = true;
+                        vizzop.HtmlSend_LastHtmlSent = null;
+                        vizzop.HtmlSend_InCourse = null;
+                        vizzop.Daemon.sendHtml();
+                    }
                 };
                 vizzop.WSchat.onmessage = function (evt) {
-                    //vizzoplib.log(evt);
+                    vizzoplib.log(evt);
                     var json = jVizzop.parseJSON(evt.data);
                     //vizzoplib.log(json);
                     self.parseNewMessages(json);
@@ -379,27 +386,6 @@ var Daemon = jVizzop.zs_Class.create({
                 };
             }
 
-            if ((typeof (WebSocket) === "function") && (vizzop.AllowScreenSockets === true)) {
-                vizzop.WSscreen = new WebSocket(url);
-                vizzop.WSscreen.onopen = function () {
-                    vizzop.HtmlSend_ForceSendHtml = true;
-                    vizzop.HtmlSend_LastHtmlSent = null;
-                    vizzop.HtmlSend_InCourse = null;
-                    vizzop.Daemon.sendHtml();
-                };
-                vizzop.WSscreen.onmessage = function (evt) {
-                    //vizzoplib.log(evt);
-                    var json = jVizzop.parseJSON(evt.data);
-                    //vizzoplib.log(json);
-                    self.parseNewMessages(json);
-                };
-                vizzop.WSscreen.onerror = function (evt) {
-                    //vizzoplib.log(evt);
-                };
-                vizzop.WSscreen.onclose = function () {
-                    //vizzoplib.log("Socket Closed");
-                };
-            }
         } catch (ex) {
             vizzoplib.log(ex)
         }
@@ -1594,7 +1580,7 @@ var Daemon = jVizzop.zs_Class.create({
                 'messagetype': 'Screen'
             };
 
-            var ws = vizzop.WSscreen;
+            var ws = vizzop.WSchat;
             if (ws != null) {
                 if (ws.readyState === undefined || ws.readyState > 1) {
                     //Abrimos :)
