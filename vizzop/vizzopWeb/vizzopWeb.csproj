@@ -262,6 +262,9 @@
     <Compile Include="Scripts\scriptloader.ashx.cs">
       <DependentUpon>scriptloader.ashx</DependentUpon>
     </Compile>
+    <Compile Include="vizzop\PhantomSocket.ashx.cs">
+      <DependentUpon>PhantomSocket.ashx</DependentUpon>
+    </Compile>
     <Compile Include="vizzop\Socket.ashx.cs">
       <DependentUpon>Socket.ashx</DependentUpon>
     </Compile>
@@ -855,6 +858,7 @@
     <Content Include="Views\vizzop\Es.cshtml" />
     <Content Include="Views\CRM\Index.cshtml" />
     <Content Include="vizzop\Socket.ashx" />
+    <Content Include="vizzop\PhantomSocket.ashx" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

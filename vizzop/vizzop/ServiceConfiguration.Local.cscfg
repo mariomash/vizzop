@@ -29,6 +29,7 @@
       <Setting name="Domain" value="vizzop.com" />
       <Setting name="Port" value="443" />
       <Setting name="Scheme" value="https" />
+      <Setting name="WsScheme" value="wss" />
       <Setting name="Microsoft.WindowsAzure.Plugins.Caching.ClientDiagnosticLevel" value="1" />
       <Setting name="CaptureProcessNumber" value="8" />
       <Setting name="CreateLogsInRelease" value="false" />

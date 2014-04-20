@@ -2014,7 +2014,7 @@ namespace vizzopWeb
 
                         new_screencapture.ReceivedOn = DateTime.UtcNow;
                         Converser converser = GetConverserFromSystem(UserName, Password, Domain);
-                        new_screencapture.converser = converser;
+                        //new_screencapture.converser = converser;
                         new_screencapture.Headers = headers;
 
                         if (dict.ContainsKey("st"))
@@ -2245,14 +2245,14 @@ namespace vizzopWeb
                             {
                                 if (OriginalWebLocation.ScreenCapture != null)
                                 {
-                                    //si no ha cambiado naaaada no renderizamos
+                                    //si no ha cambiado naaaada no cambiamos nada
                                     if ((new_screencapture.Height == OriginalWebLocation.ScreenCapture.Height) &&
                                         (new_screencapture.Width == OriginalWebLocation.ScreenCapture.Width) &&
                                         (new_screencapture.ScrollLeft == OriginalWebLocation.ScreenCapture.ScrollLeft) &&
                                         (new_screencapture.ScrollTop == OriginalWebLocation.ScreenCapture.ScrollTop))
                                     {
                                         // && (new_screencapture.Blob != sc_control.ScreenCapture.Blob)
-                                        //SingletonCache.Instance.UnLock(_key, lockHandle);
+                                        SingletonCache.Instance.UnLock(_key, _lockHandle);
                                         return true;
                                     }
                                 }
@@ -2293,16 +2293,6 @@ namespace vizzopWeb
                             }
                         }
 
-                        /*
-                         * Estas son las tres cosas que cambian en realidad... lo anterior es en caso de es crear
-                         */
-                        /*
-                        _result = SingletonCache.Instance.GetInRegionWithLock(_key, _region, out _lockHandle);
-                        if (_result != null)
-                        {
-                            OriginalWebLocation = (WebLocation)_result;
-                        }
-                         * */
                         OriginalWebLocation.Url = new_screencapture.Url;
                         OriginalWebLocation.TimeStamp_Last = loctime;
                         OriginalWebLocation.CompleteHtml = processedHtml;
@@ -2310,18 +2300,13 @@ namespace vizzopWeb
                         SingletonCache.Instance.InsertInRegionWithLock(_key, OriginalWebLocation, _region, _lockHandle);
 
                         //Y ahora a la DB
-
                         new_screencapture.Blob = OriginalWebLocation.CompleteHtml;
-
-
                         string SaveScreenshotsSetting = "SaveScreenShotsInRelease";
 #if DEBUG
                         SaveScreenshotsSetting = "SaveScreenShotsInDebug";
 #endif
-
                         bool SaveScreenShots = false;
                         SaveScreenShots = Convert.ToBoolean(CloudConfigurationManager.GetSetting(SaveScreenshotsSetting));
-
                         if (SaveScreenShots == true)
                         {
                             Task TaskLog = Task.Factory.StartNew(() =>
@@ -2330,12 +2315,6 @@ namespace vizzopWeb
                             });
                         }
 
-                        /*
-                        string tag = "weblocation";
-                        List<DataCacheTag> Tags = new List<DataCacheTag>();
-                        Tags.Add(new DataCacheTag(tag));
-                        SingletonCache.Instance.InsertWithLockAndTags(_key, weblocation, lockHandle, Tags);
-                        */
                     }
                     catch (Exception _ex)
                     {
@@ -2429,6 +2408,11 @@ namespace vizzopWeb
 
         public List<Agent> GetActiveAgents(Converser converser)
         {
+            if (db == null)
+            {
+                db = new vizzopContext();
+            }
+
             try
             {
                 TimeZone localZone = TimeZone.CurrentTimeZone;
@@ -3758,6 +3742,60 @@ namespace vizzopWeb
             }
         }
 
+
+
+        public WebLocation BuscaNuevasCapturas(string UserName, string Domain, string WindowName, string GUID)
+        {
+            try
+            {
+                if ((UserName == null) || (Domain == null) || (WindowName == null))
+                {
+                    return null;
+                }
+
+                DateTime start_time = DateTime.Now;
+                WebLocation weblocation = null;
+                while ((weblocation == null) && (DateTime.Now < start_time.AddSeconds(25)))
+                {
+                    //List<WebLocation> WebLocations = new List<WebLocation>();
+
+                    string region = "weblocations";
+                    object result = SingletonCache.Instance.GetAllInRegion(region);
+                    if (result != null)
+                    {
+                        IEnumerable<KeyValuePair<string, object>> WebLocations = (IEnumerable<KeyValuePair<string, object>>)result;
+
+                        //TimeZone localZone = TimeZone.CurrentTimeZone;
+                        //DateTime loctime = localZone.ToUniversalTime(DateTime.Now.AddSeconds(-30));
+
+                        var obj = (from m in WebLocations
+                                   //where m.TimeStamp_Last > loctime &&
+                                   where ((WebLocation)m.Value).UserName == UserName &&
+                                   ((WebLocation)m.Value).Domain == Domain &&
+                                   ((WebLocation)m.Value).WindowName == WindowName &&
+                                   ((WebLocation)m.Value).ScreenCapture != null
+                                   select m).OrderByDescending(m => ((WebLocation)m.Value).TimeStamp_Last).FirstOrDefault();
+                        weblocation = (WebLocation)obj.Value;
+                    }
+
+                    if (weblocation != null)
+                    {
+                        if ((weblocation.ScreenCapture.GUID == GUID) || (weblocation.ScreenCapture.Blob == null) || (weblocation.CompleteHtml == ""))
+                        {
+                            weblocation = null;
+                            Thread.Sleep(TimeSpan.FromSeconds(1));
+                        }
+                    }
+
+                }
+                return weblocation;
+            }
+            catch (Exception ex)
+            {
+                GrabaLogExcepcion(ex);
+                return null;
+            }
+        }
     }
 
     public static class ProcessExtensions

@@ -54,6 +54,7 @@
       <Setting name="Domain" />
       <Setting name="Port" />
       <Setting name="Scheme" />
+      <Setting name="WsScheme" />
       <Setting name="Microsoft.WindowsAzure.Plugins.Caching.ClientDiagnosticLevel" />
       <Setting name="CaptureProcessNumber" />
       <Setting name="CreateLogsInRelease" />

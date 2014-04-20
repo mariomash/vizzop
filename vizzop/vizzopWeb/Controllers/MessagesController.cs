@@ -846,49 +846,7 @@ namespace vizzopWeb.Controllers
             try
             {
 
-                if ((UserName == null) || (Domain == null))
-                {
-                    return Json(false);
-                }
-
-                DateTime start_time = DateTime.Now;
-
-                WebLocation weblocation = null;
-                /*
-                while ((weblocation == null) && (DateTime.Now < start_time.AddSeconds(25)))
-                {
-                }
-                */
-
-                //List<WebLocation> WebLocations = new List<WebLocation>();
-
-                string region = "weblocations";
-                object result = SingletonCache.Instance.GetAllInRegion(region);
-                if (result != null)
-                {
-                    IEnumerable<KeyValuePair<string, object>> WebLocations = (IEnumerable<KeyValuePair<string, object>>)result;
-
-                    //TimeZone localZone = TimeZone.CurrentTimeZone;
-                    //DateTime loctime = localZone.ToUniversalTime(DateTime.Now.AddSeconds(-30));
-
-                    var obj = (from m in WebLocations
-                               //where m.TimeStamp_Last > loctime &&
-                               where ((WebLocation)m.Value).UserName == UserName &&
-                               ((WebLocation)m.Value).Domain == Domain &&
-                               ((WebLocation)m.Value).WindowName == WindowName &&
-                               ((WebLocation)m.Value).ScreenCapture != null
-                               select m).OrderByDescending(m => ((WebLocation)m.Value).TimeStamp_Last).FirstOrDefault();
-                    weblocation = (WebLocation)obj.Value;
-                }
-
-                if (weblocation != null)
-                {
-                    if ((weblocation.ScreenCapture.GUID == GUID) || (weblocation.ScreenCapture.Blob == null))
-                    {
-                        weblocation = null;
-                        //Thread.Sleep(TimeSpan.FromMilliseconds(250));
-                    }
-                }
+                WebLocation weblocation = utils.BuscaNuevasCapturas(UserName, Domain, WindowName, GUID);
 
                 if (weblocation == null)
                 {
@@ -911,12 +869,6 @@ namespace vizzopWeb.Controllers
                         ScrollTop = weblocation.ScreenCapture.ScrollTop,
                         ScrollLeft = weblocation.ScreenCapture.ScrollLeft
                     };
-
-                    /*
-#if DEBUG
-                    utils.GrabaLog(Utils.NivelLog.info, "Lanzando imagen a Phantom");
-#endif
-                    */
 
                     return Json(toReturn);
                 }
