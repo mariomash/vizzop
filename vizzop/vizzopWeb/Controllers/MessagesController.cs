@@ -705,7 +705,7 @@ namespace vizzopWeb.Controllers
                         utils.GrabaLogExcepcion(ex);
                     }
 
-                    /* Encontrar todas las sesiones con este converser .. para available o no y dimensiones*/
+                    /* Encontrar todas las sesiones con este converser .. para interlocutor available o no*/
                     List<CommSession> sessiones_de_este_converser = new List<CommSession>();
                     if (converser.Agent != null)
                     {

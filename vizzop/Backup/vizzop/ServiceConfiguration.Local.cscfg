@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<ServiceConfiguration serviceName="vizzop" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="3" osVersion="*" schemaVersion="2013-10.2.2">
+  <Role name="vizzopWeb">
+    <Instances count="1" />
+    <ConfigurationSettings>
+      <!--
+      <Setting name="Domain" value="192.168.1.133" />
+      -->
+      <Setting name="Domain" value="vizzop.com" />
+      <Setting name="Port" value="443" />
+      <Setting name="Scheme" value="https" />
+      <Setting name="WsScheme" value="wss" />
+      <Setting name="StorageConnectionString" value="DefaultEndpointsProtocol=https;AccountName=vizzop;AccountKey=t+HUSi6EdcIqkCgeyJY2yesdp+Ti+rgLYpOPDlwFpp49uNI/2sGeI5Fx1A+syOfZCe2C6rYPqIWb/83Zbo9nTQ==" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Caching.ClientDiagnosticLevel" value="1" />
+      <Setting name="CreateLogsInRelease" value="false" />
+      <Setting name="CreateLogsInDebug" value="true" />
+    </ConfigurationSettings>
+    <Certificates>
+      <Certificate name="vizzop.com" thumbprint="C2B2F4A2ADFD60296E8B35C55A0E5ED4594C595D" thumbprintAlgorithm="sha1" />
+    </Certificates>
+  </Role>
+  <Role name="vizzopWorker">
+    <Instances count="1" />
+    <ConfigurationSettings>
+      <Setting name="StorageConnectionString" value="DefaultEndpointsProtocol=https;AccountName=vizzop;AccountKey=t+HUSi6EdcIqkCgeyJY2yesdp+Ti+rgLYpOPDlwFpp49uNI/2sGeI5Fx1A+syOfZCe2C6rYPqIWb/83Zbo9nTQ==" />
+      <Setting name="Domain" value="vizzop.com" />
+      <Setting name="Port" value="443" />
+      <Setting name="Scheme" value="https" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Caching.ClientDiagnosticLevel" value="1" />
+      <Setting name="CaptureProcessNumber" value="8" />
+      <Setting name="CreateLogsInRelease" value="false" />
+      <Setting name="CreateLogsInDebug" value="true" />
+    </ConfigurationSettings>
+    <Certificates>
+    </Certificates>
+  </Role>
+  <Role name="vizzopCache">
+    <Instances count="1" />
+    <ConfigurationSettings>
+      <Setting name="Microsoft.WindowsAzure.Plugins.Caching.NamedCaches" value="{&quot;caches&quot;:[{&quot;name&quot;:&quot;default&quot;,&quot;policy&quot;:{&quot;eviction&quot;:{&quot;type&quot;:0},&quot;expiration&quot;:{&quot;defaultTTL&quot;:15,&quot;isExpirable&quot;:true,&quot;type&quot;:2},&quot;serverNotification&quot;:{&quot;isEnabled&quot;:false}},&quot;secondaries&quot;:0}]}" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Caching.DiagnosticLevel" value="1" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Caching.CacheSizePercentage" value="" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Caching.ConfigStoreConnectionString" value="DefaultEndpointsProtocol=https;AccountName=vizzop;AccountKey=t+HUSi6EdcIqkCgeyJY2yesdp+Ti+rgLYpOPDlwFpp49uNI/2sGeI5Fx1A+syOfZCe2C6rYPqIWb/83Zbo9nTQ==" />
+    </ConfigurationSettings>
+    <Certificates>
+    </Certificates>
+  </Role>
+</ServiceConfiguration>
