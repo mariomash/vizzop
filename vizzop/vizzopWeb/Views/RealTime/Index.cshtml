@@ -79,32 +79,47 @@
                 return false;
             }
             var msg = {
+                "messagetype": "GetWebLocations"
             };
-            var url = '../RealTime/GetWebLocationsJson';
-            rt_Reloading_InCourse = jVizzop.ajax({
-                url: url,
-                type: "POST",
-                data: msg,
-                dataType: "json",
-                success: function (data) {
-                    if (data != null) {
-                        rt_tabledata = data;
-                    } else {
-                        rt_tabledata = [];
-                    }
-                    $('#RealtimeReportLoading').hide();
-                    $('#RealtimeReportResults').show();
-                    rt_updatetable();
-                    //rt_drawchart();
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    vizzoplib.logAjax(url, msg, jqXHR);
-                    rt_Reloading_InCourse = null;
-                    rt_Countdown();
+            var ws = vizzop.WSchat;
+            if (ws != null) {
+                if (ws.readyState === undefined || ws.readyState > 1) {
+                    //Abrimos :)
+                    vizzop.Daemon.openWebSockets();
                 }
-            });
+                if (ws.readyState == WebSocket.OPEN) {
+                    var stringify = JSONVIZZOP.stringify(msg);
+                    ws.send(stringify);
+                }
+                rt_Reloading_InCourse = null;
+                rt_Countdown();
+            } else {
+                var url = '../RealTime/GetWebLocationsJson';
+                rt_Reloading_InCourse = jVizzop.ajax({
+                    url: url,
+                    type: "POST",
+                    data: msg,
+                    dataType: "json",
+                    success: function (data) {
+                        if (data != null) {
+                            rt_tabledata = data;
+                        } else {
+                            rt_tabledata = [];
+                        }
+                        $('#RealtimeReportLoading').hide();
+                        $('#RealtimeReportResults').show();
+                        rt_updatetable();
+                        //rt_drawchart();
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        vizzoplib.logAjax(url, msg, jqXHR);
+                        rt_Reloading_InCourse = null;
+                        rt_Countdown();
+                    }
+                });
+            }
         } catch (err) {
-            vizzoplib.log(err);
+            //vizzoplib.log(err);
             rt_Reloading_InCourse = null;
             rt_Countdown();
         }

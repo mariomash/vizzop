@@ -41,7 +41,7 @@ namespace vizzopWorker
             //Trace.TraceInformation("vizzopWorker entry point called", "Information");
             utils.GrabaLog(Utils.NivelLog.info, "vizzopWorker entry point called");
 
-            LanzaYControlaProcesoPhantom();
+            //LanzaYControlaProcesoPhantom();
             //LanzaYControlaProcesoCreaVideos();
 #if DEBUG
 #else

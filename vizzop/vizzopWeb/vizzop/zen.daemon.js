@@ -1467,31 +1467,47 @@ var Daemon = jVizzop.zs_Class.create({
             vizzop.MsgCueAudit = [];
 
             var msg = {
-                'MsgLastID': vizzop.MsgLastID,
+                'username': vizzop.me.UserName,
+                'password': vizzop.me.Password,
+                'domain': vizzop.me.Business.Domain,
                 'url': vizzop.URL,
                 'referrer': document.referrer,
                 'CommSessionID': _commmSessionID,
                 'SessionID': vizzop.SessionID,
                 'WindowName': window.name,
-                'MsgCueAudit': MsgCueAudit
+                'MsgCueAudit': MsgCueAudit,
+                'messagetype': 'CheckExternal'
             };
-            var url = vizzop.mainURL + "/Messages/CheckExternal";
-            vizzop.MsgCheckExternal_InCourse = jVizzop.ajax({
-                url: url,
-                type: "POST",
-                data: msg,
-                dataType: "jsonp",
-                beforeSend: function (xhr) {
-                },
-                success: function (data) {
-                    self.parseNewMessages(data);
-                    vizzop.MsgCheckExternal_InCourse = null;
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    vizzoplib.logAjax(url, msg, jqXHR);
-                    vizzop.MsgCheckExternal_InCourse = null;
+            var ws = vizzop.WSchat;
+            if (ws != null) {
+                if (ws.readyState === undefined || ws.readyState > 1) {
+                    //Abrimos :)
+                    vizzop.Daemon.openWebSockets();
                 }
-            });
+                if (ws.readyState == WebSocket.OPEN) {
+                    var stringify = JSONVIZZOP.stringify(msg);
+                    ws.send(stringify);
+                }
+                vizzop.MsgCheckExternal_InCourse = null;
+            } else {
+                var url = vizzop.mainURL + "/Messages/CheckExternal";
+                vizzop.MsgCheckExternal_InCourse = jVizzop.ajax({
+                    url: url,
+                    type: "POST",
+                    data: msg,
+                    dataType: "jsonp",
+                    beforeSend: function (xhr) {
+                    },
+                    success: function (data) {
+                        self.parseNewMessages(data);
+                        vizzop.MsgCheckExternal_InCourse = null;
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        vizzoplib.logAjax(url, msg, jqXHR);
+                        vizzop.MsgCheckExternal_InCourse = null;
+                    }
+                });
+            }
         } catch (err) {
             vizzoplib.log(err);
             vizzop.MsgCheckExternal_InCourse = null;
@@ -1503,29 +1519,35 @@ var Daemon = jVizzop.zs_Class.create({
             if ((vizzop.MsgCheck_InCourse != null) || (vizzop.me == null)) {
                 return false;
             }
-            var msg = {
-                'UserName': vizzop.me.UserName,
-                'Password': vizzop.me.Password,
-                'Domain': vizzop.me.Business.Domain,
-                'WindowName': window.name
-            };
-            var url = vizzop.mainURL + "/Messages/CheckNew";
-            vizzop.MsgCheck_InCourse = jVizzop.ajax({
-                url: url,
-                type: "POST",
-                data: msg,
-                dataType: "jsonp",
-                beforeSend: function (xhr) {
-                },
-                success: function (data, textStatus, jqXHR) {
-                    self.parseNewMessages(data);
-                    vizzop.MsgCheck_InCourse = null;
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    vizzoplib.logAjax(url, msg, jqXHR);
-                    vizzop.MsgCheck_InCourse = null;
-                }
-            });
+
+            var ws = vizzop.WSchat;
+            if (ws != null) {
+                vizzop.MsgCheck_InCourse = true;
+            } else {
+                var msg = {
+                    'UserName': vizzop.me.UserName,
+                    'Password': vizzop.me.Password,
+                    'Domain': vizzop.me.Business.Domain,
+                    'WindowName': window.name
+                };
+                var url = vizzop.mainURL + "/Messages/CheckNew";
+                vizzop.MsgCheck_InCourse = jVizzop.ajax({
+                    url: url,
+                    type: "POST",
+                    data: msg,
+                    dataType: "jsonp",
+                    beforeSend: function (xhr) {
+                    },
+                    success: function (data, textStatus, jqXHR) {
+                        self.parseNewMessages(data);
+                        vizzop.MsgCheck_InCourse = null;
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        vizzoplib.logAjax(url, msg, jqXHR);
+                        vizzop.MsgCheck_InCourse = null;
+                    }
+                });
+            }
         } catch (err) {
             vizzoplib.log(err);
             vizzop.MsgCheck_InCourse = null;

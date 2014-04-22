@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
@@ -39,8 +40,11 @@ namespace vizzopWeb.vizzop
             using (var db = new vizzopContext())
             {
                 Utils utils = new Utils(db);
-
                 WebSocket socket = context.WebSocket;
+                string WindowName = null;
+                Converser converser = null;
+                HttpContextWrapper wrapper = null;
+
 
                 while (
                     (true) &&
@@ -56,10 +60,19 @@ namespace vizzopWeb.vizzop
                         if (socket.State == WebSocketState.Open)
                         {
                             /*
-                            var userMessage = DateTime.Now.ToLongTimeString();
-                            buffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(userMessage));
-                            await socket.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
+
                              * */
+                            if ((WindowName != null) && (converser != null) && (wrapper != null))
+                            {
+                                List<Message> returnmessages = utils.CheckNew(wrapper, converser, WindowName);
+                                if (returnmessages.Count > 0)
+                                {
+                                    var userMessage = returnmessages;//DateTime.Now.ToLongTimeString();
+                                    var seriuserMessage = new JavaScriptSerializer().Serialize(userMessage);
+                                    buffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(seriuserMessage));
+                                    await socket.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
+                                }
+                            }
 
                             receivedMessage += Encoding.UTF8.GetString(buffer.Array, 0, result.Count);
                             //string receivedMessage = Encoding.UTF8.GetString(buffer.Array, 0, result.Count);
@@ -69,16 +82,105 @@ namespace vizzopWeb.vizzop
 
                                 var dict = new JavaScriptSerializer().Deserialize<Dictionary<string, object>>(receivedMessage);
 
+                                wrapper = new HttpContextWrapper(HttpContext.Current);
                                 receivedMessage = null;
 
                                 string MessageType = dict.ContainsKey("messagetype") == false ? null : dict["messagetype"] == null ? null : dict["messagetype"].ToString();
                                 switch (MessageType)
                                 {
+                                    case "GetWebLocations":
+
+                                        if (converser != null)
+                                        {
+                                            string seriuserMessage = null;
+                                            List<WebLocation> _WebLocations = utils.GetWebLocations(converser);
+                                            if (_WebLocations != null)
+                                            {
+
+                                                var aaData = _WebLocations.Select(x => new[] {
+                                                x.ConverserId.ToString(), 
+                                                x.ThumbNail,
+                                                x.ScreenCapture == null ? null : x.ScreenCapture.Width.ToString(),
+                                                x.ScreenCapture == null ? null : x.ScreenCapture.Height.ToString(),
+                                                x.Url,
+                                                x.Lang,
+                                                x.Ubication,
+                                                x.UserAgent,
+                                                x.Referrer, 
+                                                x.TimeStamp_First.ToString("o"),
+                                                utils.GetPrettyDate(x.TimeStamp_First),
+                                                x.TimeStamp_Last.ToString("o"),
+                                                utils.GetPrettyDate(x.TimeStamp_Last),
+                                                x.FullName,
+                                                x.UserName,
+                                                x.Domain,
+                                                x.Password,
+                                                x.WindowName
+                                            });
+                                                seriuserMessage = new JavaScriptSerializer().Serialize(aaData);
+                                            }
+                                            if (seriuserMessage == null)
+                                            {
+                                                seriuserMessage = new JavaScriptSerializer().Serialize(false);
+                                            }
+                                            buffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(seriuserMessage));
+                                            await socket.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
+                                        }
+                                        break;
+
+                                    case "CheckExternal":
+
+                                        converser = utils.GetConverserFromSystem(
+                                            dict["username"].ToString(),
+                                            dict["password"].ToString(),
+                                            dict["domain"].ToString());
+
+                                        string referrer = null;
+                                        if (dict["referrer"] != null)
+                                        {
+                                            referrer = dict["referrer"].ToString();
+                                        }
+                                        string CommSessionID = null;
+                                        if (dict["CommSessionID"] != null)
+                                        {
+                                            CommSessionID = dict["CommSessionID"].ToString();
+                                        }
+                                        string SessionID = null;
+                                        if (dict["SessionID"] != null)
+                                        {
+                                            SessionID = dict["SessionID"].ToString();
+                                        }
+                                        if (dict["WindowName"] != null)
+                                        {
+                                            WindowName = dict["WindowName"].ToString();
+                                        }
+
+                                        List<Message> returnmessages = utils.CheckExternal(
+                                            wrapper,
+                                            dict["username"].ToString(),
+                                            dict["password"].ToString(),
+                                            dict["domain"].ToString(),
+                                            dict["url"].ToString(),
+                                            referrer,
+                                            CommSessionID,
+                                            SessionID,
+                                            WindowName,
+                                            dict["MsgCueAudit"]
+                                            );
+
+                                        if (returnmessages.Count > 0)
+                                        {
+                                            var userMessage = returnmessages;//DateTime.Now.ToLongTimeString();
+                                            var seriuserMessage = new JavaScriptSerializer().Serialize(userMessage);
+                                            buffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(seriuserMessage));
+                                            await socket.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
+
+                                        }
+
+                                        break;
                                     case "Screen":
                                         //vizzopWeb.Controllers.RealTimeController rt = new vizzopWeb.Controllers.RealTimeController();
                                         //var serializedData = new JavaScriptSerializer().Serialize(dict["data"]);
-
-                                        var wrapper = new HttpContextWrapper(HttpContext.Current);
 
                                         utils.TrackScreen(
                                             dict["username"].ToString(),
@@ -91,6 +193,7 @@ namespace vizzopWeb.vizzop
                                             );
 
                                         break;
+
                                     case "Plain":
 
                                         string ToArr = dict.ContainsKey("To") == false ? "" : dict["To"] == null ? null : dict["To"].ToString();
@@ -173,9 +276,9 @@ namespace vizzopWeb.vizzop
                         }
 
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
-                        //utils.GrabaLogExcepcion(ex);
+                        utils.GrabaLogExcepcion(ex);
                         receivedMessage = null;
                     }
                 }

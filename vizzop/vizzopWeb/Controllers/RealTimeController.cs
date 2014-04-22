@@ -402,65 +402,12 @@ namespace vizzopWeb.Controllers
                     return Json(null);
                 }
 
-                //List<WebLocation> WebLocations = new List<WebLocation>();
 
-                TimeZone localZone = TimeZone.CurrentTimeZone;
-                DateTime loctime = localZone.ToUniversalTime(DateTime.Now.AddSeconds(-30));
-
-                string region = "weblocations";
-                /*
-                List<DataCacheTag> Tags = new List<DataCacheTag>();
-                Tags.Add(new DataCacheTag(tag));
-                object result = SingletonCache.Instance.GetByTag(tag);*/
-
-                object result = SingletonCache.Instance.GetAllInRegion(region);
-                if (result != null)
+                List<WebLocation> WebLocations = utils.GetWebLocations(converser);
+                if (WebLocations != null)
                 {
 
-                    /*
-                    string VizzopGetsAllRealtimeWebLocationsSetting = "VizzopGetsAllRealtimeWebLocationsInRelease";
-    #if DEBUG
-                    VizzopGetsAllRealtimeWebLocationsSetting = "VizzopGetsAllRealtimeWebLocationsInDebug";
-    #endif
-                    bool VizzopGetsAllRealtimeWebLocations = Convert.ToBoolean((from m in db.Settings
-                                                                                where m.Name == VizzopGetsAllRealtimeWebLocationsSetting
-                                                                                select m).FirstOrDefault().Value);
-                    */
-                    var VizzopGetsAllRealtimeWebLocations = true;
-
-                    IEnumerable<KeyValuePair<string, object>> WebLocations = (IEnumerable<KeyValuePair<string, object>>)result;
-
-                    WebLocations = (from m in WebLocations
-                                    where ((WebLocation)m.Value).TimeStamp_Last > loctime
-                                    select m);
-
-                    if ((converser.Business.Domain.ToLowerInvariant() != "vizzop") || (VizzopGetsAllRealtimeWebLocations == false))
-                    {
-                        WebLocations = (from m in WebLocations
-                                        where ((WebLocation)m.Value).Domain == converser.Business.Domain
-                                        select m);
-                    }
-
-                    //var GroupedWebLocations = WebLocations.GroupBy(m => ((WebLocation)m.Value).ConverserId);
-
-                    var GroupedWebLocations = (from m in WebLocations
-                                               group m by new
-                                               {
-                                                   ((WebLocation)m.Value).ConverserId,
-                                                   ((WebLocation)m.Value).WindowName
-                                               });
-
-                    if (GroupedWebLocations.Count() > 0)
-                    {
-                        List<WebLocation> _WebLocations = new List<WebLocation>();
-                        foreach (var Group in GroupedWebLocations)
-                        {
-                            var m = Group.OrderByDescending(x => ((WebLocation)x.Value).TimeStamp_Last).FirstOrDefault();
-                            _WebLocations.Add((WebLocation)m.Value);
-                        }
-
-
-                        var aaData = _WebLocations.Select(x => new[] { 
+                    var aaData = WebLocations.Select(x => new[] { 
                         x.ConverserId.ToString(), 
                         x.ThumbNail,
                         x.ScreenCapture == null ? null : x.ScreenCapture.Width.ToString(),
@@ -481,25 +428,8 @@ namespace vizzopWeb.Controllers
                         x.WindowName
                         });
 
-                        /*
-                        foreach (var item in aaData)
-                        {
-                            ScreenCapture sc = utils.GetScreenCapture(item[14], item[15], item[17]);
-                            if (sc != null)
-                            {
-                                item[2] = sc.Width.ToString();
-                                item[3] = sc.Height.ToString();
-                            }
-                        }
-                        */
+                    return Json(aaData, JsonRequestBehavior.AllowGet);
 
-                        return Json(aaData, JsonRequestBehavior.AllowGet);
-
-                    }
-                    else
-                    {
-                        return Json(null);
-                    }
                 }
                 else
                 {

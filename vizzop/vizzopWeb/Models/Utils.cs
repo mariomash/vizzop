@@ -3796,6 +3796,486 @@ namespace vizzopWeb
                 return null;
             }
         }
+
+        internal List<Message> CheckExternal(HttpContextBase HttpContext, string UserName, string Password, string Domain, string url, string referrer, string SessionID, string CommSessionID, string WindowName, object MsgCueAudit)
+        {
+            //Y montamos la lista de mensajes que le vamos a devolver
+            List<Message> returnmessages = new List<Message>();
+            try
+            {
+
+                if (MsgCueAudit != null)
+                {
+                    if (typeof(string) == MsgCueAudit.GetType())
+                    {
+                        // Lanzamos el guardado de auditorias de mensaje en otro hilo...
+                        Thread_AuditMsg oThread = new Thread_AuditMsg((string)MsgCueAudit);
+                        Thread rCheck = new Thread(oThread.DoThings); //rCheck.Priority = ThreadPriority.Normal;
+                        rCheck.Start();
+                    }
+                }
+
+                Converser converser = null;
+                if (HttpContext.Session != null)
+                {
+                    if (HttpContext.Session["converser"] != null)
+                    {
+                        converser = (Converser)HttpContext.Session["converser"];
+                    }
+                }
+
+                if (converser == null)
+                {
+                    converser = GetConverserFromSystem(UserName, Password, Domain);
+                }
+                if (converser == null)
+                {
+                    return returnmessages;
+                }
+
+                //Solo Para agentes... permitimos una única sesion..
+                if ((converser.Agent != null) && (SessionID != null) && (SessionID != "null"))
+                {
+
+                    /*
+                     * Activamos el agente si es que tiene que estar activado...
+                     */
+                    string _key = converser.UserName + @"@" + converser.Business.Domain;
+                    string _region = "agents";
+                    DataCacheLockHandle _lockHandle;
+                    object result = SingletonCache.Instance.GetInRegionWithLock(_key, _region, out _lockHandle);
+                    if (result != null)
+                    {
+                        var agent = (Converser)result;
+                        agent.LastActive = DateTime.UtcNow;
+                        SingletonCache.Instance.InsertInRegionWithLock(_key, agent, _region, _lockHandle);
+                    }
+
+                    var ZenSession = (from m in db.ZenSessions
+                                      where m.Converser.UserName == converser.UserName
+                                      && m.Converser.Business.Domain == converser.Business.Domain
+                                      && m.sessionID == SessionID
+                                      select m).FirstOrDefault();
+                    if (ZenSession == null)
+                    {
+                        Message returnmsg = new Message();
+                        returnmsg.From = new Converser();
+                        returnmsg.From.ID = 0;
+                        returnmsg.From.UserName = "vizzop";
+                        returnmsg.From.FullName = "";
+                        returnmsg.From.Password = null;
+                        returnmsg.From.Business = new Business();
+                        returnmsg.From.Business.Domain = "vizzop";
+                        returnmsg.To = new Converser();
+                        returnmsg.To.ID = converser.ID;
+                        returnmsg.To.UserName = converser.UserName;
+                        returnmsg.To.FullName = converser.FullName;
+                        returnmsg.To.Password = null;
+                        returnmsg.To.Business = new Business();
+                        returnmsg.To.Business.Domain = converser.Business.Domain;
+                        returnmsg.Content = "";
+                        returnmsg.Subject = "$#_forcestartsession";
+                        returnmsg.db = null;
+                        returnmsg.utils = null;
+                        //returnmsg = utils.TransformMessageToSerializedProof(returnmsg);
+                        returnmessages.Add(returnmsg);
+
+                        return returnmessages;
+                    }
+                }
+
+                TimeZone localZone = TimeZone.CurrentTimeZone;
+                string[] languages = HttpContext.Request.UserLanguages;
+                string language = null;
+                if (languages != null && languages.Length != 0) { language = languages[0].ToLowerInvariant().Trim(); }
+
+                // If you want it formated in some other way.
+                var headers = "{";
+                foreach (var key in HttpContext.Request.Headers.AllKeys)
+                    headers += "'" + key + "':'" + HttpContext.Request.Headers[key] + "',";
+
+                headers = headers.TrimEnd(',') + "}";
+
+                string useragent = HttpContext.Request.UserAgent;
+
+                string sIP = HttpContext.Request.ServerVariables["HTTP_CLIENT_IP"];
+                if (string.IsNullOrEmpty(sIP) == true) { sIP = HttpContext.Request.ServerVariables["HTTP_X_FORWARDED_FOR"]; }
+                if (string.IsNullOrEmpty(sIP) == true) { sIP = HttpContext.Request.ServerVariables["REMOTE_ADDR"]; }
+                if (string.IsNullOrEmpty(sIP) == true)
+                {
+                    GrabaLog(Utils.NivelLog.error, "No IP to Track");
+                }
+                else
+                {
+                    sIP = sIP.Split(',')[0];
+
+                    //Y trackeamos la visita.. solo para clientes!!
+                    if (converser.Agent == null)
+                    {
+                        try
+                        {
+                            if ((url != null) && (referrer != null) && (converser != null))
+                            {
+                                Status returnStatus = TrackPageView(converser, url, referrer, language, useragent, sIP, headers, WindowName);
+                                /*
+                                int number = 100;
+                                while (number > 0)
+                                {
+                                    Status returnStatus = utils.TrackPageView(converser, url, referrer, language, useragent, sIP, headers, WindowName + number.ToString());
+                                    number--;
+                                }
+                                 */
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            GrabaLogExcepcion(ex);
+                        }
+                    }
+
+                }
+
+
+                DateTime AvailableTimeout = DateTime.UtcNow.AddSeconds(-15);
+
+                try
+                {
+                    if ((converser.Agent == null) && ((CommSessionID == null) || (CommSessionID == "null") || (CommSessionID == "")))
+                    {
+                        /*
+                         * Encontrar todos los Agentes de este ApiKey...
+                         * Si estan activos o no.. devuelvo un $#_activeagents o un $#_noactiveagents
+                         */
+                        /*
+                        var agents = (from m in db.Conversers
+                                      where m.Business.ID == converser.Business.ID
+                                      && m.Agent != null
+                                      && m.LastActive > loctimeUTC_AvailableTimeout
+                                      && m.Active == true
+                                      select m).ToList<Converser>();
+                        */
+
+                        Message agentsmsg = new Message();
+                        agentsmsg.Content = null;
+                        agentsmsg.From = new Converser();
+                        agentsmsg.From.ID = 0;
+                        agentsmsg.From.UserName = "vizzop";
+                        agentsmsg.From.FullName = "";
+                        agentsmsg.From.Password = null;
+                        agentsmsg.From.Business = new Business();
+                        agentsmsg.From.Business.Domain = "vizzop";
+                        agentsmsg.ID = 0;
+                        agentsmsg.To = new Converser();
+                        agentsmsg.To.ID = converser.ID;
+                        agentsmsg.To.UserName = converser.UserName;
+                        agentsmsg.To.FullName = converser.FullName;
+                        agentsmsg.To.Password = null;
+                        agentsmsg.To.Business = new Business();
+                        agentsmsg.To.Business.Domain = converser.Business.Domain;
+                        agentsmsg.ID = 0;
+                        agentsmsg.Status = 1;
+                        agentsmsg.CommSession = new CommSession();
+                        agentsmsg.CommSession.ID = 0;
+
+                        string region = "agents";
+                        object result = SingletonCache.Instance.GetAllInRegion(region);
+                        if (result != null)
+                        {
+                            IEnumerable<KeyValuePair<string, object>> Agents = (IEnumerable<KeyValuePair<string, object>>)result;
+                            var agents = (from m in Agents
+                                          where ((Converser)m.Value).LastActive > AvailableTimeout &&
+                                           ((Converser)m.Value).Business.ID > converser.Business.ID
+                                          select m);
+                            if (agents.Count() > 0)
+                            {
+                                agentsmsg.Subject = "$#_activeagents";
+                            }
+                            else
+                            {
+                                agentsmsg.Subject = "$#_noactiveagents";
+                            }
+                        }
+
+                        //agentsmsg = utils.TransformMessageToSerializedProof(agentsmsg);
+                        agentsmsg.db = null;
+                        agentsmsg.utils = null;
+
+                        returnmessages.Add(agentsmsg);
+                    }
+                }
+                catch (Exception _ex)
+                {
+                    GrabaLogExcepcion(_ex);
+                }
+
+                /* Encontrar todas las sesiones con este converser .. para interlocutor available o no*/
+                List<CommSession> sessiones_de_este_converser = new List<CommSession>();
+                try
+                {
+                    if (converser.Agent != null)
+                    {
+                        sessiones_de_este_converser = (from m in db.CommSessions
+                                                           .Include("Client")
+                                                           .Include("Client.Business")
+                                                           .Include("Business")
+                                                       where m.Agents.Any(j => j.Converser.UserName == converser.UserName && j.Converser.Business.Domain == converser.Business.Domain)
+                                                       && (m.Status == 1) //m.Status == 0 ||
+                                                       && m.Messages.Count > 0
+                                                       && m.Messages.Any(j => j.TimeStamp > DateTime.UtcNow)
+                                                       select m).ToList<CommSession>();
+                    }
+                    else
+                    {
+                        if ((CommSessionID == null) || (CommSessionID == "null") || (CommSessionID == ""))
+                        {
+                            sessiones_de_este_converser = (from m in db.CommSessions
+                                                               .Include("Client")
+                                                               .Include("Client.Business")
+                                                               .Include("Business")
+                                                           where (m.Client.UserName == converser.UserName && m.Client.Business.Domain == converser.Business.Domain)
+                                                           && (m.Status == 1) //m.Status == 0 || 
+                                                           && m.Messages.Count > 0
+                                                           && m.Messages.Any(j => j.TimeStamp > DateTime.UtcNow)
+                                                           select m).ToList<CommSession>();
+                        }
+                        else
+                        {
+                            int _CommSessionID = Convert.ToInt32(CommSessionID);
+                            sessiones_de_este_converser = (from m in db.CommSessions
+                                                           where m.ID == _CommSessionID
+                                                           select m).ToList<CommSession>();
+                        }
+                    }
+
+                }
+                catch (Exception _ex)
+                {
+                    GrabaLogExcepcion(_ex);
+                }
+
+
+                foreach (CommSession c in sessiones_de_este_converser)
+                {
+                    string anon_client = LocalizeLang("anon_client", language, null);
+
+                    //Ahora enviar un available o _notavailable segun el interlocutor esté inactivo más de X segundos 
+                    try
+                    {
+                        Converser interlocutor = new Converser();
+                        if (converser.Agent != null)
+                        {
+                            interlocutor = c.Client;
+                        }
+                        else
+                        {
+                            if (c.Agents.Count > 0)
+                            {
+                                interlocutor = c.Agents.FirstOrDefault().Converser;
+                            }
+                        }
+                        if (interlocutor.UserName == null)
+                        {
+                            continue;
+                        }
+                        string fullname = anon_client;
+                        if (interlocutor.FullName != null)
+                        {
+                            fullname = interlocutor.FullName;
+                        }
+
+                        Message returnmsg = new Message();
+                        returnmsg.Content = null;
+                        returnmsg.From = new Converser();
+                        returnmsg.From.ID = interlocutor.ID;
+                        returnmsg.From.UserName = interlocutor.UserName;
+                        returnmsg.From.Business = new Business();
+                        returnmsg.From.Business.Domain = interlocutor.Business.Domain;
+                        returnmsg.From.FullName = fullname;
+                        returnmsg.From.Password = null;
+                        returnmsg.ID = 0;
+                        returnmsg.To = new Converser();
+                        returnmsg.To.ID = converser.ID;
+                        returnmsg.To.UserName = converser.UserName;
+                        returnmsg.To.Business = new Business();
+                        returnmsg.To.Business.Domain = converser.Business.Domain;
+                        returnmsg.To.FullName = converser.FullName;
+                        returnmsg.To.Password = null;
+                        returnmsg.ID = 0;
+                        returnmsg.Status = 1;
+                        returnmsg.CommSession = new CommSession();
+                        returnmsg.CommSession.ID = c.ID;
+
+                        if ((interlocutor.LastActive > AvailableTimeout) && (interlocutor.Active == true))
+                        {
+                            returnmsg.Subject = "$#_available";
+                        }
+                        else
+                        {
+                            returnmsg.Subject = "$#_notavailable";
+                        }
+
+                        returnmsg.db = null;
+                        returnmsg.utils = null;
+                        //returnmsg = utils.TransformMessageToSerializedProof(returnmsg);
+
+                        returnmessages.Add(returnmsg);
+                    }
+                    catch (Exception _ex)
+                    {
+                        GrabaLogExcepcion(_ex);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                GrabaLogExcepcion(ex);
+            }
+            return returnmessages;
+        }
+
+        internal List<Message> CheckNew(HttpContextBase HttpContext, Converser converser, string WindowName)
+        {
+            List<Message> messages = new List<Message>();
+            List<Message> returnmessages = new List<Message>();
+            try
+            {
+                try
+                {
+                    List<Message> Messages = new List<Message>();
+                    string key = "messages_to_" + converser.UserName + "@" + converser.Business.Domain;
+                    DataCacheLockHandle lockHandle;
+                    object result = SingletonCache.Instance.GetWithLock(key, out lockHandle);
+                    //object result = SingletonCache.Instance.Get(key);
+                    if (result != null)
+                    {
+                        Messages = (List<Message>)result;
+                    }
+
+                    foreach (var m in Messages)
+                    {
+                        if (m.WindowNamesCollected == null)
+                        {
+                            m.WindowNamesCollected = new List<string>();
+                        }
+                        if (m.WindowNamesCollected.Contains(WindowName) == false)
+                        {
+                            messages.Add(m);
+                            m.WindowNamesCollected.Add(WindowName);
+                        }
+                    }
+                    SingletonCache.Instance.InsertWithLock(key, Messages, lockHandle);
+                }
+                catch (Exception _ex)
+                {
+                    GrabaLogExcepcion(_ex);
+                }
+                foreach (Message m in messages)
+                {
+                    try
+                    {
+                        if ((m.Content == null) && (m.Subject == null))
+                        {
+                            continue;
+                        }
+                        if (m.From == null)
+                        {
+                            if ((m.From_UserName != null) && (m.From_Domain != null))
+                            {
+                                m.From = new Converser();
+                                m.From.UserName = m.From_UserName;
+                                m.From.FullName = m.From_FullName;
+                                m.From.Business = new Business();
+                                m.From.Business.Domain = m.From_Domain;
+                            }
+                        }
+                        if (m.To == null)
+                        {
+                            if ((m.To_UserName != null) && (m.To_Domain != null))
+                            {
+                                m.To = new Converser();
+                                m.To.UserName = m.To_UserName;
+                                m.To.Business = new Business();
+                                m.To.Business.Domain = m.To_Domain;
+                            }
+                        }
+                        if (m.From.FullName == null)
+                        {
+                            string[] args = { m.From.IP };
+                            m.From.FullName = LocalizeLang("client", GetLang(HttpContext), args);
+                        }
+                        m.From.Password = null;
+                        m.To.Password = null;
+
+                        //Ponemos esto en el momento de hoy...luego lo arrastraremos
+                        m.TimeStampSrvSending = DateTime.Now.ToUniversalTime();
+
+                        returnmessages.Add(TransformMessageToSerializedProof(m));
+                    }
+                    catch (Exception _ex)
+                    {
+                        GrabaLogExcepcion(_ex);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                GrabaLogExcepcion(ex);
+            }
+            return returnmessages;
+        }
+
+        internal List<WebLocation> GetWebLocations(Converser converser)
+        {
+            List<WebLocation> _WebLocations = null;
+            try
+            {
+                /*
+                TimeZone localZone = TimeZone.CurrentTimeZone;
+                DateTime loctime = localZone.ToUniversalTime(DateTime.Now.AddSeconds(-30));
+                */
+
+                string region = "weblocations";
+                object result = SingletonCache.Instance.GetAllInRegion(region);
+                if (result != null)
+                {
+
+                    IEnumerable<KeyValuePair<string, object>> WebLocations = (IEnumerable<KeyValuePair<string, object>>)result;
+                    WebLocations = (from m in WebLocations
+                                    where ((WebLocation)m.Value).TimeStamp_Last > DateTime.UtcNow.AddSeconds(-30)
+                                    select m);
+
+                    var VizzopGetsAllRealtimeWebLocations = true;
+                    if ((converser.Business.Domain.ToLowerInvariant() != "vizzop") || (VizzopGetsAllRealtimeWebLocations == false))
+                    {
+                        WebLocations = (from m in WebLocations
+                                        where ((WebLocation)m.Value).Domain == converser.Business.Domain
+                                        select m);
+                    }
+
+                    var GroupedWebLocations = (from m in WebLocations
+                                               group m by new
+                                               {
+                                                   ((WebLocation)m.Value).ConverserId,
+                                                   ((WebLocation)m.Value).WindowName
+                                               });
+                    if (GroupedWebLocations.Count() > 0)
+                    {
+                        _WebLocations = new List<WebLocation>();
+                        foreach (var Group in GroupedWebLocations)
+                        {
+                            var m = Group.OrderByDescending(x => ((WebLocation)x.Value).TimeStamp_Last).FirstOrDefault();
+                            _WebLocations.Add((WebLocation)m.Value);
+                        }
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                GrabaLogExcepcion(ex);
+            }
+            return _WebLocations;
+        }
     }
 
     public static class ProcessExtensions
