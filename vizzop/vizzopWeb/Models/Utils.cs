@@ -2460,6 +2460,7 @@ namespace vizzopWeb
                     {
                         weblocation.Url = url;
                         weblocation.TimeStamp_Last = loctime;
+                        weblocation.UserAgent = useragent;
                         SingletonCache.Instance.InsertInRegion(key, weblocation, region);
                     }
                     else

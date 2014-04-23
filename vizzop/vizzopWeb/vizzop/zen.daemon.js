@@ -214,26 +214,43 @@ var Tracking = jVizzop.zs_Class.create({
                 return;
             }
             var msg = {
+                'username': vizzop.me.UserName,
+                'password': vizzop.me.Password,
+                'domain': vizzop.me.Business.Domain,
                 'url': url,
                 'referrer': referrer,
-                'windowname': window.name
+                'windowname': window.name,
+                'messagetype': 'TrackPageView'
             };
-            url = vizzop.mainURL + "/RealTime/TrackPageView";
-            vizzop.Tracking_InCourse = jVizzop.ajax({
-                url: url,
-                type: "POST",
-                data: msg,
-                dataType: "jsonp",
-                beforeSend: function (xhr) {
-                },
-                success: function (data) {
-                    vizzop.Tracking_InCourse = null;
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    vizzoplib.logAjax(url, msg, jqXHR);
+            var ws = vizzop.WSchat;
+            if (ws != null) {
+                if (ws.readyState === undefined || ws.readyState > 1) {
+                    //Abrimos :)
+                    vizzop.Daemon.openWebSockets();
+                }
+                if (ws.readyState == WebSocket.OPEN) {
+                    var stringify = JSONVIZZOP.stringify(msg);
+                    ws.send(stringify);
                     vizzop.Tracking_InCourse = null;
                 }
-            });
+            } else {
+                url = vizzop.mainURL + "/RealTime/TrackPageView";
+                vizzop.Tracking_InCourse = jVizzop.ajax({
+                    url: url,
+                    type: "POST",
+                    data: msg,
+                    dataType: "jsonp",
+                    beforeSend: function (xhr) {
+                    },
+                    success: function (data) {
+                        vizzop.Tracking_InCourse = null;
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        vizzoplib.logAjax(url, msg, jqXHR);
+                        vizzop.Tracking_InCourse = null;
+                    }
+                });
+            }
         } catch (err) {
             vizzoplib.log(err);
         }
@@ -373,10 +390,53 @@ var Daemon = jVizzop.zs_Class.create({
                     }
                 };
                 vizzop.WSchat.onmessage = function (evt) {
-                    vizzoplib.log(evt);
-                    var json = jVizzop.parseJSON(evt.data);
-                    //vizzoplib.log(json);
-                    self.parseNewMessages(json);
+                    try {
+                        var json = jVizzop.parseJSON(evt.data);
+
+                        jVizzop.each(json, function (i, v) {
+                            try {
+                                /*
+                                console.log(v);
+                                console.log(i);
+                                console.log(v.type);
+                                console.log(v.data);*/
+                                if (v.type != null) {
+                                    if (v.type == "GetWebLocations") {
+                                        //console.log(v);
+                                        if (v.data != false) {
+                                            //console.log(v.data);
+                                            rt_tabledata = v.data;
+                                            $('#RealtimeReportLoading').hide();
+                                            $('#RealtimeReportResults').show();
+                                            rt_updatetable();
+                                        }
+                                        rt_Reloading_InCourse = null;
+                                        rt_Countdown();
+                                    } else if (v.type == "CheckNew") {
+                                        if (v.data != false) {
+                                            self.parseNewMessages(v.data);
+                                        }
+                                    } else if (v.type == "CheckExternal") {
+                                        if (v.data != false) {
+                                            self.parseNewMessages(v.data);
+                                        }
+                                        vizzop.MsgCheckExternal_InCourse = null;
+                                    } else {
+                                        if (v.data != false) {
+                                            //jVizzop.each(json.data, function (i, v) {}
+                                            self.parseNewMessages(v.data);
+                                        }
+                                    }
+                                } else {
+                                    self.parseNewMessages(v);
+                                }
+                            } catch (err) {
+                                vizzoplib.log(err);
+                            }
+                        });
+                    } catch (_ex) {
+                        vizzoplib.log(_ex)
+                    }
                 };
                 vizzop.WSchat.onerror = function (evt) {
                     //vizzoplib.log(evt);
@@ -460,8 +520,8 @@ var Daemon = jVizzop.zs_Class.create({
             if (vizzop.me != null) {
 
                 if ((vizzop.DaemonTiming_Steps % 1) == 0) {
-                    self.checkNewMessages();
                     self.sendNewMessages();
+                    self.checkNewMessages();
 
                     if (vizzop.AllowScreenCaptures == true) {
                         self.sendHtml();
@@ -516,9 +576,13 @@ var Daemon = jVizzop.zs_Class.create({
                     self.getNewConverser();
                     return;
                 }
+
                 if ((vizzop.DaemonTiming_Steps % 1) == 0) {
-                    self.checkNewMessages();
                     self.sendNewMessages();
+                }
+
+                if ((vizzop.DaemonTiming_Steps % 5) == 0) {
+                    self.checkNewMessages();
                 }
 
                 if ((vizzop.DaemonTiming_Steps % vizzop.CheckExternalTiming) == 0) {
@@ -1488,7 +1552,6 @@ var Daemon = jVizzop.zs_Class.create({
                     var stringify = JSONVIZZOP.stringify(msg);
                     ws.send(stringify);
                 }
-                vizzop.MsgCheckExternal_InCourse = null;
             } else {
                 var url = vizzop.mainURL + "/Messages/CheckExternal";
                 vizzop.MsgCheckExternal_InCourse = jVizzop.ajax({
@@ -1520,16 +1583,17 @@ var Daemon = jVizzop.zs_Class.create({
                 return false;
             }
 
+            var msg = {
+                'username': vizzop.me.UserName,
+                'password': vizzop.me.Password,
+                'domain': vizzop.me.Business.Domain,
+                'WindowName': window.name,
+                'messagetype': 'CheckNew'
+            };
             var ws = vizzop.WSchat;
             if (ws != null) {
                 vizzop.MsgCheck_InCourse = true;
             } else {
-                var msg = {
-                    'UserName': vizzop.me.UserName,
-                    'Password': vizzop.me.Password,
-                    'Domain': vizzop.me.Business.Domain,
-                    'WindowName': window.name
-                };
                 var url = vizzop.mainURL + "/Messages/CheckNew";
                 vizzop.MsgCheck_InCourse = jVizzop.ajax({
                     url: url,

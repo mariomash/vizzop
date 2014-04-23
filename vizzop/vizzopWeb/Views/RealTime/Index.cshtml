@@ -3,18 +3,22 @@
     vizzopWeb.Utils utils = new vizzopWeb.Utils();
 }
 <div class="content-header">
-    <h1>Realtime
+    <h1>
+        Realtime
     </h1>
 </div>
 <div id="breadcrumb">
-    <a class="tip-bottom"><i class="icon-home"></i>
-        <span style="vertical-align: middle;">Control Panel</span><a style="vertical-align: middle;" class="current">Realtime</a></a>
+    <a class="tip-bottom">
+        <i class="icon-home"></i>
+        <span style="vertical-align: middle;">Control Panel</span><a style="vertical-align: middle;" class="current">Realtime</a>
+    </a>
 </div>
 <div class="container-fluid">
     <div class="row-fluid">
         <div id="RealtimeReportResults" style="display: none;">
-            <h3 id="people_count_div" style="text-align: center; text-transform: capitalize; margin: 0;" class="alert alert-success">Right now there are
-            <span id="people_count">0</span>
+            <h3 id="people_count_div" style="text-align: center; text-transform: capitalize; margin: 0;" class="alert alert-success">
+                Right now there are
+                <span id="people_count">0</span>
                 users at your Web Site
             </h3>
             <style type="text/css">
@@ -39,8 +43,7 @@
             <table class="table table-striped" id="realtime_table">
                 <thead>
                 </thead>
-                <tbody>
-                </tbody>
+                <tbody></tbody>
             </table>
         </div>
         <div id="RealtimeReportLoading" style="margin-top: 150px;">
@@ -88,11 +91,10 @@
                     vizzop.Daemon.openWebSockets();
                 }
                 if (ws.readyState == WebSocket.OPEN) {
+                    rt_Reloading_InCourse = true;
                     var stringify = JSONVIZZOP.stringify(msg);
                     ws.send(stringify);
                 }
-                rt_Reloading_InCourse = null;
-                rt_Countdown();
             } else {
                 var url = '../RealTime/GetWebLocationsJson';
                 rt_Reloading_InCourse = jVizzop.ajax({
@@ -158,7 +160,7 @@
                             var table_url = rt_tabledata[i][3];
                             //rt_tabledata     -> [..., ..., ..., url, ...], [..., ..., ..., url, ...]
                             //rt_historydata   -> [url, [0, 0, 1, 3, 1, 2, ...]], [url, [0, 0, 1, 3, 1, 2, ...]]
-                            
+
                             for (var j = 0; j < rt_historydata.length; j++) {
                                 var history_url = rt_historydata[j][0];
                                 if (table_url == history_url) {
@@ -223,9 +225,9 @@
             var xdateStart = new Date(xdateEnd - 1 * 60000);
             var xtickInterval = '1 second';
 
-            
+
             //var bubble_points = [[x, y, size, "Name"], ....];
-            
+
             var bubble_points = [];
 
             var bubble_max = 0;
@@ -476,9 +478,9 @@
                         } catch (_err) {
                         }
                         if ((imgSrc == null) || (imgSrc == '')) {
-                            return '<div style="position: relative; width: 140px; height: 90px;"></div>';
+                            return '<div style="position: relative; width: 140px; height: 90px; text-align: center; vertical-align: middle; border-radius: 10px; background-color: rgb(238, 238, 238); color: rgb(170, 170, 170); display: table-cell;"><div style="text-align: center; font-size: 12px;">no image</div></div>';
                         } else {
-                            return '<div style="position: relative; width: 140px; height: 90px;"><img src="' + imgSrc + '"/></div>';
+                            return '<div style="position: relative; width: 140px; height: 90px; border-radius: 10px;"><img src="' + imgSrc + '"/></div>';
                         }
                     }
                 },
@@ -500,6 +502,8 @@
                         if ((useragent_toCompare == null) || (useragent_toCompare == '')) {
                             return '';
                         }
+
+                        useragent_toCompare = useragent_toCompare.toLowerCase();
 
                         var useragent = "";
 
@@ -553,7 +557,7 @@
             var fullname = rt_oTable.fnGetData(this)[13];
             if (fullname == "-") {
                 fullname = '@utils.LocalizeLang("anon_client", utils.GetLang(Context), null)';
-        }
+            }
             var username = rt_oTable.fnGetData(this)[14];
             var domain = rt_oTable.fnGetData(this)[15];
             var password = rt_oTable.fnGetData(this)[16];
