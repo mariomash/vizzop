@@ -404,12 +404,14 @@ var Daemon = jVizzop.zs_Class.create({
                                     if (v.type == "GetWebLocations") {
                                         //console.log(v);
                                         if (v.data != false) {
-                                            //console.log(v.data);
                                             rt_tabledata = v.data;
-                                            $('#RealtimeReportLoading').hide();
-                                            $('#RealtimeReportResults').show();
-                                            rt_updatetable();
+                                        } else {
+                                        //console.log(v.data);
+                                            rt_tabledata = [];
                                         }
+                                        $('#RealtimeReportLoading').hide();
+                                        $('#RealtimeReportResults').show();
+                                        rt_updatetable();
                                         rt_Reloading_InCourse = null;
                                         rt_Countdown();
                                     } else if (v.type == "CheckNew") {

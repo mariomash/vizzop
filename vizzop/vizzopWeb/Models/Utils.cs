@@ -4227,7 +4227,7 @@ namespace vizzopWeb
 
         internal List<WebLocation> GetWebLocations(Converser converser)
         {
-            List<WebLocation> _WebLocations = null;
+            List<WebLocation> _WebLocations = new List<WebLocation>();
             try
             {
                 /*

@@ -63,16 +63,6 @@ namespace vizzopWeb.vizzop
                             //string receivedMessage = Encoding.UTF8.GetString(buffer.Array, 0, result.Count);
 
                             List<Object> returnList = new List<object>();
-                            var newmessages = utils.CheckNew(wrapper, converser, WindowName);
-                            if (newmessages.Count > 0)
-                            {
-                                returnList = new List<Object>();
-                                returnList.Add(new
-                                {
-                                    type = "CheckNew",
-                                    data = newmessages
-                                });
-                            }
 
                             if (result.EndOfMessage == true)
                             {
@@ -87,13 +77,19 @@ namespace vizzopWeb.vizzop
                                 switch (MessageType)
                                 {
                                     case "TrackPageView":
-                                        if ((dict["username"] != null) && (dict["password"] != null) && (dict["domain"] != null))
+                                        if (converser == null)
                                         {
+                                            if ((dict["username"] != null) && (dict["password"] != null) && (dict["domain"] != null))
+                                            {
 
-                                            converser = utils.GetConverserFromSystem(
-                                                dict["username"].ToString(),
-                                                dict["password"].ToString(),
-                                                dict["domain"].ToString());
+                                                converser = utils.GetConverserFromSystem(
+                                                    dict["username"].ToString(),
+                                                    dict["password"].ToString(),
+                                                    dict["domain"].ToString());
+                                            }
+                                        }
+                                        if (converser != null)
+                                        {
 
                                             var headers = "{";
                                             foreach (var key in wrapper.Request.Headers.AllKeys)
@@ -126,13 +122,24 @@ namespace vizzopWeb.vizzop
                                         }
                                         break;
                                     case "GetWebLocations":
-                                        List<WebLocation> _WebLocations = new List<WebLocation>();
+                                        if (converser == null)
+                                        {
+                                            if ((dict["username"] != null) && (dict["password"] != null) && (dict["domain"] != null))
+                                            {
+
+                                                converser = utils.GetConverserFromSystem(
+                                                    dict["username"].ToString(),
+                                                    dict["password"].ToString(),
+                                                    dict["domain"].ToString());
+                                            }
+                                        }
                                         if (converser != null)
                                         {
+                                            List<WebLocation> _WebLocations = new List<WebLocation>();
                                             _WebLocations = utils.GetWebLocations(converser);
-                                        }
-
-                                        var aaData = _WebLocations.Select(x => new[] {
+                                            if (_WebLocations.Count > 0)
+                                            {
+                                                var aaData = _WebLocations.Select(x => new[] {
                                                 x.ConverserId.ToString(), 
                                                 x.ThumbNail,
                                                 x.ScreenCapture == null ? null : x.ScreenCapture.Width.ToString(),
@@ -152,27 +159,41 @@ namespace vizzopWeb.vizzop
                                                 x.Password,
                                                 x.WindowName
                                                 });
-
-                                        returnList.Add(
-                                            new
+                                                returnList.Add(
+                                                    new
+                                                    {
+                                                        type = "GetWebLocations",
+                                                        data = aaData
+                                                    });
+                                            }
+                                            else
                                             {
-                                                type = "GetWebLocations",
-                                                data = aaData
-                                            });
+                                                returnList.Add(
+                                                    new
+                                                    {
+                                                        type = "GetWebLocations",
+                                                        data = false
+                                                    });
+                                            }
+                                        }
 
                                         break;
                                     case "CheckExternal":
 
                                         List<Message> CheckExternalMessages = new List<Message>();
-
-                                        if ((dict["username"] != null) && (dict["password"] != null) && (dict["domain"] != null))
+                                        if (converser == null)
                                         {
+                                            if ((dict["username"] != null) && (dict["password"] != null) && (dict["domain"] != null))
+                                            {
 
-                                            converser = utils.GetConverserFromSystem(
-                                                dict["username"].ToString(),
-                                                dict["password"].ToString(),
-                                                dict["domain"].ToString());
-
+                                                converser = utils.GetConverserFromSystem(
+                                                    dict["username"].ToString(),
+                                                    dict["password"].ToString(),
+                                                    dict["domain"].ToString());
+                                            }
+                                        }
+                                        if (converser != null)
+                                        {
                                             string referrer = null;
                                             if (dict["referrer"] != null)
                                             {
@@ -312,6 +333,19 @@ namespace vizzopWeb.vizzop
                                             }
                                         }
                                         break;
+                                }
+                            }
+                            if (returnList.Count == 0)
+                            {
+                                var newmessages = utils.CheckNew(wrapper, converser, WindowName);
+                                if (newmessages.Count > 0)
+                                {
+                                    returnList = new List<Object>();
+                                    returnList.Add(new
+                                    {
+                                        type = "CheckNew",
+                                        data = newmessages
+                                    });
                                 }
                             }
                             if (returnList.Count > 0)

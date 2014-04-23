@@ -539,6 +539,8 @@ namespace vizzopWeb.Controllers
         public ActionResult CheckCaptureControl(string UserName, string Domain, string WindowName, string GUID, string callback)
         {
 
+            return Json(false);
+
             Utils utils = new Utils();
 
             try

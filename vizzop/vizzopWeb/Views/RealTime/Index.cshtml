@@ -82,6 +82,9 @@
                 return false;
             }
             var msg = {
+                'username': vizzop.me.UserName,
+                'password': vizzop.me.Password,
+                'domain': vizzop.me.Business.Domain,
                 "messagetype": "GetWebLocations"
             };
             var ws = vizzop.WSchat;
@@ -89,11 +92,16 @@
                 if (ws.readyState === undefined || ws.readyState > 1) {
                     //Abrimos :)
                     vizzop.Daemon.openWebSockets();
+                    rt_Reloading_InCourse = null;
+                    rt_Countdown();
                 }
                 if (ws.readyState == WebSocket.OPEN) {
                     rt_Reloading_InCourse = true;
                     var stringify = JSONVIZZOP.stringify(msg);
                     ws.send(stringify);
+                } else {
+                    rt_Reloading_InCourse = null;
+                    rt_Countdown();
                 }
             } else {
                 var url = '../RealTime/GetWebLocationsJson';
