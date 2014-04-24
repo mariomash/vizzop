@@ -13,6 +13,7 @@ using Microsoft.WindowsAzure.ServiceRuntime;
 using vizzopWeb.Models;
 using HtmlAgilityPack;
 using System.Threading.Tasks;
+using System.ComponentModel;
 
 namespace vizzopWeb
 {
@@ -529,57 +530,6 @@ namespace vizzopWeb.Controllers
                 }
             }
         }
-
-        [ValidateInput(false)]
-        [JsonpFilter]
-#if DEBUG
-#else
-        [RequireHttps]
-#endif
-        public ActionResult CheckCaptureControl(string UserName, string Domain, string WindowName, string GUID, string callback)
-        {
-
-            return Json(false);
-
-            Utils utils = new Utils();
-
-            try
-            {
-
-                WebLocation weblocation = utils.BuscaNuevasCapturas(UserName, Domain, WindowName, GUID);
-
-                if (weblocation == null)
-                {
-                    return Json(false);
-                }
-                else
-                {
-                    var CompleteHtml = utils.ScrubHTML(weblocation.CompleteHtml);
-
-                    var toReturn = new
-                    {
-                        Html = CompleteHtml,
-                        Blob = weblocation.ScreenCapture.Blob,
-                        UserName = UserName,
-                        Domain = Domain,
-                        GUID = weblocation.ScreenCapture.GUID,
-                        WindowName = weblocation.ScreenCapture.WindowName,
-                        Width = weblocation.ScreenCapture.Width,
-                        Height = weblocation.ScreenCapture.Height,
-                        ScrollTop = weblocation.ScreenCapture.ScrollTop,
-                        ScrollLeft = weblocation.ScreenCapture.ScrollLeft
-                    };
-
-                    return Json(toReturn);
-                }
-            }
-            catch (Exception ex)
-            {
-                utils.GrabaLogExcepcion(ex);
-                return Json(false);
-            }
-        }
-
 
         [ValidateInput(false)]
         [JsonpFilter]

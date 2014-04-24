@@ -202,6 +202,7 @@
     <Compile Include="Controllers\LogController.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Controllers\PanelController.cs" />
+    <Compile Include="Controllers\PhantomController.cs" />
     <Compile Include="Controllers\RealTimeController.cs" />
     <Compile Include="Controllers\ScreenshotController.cs" />
     <Compile Include="Controllers\MeetingController.cs" />

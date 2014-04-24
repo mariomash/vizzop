@@ -3219,31 +3219,21 @@ namespace vizzopWeb
                     }
                 }
 
+                WebLocation item = (WebLocation)WebLocations.FirstOrDefault().Value;
+                Process proc = DoLaunchCaptureProcessScreenCaptures("phantom.js", item.UserName, item.Domain, item.WindowName);
+                /*
                 foreach (var m in WebLocations)
                 {
                     try
                     {
-
                         var item = (WebLocation)m.Value;
-
-                        /*
-                        // instanceIndex is begin from 0. The instanceIndex of the first instance is 0. 
-                        string instanceId = RoleEnvironment.CurrentRoleInstance.Id;
-                        int instanceIndex = 0;
-                        if (int.TryParse(instanceId.Substring(instanceId.LastIndexOf(".") + 1), out instanceIndex)) // On cloud.
-                        {
-                            int.TryParse(instanceId.Substring(instanceId.LastIndexOf("_") + 1), out instanceIndex); // On compute emulator.
-                        }
-                        */
-
-                        Process proc = DoLaunchCaptureProcessScreenCaptures("phantom.js", item.UserName, item.Domain, item.WindowName);
-
                     }
                     catch (Exception ex)
                     {
                         GrabaLog(Utils.NivelLog.error, ex.Message);
                     }
                 }
+                 */
             }
             catch (Exception ex)
             {
