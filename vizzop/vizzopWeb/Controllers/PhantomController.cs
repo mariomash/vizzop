@@ -23,12 +23,11 @@ namespace vizzopWeb.Controllers
         {
             try
             {
-                WebLocation weblocation = await Task.Factory.StartNew(
-                    () => utils.BuscaNuevasCapturas(
-                        UserName,
-                        Domain,
-                        WindowName,
-                        GUID));
+                WebLocation weblocation = await Task.Factory.StartNew(() => utils.BuscaNuevasCapturas(
+                    UserName,
+                    Domain,
+                    WindowName,
+                    GUID));
 
                 if (weblocation == null)
                 {

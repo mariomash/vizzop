@@ -3330,12 +3330,23 @@ namespace vizzopWeb
 
                                     if (strBase64 != null)
                                     {
+                                        string AddScreenshotToCacheSetting = "AddScreenshotToCacheInRelease";
+#if DEBUG
+                                        AddScreenshotToCacheSetting = "AddScreenshotToCacheInDebug";
+#endif
+                                        bool AddScreenshotToCache = false;
+                                        AddScreenshotToCache = Convert.ToBoolean(CloudConfigurationManager.GetSetting(AddScreenshotToCacheSetting));
+
+                                        if (AddScreenshotToCache == false)
+                                        {
+                                            return;
+                                        }
 
                                         WebLocation weblocation = null;
                                         string region = "weblocations";
                                         string key = username + @"@" + domain + @"@" + windowname;
-                                        DataCacheLockHandle lockHandle;
-                                        object result = SingletonCache.Instance.GetInRegionWithLock(key, region, out lockHandle);
+
+                                        object result = SingletonCache.Instance.GetInRegion(key, region);
                                         if (result != null)
                                         {
                                             weblocation = (WebLocation)result;
@@ -3345,10 +3356,6 @@ namespace vizzopWeb
                                             return;
                                         }
 
-                                        weblocation.ScreenCapture.Data = strBase64;
-                                        weblocation.ScreenCapture.GUID = Guid.NewGuid().ToString();
-                                        weblocation.ScreenCapture.PicturedOn = DateTime.UtcNow;
-
                                         string ThumbNail = "data:image/jpg;base64," + ImageToJpegBase64(
                                         PrepareScreenToReturn(
                                             weblocation.ScreenCapture,
@@ -3356,9 +3363,25 @@ namespace vizzopWeb
                                             "90",
                                             false),
                                         40L);
-                                        weblocation.ThumbNail = ThumbNail;
 
-                                        SingletonCache.Instance.InsertInRegionWithLock(key, weblocation, region, lockHandle);
+                                        DataCacheLockHandle lockHandle;
+                                        result = SingletonCache.Instance.GetInRegionWithLock(key, region, out lockHandle);
+                                        if (result != null)
+                                        {
+                                            weblocation = (WebLocation)result;
+                                        }
+                                        if (weblocation != null)
+                                        {
+                                            weblocation.ScreenCapture.Data = strBase64;
+                                            weblocation.ScreenCapture.GUID = Guid.NewGuid().ToString();
+                                            weblocation.ScreenCapture.PicturedOn = DateTime.UtcNow;
+                                            weblocation.ThumbNail = ThumbNail;
+                                            SingletonCache.Instance.InsertInRegionWithLock(key, weblocation, region, lockHandle);
+                                        }
+                                        else
+                                        {
+                                            SingletonCache.Instance.UnLockInRegion(key, lockHandle, region);
+                                        }
                                     }
                                 }
                             }
@@ -3774,7 +3797,6 @@ namespace vizzopWeb
                         if ((weblocation.ScreenCapture.GUID == GUID) || (weblocation.ScreenCapture.Blob == null) || (weblocation.CompleteHtml == ""))
                         {
                             weblocation = null;
-                            Thread.Sleep(TimeSpan.FromSeconds(1));
                         }
                     }
 

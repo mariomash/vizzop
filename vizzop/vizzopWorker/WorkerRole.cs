@@ -47,7 +47,7 @@ namespace vizzopWorker
 #else
 #endif
 
-            LanzaYControlaProcesoLimpiaWebLocations();
+            //LanzaYControlaProcesoLimpiaWebLocations();
 
             while (true)
             {

@@ -15,14 +15,6 @@ namespace vizzopWeb.Models
         private TimeSpan LockTimeout = TimeSpan.FromSeconds(15);
         private TimeSpan ObjTimeout = TimeSpan.FromMinutes(15);
         private string region = @"vizzop";
-        //private DataCacheLockHandle lockHandle;
-
-        /*
-         * Al pedir un objeto a cache... en caso de que falle lo intenta una y otra vez hasta que bloquea....
-         * Al meter un objeto en la cache quita el bloqueo....
-         * 
-         */
-
 
         private SingletonCache()
         {
@@ -307,6 +299,23 @@ namespace vizzopWeb.Models
                 if (lockHandle != null)
                 {
                     _cache.Unlock(key, lockHandle, region);
+                }
+                return true;
+            }
+            catch (Exception)
+            {
+                //utils.GrabaLogExcepcion(ex);
+                return false;
+            }
+        }
+
+        public bool UnLockInRegion(string key, DataCacheLockHandle lockHandle, string _region)
+        {
+            try
+            {
+                if (lockHandle != null)
+                {
+                    _cache.Unlock(key, lockHandle, _region);
                 }
                 return true;
             }

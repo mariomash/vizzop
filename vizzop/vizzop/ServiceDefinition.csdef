@@ -24,9 +24,10 @@
       <Setting name="CreateLogsInDebug" />
       <Setting name="SaveScreenShotsInRelease" />
       <Setting name="SaveScreenShotsInDebug" />
+      <Setting name="AddScreenshotToCacheInRelease" />
+      <Setting name="AddScreenshotToCacheInDebug" />
     </ConfigurationSettings>
     <Imports>
-      <Import moduleName="Diagnostics" />
     </Imports>
     <Certificates>
       <Certificate name="vizzop.com" storeLocation="LocalMachine" storeName="My" />
@@ -43,7 +44,6 @@
   <WorkerRole name="vizzopWorker" vmsize="Small">
     <Runtime executionContext="elevated" />
     <Imports>
-      <Import moduleName="Diagnostics" />
     </Imports>
     <LocalResources>
       <LocalStorage name="DiagnosticStore" cleanOnRoleRecycle="false" sizeInMB="2000" />
@@ -61,6 +61,8 @@
       <Setting name="CreateLogsInDebug" />
       <Setting name="SaveScreenShotsInRelease" />
       <Setting name="SaveScreenShotsInDebug" />
+      <Setting name="AddScreenshotToCacheInRelease" />
+      <Setting name="AddScreenshotToCacheInDebug" />
     </ConfigurationSettings>
     <Startup priority="-2">
       <Task commandLine="Microsoft.WindowsAzure.Caching\ClientPerfCountersInstaller.exe install" executionContext="elevated" taskType="simple" />
@@ -71,7 +73,6 @@
   <WorkerRole name="vizzopCache" vmsize="Small">
     <Imports>
       <Import moduleName="Caching" />
-      <Import moduleName="Diagnostics" />
     </Imports>
     <LocalResources>
       <LocalStorage name="DiagnosticStore" sizeInMB="20000" cleanOnRoleRecycle="false" />
