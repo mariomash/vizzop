@@ -3220,7 +3220,11 @@ namespace vizzopWeb
                 }
 
                 WebLocation item = (WebLocation)WebLocations.FirstOrDefault().Value;
-                Process proc = DoLaunchCaptureProcessScreenCaptures("phantom.js", item.UserName, item.Domain, item.WindowName);
+                if (item != null)
+                {
+                    Process proc = DoLaunchCaptureProcessScreenCaptures("phantom.js", item.UserName, item.Domain, item.WindowName);
+                }
+
                 /*
                 foreach (var m in WebLocations)
                 {
@@ -3330,18 +3334,6 @@ namespace vizzopWeb
 
                                     if (strBase64 != null)
                                     {
-                                        string AddScreenshotToCacheSetting = "AddScreenshotToCacheInRelease";
-#if DEBUG
-                                        AddScreenshotToCacheSetting = "AddScreenshotToCacheInDebug";
-#endif
-                                        bool AddScreenshotToCache = false;
-                                        AddScreenshotToCache = Convert.ToBoolean(CloudConfigurationManager.GetSetting(AddScreenshotToCacheSetting));
-
-                                        if (AddScreenshotToCache == false)
-                                        {
-                                            return;
-                                        }
-
                                         WebLocation weblocation = null;
                                         string region = "weblocations";
                                         string key = username + @"@" + domain + @"@" + windowname;
@@ -3398,6 +3390,7 @@ namespace vizzopWeb
                 process.OutputDataReceived += (sender, e) => actionWrite(sender, e);
                 process.Exited += (sender, e) =>
                 {
+
                     WebLocation weblocation = null;
                     string region = "weblocations";
                     string key = username + @"@" + domain + @"@" + windowname;
