@@ -32,22 +32,24 @@ namespace vizzopWorker
                 var localResource = RoleEnvironment.GetLocalResource("LocalImageProcessingTemp");
                 tempPath = localResource.RootPath;
 
+
+                utils.GrabaLog(Utils.NivelLog.info, "vizzopWorker entry point called");
+
+                int MaximumPhantomNumber = 0;
+                MaximumPhantomNumber = Convert.ToInt16(CloudConfigurationManager.GetSetting("MaximumPhantomNumber"));
+                for (var i = 0; i < MaximumPhantomNumber; i++)
+                {
+                    LanzaYControlaProcesoPhantom();
+                }
+
+                //LanzaYControlaProcesoCreaVideos();
+                //LanzaYControlaProcesoLimpiaWebLocations();
+
             }
             catch (Exception ex)
             {
                 utils.GrabaLogExcepcion(ex);
             }
-            // This is a sample worker implementation. Replace with your logic.
-            //Trace.TraceInformation("vizzopWorker entry point called", "Information");
-            utils.GrabaLog(Utils.NivelLog.info, "vizzopWorker entry point called");
-
-            LanzaYControlaProcesoPhantom();
-            //LanzaYControlaProcesoCreaVideos();
-#if DEBUG
-#else
-#endif
-
-            //LanzaYControlaProcesoLimpiaWebLocations();
 
             while (true)
             {
@@ -65,7 +67,6 @@ namespace vizzopWorker
 
             return base.OnStart();
         }
-
 
         private class ScreenGroup
         {
@@ -572,32 +573,20 @@ namespace vizzopWorker
             bw.RunWorkerAsync();
         }
 
-        /*
-         * Tema capturas...
-         */
-
         private void LanzaYControlaProcesoPhantom()
         {
 
             BackgroundWorker bw = new BackgroundWorker();
 
             // this allows our worker to report progress during work
-            bw.WorkerReportsProgress = true;
+            bw.WorkerReportsProgress = false;
 
             // what to do in the background thread
             bw.DoWork += new DoWorkEventHandler(
             delegate(object o, DoWorkEventArgs args)
             {
                 BackgroundWorker b = o as BackgroundWorker;
-                utils.CheckIfCaptureProcessesHaveToBeStarted();
-                Thread.Sleep(TimeSpan.FromSeconds(1));
-            });
-
-            // what to do when progress changed (update the progress bar for example)
-            bw.ProgressChanged += new ProgressChangedEventHandler(
-            delegate(object o, ProgressChangedEventArgs args)
-            {
-                //label1.Text = string.Format("{0}% Completed", args.ProgressPercentage);
+                utils.LaunchPhantomProcess();
             });
 
             // what to do when worker completes its task (notify the user)

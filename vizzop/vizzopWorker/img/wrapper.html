@@ -76,42 +76,23 @@
             return iFrame;
         }
 
-        function GetOrders(page, mainURL, UserName, Domain, WindowName) {
+        function GetOrders(page, mainURL) {
             try {
-                if (OrdersRequest_InCourse != null) {
-                    return;
-                }
 
+                if (OrdersRequest_InCourse != null) { return; }
                 OrdersRequest_InCourse = true;
 
                 var dateNow = new Date();
                 var dateToCompare = new Date();
-                dateToCompare.setTime(StartDate.getTime() + (1 * 60 * 1000)); // 1 minutes in milliseconds
+                dateToCompare.setTime(StartDate.getTime() + (10 * 60 * 1000)); // 10 minutes in milliseconds
                 if (dateNow > dateToCompare) {
-                    //Esto se autodestruye tras un tiempo sin recibir ordenes...
+                    //Esto se autodestruye tras un tiempo por aquello de los memory leaks...
                     window.callPhantom({ 'command': 'exit' });
                 }
 
-
-                var GUID = '';
-                //var WindowName = '';
-                if (data != null) {
-                    GUID = data.GUID;
-                    WindowName = data.WindowName;
-                }
-
-                var msg = {
-                    'UserName': UserName,
-                    'Domain': Domain,
-                    'GUID': GUID,
-                    'WindowName': WindowName
-                };
-                var url = mainURL + "/Phantom/GetCapture";
-
-                window.callPhantom({
-                    'log': 'calling ' + url + ' ' + GUID
-                });
-
+                var msg = {};
+                var url = mainURL + "/Phantom/GetCaptureToRender";
+                window.callPhantom({ 'log': 'calling ' + url });
                 OrdersRequest_InCourse = $.ajax({
                     url: url,
                     type: "POST",
@@ -122,84 +103,22 @@
                             OrdersRequest_InCourse = null;
                             return;
                         }
-
+                        //StartDate = new Date();
                         data = d;
-
-
-                        if (lastData != null) {
-                            if ((data.Html == lastData.Html) &&
-                                (data.Width == lastData.Width) &&
-                                (data.Height == lastData.Height) &&
-                                (data.ScrollLeft == lastData.ScrollLeft) &&
-                                (data.ScrollTop == lastData.ScrollTop)) {
-                                OrdersRequest_InCourse = null;
-                                return;
-                            }
-                        }
-
-                        lastData = data;
-
-                        window.callPhantom({
-                            'log': 'GOT NEW IMG: GUID ' + data.GUID
-                        });
-
                         sacafotos = false;
-
-                        StartDate = new Date();
-
-                        /*
-                        window.callPhantom({
-                            'log': data.Blob
-                        });
-                        */
-
-                        var json = $.parseJSON(data.Blob);
+                        window.callPhantom({ 'log': 'GOT NEW IMG: ' + data.GUID });
 
                         var iFrame = null;
                         iFrame = document.getElementById("WrapperIframe");
                         if (iFrame == null) {
                             iFrame = CreateAndAddIframe();
-                            var win = iFrame.contentWindow;
-                            win.document.open('text/html', 'replace');
-                            win.document.write(data.Html);
-                            win.document.close();
-                        } else {
-                            if ((json.length == 1) && (json[0][0] == 0)) {
-                            } else {
-                                var win = iFrame.contentWindow;
-                                win.document.open('text/html', 'replace');
-                                win.document.write(data.Html);
-                                win.document.close();
-                            }
                         }
-                        /*
-                                                    var CompleteHtml = iFrame.contentWindow.document.body.innerHTML;
 
-                                                    for (var i = 0; i < json.length; i++) {
+                        var win = iFrame.contentWindow;
+                        win.document.open('text/html', 'replace');
+                        win.document.write(data.Html);
+                        win.document.close();
 
-                                                    var type = json[i][0];
-                                                    var contents = json[i][1];
-
-
-                                                    if (type == "1") {
-                                                        iFrame.contentWindow.document.body.innerHTML += contents;
-                                                    }
-                                                    else if (type == "-1") {
-                                                        if (CompleteHtml != null) {
-                                                            CompleteHtml = CompleteHtml.substr(contents);
-                                                        }
-                                                    else if (type == "0") {
-                                                        if (CompleteHtml != null) {
-                                                            if (new Number(contents) > CompleteHtml.length) {
-                                                                continue;
-                                                            }
-                                                            iFrame.contentWindow.document.body.innerHTML += CompleteHtml.substring(0, contents);
-                                                            CompleteHtml = CompleteHtml.substr(contents);
-                                                        }
-                                                    }
-                                                    //iFrame.src = "data:text/html;charset=utf-8," + data.Html;
-                                                    }
-                        */
                         $('#WrapperIframe')
                             .attr('width', data.Width)
                             .attr('height', data.Height)
@@ -226,7 +145,6 @@
 
                         sacafotos = true;
                         //OrdersRequest_InCourse = null;
-
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
                         OrdersRequest_InCourse = null;

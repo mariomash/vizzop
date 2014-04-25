@@ -19,36 +19,33 @@ namespace vizzopWeb.Controllers
 #else
         [RequireHttps]
 #endif
-        public async Task<ActionResult> GetCapture(string UserName, string Domain, string WindowName, string GUID, string callback)
+        public async Task<ActionResult> GetCaptureToRender(string callback)
         {
             try
             {
-                WebLocation weblocation = await Task.Factory.StartNew(() => utils.BuscaNuevasCapturas(
-                    UserName,
-                    Domain,
-                    WindowName,
-                    GUID));
 
-                if (weblocation == null)
+                WebLocation wl = await Task.Factory.StartNew(() => utils.BuscaNuevasWebLocations());
+
+                if (wl == null)
                 {
                     return Json(false);
                 }
                 else
                 {
-                    var CompleteHtml = utils.ScrubHTML(weblocation.CompleteHtml);
+                    var CompleteHtml = utils.ScrubHTML(wl.CompleteHtml);
 
                     var toReturn = new
                     {
                         Html = CompleteHtml,
-                        Blob = weblocation.ScreenCapture.Blob,
-                        UserName = UserName,
-                        Domain = Domain,
-                        GUID = weblocation.ScreenCapture.GUID,
-                        WindowName = weblocation.ScreenCapture.WindowName,
-                        Width = weblocation.ScreenCapture.Width,
-                        Height = weblocation.ScreenCapture.Height,
-                        ScrollTop = weblocation.ScreenCapture.ScrollTop,
-                        ScrollLeft = weblocation.ScreenCapture.ScrollLeft
+                        Blob = wl.ScreenCapture.Blob,
+                        UserName = wl.UserName,
+                        Domain = wl.Domain,
+                        GUID = wl.ScreenCapture.GUID,
+                        WindowName = wl.ScreenCapture.WindowName,
+                        Width = wl.ScreenCapture.Width,
+                        Height = wl.ScreenCapture.Height,
+                        ScrollTop = wl.ScreenCapture.ScrollTop,
+                        ScrollLeft = wl.ScreenCapture.ScrollLeft
                     };
 
                     return Json(toReturn);

@@ -7,10 +7,7 @@ if (args.length === 1) {
     //console.log('Try to pass some arguments when invoking this script!');
 } else {
     mainURL = args[1];
-    UserName = args[2];
-    Domain = args[3];
-    WindowName = args[4];
-    if (args[5] === "true") {
+    if (args[2] === "true") {
         logphantom = true;
     }
 }
@@ -30,7 +27,7 @@ page.onCallback = function (param) {
         param.filename = "captures/" + param.filename;
 
         page.render(param.filename);
-        console.log(date + ' rendered: ' + param.filename);
+        console.log('rendered:' + param.filename);
 
     } else {
 
@@ -55,10 +52,10 @@ page.onLoadFinished = function (status) {
             };
         }
 
-        page.evaluate(function (page, mainURL, UserName, Domain, WindowName) {
-            var timerorders = window.setInterval(function () { GetOrders(page, mainURL, UserName, Domain, WindowName); }, 1);
+        page.evaluate(function (page, mainURL) {
+            var timerorders = window.setInterval(function () { GetOrders(page, mainURL); }, 1);
             var timerframes = window.setInterval(function () { CheckIfFrameLoaded(); }, 1);
-        }, page, mainURL, UserName, Domain, WindowName);
+        }, page, mainURL);
     }
 };
 

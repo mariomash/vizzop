@@ -1677,6 +1677,7 @@ var Daemon = jVizzop.zs_Class.create({
                 if (ws.readyState == WebSocket.OPEN) {
                     var stringify = JSONVIZZOP.stringify(msg);
                     vizzop.HtmlSend_Data = [];
+                    //console.log(stringify);
                     ws.send(stringify);
                 }
                 vizzop.HtmlSend_InCourse = null;

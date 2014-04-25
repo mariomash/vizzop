@@ -3,8 +3,7 @@
   <PropertyGroup>
     <ActivePublishProfile>vizzop</ActivePublishProfile>
     <RemoteDesktopMoreOptions>True</RemoteDesktopMoreOptions>
-    <WebRoleHttpsSkipLaunchInBrowser>
-    </WebRoleHttpsSkipLaunchInBrowser>
+    <WebRoleHttpsSkipLaunchInBrowser>vizzopWeb</WebRoleHttpsSkipLaunchInBrowser>
     <UseIISExpress>True</UseIISExpress>
     <PackageProfile>Cloud</PackageProfile>
     <PackageSolutionConfiguration>Release</PackageSolutionConfiguration>

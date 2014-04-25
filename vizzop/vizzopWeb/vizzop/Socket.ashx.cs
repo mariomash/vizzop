@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
-using System.Web.SessionState;
 using System.Web.WebSockets;
 using vizzopWeb.Models;
 
@@ -18,8 +17,7 @@ namespace vizzopWeb.vizzop
     /// <summary>
     /// Summary description for Socket
     /// </summary>
-    [SessionState(System.Web.SessionState.SessionStateBehavior.Required)]
-    public class Socket : IHttpHandler, IRequiresSessionState
+    public class Socket : IHttpHandler
     {
 
         private string receivedMessage = null;

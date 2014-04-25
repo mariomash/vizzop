@@ -2299,6 +2299,33 @@ namespace vizzopWeb
                         OriginalWebLocation.ScreenCapture = new_screencapture;
                         SingletonCache.Instance.InsertInRegionWithLock(_key, OriginalWebLocation, _region, _lockHandle);
 
+                        if ((OriginalWebLocation.CompleteHtml != "") && (OriginalWebLocation.CompleteHtml != null))
+                        {
+                            //Por ultimo lo metemos para renderizar... esta lista va separada para que no se peleen!!!
+                            //Se la vuelve a llamar desde Utils.BuscaNuevasWebLocations() <- PhantomController.GetCaptureToRender() <- PhantomJs <- WorkerRole.cs
+                            string rkey = "WebLocationsToRender";
+                            DataCacheLockHandle rlockHandle;
+                            object result = SingletonCache.Instance.GetWithLock(rkey, out rlockHandle);
+                            if (result != null)
+                            {
+                                List<WebLocation> wls = (List<WebLocation>)result;
+                                wls = (from m in wls
+                                       where m.UserName != OriginalWebLocation.UserName &&
+                                       m.Domain != OriginalWebLocation.Domain &&
+                                       m.WindowName != OriginalWebLocation.WindowName
+                                       select m).ToList();
+                                wls.Add(OriginalWebLocation);
+                                SingletonCache.Instance.InsertWithLock(rkey, wls, rlockHandle);
+                            }
+                            else
+                            {
+                                List<WebLocation> wls = new List<WebLocation>();
+                                wls.Add(OriginalWebLocation);
+                                SingletonCache.Instance.Insert(rkey, wls);
+                                SingletonCache.Instance.UnLock(rkey, rlockHandle);
+                            }
+                        }
+
                         //Y ahora a la DB
                         new_screencapture.Blob = OriginalWebLocation.CompleteHtml;
                         string SaveScreenshotsSetting = "SaveScreenShotsInRelease";
@@ -3178,106 +3205,23 @@ namespace vizzopWeb
         }
         */
 
-        public void CheckIfCaptureProcessesHaveToBeStarted()
+        public void LaunchPhantomProcess()
         {
             try
             {
 
-                /*
-                 * La cosa es asi.. para ver que procesos tengo que empezar tengo que agrupar por (converser:windowname)
-                 * y elegir la primera weblocation de ese (converser:windowname) (o sea ordeno por Timestamp_First), pero luego para añadir
-                 * la screenshot tengo que añadirsela a todas las mismas (converser:windowname)....
-                 * porque no voy a lanzar un proceso para cada weblocation, dado que hay Focus y cosas asi...
-                 */
-
-                string region = "weblocations";
-                object result = SingletonCache.Instance.GetAllInRegion(region);
-                if (result == null) { return; }
-                var WebLocations = (IEnumerable<KeyValuePair<string, object>>)result;
-                if (WebLocations == null) { return; }
-
-                WebLocations = (from m in WebLocations
-                                where ((WebLocation)m.Value).MustGenerateScreenshot == true &&
-                                ((WebLocation)m.Value).CaptureProcessId == null
-                                select m);
-
-                var GroupedWebLocations = (from m in WebLocations
-                                           group m by new
-                                           {
-                                               ((WebLocation)m.Value).ConverserId,
-                                               ((WebLocation)m.Value).WindowName
-                                           });
-
-                List<WebLocation> _WebLocations = new List<WebLocation>();
-
-                if (GroupedWebLocations.Count() > 0)
-                {
-                    foreach (var Group in GroupedWebLocations)
-                    {
-                        var m = Group.OrderBy(x => ((WebLocation)x.Value).TimeStamp_First).FirstOrDefault();
-                        _WebLocations.Add((WebLocation)m.Value);
-                    }
-                }
-
-                WebLocation item = (WebLocation)WebLocations.FirstOrDefault().Value;
-                if (item != null)
-                {
-                    Process proc = DoLaunchCaptureProcessScreenCaptures("phantom.js", item.UserName, item.Domain, item.WindowName);
-                }
-
-                /*
-                foreach (var m in WebLocations)
-                {
-                    try
-                    {
-                        var item = (WebLocation)m.Value;
-                    }
-                    catch (Exception ex)
-                    {
-                        GrabaLog(Utils.NivelLog.error, ex.Message);
-                    }
-                }
-                 */
-            }
-            catch (Exception ex)
-            {
-                GrabaLog(Utils.NivelLog.error, ex.Message);
-            }
-        }
-
-        public Process DoLaunchCaptureProcessScreenCaptures(string pathjs, string username, string domain, string windowname)
-        {
-            try
-            {
-
-                //GrabaLog(Utils.NivelLog.error, "Iniciando CreateAndAddHeadlessProcessToPool: " + QueueId.ToString());
-
+                string pathjs = "phantom.js";
                 string strPath = AppDomain.CurrentDomain.BaseDirectory + @"\img\";
                 string phantomjs_filename = strPath + "phantomjs.exe";
-                string scheme = null;
-                string strdomain = null;
-                int port = 0;
-                try
-                {
-                    strdomain = RoleEnvironment.GetConfigurationSettingValue("Domain");
-                    port = Convert.ToInt32(RoleEnvironment.GetConfigurationSettingValue("Port"));
-                    scheme = RoleEnvironment.GetConfigurationSettingValue("Scheme");
-                }
-                catch (Exception _ex)
-                {
-                    GrabaLog(Utils.NivelLog.info, _ex.Message);
-                }
+                string strdomain = RoleEnvironment.GetConfigurationSettingValue("Domain");
+                int port = Convert.ToInt32(RoleEnvironment.GetConfigurationSettingValue("Port"));
+                string scheme = RoleEnvironment.GetConfigurationSettingValue("Scheme");
                 string mainURL = scheme + @"://" + strdomain + ":" + port;
-
+                string logPhantom = "true";
                 string debug_args = "";
-
-                /*
 #if DEBUG
-                debug_args = " --remote-debugger-port=9000 --remote-debugger-autorun=yes ";
+                //debug_args = " --remote-debugger-port=9000 --remote-debugger-autorun=yes ";
 #endif
-                */
-
-                string strlogPhantom = "false";
 
                 var psi = new ProcessStartInfo(phantomjs_filename)
                 {
@@ -3286,18 +3230,18 @@ namespace vizzopWeb
                     CreateNoWindow = true,
                     WindowStyle = ProcessWindowStyle.Hidden,
                     WorkingDirectory = strPath,
-                    Arguments = @" --proxy-type=none --disk-cache=yes  --web-security=no --ignore-ssl-errors=yes " +
-                    debug_args + @" " + pathjs + @" " + mainURL + @" " + username + @" " + domain + @" " + windowname + @" " + strlogPhantom,
+                    Arguments = @" --proxy-type=none --disk-cache=yes --web-security=no --ignore-ssl-errors=yes " +
+                    debug_args + @" " + pathjs + @" " + mainURL + @" " + logPhantom,
                     ErrorDialog = false
                 };
 
-#if DEBUG
-                psi.CreateNoWindow = false;
-                psi.WindowStyle = ProcessWindowStyle.Minimized;
-#endif
-
                 psi.RedirectStandardError = true;
                 psi.RedirectStandardOutput = true;
+
+#if DEBUG
+                psi.CreateNoWindow = false;
+                psi.WindowStyle = ProcessWindowStyle.Normal;
+#endif
 
                 var process = new Process
                 {
@@ -3317,6 +3261,11 @@ namespace vizzopWeb
                             try
                             {
                                 var path = AppDomain.CurrentDomain.BaseDirectory + @"\img\captures\";
+                                var details = e.Data.Split('/')[1];
+                                var username = details.Split('_')[0];
+                                var domain = details.Split('_')[1];
+                                var windowname = details.Split('_')[2];
+
                                 path = path + username + "_" + domain + "_" + windowname + "_.png";
                                 if (File.Exists(path))
                                 {
@@ -3334,6 +3283,7 @@ namespace vizzopWeb
 
                                     if (strBase64 != null)
                                     {
+
                                         WebLocation weblocation = null;
                                         string region = "weblocations";
                                         string key = username + @"@" + domain + @"@" + windowname;
@@ -3348,6 +3298,7 @@ namespace vizzopWeb
                                             return;
                                         }
 
+                                        weblocation.ScreenCapture.Data = strBase64;
                                         string ThumbNail = "data:image/jpg;base64," + ImageToJpegBase64(
                                         PrepareScreenToReturn(
                                             weblocation.ScreenCapture,
@@ -3374,6 +3325,7 @@ namespace vizzopWeb
                                         {
                                             SingletonCache.Instance.UnLockInRegion(key, lockHandle, region);
                                         }
+
                                     }
                                 }
                             }
@@ -3388,60 +3340,17 @@ namespace vizzopWeb
 
                 process.ErrorDataReceived += (sender, e) => actionWrite(sender, e);
                 process.OutputDataReceived += (sender, e) => actionWrite(sender, e);
-                process.Exited += (sender, e) =>
-                {
-
-                    WebLocation weblocation = null;
-                    string region = "weblocations";
-                    string key = username + @"@" + domain + @"@" + windowname;
-                    DataCacheLockHandle lockHandle;
-                    object result = SingletonCache.Instance.GetInRegionWithLock(key, region, out lockHandle);
-                    if (result != null)
-                    {
-                        weblocation = (WebLocation)result;
-                    }
-
-                    if (weblocation != null)
-                    {
-                        weblocation.CaptureProcessId = null;
-                        SingletonCache.Instance.InsertInRegionWithLock(key, weblocation, region, lockHandle);
-                    }
-                    if (Logged != "")
-                    {
-                        GrabaLog(Utils.NivelLog.info, Logged);
-                    }
-                };
 
                 process.Start();
 
                 process.BeginOutputReadLine();
                 process.BeginErrorReadLine();
 
-                //process.WaitForExit();
-                if (process != null)
-                {
-                    string _region = "weblocations";
-                    WebLocation _weblocation = null;
-                    DataCacheLockHandle _lockHandle;
-                    string _key = username + @"@" + domain + @"@" + windowname;
-                    object _result = SingletonCache.Instance.GetInRegionWithLock(_key, _region, out _lockHandle);
-                    if (_result != null)
-                    {
-                        _weblocation = (WebLocation)_result;
-                    }
-
-                    if (_weblocation != null)
-                    {
-                        _weblocation.CaptureProcessId = process.Id.ToString();
-                        SingletonCache.Instance.InsertInRegionWithLock(_key, _weblocation, _region, _lockHandle);
-                    }
-                }
-                return process;
+                process.WaitForExit();
             }
             catch (Exception)
             {
                 //GrabaLog(Utils.NivelLog.error, ex.Message);
-                return null;
             }
         }
 
@@ -3751,50 +3660,37 @@ namespace vizzopWeb
 
 
 
-        public WebLocation BuscaNuevasCapturas(string UserName, string Domain, string WindowName, string GUID)
+        public WebLocation BuscaNuevasWebLocations()
         {
             try
             {
-                if ((UserName == null) || (Domain == null) || (WindowName == null))
-                {
-                    return null;
-                }
-
                 DateTime start_time = DateTime.Now;
-                WebLocation weblocation = null;
-                while ((weblocation == null) && (DateTime.Now < start_time.AddSeconds(25)))
+                WebLocation wl = null;
+                string key = "WebLocationsToRender";
+                DataCacheLockHandle lockHandle;
+                while ((wl == null) && (DateTime.Now < start_time.AddSeconds(25)))
                 {
-                    //List<WebLocation> WebLocations = new List<WebLocation>();
-
-                    string region = "weblocations";
-                    object result = SingletonCache.Instance.GetAllInRegion(region);
+                    object result = SingletonCache.Instance.GetWithLock(key, out lockHandle);
                     if (result != null)
                     {
-                        IEnumerable<KeyValuePair<string, object>> WebLocations = (IEnumerable<KeyValuePair<string, object>>)result;
-
-                        //TimeZone localZone = TimeZone.CurrentTimeZone;
-                        //DateTime loctime = localZone.ToUniversalTime(DateTime.Now.AddSeconds(-30));
-
-                        var obj = (from m in WebLocations
-                                   //where m.TimeStamp_Last > loctime &&
-                                   where ((WebLocation)m.Value).UserName == UserName &&
-                                   ((WebLocation)m.Value).Domain == Domain &&
-                                   ((WebLocation)m.Value).WindowName == WindowName &&
-                                   ((WebLocation)m.Value).ScreenCapture != null
-                                   select m).OrderByDescending(m => ((WebLocation)m.Value).TimeStamp_Last).FirstOrDefault();
-                        weblocation = (WebLocation)obj.Value;
-                    }
-
-                    if (weblocation != null)
-                    {
-                        if ((weblocation.ScreenCapture.GUID == GUID) || (weblocation.ScreenCapture.Blob == null) || (weblocation.CompleteHtml == ""))
+                        List<WebLocation> wls = (List<WebLocation>)result;
+                        if (wls.Count > 0)
                         {
-                            weblocation = null;
+                            wl = wls.FirstOrDefault();
+                            wls.Remove(wl);
+                            SingletonCache.Instance.InsertWithLock(key, wls, lockHandle);
+                        }
+                        else
+                        {
+                            SingletonCache.Instance.UnLock(key, lockHandle);
                         }
                     }
-
+                    else
+                    {
+                        SingletonCache.Instance.Insert(key, new List<WebLocation>());
+                    }
                 }
-                return weblocation;
+                return wl;
             }
             catch (Exception ex)
             {

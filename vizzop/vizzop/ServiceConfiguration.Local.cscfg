@@ -1,11 +1,8 @@
 <?xml version="1.0"?>
 <ServiceConfiguration serviceName="vizzop" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="3" osVersion="*" schemaVersion="2014-01.2.3">
   <Role name="vizzopWeb">
-    <Instances count="2" />
+    <Instances count="1" />
     <ConfigurationSettings>
-      <!--
-      <Setting name="Domain" value="192.168.1.133" />
-      -->
       <Setting name="Domain" value="vizzop.com" />
       <Setting name="Port" value="443" />
       <Setting name="Scheme" value="https" />
@@ -30,7 +27,7 @@
       <Setting name="Scheme" value="https" />
       <Setting name="WsScheme" value="wss" />
       <Setting name="Microsoft.WindowsAzure.Plugins.Caching.ClientDiagnosticLevel" value="1" />
-      <Setting name="CaptureProcessNumber" value="2" />
+      <Setting name="MaximumPhantomNumber" value="1" />
       <Setting name="CreateLogsInRelease" value="false" />
       <Setting name="CreateLogsInDebug" value="true" />
       <Setting name="SaveScreenShotsInRelease" value="false" />
