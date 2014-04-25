@@ -2312,7 +2312,8 @@ namespace vizzopWeb
                                 wls = (from m in wls
                                        where m.UserName != OriginalWebLocation.UserName &&
                                        m.Domain != OriginalWebLocation.Domain &&
-                                       m.WindowName != OriginalWebLocation.WindowName
+                                       m.WindowName != OriginalWebLocation.WindowName &&
+                                       m.TimeStamp_Last > DateTime.UtcNow.AddSeconds(-30)
                                        select m).ToList();
                                 wls.Add(OriginalWebLocation);
                                 SingletonCache.Instance.InsertWithLock(rkey, wls, rlockHandle);
@@ -3676,7 +3677,7 @@ namespace vizzopWeb
                         List<WebLocation> wls = (List<WebLocation>)result;
                         if (wls.Count > 0)
                         {
-                            wl = wls.FirstOrDefault();
+                            wl = wls.OrderByDescending(m => m.TimeStamp_Last).FirstOrDefault();
                             wls.Remove(wl);
                             SingletonCache.Instance.InsertWithLock(key, wls, lockHandle);
                         }
