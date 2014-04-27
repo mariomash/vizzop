@@ -993,7 +993,6 @@ jVizzop(document).bind('ready.vizzop', function () {
         vizzop.me.LastActive = vizzop.me.LastActive.dateFromJSON();
     }
 
-
     jVizzop(vizzop).on('mutated', function (e) {
         try {
             vizzop.HtmlSend_ForceSendHtml = true;
@@ -1002,19 +1001,45 @@ jVizzop(document).bind('ready.vizzop', function () {
         }
     }, vizzop.MutationWaitingMsTrigger);
 
+    jVizzop(document).mousemove(function (e) {
+        try {
+            vizzop.mouseXPos = e.pageX;
+            vizzop.mouseYPos = e.pageY;
+            if (vizzop.AllowCaptureMouse == true) {
+                //jVizzop(vizzop).trigger("mutated");
+            }
+        } catch (err) {
 
+        }
+    });
+
+    jVizzop(window).scroll(function (e) {
+        try {
+            jVizzop(vizzop).trigger("mutated");
+        } catch (err) {
+
+        }
+    });
+
+    jVizzop(window).resize(function (e) {
+        try {
+            jVizzop(vizzop).trigger("mutated");
+        } catch (err) {
+
+        }
+    });
+    /*
     jVizzop(document).on('mousemove.vizzop', function (e) {
         try {
             vizzop.mouseXPos = e.pageX;
             vizzop.mouseYPos = e.pageY;
             if (vizzop.AllowCaptureMouse == true) {
-                jVizzop(vizzop).trigger("mutated");
+                //jVizzop(vizzop).trigger("mutated");
             }
         } catch (err) {
 
         }
     }, 0);
-
     jVizzop(window).on('scroll.vizzop', function (e) {
         try {
             jVizzop(vizzop).trigger("mutated");
@@ -1022,15 +1047,10 @@ jVizzop(document).bind('ready.vizzop', function () {
 
         }
     }, 0);
-
-
     jVizzop(window).on('resize.vizzop', function (e) {
-        try {
-            jVizzop(vizzop).trigger("mutated");
-        } catch (err) {
-
-        }
+        console.log("e");
     }, 0);
+    */
 
     /*
     jVizzop('input').each(function () {

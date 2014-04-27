@@ -21,10 +21,12 @@ namespace vizzopWeb
     public class Thread_SendMsg
     {
 
-
         public Message message { get; set; }
+
         public NewMessage newmessage { get; set; }
+
         public string setticketstate { get; set; }
+
         public string mainUrl { get; set; }
 
         public Thread_SendMsg(NewMessage newmessage, string setticketstate, string mainUrl)

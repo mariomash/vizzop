@@ -474,7 +474,7 @@
             "fnInitComplete": function (oSettings, json) {
             },
             "aoColumns": [
-                { "sTitle": "ID", "bSearchable": false, "bVisible": true, "bSortable": true, "sWidth": "35px" },
+                { "sTitle": "ID", "bSearchable": false, "bVisible": true, "bSortable": true, "sWidth": "40px" },
                 {
                     "sTitle": "Screenshot", "bSortable": false, "bSearchable": false, "sWidth": "150px", "bVisible": true,
                     "fnRender": function (oObj) {
@@ -492,13 +492,13 @@
                         }
                     }
                 },
-                { "sTitle": "Width", "sWidth": "40px" },
-                { "sTitle": "Height", "sWidth": "40px" },
+                { "sTitle": "Width", "sWidth": "35px" },
+                { "sTitle": "Height", "sWidth": "35px" },
                 { "sTitle": "URL" },
                 { "sTitle": "Lang", "sWidth": "40px" },
-                { "sTitle": "Ubication", "sWidth": "100px" },
+                { "sTitle": "Ubication", "sWidth": "80px" },
                 {
-                    "sTitle": "Browser", "sWidth": "120px",
+                    "sTitle": "Browser", "sWidth": "60px",
                     "fnRender": function (oObj) {
                         var useragent_toCompare = '';
                         try {
@@ -549,9 +549,13 @@
                 },
                 { "sTitle": "Referrer", "sWidth": "200px", "bVisible": false },
                 { "sTitle": "First Access Machine", "bSearchable": false, "bVisible": false, "sType": "date" },
-                { "sTitle": "First Access", "bSearchable": false, "bVisible": true, "sType": "date", "iDataSort": 9, "sWidth": "90px" },
+                { "sTitle": "Since", "bSearchable": false, "bVisible": true, "sType": "date", "iDataSort": 9, "sWidth": "40px" },
                 { "sTitle": "Last Active Machine", "bSearchable": false, "bVisible": false, "sType": "date" },
-                { "sTitle": "Last Active", "bSearchable": false, "bVisible": true, "sType": "date", "iDataSort": 11, "sWidth": "90px" },
+                { "sTitle": "Active", "bSearchable": false, "bVisible": true, "sType": "date", "iDataSort": 11, "sWidth": "40px" },
+                { "sTitle": "Last ScreenShot Machine", "bSearchable": false, "bVisible": false, "sType": "date" },
+                { "sTitle": "Captured", "bSearchable": false, "bVisible": true, "sType": "date", "iDataSort": 13, "sWidth": "40px" },
+                { "sTitle": "Last Render Machine", "bSearchable": false, "bVisible": false, "sType": "date" },
+                { "sTitle": "Rendered", "bSearchable": false, "bVisible": true, "sType": "date", "iDataSort": 15, "sWidth": "40px" },
                 { "sTitle": "Name", "bSearchable": false, "bVisible": false, "bSortable": false },
                 { "sTitle": "UserName", "bSearchable": false, "bVisible": false, "bSortable": false },
                 { "sTitle": "Domain", "bSearchable": false, "bVisible": false, "bSortable": false },
@@ -562,14 +566,14 @@
         //rt_updatetable();
         $("#realtime_table tbody tr").live("click", function (event) {
             var id = rt_oTable.fnGetData(this)[0];
-            var fullname = rt_oTable.fnGetData(this)[13];
+            var fullname = rt_oTable.fnGetData(this)[17];
             if (fullname == "-") {
                 fullname = '@utils.LocalizeLang("anon_client", utils.GetLang(Context), null)';
             }
-            var username = rt_oTable.fnGetData(this)[14];
-            var domain = rt_oTable.fnGetData(this)[15];
-            var password = rt_oTable.fnGetData(this)[16];
-            var windowname = rt_oTable.fnGetData(this)[17];
+            var username = rt_oTable.fnGetData(this)[18];
+            var domain = rt_oTable.fnGetData(this)[19];
+            var password = rt_oTable.fnGetData(this)[20];
+            var windowname = rt_oTable.fnGetData(this)[21];
             var scrwidth = rt_oTable.fnGetData(this)[2];
             //console.log(scrwidth);
             if (vizzop.Daemon != null) {
