@@ -2210,13 +2210,10 @@ namespace vizzopWeb
                             OriginalWebLocation = (WebLocation)_result;
                         }
 
-                        TimeZone localZone = TimeZone.CurrentTimeZone;
-                        DateTime loctime = localZone.ToUniversalTime(DateTime.Now);
-
                         if (OriginalWebLocation == null)
                         {
                             OriginalWebLocation = new WebLocation();
-                            OriginalWebLocation.TimeStamp_First = loctime;
+                            OriginalWebLocation.TimeStamp_First = DateTime.UtcNow;
                             OriginalWebLocation.Url = new_screencapture.Url;
                             OriginalWebLocation.IP = sIP;
                             OriginalWebLocation.Ubication = GetUbicationFromIP(sIP);
@@ -2294,7 +2291,7 @@ namespace vizzopWeb
                         }
 
                         OriginalWebLocation.Url = new_screencapture.Url;
-                        OriginalWebLocation.TimeStamp_Last = loctime;
+                        OriginalWebLocation.TimeStamp_Last = DateTime.UtcNow;
                         OriginalWebLocation.CompleteHtml = processedHtml;
                         OriginalWebLocation.ScreenCapture = new_screencapture;
                         SingletonCache.Instance.InsertInRegionWithLock(_key, OriginalWebLocation, _region, _lockHandle);
@@ -2303,7 +2300,14 @@ namespace vizzopWeb
                         {
                             //Por ultimo lo metemos para renderizar... esta lista va separada para que no se peleen!!!
                             //Se la vuelve a llamar desde Utils.BuscaNuevasWebLocations() <- PhantomController.GetCaptureToRender() <- PhantomJs <- WorkerRole.cs
-                            string rkey = "WebLocationsToRender";
+                            string rRegion = "WebLocationsToRender";
+                            string rKey = OriginalWebLocation.UserName + @"@" + OriginalWebLocation.Domain + @"@" + OriginalWebLocation.WindowName;
+                            SingletonCache.Instance.InsertInRegion(rKey, OriginalWebLocation, rRegion);
+                            /*
+                            List<WebLocation> wls = new List<WebLocation>();
+                            wls.Add(OriginalWebLocation);
+                             * */
+                            /*
                             DataCacheLockHandle rlockHandle;
                             object result = SingletonCache.Instance.GetWithLock(rkey, out rlockHandle);
                             if (result != null)
@@ -2325,6 +2329,7 @@ namespace vizzopWeb
                                 SingletonCache.Instance.Insert(rkey, wls);
                                 SingletonCache.Instance.UnLock(rkey, rlockHandle);
                             }
+                            */
                         }
 
                         //Y ahora a la DB
@@ -3663,41 +3668,32 @@ namespace vizzopWeb
 
         public WebLocation BuscaNuevasWebLocations()
         {
+            WebLocation wl = null;
             try
             {
                 DateTime start_time = DateTime.Now;
-                WebLocation wl = null;
-                string key = "WebLocationsToRender";
-                DataCacheLockHandle lockHandle;
+                string rRegion = "WebLocationsToRender";
                 while ((wl == null) && (DateTime.Now < start_time.AddSeconds(25)))
                 {
-                    object result = SingletonCache.Instance.GetWithLock(key, out lockHandle);
+                    object result = SingletonCache.Instance.GetAllInRegion(rRegion);
+                    IEnumerable<KeyValuePair<string, object>> WebLocations = null;
                     if (result != null)
                     {
-                        List<WebLocation> wls = (List<WebLocation>)result;
-                        if (wls.Count > 0)
-                        {
-                            wl = wls.OrderByDescending(m => m.TimeStamp_Last).FirstOrDefault();
-                            wls.Remove(wl);
-                            SingletonCache.Instance.InsertWithLock(key, wls, lockHandle);
-                        }
-                        else
-                        {
-                            SingletonCache.Instance.UnLock(key, lockHandle);
-                        }
+                        WebLocations = (IEnumerable<KeyValuePair<string, object>>)result;
                     }
-                    else
+                    wl = (WebLocation)WebLocations.OrderBy(m => ((WebLocation)m.Value).TimeStamp_Last).FirstOrDefault().Value;
+                    if (wl != null)
                     {
-                        SingletonCache.Instance.Insert(key, new List<WebLocation>());
+                        string key = wl.UserName + @"@" + wl.Domain + @"@" + wl.WindowName;
+                        SingletonCache.Instance.RemoveInRegion(key, rRegion);
                     }
                 }
-                return wl;
             }
             catch (Exception ex)
             {
                 GrabaLogExcepcion(ex);
-                return null;
             }
+            return wl;
         }
 
         internal List<Message> CheckExternal(HttpContextBase HttpContext, string UserName, string Password, string Domain, string url, string referrer, string SessionID, string CommSessionID, string WindowName, object MsgCueAudit)
