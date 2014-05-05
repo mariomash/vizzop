@@ -223,8 +223,8 @@ namespace vizzopWeb.vizzop
                                                 dict["domain"].ToString(),
                                                 dict["url"].ToString(),
                                                 referrer,
-                                                CommSessionID,
                                                 SessionID,
+                                                CommSessionID,
                                                 WindowName,
                                                 dict["MsgCueAudit"]
                                                 );
@@ -339,15 +339,18 @@ namespace vizzopWeb.vizzop
                             }
                             if (returnList.Count == 0)
                             {
-                                var newmessages = utils.CheckNew(wrapper, converser, WindowName);
-                                if (newmessages.Count > 0)
+                                if (converser != null)
                                 {
-                                    returnList = new List<Object>();
-                                    returnList.Add(new
+                                    var newmessages = utils.CheckNew(wrapper, converser, WindowName);
+                                    if (newmessages.Count > 0)
                                     {
-                                        type = "CheckNew",
-                                        data = newmessages
-                                    });
+                                        returnList = new List<Object>();
+                                        returnList.Add(new
+                                        {
+                                            type = "CheckNew",
+                                            data = newmessages
+                                        });
+                                    }
                                 }
                             }
                             if (returnList.Count > 0)

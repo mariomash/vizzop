@@ -73,5 +73,6 @@ namespace vizzopWeb.Models
         [Required]
         public string GUID { get; set; }
 
+        public string checksum { get; set; }
     }
 }

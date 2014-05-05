@@ -86,7 +86,7 @@ namespace vizzopWeb.vizzop
                                 //List<WebLocation> WebLocations = new List<WebLocation>();
 
                                 WebLocation weblocation = null;
-                                string region = "weblocations";
+                                string region= "WebLocations";
                                 object _result = SingletonCache.Instance.GetAllInRegion(region);
                                 if (_result != null)
                                 {
@@ -116,32 +116,30 @@ namespace vizzopWeb.vizzop
                                 }
 
                                 var CompleteHtml = utils.ScrubHTML(weblocation.CompleteHtml);
-                                var toReturn = new
+
+                                if (CompleteHtml != null)
                                 {
-                                    Html = CompleteHtml,
-                                    Blob = weblocation.ScreenCapture.Blob,
-                                    UserName = UserName,
-                                    Domain = Domain,
-                                    GUID = weblocation.ScreenCapture.GUID,
-                                    WindowName = weblocation.ScreenCapture.WindowName,
-                                    Width = weblocation.ScreenCapture.Width,
-                                    Height = weblocation.ScreenCapture.Height,
-                                    ScrollTop = weblocation.ScreenCapture.ScrollTop,
-                                    ScrollLeft = weblocation.ScreenCapture.ScrollLeft
-                                };
+                                    var toReturn = new
+                                    {
+                                        Html = CompleteHtml,
+                                        Blob = weblocation.ScreenCapture.Blob,
+                                        UserName = UserName,
+                                        Domain = Domain,
+                                        GUID = weblocation.ScreenCapture.GUID,
+                                        WindowName = weblocation.ScreenCapture.WindowName,
+                                        Width = weblocation.ScreenCapture.Width,
+                                        Height = weblocation.ScreenCapture.Height,
+                                        ScrollTop = weblocation.ScreenCapture.ScrollTop,
+                                        ScrollLeft = weblocation.ScreenCapture.ScrollLeft
+                                    };
 
-                                GUID = weblocation.ScreenCapture.GUID;
+                                    GUID = weblocation.ScreenCapture.GUID;
 
-                                /*
-            #if DEBUG
-                                utils.GrabaLog(Utils.NivelLog.info, "Lanzando imagen a Phantom");
-            #endif
-                                */
-                                string SerializedResult = new JavaScriptSerializer().Serialize(toReturn);
+                                    string SerializedResult = new JavaScriptSerializer().Serialize(toReturn);
 
-                                buffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(SerializedResult));
-                                await socket.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
-
+                                    buffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(SerializedResult));
+                                    await socket.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
+                                }
                             }
                         }
                     }

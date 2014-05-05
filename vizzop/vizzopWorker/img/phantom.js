@@ -46,15 +46,17 @@ page.onLoadFinished = function (status) {
         }
         counter++;
 
+        /*
         if (logphantom === true) {
             page.onResourceRequested = function (request) {
                 console.log('Request ' + JSON.stringify(request, undefined, 4));
             };
         }
+        */
 
         page.evaluate(function (page, mainURL) {
             var timerorders = window.setInterval(function () { GetOrders(page, mainURL); }, 1);
-            var timerframes = window.setInterval(function () { CheckIfFrameLoaded(); }, 1);
+            var timerframes = window.setInterval(function () { CheckIfFrameLoaded(); }, 1000);
         }, page, mainURL);
     }
 };

@@ -1,0 +1,3 @@
+C:\Users\vizzop\Desktop\vizzop\vizzop\vizzopWorker\bin\Release\Content\GeoLiteCity.dat
+C:\Users\vizzop\Desktop\vizzop\vizzop\vizzopWorker\bin\Release\zh-Hans\System.Spatial.resources.dll
+C:\Users\vizzop\Desktop\vizzop\vizzop\vizzopWorker\obj\Release\vizzopWorker.csprojResolveAssemblyReference.cache

@@ -429,7 +429,6 @@
     <None Include="Microsoft.WindowsAzure.Caching\PerformanceCounters.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Content Include="Scripts\bidelmanshot.js" />
     <Content Include="Scripts\bootbox.min.js" />
     <Content Include="Scripts\bootstrap-button.js" />
     <Content Include="Scripts\bootstrap-carousel.js" />

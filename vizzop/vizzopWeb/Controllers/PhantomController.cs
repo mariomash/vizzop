@@ -24,7 +24,7 @@ namespace vizzopWeb.Controllers
             try
             {
 
-                WebLocation wl = await Task.Factory.StartNew(() => utils.BuscaNuevasWebLocations());
+                WebLocation wl = await Task.Factory.StartNew(() => utils.BuscaNuevasWebLocationsQueRenderizar());
 
                 if (wl == null)
                 {
@@ -32,7 +32,13 @@ namespace vizzopWeb.Controllers
                 }
                 else
                 {
-                    var CompleteHtml = utils.ScrubHTML(wl.CompleteHtml);
+                    var CompleteHtml = HttpUtility.UrlDecode(wl.CompleteHtml);
+                    CompleteHtml = utils.ScrubHTML(CompleteHtml);
+
+                    if (CompleteHtml == null)
+                    {
+                        return Json(false);
+                    }
 
                     var toReturn = new
                     {

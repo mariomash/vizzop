@@ -43,23 +43,36 @@
                     var iframe = document.getElementById('WrapperIframe');
                     iframe.contentWindow.scrollTo(data.ScrollLeft, data.ScrollTop);
 
-                    var filename = data.UserName + '_' + data.Domain + '_' + data.WindowName + '_.png';
+                    var filename = data.UserName + '_' + data.Domain + '_' + data.WindowName + '_' + data.GUID + '_.png';
+
+                    window.callPhantom({
+                        'command': 'render',
+                        'filename': filename
+                    });
 
                     if (iframeDoc.readyState.toLowerCase() == 'complete') {
-                        window.callPhantom({
-                            'command': 'render',
-                            'filename': filename
-                        });
-                        sacafotos = false;
-                        OrdersRequest_InCourse = null;
+                        if (sacafotos == true) {
+                            /*
+                            window.setTimeout(function () {
+                            }, 500);
+                            */
+                            /*
+                            window.callPhantom({
+                                'command': 'render',
+                                'filename': filename
+                            });
+                            */
+                            //sacafotos = false;
+                            //OrdersRequest_InCourse = null;
+                        }
                     }
                 }
             } catch (err) {
                 window.callPhantom({
                     'log': 'error ' + err
                 });
-                sacafotos = false;
-                OrdersRequest_InCourse = null;
+                //sacafotos = false;
+                //OrdersRequest_InCourse = null;
             }
         }
 
@@ -92,27 +105,30 @@
 
                 var msg = {};
                 var url = mainURL + "/Phantom/GetCaptureToRender";
-                window.callPhantom({ 'log': 'calling ' + url });
+                //window.callPhantom({ 'log': 'calling ' + url });
                 OrdersRequest_InCourse = $.ajax({
                     url: url,
                     type: "POST",
                     data: msg,
                     dataType: "jsonp",
                     success: function (d) {
+
                         if ((d == null) || (d == false)) {
                             OrdersRequest_InCourse = null;
                             return;
                         }
-                        //StartDate = new Date();
-                        data = d;
-                        sacafotos = false;
-                        window.callPhantom({ 'log': 'GOT NEW IMG: ' + data.GUID });
 
                         var iFrame = null;
                         iFrame = document.getElementById("WrapperIframe");
                         if (iFrame == null) {
                             iFrame = CreateAndAddIframe();
                         }
+
+                        //StartDate = new Date();
+                        data = d;
+                        sacafotos = false
+                        //sacafotos = false;
+                        //window.callPhantom({ 'log': data.Html });
 
                         var win = iFrame.contentWindow;
                         win.document.open('text/html', 'replace');
@@ -144,7 +160,7 @@
                         */
 
                         sacafotos = true;
-                        //OrdersRequest_InCourse = null;
+                        OrdersRequest_InCourse = null;
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
                         OrdersRequest_InCourse = null;

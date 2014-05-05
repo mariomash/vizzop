@@ -118,11 +118,6 @@ var Audio = jVizzop.zs_Class.create({
     createAudioElement: function () {
         var self = this;
         try {
-            /*
-            self._audioelement = jVizzop('<audio></audio>')
-                    .attr('src', self._audiofile_mp3)
-                    .appendTo(jVizzop('body'));
-                    */
             var audioelement = document.createElement('audio');
             if (audioelement.canPlayType('audio/ogg; codecs="vorbis"')) {
                 audioelement.setAttribute('src', self._audiofile_ogg);
@@ -132,31 +127,7 @@ var Audio = jVizzop.zs_Class.create({
             audioelement.setAttribute('autobuffer', 'true');
             audioelement.setAttribute('preload', 'auto');
             audioelement.load();
-            //document.body.appendChild(audioelement);
             self._audioelement = audioelement;
-
-            /*
-            .attr('autobuffer', 'true')
-            .attr('preload', 'auto')
-            */
-            /*
-            try {
-                self._audiosrc_mp3 = jVizzop('<source/>')
-                    .attr('src', self._audiofile_mp3)
-                    .appendTo(self._audioelement);
-            } catch (err) {
-                console.log("error mp3 audio");
-            }
-            */
-            /*
-            try {
-                self._audiosrc_ogg = jVizzop('<source/>')
-                    .attr('src', self._audiofile_ogg)
-                    .appendTo(self._audioelement);
-            } catch (err) {
-                console.log("error ogg audio");
-            }
-            */
             if (self._loop == true) {
                 jVizzop(self._audioelement).bind('ended', function () {
                     this.currentTime = 0;
@@ -293,7 +264,6 @@ var Daemon = jVizzop.zs_Class.create({
             if (jVizzop("[rel='icon']").length > 0) {
                 vizzop.OriginalFavicon = jVizzop("[rel='icon']").attr("href");
             }
-
             var name_mecookie = vizzop.ApiKey + "_me";
             var name_comsessionidcookie = vizzop.ApiKey + "_commsessionid";
             var disclaimer_idcookie = vizzop.ApiKey + "_disclaimer";
@@ -346,7 +316,6 @@ var Daemon = jVizzop.zs_Class.create({
 
                         self._commsessionid = null;
                         if (typeof jVizzop.cookie(name_comsessionidcookie) != "undefined") {
-                            /*Creo que aqui abajo fallaba... igualandolo a ""*/
                             if (jVizzop.cookie(name_comsessionidcookie) != "") {
                                 self._commsessionid = jVizzop.cookie(name_comsessionidcookie);
                                 self.clientmessagebox._commsessionid = self._commsessionid;
@@ -383,10 +352,7 @@ var Daemon = jVizzop.zs_Class.create({
                         vizzop.Daemon.sendNewMessages();
                     }
                     if (vizzop.AllowScreenSockets === true) {
-                        vizzop.HtmlSend_ForceSendHtml = true;
-                        vizzop.HtmlSend_LastHtmlSent = null;
-                        vizzop.HtmlSend_InCourse = null;
-                        vizzop.Daemon.sendHtml();
+                        jVizzop(vizzop).trigger("mutated");
                     }
                 };
                 vizzop.WSchat.onmessage = function (evt) {
@@ -395,18 +361,11 @@ var Daemon = jVizzop.zs_Class.create({
 
                         jVizzop.each(json, function (i, v) {
                             try {
-                                /*
-                                console.log(v);
-                                console.log(i);
-                                console.log(v.type);
-                                console.log(v.data);*/
                                 if (v.type != null) {
                                     if (v.type == "GetWebLocations") {
-                                        //console.log(v);
                                         if (v.data != false) {
                                             rt_tabledata = v.data;
                                         } else {
-                                        //console.log(v.data);
                                             rt_tabledata = [];
                                         }
                                         $('#RealtimeReportLoading').hide();
@@ -526,7 +485,7 @@ var Daemon = jVizzop.zs_Class.create({
                     self.checkNewMessages();
 
                     if (vizzop.AllowScreenCaptures == true) {
-                        self.sendHtml();
+                        self.trackScreen();
                     }
                 }
 
@@ -603,7 +562,6 @@ var Daemon = jVizzop.zs_Class.create({
     deactivateMutationObserver: function () {
         var self = this;
         try {
-            vizzop.HtmlSend_ForceSendHtml = null;
             if (MutationObserver) {
                 if (vizzop.MutationObserver != null) {
                     vizzop.MutationObserver.disconnect();
@@ -638,7 +596,6 @@ var Daemon = jVizzop.zs_Class.create({
                     });
                     */
                 });
-
                 vizzop.MutationObserver.observe(document.body,
                 {  // options:
                     subtree: true,  // observe the subtree rooted at myNode
@@ -655,7 +612,6 @@ var Daemon = jVizzop.zs_Class.create({
                     try {
                         if (document.onpropertychange) { // for IE 5.5+
                             document.onpropertychange = function (e) {
-                                /*vizzop.HtmlSend_ForceSendHtml = true;*/
                                 jVizzop(vizzop).trigger("mutated");
                             };
                         }
@@ -1391,6 +1347,10 @@ var Daemon = jVizzop.zs_Class.create({
                                     msgbox.askforscreenshare();
                                 }
                                 break;
+                            case '$#_sendfullscreen':
+                                vizzop.HtmlSend_LastHtmlContents = "";
+                                jVizzop(vizzop).trigger("mutated");
+                                break;
                             case '$#_updatescreen':
                                 jVizzop.each(vizzop.Boxes, function (index, foundbox) {
                                     if ((typeof foundbox._interlocutor != "undefined") && (foundbox._interlocutor != null)) {
@@ -1619,17 +1579,24 @@ var Daemon = jVizzop.zs_Class.create({
             vizzop.MsgCheck_InCourse = null;
         }
     },
-    sendHtml: function () {
+    trackScreen: function () {
         var self = this;
         try {
-            if (vizzop.HtmlSend_InCourse != null) {
+            if ((vizzop.HtmlSend_InCourse != null) || (vizzop.HtmlSend_ForceSendHtml != true)) {
                 return;
             }
 
-            if ((vizzop.HtmlSend_ForceSendHtml != true)) {
+            vizzop.HtmlSend_InCourse = true;
+
+            var HtmlData = self.GetHtmlToSend();
+
+            self.activateMutationObserver();
+
+            if ((HtmlData == null) || (HtmlData == "")) {
+                vizzop.HtmlSend_ForceSendHtml = false;
+                vizzop.HtmlSend_InCourse = null;
                 return;
             }
-            vizzop.HtmlSend_InCourse = true;
 
             var listeners_list = '';
 
@@ -1644,17 +1611,6 @@ var Daemon = jVizzop.zs_Class.create({
                 }
             });
 
-            var HtmlData = self.GetHtmlToSend();
-
-            if (HtmlData == null) {
-                vizzop.HtmlSend_InCourse = null;
-                return;
-            }
-
-            vizzop.HtmlSend_ForceSendHtml = false;
-
-            vizzop.HtmlSend_LastHtmlSent = HtmlData;
-
             if (vizzop.CompressHtmlData == true) {
                 HtmlData = LZString.compressToBase64(JSONVIZZOP.stringify(HtmlData))
             }
@@ -1668,6 +1624,7 @@ var Daemon = jVizzop.zs_Class.create({
                 'messagetype': 'Screen'
             };
 
+            /*
             var ws = vizzop.WSchat;
             if (ws != null) {
                 if (ws.readyState === undefined || ws.readyState > 1) {
@@ -1676,41 +1633,41 @@ var Daemon = jVizzop.zs_Class.create({
                 }
                 if (ws.readyState == WebSocket.OPEN) {
                     var stringify = JSONVIZZOP.stringify(msg);
-                    vizzop.HtmlSend_Data = [];
-                    //console.log(stringify);
                     ws.send(stringify);
+                    vizzop.HtmlSend_InCourse = null;
+                } else {
+                    vizzop.HtmlSend_LastHtmlSent = null;
                 }
                 vizzop.HtmlSend_InCourse = null;
             } else {
-                var url = vizzop.mainURL + "/RealTime/TrackScreen";
-                msg.data = JSONVIZZOP.stringify(msg.data);
-                vizzop.HtmlSend_Data = [];
-                vizzop.HtmlSend_InCourse = jVizzop.ajax({
-                    url: url,
-                    type: "POST",
-                    data: msg,
-                    beforeSend: function (xhr) {
-                        //console.vizzoplib.log(msg);
-                        //vizzop.Daemon.audioNewAction.Play();
-                    },
-                    success: function (data) {
-                        vizzop.HtmlSend_InCourse = null;
-                        //vizzop.Daemon.audioNewAction.Play();
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        //it allways gives an error
-                        //vizzoplib.logAjax(url, msg, jqXHR);
-                        //vizzop.Daemon.audioNewAction.Play();
-                        vizzop.HtmlSend_InCourse = null;
-                        vizzop.HtmlSend_ForceSendHtml = false;
-                    }
-                });
-            }
-            //vizzop.HtmlSend_InCourse = null;
+            }*/
+            var url = vizzop.mainURL + "/RealTime/TrackScreen";
+            msg.data = JSONVIZZOP.stringify(msg.data);
+            vizzop.HtmlSend_InCourse = jVizzop.ajax({
+                url: url,
+                type: "POST",
+                data: msg,
+                beforeSend: function (xhr) {
+                    //console.vizzoplib.log(msg);
+                    //vizzop.Daemon.audioNewAction.Play();
+                },
+                success: function (data) {
+                    //HtmlSend_ForceSendHtml = false;
+                    vizzop.HtmlSend_InCourse = null;
+                    //jVizzop(vizzop).trigger("mutated");
+                    //vizzop.Daemon.audioNewAction.Play();
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    //vizzoplib.logAjax(url, msg, jqXHR);
+                    //vizzop.Daemon.audioNewAction.Play();
+                    //vizzop.HtmlSend_ForceSendHtml = false;
+                    vizzop.HtmlSend_InCourse = null;
+                }
+            });
         } catch (err) {
+            console.log(err);
             vizzoplib.log(err);
-            //vizzop.HtmlSend_Data = [];
-            vizzop.HtmlSend_ForceSendHtml = false;
+            //vizzop.HtmlSend_ForceSendHtml = false;
             vizzop.HtmlSend_InCourse = null;
         }
     },
@@ -1720,26 +1677,28 @@ var Daemon = jVizzop.zs_Class.create({
         try {
 
             var toSend = null;
-            self.deactivateMutationObserver();
+
             var st = jVizzop(window).scrollTop();
             var sl = jVizzop(window).scrollLeft();
-
-            DateUTC = new Date();
             var size = vizzoplib.getViewportSize();
 
-            if (vizzop.current_html == null) {
-                //Si vizzop.screenshot != null es que estamos trabajando en crear vizzop.current_html...
-                if (vizzop.screenshot == null) {
-                    vizzoplib.screenshotPage();
-                }
-                self.activateMutationObserver();
-                return null;
-            }
-            self.activateMutationObserver();
+            self.deactivateMutationObserver();
+            var current_html = vizzoplib.getPageScreenshot();
 
+            if (vizzop.HtmlSend_LastHtmlContents == null) { vizzop.HtmlSend_LastHtmlContents = ""; }
+
+            //console.log("calcula crc32");
+            //var current_crc32 = vizzoplib.getcrc32(current_html);
+            //console.log(current_crc32);
+
+            var checksum = current_html.length;
+            //console.log(checksum);
+            var previous_html = vizzop.HtmlSend_LastHtmlContents;
+            //vizzop.HtmlSend_LastHtmlContents = "";
+            //console.log(previous_html);
+            //console.log(current_html);
             var objdiff = new diff_match_patch();
-            var diffresult = objdiff.diff_main(vizzop.HtmlSend_LastHtmlContents, vizzop.current_html);
-
+            var diffresult = objdiff.diff_main(previous_html, current_html);
             for (var i in diffresult) {
                 var elem = diffresult[i];
                 if (elem[0] == 0) {
@@ -1750,32 +1709,28 @@ var Daemon = jVizzop.zs_Class.create({
                     elem[1] = elem[1].length;
                 }
             }
+            //console.info(diffresult);
+
+            //var hashCode = null;//vizzoplib.getHashCode(current_html);
+
             var toSend = {
-                'mx': vizzop.mouseXPos,
-                'my': vizzop.mouseYPos,
                 'st': jVizzop(window).scrollTop(),
                 'sl': jVizzop(window).scrollLeft(),
                 'w': size.w, /*jVizzop(window).width(),*/
                 'h': size.h, /*jVizzop(window).height(),*/
                 'url': vizzop.URL,
-                'date': DateUTC,
+                'date': new Date(),
                 'img': null,
                 'blob': diffresult,
+                'checksum': checksum,
                 'windowname': window.name
             }
-
-            self.activateMutationObserver();
 
             var enviarTienes = false;
             if (vizzop.HtmlSend_LastHtmlSent == null) {
                 enviarTienes = true;
             } else {
                 var last = vizzop.HtmlSend_LastHtmlSent;
-                var blobsSonIguales = false;
-                if ((toSend.blob.length == 1) && (toSend.blob[0][0] == '0')) {
-                    //console.log("blobs son iguales");
-                    blobsSonIguales = true;
-                }
                 if ((last.mx != toSend.mx) ||
                     (last.my != toSend.my) ||
                     (last.st != toSend.st) ||
@@ -1784,20 +1739,19 @@ var Daemon = jVizzop.zs_Class.create({
                     (last.h != toSend.h) ||
                     (last.url != toSend.url) ||
                     (last.img != toSend.img) ||
-                    (blobsSonIguales == false)) {
+                    (((toSend.blob.length == 1) && (toSend.blob[0][0] == '0')) == false)) {
                     enviarTienes = true;
                 }
             }
 
-            vizzop.HtmlSend_LastHtmlContents = vizzop.current_html;
-            vizzop.current_html = null;
-            vizzop.screenshot = null;
-
             if (enviarTienes == true) {
+                vizzop.HtmlSend_LastHtmlSent = toSend;
+                vizzop.HtmlSend_LastHtmlContents = current_html;
                 return toSend;
             } else {
                 return null;
             }
+
         } catch (err) {
             vizzoplib.log(err);
             self.activateMutationObserver();

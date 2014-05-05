@@ -9,7 +9,7 @@
       <Setting name="WsScheme" value="wss" />
       <Setting name="StorageConnectionString" value="DefaultEndpointsProtocol=https;AccountName=vizzop;AccountKey=t+HUSi6EdcIqkCgeyJY2yesdp+Ti+rgLYpOPDlwFpp49uNI/2sGeI5Fx1A+syOfZCe2C6rYPqIWb/83Zbo9nTQ==" />
       <Setting name="Microsoft.WindowsAzure.Plugins.Caching.ClientDiagnosticLevel" value="1" />
-      <Setting name="CreateLogsInRelease" value="false" />
+      <Setting name="CreateLogsInRelease" value="true" />
       <Setting name="CreateLogsInDebug" value="true" />
       <Setting name="SaveScreenShotsInRelease" value="false" />
       <Setting name="SaveScreenShotsInDebug" value="false" />
@@ -27,8 +27,8 @@
       <Setting name="Scheme" value="https" />
       <Setting name="WsScheme" value="wss" />
       <Setting name="Microsoft.WindowsAzure.Plugins.Caching.ClientDiagnosticLevel" value="1" />
-      <Setting name="MaximumPhantomNumber" value="1" />
-      <Setting name="CreateLogsInRelease" value="false" />
+      <Setting name="MaximumPhantomNumber" value="6" />
+      <Setting name="CreateLogsInRelease" value="true" />
       <Setting name="CreateLogsInDebug" value="true" />
       <Setting name="SaveScreenShotsInRelease" value="false" />
       <Setting name="SaveScreenShotsInDebug" value="false" />
