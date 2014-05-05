@@ -26,7 +26,7 @@
         var data = null;
         var StartDate = new Date();
         var OrdersRequest_InCourse = null;
-        var sacafotos = false;
+        var sacafotos = true;
         var lastData = null;
 
         function CheckIfFrameLoaded() {
@@ -52,6 +52,10 @@
 
                     if (iframeDoc.readyState.toLowerCase() == 'complete') {
                         if (sacafotos == true) {
+                            window.callPhantom({
+                                'command': 'render',
+                                'filename': filename
+                            });
                             /*
                             window.setTimeout(function () {
                             }, 500);
@@ -68,9 +72,11 @@
                     }
                 }
             } catch (err) {
+                /*
                 window.callPhantom({
                     'log': 'error ' + err
                 });
+                */
                 //sacafotos = false;
                 //OrdersRequest_InCourse = null;
             }
@@ -126,7 +132,7 @@
 
                         //StartDate = new Date();
                         data = d;
-                        sacafotos = false
+                        //sacafotos = false
                         //sacafotos = false;
                         //window.callPhantom({ 'log': data.Html });
 
@@ -159,7 +165,7 @@
                         document.head.insertBefore(style, document.head.firstChild);
                         */
 
-                        sacafotos = true;
+                        //sacafotos = true;
                         OrdersRequest_InCourse = null;
                     },
                     error: function (jqXHR, textStatus, errorThrown) {

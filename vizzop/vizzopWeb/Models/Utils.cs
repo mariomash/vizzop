@@ -29,6 +29,8 @@ using Microsoft.WindowsAzure.ServiceRuntime;
 using System.ComponentModel;
 using Newtonsoft.Json;
 using Microsoft.WindowsAzure;
+using System.Runtime.InteropServices;
+//using AForge.Imaging;
 
 public class Crc32 : HashAlgorithm //Core code
 {
@@ -3390,6 +3392,13 @@ namespace vizzopWeb
         }
         */
 
+        public bool IsNotBlackImage(Bitmap bitmap)
+        {
+            var imgStatistics = new AForge.Imaging.ImageStatistics(bitmap);
+            return imgStatistics.PixelsCountWithoutBlack != 0;
+        }
+
+
         public void LaunchPhantomProcess()
         {
             try
@@ -3459,6 +3468,15 @@ namespace vizzopWeb
                                     using (var stream = File.OpenRead(path))
                                     using (var image = Image.FromStream(stream))
                                     {
+                                        Bitmap bitmap = new Bitmap(image);
+                                        if (IsNotBlackImage(bitmap) == false)
+                                        {
+                                            if (File.Exists(path))
+                                            {
+                                                File.Delete(path);
+                                            }
+                                            return;
+                                        }
                                         strBase64 = ImageToJpegBase64(image, 100L);
                                     }
 

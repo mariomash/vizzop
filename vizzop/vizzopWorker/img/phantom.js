@@ -4,7 +4,7 @@ var mainURL = null;
 var logphantom = false;
 
 if (args.length === 1) {
-    //console.log('Try to pass some arguments when invoking this script!');
+    console.log('Try to pass some arguments when invoking this script!');
 } else {
     mainURL = args[1];
     if (args[2] === "true") {
@@ -27,8 +27,12 @@ page.onCallback = function (param) {
         param.filename = "captures/" + param.filename;
 
         page.render(param.filename);
-        console.log('rendered:' + param.filename);
 
+        console.log('rendered:' + param.filename);
+        /*
+        window.setTimeout(function () {
+        }, 500);
+        */
     } else {
 
         if (logphantom === true) {
