@@ -3424,7 +3424,7 @@ namespace vizzopWeb
                     CreateNoWindow = true,
                     WindowStyle = ProcessWindowStyle.Hidden,
                     WorkingDirectory = strPath,
-                    Arguments = @" --proxy-type=none --disk-cache=yes --web-security=no --ignore-ssl-errors=yes " +
+                    Arguments = @" --proxy-type=none --disk-cache=yes --web-security=no --ignore-ssl-errors=yes --local-to-remote-url-access=yes --load-images=no " +
                     debug_args + @" " + pathjs + @" " + mainURL + @" " + logPhantom,
                     ErrorDialog = false
                 };
@@ -3876,7 +3876,7 @@ namespace vizzopWeb
                                        where ((WebLocation)m.Value).TimeStamp_Last > DateTime.UtcNow.AddSeconds(-30)
                                        orderby ((WebLocation)m.Value).ScreenCapture.CreatedOn
                                        select m).FirstOrDefault().Value;
-
+                    Thread.Sleep(250);
                 }
                 //wl = (WebLocation)WebLocations.OrderBy(m => ((WebLocation)m.Value).ScreenCapture.CreatedOn).FirstOrDefault().Value;
                 if (wl != null)

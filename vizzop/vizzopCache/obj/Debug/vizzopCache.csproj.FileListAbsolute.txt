@@ -1,3 +1,0 @@
-C:\Users\vizzop\Desktop\vizzop\vizzop\vizzopCache\bin\Debug\Microsoft.Data.Edm.xml
-C:\Users\vizzop\Desktop\vizzop\vizzop\vizzopCache\bin\Debug\Newtonsoft.Json.xml
-C:\Users\vizzop\Desktop\vizzop\vizzop\vizzopCache\bin\Debug\System.Net.Http.Formatting.xml

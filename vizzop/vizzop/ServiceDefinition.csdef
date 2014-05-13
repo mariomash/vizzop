@@ -71,7 +71,7 @@
       <Import moduleName="Caching" />
     </Imports>
     <LocalResources>
-      <LocalStorage name="DiagnosticStore" sizeInMB="20000" cleanOnRoleRecycle="false" />
+      <LocalStorage name="DiagnosticStore" sizeInMB="5000" cleanOnRoleRecycle="false" />
     </LocalResources>
   </WorkerRole>
 </ServiceDefinition>
