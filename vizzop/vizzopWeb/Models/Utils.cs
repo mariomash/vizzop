@@ -30,6 +30,8 @@ using System.ComponentModel;
 using Newtonsoft.Json;
 using Microsoft.WindowsAzure;
 using System.Runtime.InteropServices;
+//using System.Windows.Forms;
+//using Awesomium.Core;
 //using AForge.Imaging;
 
 public class Crc32 : HashAlgorithm //Core code
@@ -1161,6 +1163,92 @@ namespace vizzopWeb
 
         public string secret = "tortuga";
 
+        void CapturaImagenEnWebBrowser(string HTML, ScreenCapture sc, string key)
+        {
+            System.Windows.Forms.WebBrowser wb = new System.Windows.Forms.WebBrowser();
+            try
+            {
+                wb.ScrollBarsEnabled = false;
+                wb.ScriptErrorsSuppressed = true;
+                wb.Width = sc.Width;
+                wb.Height = sc.Height;
+                wb.AllowNavigation = true;
+                //wb.AutoScrollOffset = new Point(0, 200);
+                //HTML = unescape(HTML);
+                //HTML = HttpUtility.UrlDecode(HTML);
+                HTML = ScrubHTML(HTML);
+
+                byte[] bytes = Encoding.UTF8.GetBytes(HTML);
+                MemoryStream ms = new MemoryStream();
+                ms.Write(bytes, 0, bytes.Length);
+                ms.Position = 0;
+                wb.DocumentStream = ms;
+
+                //wb.Do = unescape(HTML);
+                //wb.Navigate("https://vizzop.com");
+
+                Action<object, System.Windows.Forms.WebBrowserDocumentCompletedEventArgs> actionWrite = (sender, e) =>
+                {
+                    try
+                    {
+                        //if (e.Url != null) { }
+                        if (wb.ReadyState == System.Windows.Forms.WebBrowserReadyState.Complete)
+                        {
+
+                            wb.Document.Window.ScrollTo(sc.ScrollLeft, sc.ScrollTop);
+
+                            Bitmap tBitmap = new Bitmap(wb.Width, wb.Height);
+                            wb.DrawToBitmap(tBitmap, new Rectangle(0, 0, wb.Width, wb.Height));
+                            string strBase64 = ImageToJpegBase64(tBitmap, 100L);
+
+                            WebLocation weblocation = null;
+                            string region = "WebLocations";
+                            object result = SingletonCache.Instance.GetInRegion(key, region);
+                            if (result != null) weblocation = (WebLocation)result;
+                            if (weblocation == null) return;
+
+                            weblocation.ScreenCapture.Data = strBase64;
+                            string ThumbNail = "data:image/jpg;base64," + ImageToJpegBase64(
+                            PrepareScreenToReturn(
+                                weblocation.ScreenCapture,
+                                "140",
+                                "90",
+                                false),
+                            40L);
+
+                            DataCacheLockHandle lockHandle;
+                            result = SingletonCache.Instance.GetInRegionWithLock(key, region, out lockHandle);
+                            if (result != null) weblocation = (WebLocation)result;
+                            if (weblocation == null) return;
+
+                            weblocation.ScreenCapture.Data = strBase64;
+                            weblocation.ScreenCapture.GUID = Guid.NewGuid().ToString();
+                            weblocation.ScreenCapture.PicturedOn = DateTime.UtcNow;
+                            weblocation.ThumbNail = ThumbNail;
+
+                            SingletonCache.Instance.InsertInRegionWithLock(key, weblocation, region, lockHandle);
+
+                            wb.Dispose();
+                        }
+                    }
+                    catch (Exception)
+                    {
+
+                        wb.Dispose();
+                    }
+                };
+
+                wb.DocumentCompleted += (sender, e) => actionWrite(sender, e);
+
+                while (wb.ReadyState != System.Windows.Forms.WebBrowserReadyState.Complete)
+                {
+                    System.Windows.Forms.Application.DoEvents();
+                }
+
+            }
+            catch (Exception) { }
+        }
+
         public string GetIP(HttpContext Context)
         {
             HttpContextBase abstractContext = new System.Web.HttpContextWrapper(Context);
@@ -2008,6 +2096,9 @@ namespace vizzopWeb
 
                 var SelectedHtmlNode = doc.DocumentNode.SelectSingleNode("//html");
 
+                var head = doc.DocumentNode.SelectSingleNode("//head");
+
+
                 if (SelectedHtmlNode != null)
                 {
                     var vizzop_base = (from m in SelectedHtmlNode.Attributes
@@ -2016,7 +2107,6 @@ namespace vizzopWeb
 
                     if (vizzop_base != null)
                     {
-                        var head = doc.DocumentNode.SelectSingleNode("//head");
                         if (head != null)
                         {
                             var b = doc.CreateElement("base");
@@ -2025,6 +2115,16 @@ namespace vizzopWeb
                         }
                     }
                 }
+
+                if (head != null)
+                {
+                    //<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+                    var meta = doc.CreateElement("meta");
+                    meta.Attributes.Add("http-equiv", "X-UA-Compatible");
+                    meta.Attributes.Add("content", "IE=edge");
+                    head.InsertBefore(meta, head.FirstChild);
+                }
+
                 /*
                 head.InsertBefore(b
         var b = document.createElement('base');
@@ -2479,38 +2579,20 @@ namespace vizzopWeb
 
                         if ((OriginalWebLocation.CompleteHtml != "") && (OriginalWebLocation.CompleteHtml != null))
                         {
+                            string rKey = OriginalWebLocation.UserName + @"@" + OriginalWebLocation.Domain + @"@" + OriginalWebLocation.WindowName;
+
+                            /*
+                            Thread thread = new Thread(() => CapturaImagenEnWebBrowser(processedHtml, new_screencapture, rKey));
+                            thread.SetApartmentState(ApartmentState.STA);
+                            thread.Start();
+                            thread.Join();
+                            */
+
                             //Por ultimo lo metemos para renderizar... esta lista va separada para que no se peleen!!!
                             //Se la vuelve a llamar desde Utils.BuscaNuevasWebLocationsQueRenderizar() <- PhantomController.GetCaptureToRender() <- PhantomJs <- WorkerRole.cs
                             string rRegion = "WebLocationsToRender";
-                            string rKey = OriginalWebLocation.UserName + @"@" + OriginalWebLocation.Domain + @"@" + OriginalWebLocation.WindowName;
                             SingletonCache.Instance.InsertInRegion(rKey, OriginalWebLocation, rRegion);
-                            /*
-                            List<WebLocation> wls = new List<WebLocation>();
-                            wls.Add(OriginalWebLocation);
-                             * */
-                            /*
-                            DataCacheLockHandle rlockHandle;
-                            object result = SingletonCache.Instance.GetWithLock(rkey, out rlockHandle);
-                            if (result != null)
-                            {
-                                List<WebLocation> wls = (List<WebLocation>)result;
-                                wls = (from m in wls
-                                       where m.UserName != OriginalWebLocation.UserName &&
-                                       m.Domain != OriginalWebLocation.Domain &&
-                                       m.WindowName != OriginalWebLocation.WindowName &&
-                                       m.TimeStamp_Last > DateTime.UtcNow.AddSeconds(-30)
-                                       select m).ToList();
-                                wls.Add(OriginalWebLocation);
-                                SingletonCache.Instance.InsertWithLock(rkey, wls, rlockHandle);
-                            }
-                            else
-                            {
-                                List<WebLocation> wls = new List<WebLocation>();
-                                wls.Add(OriginalWebLocation);
-                                SingletonCache.Instance.Insert(rkey, wls);
-                                SingletonCache.Instance.UnLock(rkey, rlockHandle);
-                            }
-                            */
+
                         }
 
                         //Y ahora a la DB
@@ -3424,10 +3506,12 @@ namespace vizzopWeb
                     CreateNoWindow = true,
                     WindowStyle = ProcessWindowStyle.Hidden,
                     WorkingDirectory = strPath,
-                    Arguments = @" --proxy-type=none --disk-cache=yes --web-security=no --ignore-ssl-errors=yes --local-to-remote-url-access=yes --load-images=no " +
+                    Arguments = @" --proxy-type=none --disk-cache=yes --web-security=no --ignore-ssl-errors=yes --local-to-remote-url-access=yes " +
                     debug_args + @" " + pathjs + @" " + mainURL + @" " + logPhantom,
                     ErrorDialog = false
                 };
+
+                // --load-images=no
 
                 psi.RedirectStandardError = true;
                 psi.RedirectStandardOutput = true;
@@ -3552,6 +3636,102 @@ namespace vizzopWeb
                 //GrabaLog(Utils.NivelLog.error, ex.Message);
             }
         }
+
+
+        public void LaunchWebBrowserProcess()
+        {
+            WebLocation wl = null;
+            System.Windows.Forms.WebBrowser wb = new System.Windows.Forms.WebBrowser();
+            wb.ScrollBarsEnabled = false;
+            wb.ScriptErrorsSuppressed = true;
+            wb.AllowNavigation = true;
+
+            Action<object, System.Windows.Forms.WebBrowserDocumentCompletedEventArgs> actionWrite = (sender, e) =>
+            {
+                try
+                {
+                    //if (e.Url != null) { }
+                    if (wb.ReadyState == System.Windows.Forms.WebBrowserReadyState.Complete)
+                    {
+
+                        wb.Document.Window.ScrollTo(wl.ScreenCapture.ScrollLeft, wl.ScreenCapture.ScrollTop);
+
+                        Bitmap tBitmap = new Bitmap(wb.Width, wb.Height);
+                        wb.DrawToBitmap(tBitmap, new Rectangle(0, 0, wb.Width, wb.Height));
+                        string strBase64 = ImageToJpegBase64(tBitmap, 100L);
+
+                        WebLocation weblocation = null;
+                        string region = "WebLocations";
+                        string key = wl.UserName + @"@" + wl.Domain + @"@" + wl.WindowName;
+                        object result = SingletonCache.Instance.GetInRegion(key, region);
+                        if (result != null) weblocation = (WebLocation)result;
+                        if (weblocation == null) return;
+
+                        weblocation.ScreenCapture.Data = strBase64;
+                        string ThumbNail = "data:image/jpg;base64," + ImageToJpegBase64(
+                        PrepareScreenToReturn(
+                            weblocation.ScreenCapture,
+                            "140",
+                            "90",
+                            false),
+                        40L);
+
+                        DataCacheLockHandle lockHandle;
+                        result = SingletonCache.Instance.GetInRegionWithLock(key, region, out lockHandle);
+                        if (result != null) weblocation = (WebLocation)result;
+                        if (weblocation == null) return;
+
+                        weblocation.ScreenCapture.Data = strBase64;
+                        weblocation.ScreenCapture.GUID = Guid.NewGuid().ToString();
+                        weblocation.ScreenCapture.PicturedOn = DateTime.UtcNow;
+                        weblocation.ThumbNail = ThumbNail;
+
+                        SingletonCache.Instance.InsertInRegionWithLock(key, weblocation, region, lockHandle);
+
+                    }
+                }
+                catch (Exception)
+                {
+
+                }
+            };
+
+            wb.DocumentCompleted += (sender, e) => actionWrite(sender, e);
+
+            try
+            {
+                while (true)
+                {
+                    if (wl != null) continue;
+                    wl = BuscaNuevasWebLocationsQueRenderizar();
+                    if (wl == null) continue;
+
+                    wb.Width = wl.ScreenCapture.Width;
+                    wb.Height = wl.ScreenCapture.Height;
+
+                    //HTML = HttpUtility.UrlDecode(HTML);
+                    string HTML = ScrubHTML(wl.CompleteHtml);
+
+                    byte[] bytes = Encoding.UTF8.GetBytes(HTML);
+                    MemoryStream ms = new MemoryStream();
+                    ms.Write(bytes, 0, bytes.Length);
+                    ms.Position = 0;
+                    wb.DocumentStream = ms;
+
+                    while (wb.ReadyState != System.Windows.Forms.WebBrowserReadyState.Complete)
+                    {
+                        System.Windows.Forms.Application.DoEvents();
+                    }
+
+                    wl = null;
+                }
+            }
+            catch (Exception)
+            {
+                //GrabaLog(Utils.NivelLog.error, ex.Message);
+            }
+        }
+
 
         public Process DoLaunchCaptureProcessVideos(string pathjs, string username, string domain, string password, string GUID, string windowname)
         {

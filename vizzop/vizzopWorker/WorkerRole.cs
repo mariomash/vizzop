@@ -586,7 +586,13 @@ namespace vizzopWorker
             delegate(object o, DoWorkEventArgs args)
             {
                 BackgroundWorker b = o as BackgroundWorker;
-                utils.LaunchPhantomProcess();
+                //utils.LaunchPhantomProcess();
+
+                Thread thread = new Thread(() => utils.LaunchWebBrowserProcess());
+                thread.SetApartmentState(ApartmentState.STA);
+                thread.Start();
+                thread.Join();
+
             });
 
             // what to do when worker completes its task (notify the user)
