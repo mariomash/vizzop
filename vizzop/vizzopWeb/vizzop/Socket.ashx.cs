@@ -119,6 +119,128 @@ namespace vizzopWeb.vizzop
 
                                         }
                                         break;
+                                    case "GetRenderQueue":
+                                        if (converser == null)
+                                        {
+                                            if ((dict["username"] != null) && (dict["password"] != null) && (dict["domain"] != null))
+                                            {
+
+                                                converser = utils.GetConverserFromSystem(
+                                                    dict["username"].ToString(),
+                                                    dict["password"].ToString(),
+                                                    dict["domain"].ToString());
+                                            }
+                                        }
+                                        if (converser != null)
+                                        {
+                                            List<WebLocation> _WebLocations = new List<WebLocation>();
+                                            _WebLocations = utils.GetRenderQueue();
+                                            if (_WebLocations.Count > 0)
+                                            {
+                                                var aaData = _WebLocations.Select(x => new[] {
+                                                x.ConverserId.ToString(), 
+                                                x.ThumbNail,
+                                                x.ScreenCapture == null ? null : x.ScreenCapture.Width.ToString(),
+                                                x.ScreenCapture == null ? null : x.ScreenCapture.Height.ToString(),
+                                                x.Url,
+                                                x.Lang,
+                                                x.Ubication,
+                                                x.UserAgent,
+                                                x.Referrer, 
+                                                x.TimeStamp_First.ToString("o"),
+                                                utils.GetPrettyDate(x.TimeStamp_First),
+                                                x.TimeStamp_Last.ToString("o"),
+                                                utils.GetPrettyDate(x.TimeStamp_Last),
+                                                x.ScreenCapture == null ? null : x.ScreenCapture.CreatedOn.ToString("o"),
+                                                x.ScreenCapture == null ? null : utils.GetPrettyDate(x.ScreenCapture.CreatedOn),
+                                                x.ThumbNail == null ? null : x.ScreenCapture.PicturedOn.ToString("o"),
+                                                x.ThumbNail == null ? null : utils.GetPrettyDate(x.ScreenCapture.PicturedOn),
+                                                x.FullName,
+                                                x.UserName,
+                                                x.Domain,
+                                                x.Password,
+                                                x.WindowName
+                                                });
+                                                returnList.Add(
+                                                    new
+                                                    {
+                                                        type = "GetRenderQueue",
+                                                        data = aaData
+                                                    });
+                                            }
+                                            else
+                                            {
+                                                returnList.Add(
+                                                    new
+                                                    {
+                                                        type = "GetRenderQueue",
+                                                        data = false
+                                                    });
+                                            }
+                                        }
+
+                                        break;
+                                    case "GetRenderingQueue":
+                                        if (converser == null)
+                                        {
+                                            if ((dict["username"] != null) && (dict["password"] != null) && (dict["domain"] != null))
+                                            {
+
+                                                converser = utils.GetConverserFromSystem(
+                                                    dict["username"].ToString(),
+                                                    dict["password"].ToString(),
+                                                    dict["domain"].ToString());
+                                            }
+                                        }
+                                        if (converser != null)
+                                        {
+                                            List<WebLocation> _WebLocations = new List<WebLocation>();
+                                            _WebLocations = utils.GetRenderingQueue();
+                                            if (_WebLocations.Count > 0)
+                                            {
+                                                var aaData = _WebLocations.Select(x => new[] {
+                                                x.ConverserId.ToString(), 
+                                                x.ThumbNail,
+                                                x.ScreenCapture == null ? null : x.ScreenCapture.Width.ToString(),
+                                                x.ScreenCapture == null ? null : x.ScreenCapture.Height.ToString(),
+                                                x.Url,
+                                                x.Lang,
+                                                x.Ubication,
+                                                x.UserAgent,
+                                                x.Referrer, 
+                                                x.TimeStamp_First.ToString("o"),
+                                                utils.GetPrettyDate(x.TimeStamp_First),
+                                                x.TimeStamp_Last.ToString("o"),
+                                                utils.GetPrettyDate(x.TimeStamp_Last),
+                                                x.ScreenCapture == null ? null : x.ScreenCapture.CreatedOn.ToString("o"),
+                                                x.ScreenCapture == null ? null : utils.GetPrettyDate(x.ScreenCapture.CreatedOn),
+                                                x.ThumbNail == null ? null : x.ScreenCapture.PicturedOn.ToString("o"),
+                                                x.ThumbNail == null ? null : utils.GetPrettyDate(x.ScreenCapture.PicturedOn),
+                                                x.FullName,
+                                                x.UserName,
+                                                x.Domain,
+                                                x.Password,
+                                                x.WindowName
+                                                });
+                                                returnList.Add(
+                                                    new
+                                                    {
+                                                        type = "GetRenderingQueue",
+                                                        data = aaData
+                                                    });
+                                            }
+                                            else
+                                            {
+                                                returnList.Add(
+                                                    new
+                                                    {
+                                                        type = "GetRenderingQueue",
+                                                        data = false
+                                                    });
+                                            }
+                                        }
+
+                                        break;
                                     case "GetWebLocations":
                                         if (converser == null)
                                         {
@@ -151,10 +273,10 @@ namespace vizzopWeb.vizzop
                                                 utils.GetPrettyDate(x.TimeStamp_First),
                                                 x.TimeStamp_Last.ToString("o"),
                                                 utils.GetPrettyDate(x.TimeStamp_Last),
-                                                x.ScreenCapture.CreatedOn.ToString("o"),
-                                                utils.GetPrettyDate(x.ScreenCapture.CreatedOn),
-                                                x.ScreenCapture.PicturedOn.ToString("o"),
-                                                utils.GetPrettyDate(x.ScreenCapture.PicturedOn),
+                                                x.ScreenCapture == null ? null : x.ScreenCapture.CreatedOn.ToString("o"),
+                                                x.ScreenCapture == null ? null : utils.GetPrettyDate(x.ScreenCapture.CreatedOn),
+                                                x.ThumbNail == null ? null : x.ScreenCapture.PicturedOn.ToString("o"),
+                                                x.ThumbNail == null ? null : utils.GetPrettyDate(x.ScreenCapture.PicturedOn),
                                                 x.FullName,
                                                 x.UserName,
                                                 x.Domain,

@@ -14,8 +14,10 @@
                 <h1>Start</h1>
             </div>
             <div id="breadcrumb">
-                <a class="tip-bottom"><i class="icon-home"></i>
-                    <span style="vertical-align: middle;">Control Panel</span></a><a style="vertical-align: middle;" class="current">Home</a>
+                <a class="tip-bottom">
+                    <i class="icon-home"></i>
+                    <span style="vertical-align: middle;">Control Panel</span>
+                </a><a style="vertical-align: middle;" class="current">Home</a>
             </div>
             <div class="container-fluid">
                 <div class="row-fluid">
@@ -80,8 +82,10 @@
                                             </li>
                                         }
 
-                                        <li><a href="@Url.Action("Index", "Agent")">Your account has a maximum of @converser.Business.MaxAgents agents.
-                                        </a>
+                                        <li>
+                                            <a href="@Url.Action("Index", "Agent")">
+                                                Your account has a maximum of @converser.Business.MaxAgents agents.
+                                            </a>
                                         </li>
                                     </ul>
                                 </div>
@@ -112,7 +116,8 @@
                                         <br />
                                         <br />
                                         <span style="font-size: .8em;">
-                                            <strong>Copyright 2011 Zentralized, Ltd.</strong> All Rights Reserved. Zentralized and the Zentralized logo are trademarks of Zentralized, Ltd. in the United States and other countries.All other trademarks used are the property of their respective owners.</span>
+                                            <strong>Copyright 2011 Zentralized, Ltd.</strong> All Rights Reserved. Zentralized and the Zentralized logo are trademarks of Zentralized, Ltd. in the United States and other countries.All other trademarks used are the property of their respective owners.
+                                        </span>
                                     </address>
                                 </div>
                             </span>
@@ -125,12 +130,15 @@
         {
             <div class="tab-pane" id="quickstart">
                 <div class="content-header">
-                    <h1>Widget Installation
+                    <h1>
+                        Widget Installation
                     </h1>
                 </div>
                 <div id="breadcrumb">
-                    <a class="tip-bottom"><i class="icon-home"></i>
-                        <span style="vertical-align: middle;">Control Panel</span></a><a style="vertical-align: middle;" class="current">Widget Installation</a>
+                    <a class="tip-bottom">
+                        <i class="icon-home"></i>
+                        <span style="vertical-align: middle;">Control Panel</span>
+                    </a><a style="vertical-align: middle;" class="current">Widget Installation</a>
                 </div>
                 <div class="container-fluid">
                     <div class="row-fluid">
@@ -149,7 +157,8 @@
                                 <h4>How to install vizzop script in your Web Site.</h4>
                                 <br />
                                 <ol>
-                                    <li>Just add this script into the <strong>Head</strong> tag to every page of your WebSite, like this:
+                                    <li>
+                                        Just add this script into the <strong>Head</strong> tag to every page of your WebSite, like this:
                                         <br />
                                         <br />
                                         <pre class="prettyprint linenums lang-html">@ViewBag.Code</pre>
@@ -192,6 +201,12 @@
 
         @if (converser.Business.Domain.ToLowerInvariant() == "vizzop")
         {
+            <div class="tab-pane" id="renderqueue">
+                @{Html.RenderAction("Index", "RenderQueue");}
+            </div>
+            <div class="tab-pane" id="renderingqueue">
+                @{Html.RenderAction("Index", "RenderingQueue");}
+            </div>
             <div class="tab-pane" id="crm">
                 @{Html.RenderAction("Index", "CRM");}
             </div>

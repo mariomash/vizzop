@@ -18,7 +18,7 @@
 <html class="@class_">
 <head>
     @if (Request["popupmsg"] != null)
-    { 
+    {
         <script type="text/javascript">
             alert("@Request["popupmsg"]");
         </script>
@@ -32,7 +32,7 @@
     <script type="text/javascript" src="@Url.Content("~/Scripts/d3.v3.min.js")"></script>
     @if ((ViewBag.LayoutPanelMode == true) || (ViewBag.LayoutWhiteLabelMode == true))
     {
-        <script src="@Url.Content("~/Scripts/scriptloader.ashx")" type="text/javascript" ></script>
+        <script src="@Url.Content("~/Scripts/scriptloader.ashx")" type="text/javascript"></script>
     }
     <link href="@Url.Content("~/Scripts/bootstrap/css/bootstrap.css")" rel="stylesheet" type="text/css" />
     <link href="@Url.Content("~/Content/themes/base/jVizzop-ui.css")" rel="stylesheet" type="text/css" />
@@ -74,107 +74,107 @@
                                  select m).FirstOrDefault();
                 ViewBag.business = _business;
                 ViewBag.ApiKey = _business.ApiKey;
-        <script type="text/javascript" src="/vizzop/jsapi.ashx?mode=client&apikey=@Html.Raw(ViewBag.ApiKey)"></script>   
+                <script type="text/javascript" src="/vizzop/jsapi.ashx?mode=client&apikey=@Html.Raw(ViewBag.ApiKey)"></script>
             }
             else
             {
                 if (converser != null)
-                {                    
-        <script type="text/javascript">
+                {
+                    <script type="text/javascript">
 
-            setTimeout(function () {
-                var d = document; h = d.getElementsByTagName('head')[0];
-                var s = d.createElement('script'); s.type = 'text/javascript'; s.async = true; s.setAttribute('async', 'true');
-                s.src = "/vizzop/jsapi.ashx?mode=agent&apikey=@Html.Raw(converser.Business.ApiKey)&username=@Html.Raw(converser.UserName)&password=@Html.Raw(converser.Password)&domain=@Html.Raw(converser.Business.Domain)";
-                h.appendChild(s);
-            }, 50);
+                        setTimeout(function () {
+                            var d = document; h = d.getElementsByTagName('head')[0];
+                            var s = d.createElement('script'); s.type = 'text/javascript'; s.async = true; s.setAttribute('async', 'true');
+                            s.src = "/vizzop/jsapi.ashx?mode=agent&apikey=@Html.Raw(converser.Business.ApiKey)&username=@Html.Raw(converser.UserName)&password=@Html.Raw(converser.Password)&domain=@Html.Raw(converser.Business.Domain)";
+                            h.appendChild(s);
+                        }, 50);
 
-            function SendReview() {
-                try {
-                    $('#popover_action_send').hide();
-                    $('#popover_action_loading').show();
-                    var msg = {
-                        'UserName': '@Html.Raw(converser.UserName)',
-                        'Domain': '@Html.Raw(converser.Business.Domain)',
-                        'Password': '@Html.Raw(converser.Password)',
-                        'newReviewRating': $('#beta_rating').val(),
-                        'newReviewComment': $('#beta_comment').val()
-                    };
-                    var post = $.ajax({
-                        url: '@Url.Action("SendNewReview", "Messages")',
-                        type: "POST",
-                        data: msg,
-                        dataType: "jsonp",
-                        beforeSend: function (xhr) {
-                            //(xhr);
-                        },
-                        success: function (data) {
-                            if (data == true) {
-                                $('#popover_contents').html('<center style="color: #009900; font-weight: bold; font-size: 20px;">Your message was sent successfuly.</center><br/><center>Thank you for your Comment. We will answer you very soon.</center>');
-                            } else {
+                        function SendReview() {
+                            try {
+                                $('#popover_action_send').hide();
+                                $('#popover_action_loading').show();
+                                var msg = {
+                                    'UserName': '@Html.Raw(converser.UserName)',
+                                    'Domain': '@Html.Raw(converser.Business.Domain)',
+                                    'Password': '@Html.Raw(converser.Password)',
+                                    'newReviewRating': $('#beta_rating').val(),
+                                    'newReviewComment': $('#beta_comment').val()
+                                };
+                                var post = $.ajax({
+                                    url: '@Url.Action("SendNewReview", "Messages")',
+                                    type: "POST",
+                                    data: msg,
+                                    dataType: "jsonp",
+                                    beforeSend: function (xhr) {
+                                        //(xhr);
+                                    },
+                                    success: function (data) {
+                                        if (data == true) {
+                                            $('#popover_contents').html('<center style="color: #009900; font-weight: bold; font-size: 20px;">Your message was sent successfuly.</center><br/><center>Thank you for your Comment. We will answer you very soon.</center>');
+                                        } else {
+                                            $('#popover_action_loading').hide();
+                                            $('#popover_action_send').show();
+                                            $('#popover_action_result').html('<center style="color: red; font-weight: bold; font-size: 18px;">Error sending comment, please try again</center>').show();
+                                        }
+                                    },
+                                    error: function (jqXHR, textStatus) {
+                                        $('#popover_action_loading').hide();
+                                        $('#popover_action_send').show();
+                                        $('#popover_action_result').html('<center style="color: red; font-weight: bold; font-size: 18px;">Error sending comment, please try again</center>').show();
+                                    }
+                                });
+                            } catch (err) {
                                 $('#popover_action_loading').hide();
                                 $('#popover_action_send').show();
                                 $('#popover_action_result').html('<center style="color: red; font-weight: bold; font-size: 18px;">Error sending comment, please try again</center>').show();
                             }
-                        },
-                        error: function (jqXHR, textStatus) {
-                            $('#popover_action_loading').hide();
-                            $('#popover_action_send').show();
-                            $('#popover_action_result').html('<center style="color: red; font-weight: bold; font-size: 18px;">Error sending comment, please try again</center>').show();
                         }
-                    });
-                    } catch (err) {
-                        $('#popover_action_loading').hide();
-                        $('#popover_action_send').show();
-                        $('#popover_action_result').html('<center style="color: red; font-weight: bold; font-size: 18px;">Error sending comment, please try again</center>').show();
-                    }
-                }
-                $(document).bind('ready.beta', function () {
-                    var formContents = '<div id="popover_contents">';
-                    formContents += '<div>Write the description of the issue</div>';
-                    formContents += '<div><textarea style="width: 190px; height: 150px;" id=beta_comment></textarea>';
-                    formContents += '</div>';
-                    formContents += '<br/>';
-                    formContents += '<div>Issue Importance</div>';
-                    formContents += '<div>';
-                    formContents += '<select id=beta_rating style="width: 190px;">';
-                    formContents += '<option value="5" selected>Critical Error</option>';
-                    formContents += '<option value="4">Important Error</option>';
-                    formContents += '<option value="3">Not critical</option>';
-                    formContents += '<option value="2">Feature Sugestion</option>';
-                    formContents += '<option value="1">Just a Comment</option>';
-                    formContents += '</select>';
-                    formContents += '</div>';
-                    formContents += '<br/>';
-                    formContents += '<div class=actions id=popover_action>';
-                    formContents += '<button class="vizzop-btn vizzop-btn-primary vizzop-btn-large" id=popover_action_send onclick="javascript:SendReview();return false;">Send</button>';
-                    formContents += '<span id=popover_action_loading style="display:none;"><img src="@Url.Content("~/Content/images/loading.gif")"/></span>';
-                    formContents += '<span id=popover_action_result style="display:none;"></span>';
-                    formContents += '</div></div>';
-                    $('#previewbut').attr({
-                        'rel': 'popover',
-                        'title': 'Report an Issue',
-                        'data-content': formContents,
-                        'data-trigger': 'manual',
-                        'data-placement': 'bottom',
-                        'data-html': 'true'
-                    });
-                    $('#previewbut').popover();
+                        $(document).bind('ready.beta', function () {
+                            var formContents = '<div id="popover_contents">';
+                            formContents += '<div>Write the description of the issue</div>';
+                            formContents += '<div><textarea style="width: 190px; height: 150px;" id=beta_comment></textarea>';
+                            formContents += '</div>';
+                            formContents += '<br/>';
+                            formContents += '<div>Issue Importance</div>';
+                            formContents += '<div>';
+                            formContents += '<select id=beta_rating style="width: 190px;">';
+                            formContents += '<option value="5" selected>Critical Error</option>';
+                            formContents += '<option value="4">Important Error</option>';
+                            formContents += '<option value="3">Not critical</option>';
+                            formContents += '<option value="2">Feature Sugestion</option>';
+                            formContents += '<option value="1">Just a Comment</option>';
+                            formContents += '</select>';
+                            formContents += '</div>';
+                            formContents += '<br/>';
+                            formContents += '<div class=actions id=popover_action>';
+                            formContents += '<button class="vizzop-btn vizzop-btn-primary vizzop-btn-large" id=popover_action_send onclick="javascript:SendReview();return false;">Send</button>';
+                            formContents += '<span id=popover_action_loading style="display:none;"><img src="@Url.Content("~/Content/images/loading.gif")"/></span>';
+                            formContents += '<span id=popover_action_result style="display:none;"></span>';
+                            formContents += '</div></div>';
+                            $('#previewbut').attr({
+                                'rel': 'popover',
+                                'title': 'Report an Issue',
+                                'data-content': formContents,
+                                'data-trigger': 'manual',
+                                'data-placement': 'bottom',
+                                'data-html': 'true'
+                            });
+                            $('#previewbut').popover();
 
-                    $('#previewbut').click(function (e) {
-                        if ($(e.target).parents('.popover').length > 0) {
-                            return false;
-                        }
-                        $('#previewbut').popover('toggle');
-                    });
-                });
-        </script>
-        <link href="@Url.Content("~/Scripts/bootstrap/css/unicorn.main.css")" rel="stylesheet" type="text/css" />
-        <link href="@Url.Content("~/Scripts/bootstrap/css/unicorn.grey.css")" rel="stylesheet" type="text/css" />
+                            $('#previewbut').click(function (e) {
+                                if ($(e.target).parents('.popover').length > 0) {
+                                    return false;
+                                }
+                                $('#previewbut').popover('toggle');
+                            });
+                        });
+                    </script>
+                    <link href="@Url.Content("~/Scripts/bootstrap/css/unicorn.main.css")" rel="stylesheet" type="text/css" />
+                    <link href="@Url.Content("~/Scripts/bootstrap/css/unicorn.grey.css")" rel="stylesheet" type="text/css" />
                 }
             }
         }
-        catch (Exception ex) { utils.GrabaLog(vizzopWeb.Utils.NivelLog.error, ex.Message); } 
+        catch (Exception ex) { utils.GrabaLog(vizzopWeb.Utils.NivelLog.error, ex.Message); }
     }
 </head>
 <body class="@class_">
@@ -188,33 +188,33 @@
 
             if (ViewBag.LayoutPanelMode == true)
             {
-            <div id="header">
-                <span class="logomain"></span>
-                <span class="LogOnPartial">@Html.Partial("_LogOnPartial")</span>
-            </div>
+                <div id="header">
+                    <span class="logomain"></span>
+                    <span class="LogOnPartial">@Html.Partial("_LogOnPartial")</span>
+                </div>
             }
             else
-            {           
-            <div class="navbar navbar-inverse navbar-fixed-top">
-                <div class="navbar-inner">
-                    <div class="container">
-                        <ul class="nav">
-                            <li>
-                                <a href="@Url.Action("Index", "Home", new { force = true })">Home</a>
-                            </li>
-                            <li>
-                                @Html.ActionLink("Create your account", "Create", "vizzop")
-                            </li>
-                            <!--
-                            <li>
-                                @Html.ActionLink("What is vizzop?", "En", "vizzop")
-                            </li>
-                                -->
-                        </ul>
-                        @Html.Partial("_LogOnPartial")
+            {
+                <div class="navbar navbar-inverse navbar-fixed-top">
+                    <div class="navbar-inner">
+                        <div class="container">
+                            <ul class="nav">
+                                <li>
+                                    <a href="@Url.Action("Index", "Home", new { force = true })">Home</a>
+                                </li>
+                                <li>
+                                    @Html.ActionLink("Create your account", "Create", "vizzop")
+                                </li>
+                                <!--
+                                <li>
+                                    @Html.ActionLink("What is vizzop?", "En", "vizzop")
+                                </li>
+                                    -->
+                            </ul>
+                            @Html.Partial("_LogOnPartial")
+                        </div>
                     </div>
                 </div>
-            </div>
             }
         }
         @{
@@ -222,194 +222,232 @@
             {
                 if (ViewBag.LayoutSubPanelMode == true)
                 {
-            <div id="sidebar">
-                <ul>
-                    <li class="tab">
-                        <a href="@Url.Action("Index", "Panel")"><i class="icon-arrow-left icon-blue"></i>
-                            <span style="vertical-align: middle;">&nbsp;Back to Control Panel</span></a>
-                    </li>
-                </ul>
-                <div id="chatlist">
-                </div>
-            </div>
+                    <div id="sidebar">
+                        <ul>
+                            <li class="tab">
+                                <a href="@Url.Action("Index", "Panel")">
+                                    <i class="icon-arrow-left icon-blue"></i>
+                                    <span style="vertical-align: middle;">&nbsp;Back to Control Panel</span>
+                                </a>
+                            </li>
+                        </ul>
+                        <div id="chatlist">
+                        </div>
+                    </div>
                 }
                 else
                 {
-            <script type="text/javascript">
-                function ShowTab(name) {
-                    _gaq.push(['_trackPageview', '/Panel/' + name]);
-                    $('ul > li.tab > a[href="' + name + '"]').tab('show');
-                }
-                $(function () {
-                    $('.nav-tabs').tab();
-                    //(window.location.hash);
-                    if (window.location.hash.length > 0) {
-                        ShowTab(window.location.hash);
-                    } else {
-                        ShowTab('#home');
-                    }
-                    $('a[data-toggle="tab"]').on('shown', function (e) {
-                        if ($(e.target).attr('href') == '#analytics') {
-                            try {
-                                if (analytics_plot) {
-                                    if (analytics_plot != null) {
-                                        analytics_plot.replot();
-                                    }
-                                }
-                            } catch (ex) { }
-                        } else if ($(e.target).attr('href') == '#realtime') {
-                            try {
-                                if (realtime_plot != null) {
-                                    realtime_plot.replot();
-                                }
-                            } catch (ex) { }
-                            try {
-                                if (bubbles_plot != null) {
-                                    bubbles_plot.replot();
-                                }
-                            } catch (ex) { }
+                    <script type="text/javascript">
+                        function ShowTab(name) {
+                            _gaq.push(['_trackPageview', '/Panel/' + name]);
+                            $('ul > li.tab > a[href="' + name + '"]').tab('show');
                         }
-                    })
-                })
-            </script>
-            <div id="sidebar">
-                <ul>
-                    <li class="tab">
-                        <a href="#home" data-toggle="tab"><i class="icon-home icon-blue"></i>
-                            <span style="vertical-align: middle;">&nbsp;Home</span></a>
-                    </li>
-                    <li class="tab">
-                        <a href="#realtime" data-toggle="tab"><i class="icon-eye-open icon-blue"></i>
-                            <span style="vertical-align: middle;">&nbsp;Realtime</span></a>
-                    </li>
-                    @if (converser.Business.ShowVideosPanel == true)
-                    {
-                        <li class="tab">
-                            <a href="#screenshots" data-toggle="tab"><i class="icon-film icon-white"></i>
-                                <span style="vertical-align: middle;">&nbsp;Visitor Videos</span></a>
-                        </li>
-                    }
+                        $(function () {
+                            $('.nav-tabs').tab();
+                            //(window.location.hash);
+                            if (window.location.hash.length > 0) {
+                                ShowTab(window.location.hash);
+                            } else {
+                                ShowTab('#home');
+                            }
+                            $('a[data-toggle="tab"]').on('shown', function (e) {
+                                if ($(e.target).attr('href') == '#analytics') {
+                                    try {
+                                        if (analytics_plot) {
+                                            if (analytics_plot != null) {
+                                                analytics_plot.replot();
+                                            }
+                                        }
+                                    } catch (ex) { }
+                                } else if ($(e.target).attr('href') == '#realtime') {
+                                    try {
+                                        if (realtime_plot != null) {
+                                            realtime_plot.replot();
+                                        }
+                                    } catch (ex) { }
+                                    try {
+                                        if (bubbles_plot != null) {
+                                            bubbles_plot.replot();
+                                        }
+                                    } catch (ex) { }
+                                }
+                            })
+                        })
+                    </script>
+                    <div id="sidebar">
+                        <ul>
+                            <li class="tab">
+                                <a href="#home" data-toggle="tab">
+                                    <i class="icon-home icon-blue"></i>
+                                    <span style="vertical-align: middle;">&nbsp;Home</span>
+                                </a>
+                            </li>
+                            <li class="tab">
+                                <a href="#realtime" data-toggle="tab">
+                                    <i class="icon-eye-open icon-blue"></i>
+                                    <span style="vertical-align: middle;">&nbsp;Realtime</span>
+                                </a>
+                            </li>
+                            @if (converser.Business.ShowVideosPanel == true)
+                            {
+                                <li class="tab">
+                                    <a href="#screenshots" data-toggle="tab">
+                                        <i class="icon-film icon-white"></i>
+                                        <span style="vertical-align: middle;">&nbsp;Visitor Videos</span>
+                                    </a>
+                                </li>
+                            }
 
-                    @if (converser.Business.ShowStatsPanel == true)
-                    {
-                        <li class="tab">
-                            <a href="#analytics" data-toggle="tab"><i class="icon-signal icon-blue"></i>
-                                <span style="vertical-align: middle;">&nbsp;Visitor Stats</span></a>
-                        </li>
-                    }
-                    <li class="tab">
-                        <a href="#tickets" data-toggle="tab"><i class="icon-comment icon-blue"></i>
-                            <span style="vertical-align: middle;">&nbsp;Customer Support</span></a>
-                    </li>
-                    <li class="zs_dialog stacked zs_dialog_title">
-                        <div class="title">Help</div>
-                    </li>
-                    <li class="tab">
-                        <a href="#quickstart" data-toggle="tab"><i class="icon-question-sign icon-blue"></i>
-                            <span style="vertical-align: middle;">&nbsp;Widget Installation</span></a>
-                    </li>
-                    <!--
-                    <li class="tab">
-                        <a href="#manuals" data-toggle="tab"><i class="icon-question-sign icon-blue"></i>
-                            <span style="vertical-align: middle;">&nbsp;Docs & FAQs</span></a>
-                    </li>
-                        -->
-                    @if (converser.Agent.IsAdmin == true)
-                    {
-                        <li class="zs_dialog stacked zs_dialog_title">
-                            <div class="title">Settings</div>
-                        </li>
-                        <li class="tab">
-                            <a href="@Url.Action("EditBusiness")"><i class="icon-cog icon-blue"></i>
-                                <span style="vertical-align: middle;">&nbsp;Account Settings</span></a>
-                        </li>
-                        <li class="tab">
-                            <a href="@Url.Action("Index", "Agent")"><i class="icon-cog icon-blue"></i>
-                                <span style="vertical-align: middle;">&nbsp;Agents Settings</span></a>
-                        </li>
-                        <li class="tab">
-                            <a href="#widget" data-toggle="tab"><i class="icon-cog icon-blue"></i>
-                                <span style="vertical-align: middle;">&nbsp;System Settings</span></a>
-                        </li>
-                    }
+                            @if (converser.Business.ShowStatsPanel == true)
+                            {
+                                <li class="tab">
+                                    <a href="#analytics" data-toggle="tab">
+                                        <i class="icon-signal icon-blue"></i>
+                                        <span style="vertical-align: middle;">&nbsp;Visitor Stats</span>
+                                    </a>
+                                </li>
+                            }
+                            <li class="tab">
+                                <a href="#tickets" data-toggle="tab">
+                                    <i class="icon-comment icon-blue"></i>
+                                    <span style="vertical-align: middle;">&nbsp;Customer Support</span>
+                                </a>
+                            </li>
+                            <li class="zs_dialog stacked zs_dialog_title">
+                                <div class="title">Help</div>
+                            </li>
+                            <li class="tab">
+                                <a href="#quickstart" data-toggle="tab">
+                                    <i class="icon-question-sign icon-blue"></i>
+                                    <span style="vertical-align: middle;">&nbsp;Widget Installation</span>
+                                </a>
+                            </li>
+                            <!--
+                            <li class="tab">
+                                <a href="#manuals" data-toggle="tab"><i class="icon-question-sign icon-blue"></i>
+                                    <span style="vertical-align: middle;">&nbsp;Docs & FAQs</span></a>
+                            </li>
+                                -->
+                            @if (converser.Agent.IsAdmin == true)
+                            {
+                                <li class="zs_dialog stacked zs_dialog_title">
+                                    <div class="title">Settings</div>
+                                </li>
+                                <li class="tab">
+                                    <a href="@Url.Action("EditBusiness")">
+                                        <i class="icon-cog icon-blue"></i>
+                                        <span style="vertical-align: middle;">&nbsp;Account Settings</span>
+                                    </a>
+                                </li>
+                                <li class="tab">
+                                    <a href="@Url.Action("Index", "Agent")">
+                                        <i class="icon-cog icon-blue"></i>
+                                        <span style="vertical-align: middle;">&nbsp;Agents Settings</span>
+                                    </a>
+                                </li>
+                                <li class="tab">
+                                    <a href="#widget" data-toggle="tab">
+                                        <i class="icon-cog icon-blue"></i>
+                                        <span style="vertical-align: middle;">&nbsp;System Settings</span>
+                                    </a>
+                                </li>
+                            }
 
-                    @if (converser.Business.Domain.ToLowerInvariant() == "vizzop")
-                    {
-                        <li class="zs_dialog stacked zs_dialog_title">
-                            <div class="title">Vizzop Administration</div>
-                        </li>
-                        <li class="tab">
-                            <a href="#crm" data-toggle="tab"><i class="icon-cog icon-blue"></i>
-                                <span style="vertical-align: middle;">&nbsp;Clients</span></a>
-                        </li>
-                        <li class="tab">
-                            <a href="#localization" data-toggle="tab"><i class="icon-cog icon-blue"></i>
-                                <span style="vertical-align: middle;">&nbsp;Localization</span></a>
-                        </li>
-                        <li class="tab">
-                            <a href="#mailing" data-toggle="tab"><i class="icon-cog icon-blue"></i>
-                                <span style="vertical-align: middle;">&nbsp;Mailing</span></a>
-                        </li>
-                    }
-                </ul>
-                <div id="chatlist">
-                </div>
-            </div>
+                            @if (converser.Business.Domain.ToLowerInvariant() == "vizzop")
+                            {
+                                <li class="zs_dialog stacked zs_dialog_title">
+                                    <div class="title">Vizzop Administration</div>
+                                </li>
+                                <li class="tab">
+                                    <a href="#renderqueue" data-toggle="tab">
+                                        <i class="icon-eye-open icon-blue"></i>
+                                        <span style="vertical-align: middle;">&nbsp;Render Queue</span>
+                                    </a>
+                                </li>
+                                <li class="tab">
+                                    <a href="#renderingqueue" data-toggle="tab">
+                                        <i class="icon-eye-open icon-blue"></i>
+                                        <span style="vertical-align: middle;">&nbsp;Rendering Queue</span>
+                                    </a>
+                                </li>
+                                <li class="tab">
+                                    <a href="#crm" data-toggle="tab">
+                                        <i class="icon-cog icon-blue"></i>
+                                        <span style="vertical-align: middle;">&nbsp;Clients</span>
+                                    </a>
+                                </li>
+                                <li class="tab">
+                                    <a href="#localization" data-toggle="tab">
+                                        <i class="icon-cog icon-blue"></i>
+                                        <span style="vertical-align: middle;">&nbsp;Localization</span>
+                                    </a>
+                                </li>
+                                <li class="tab">
+                                    <a href="#mailing" data-toggle="tab">
+                                        <i class="icon-cog icon-blue"></i>
+                                        <span style="vertical-align: middle;">&nbsp;Mailing</span>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                        <div id="chatlist">
+                        </div>
+                    </div>
                 }
             }
             @RenderBody()
             if ((ViewBag.LayoutPanelMode != true) && (ViewBag.LayoutWhiteLabelMode != true))
             {
-            <div style="width: 630px; margin: 55px auto; text-align: center;">
-                <!--<blockquote style="display: block; vertical-align: top;">
-                    width: 250px; width: 350px;
-                </blockquote>-->
-                <div>
-                    <strong>Copyright 2011 Zentralized, Ltd.</strong> All Rights Reserved. Zentralized and the Zentralized logo are trademarks of Zentralized, Ltd. in the United States and other countries.All other trademarks used are the property of their respective owners.
+                <div style="width: 630px; margin: 55px auto; text-align: center;">
+                    <!--<blockquote style="display: block; vertical-align: top;">
+                        width: 250px; width: 350px;
+                    </blockquote>-->
+                    <div>
+                        <strong>Copyright 2011 Zentralized, Ltd.</strong> All Rights Reserved. Zentralized and the Zentralized logo are trademarks of Zentralized, Ltd. in the United States and other countries.All other trademarks used are the property of their respective owners.
+                    </div>
+                    <hr />
+                    <address style="display: block; vertical-align: top;">
+                        <strong>Zentralized Ltd.</strong>
+                        <br />
+                        145-157 St John Street, London, EC1V 4PW, United Kingdom
+                        <br />
+                        20, Sant josep de la Muntanya, Palma, 07010, Spain
+                        <br />
+                        <br />
+                        <a href="mailto:customer.service@vizzop.com">customer.service@vizzop.com</a>
+                    </address>
                 </div>
-                <hr />
-                <address style="display: block; vertical-align: top;">
-                    <strong>Zentralized Ltd.</strong>
-                    <br />
-                    145-157 St John Street, London, EC1V 4PW, United Kingdom
-                    <br />
-                    20, Sant josep de la Muntanya, Palma, 07010, Spain
-                    <br />
-                    <br />
-                    <a href="mailto:customer.service@vizzop.com">customer.service@vizzop.com</a>
-                </address>
-            </div>
-            <br />
+                <br />
             <!-- Google Code for Etiqueta de remarketing: -->
             <!-- Remarketing tags may not be associated with personally identifiable information or placed on pages related to sensitive categories. For instructions on adding this tag and more information on the above requirements, read the setup guide: google.com/ads/remarketingsetup -->
-            <script type="text/javascript">
-                /* <![CDATA[ */
-                var google_conversion_id = 1006879207;
-                var google_conversion_label = "G0dnCIG9uQMQ54OP4AM";
-                var google_custom_params = window.google_tag_params;
-                var google_remarketing_only = true;
-                /* ]]> */
-            </script>
-            <script type="text/javascript" src="//www.googleadservices.com/pagead/conversion.js">
-            </script>
-            <noscript>
-                <div style="display: inline;">
-                    <img height="1" width="1" style="border-style: none;" alt="" src="//googleads.g.doubleclick.net/pagead/viewthroughconversion/1006879207/?value=0&amp;label=G0dnCIG9uQMQ54OP4AM&amp;guid=ON&amp;script=0" />
-                </div>
-            </noscript>
-            
-            <script>
-                var _prum = [['id', '51c2ee28abe53d6a73000000'],
-                             ['mark', 'firstbyte', (new Date()).getTime()]];
-                (function () {
-                    var s = document.getElementsByTagName('script')[0]
-                      , p = document.createElement('script');
-                    p.async = 'async';
-                    p.src = '//rum-static.pingdom.net/prum.min.js';
-                    s.parentNode.insertBefore(p, s);
-                })();
-            </script>
-    
+                <script type="text/javascript">
+                    /* <![CDATA[ */
+                    var google_conversion_id = 1006879207;
+                    var google_conversion_label = "G0dnCIG9uQMQ54OP4AM";
+                    var google_custom_params = window.google_tag_params;
+                    var google_remarketing_only = true;
+                    /* ]]> */
+                </script>
+                <script type="text/javascript" src="//www.googleadservices.com/pagead/conversion.js">
+                </script>
+                <noscript>
+                    <div style="display: inline;">
+                        <img height="1" width="1" style="border-style: none;" alt="" src="//googleads.g.doubleclick.net/pagead/viewthroughconversion/1006879207/?value=0&amp;label=G0dnCIG9uQMQ54OP4AM&amp;guid=ON&amp;script=0" />
+                    </div>
+                </noscript>
+
+                <script>
+                    var _prum = [['id', '51c2ee28abe53d6a73000000'],
+                                 ['mark', 'firstbyte', (new Date()).getTime()]];
+                    (function () {
+                        var s = document.getElementsByTagName('script')[0]
+                          , p = document.createElement('script');
+                        p.async = 'async';
+                        p.src = '//rum-static.pingdom.net/prum.min.js';
+                        s.parentNode.insertBefore(p, s);
+                    })();
+                </script>
+
             }
         }
     </div>

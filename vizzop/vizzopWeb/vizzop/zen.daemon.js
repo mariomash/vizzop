@@ -373,6 +373,28 @@ var Daemon = jVizzop.zs_Class.create({
                                         rt_updatetable();
                                         rt_Reloading_InCourse = null;
                                         rt_Countdown();
+                                    } else if (v.type == "GetRenderQueue") {
+                                        if (v.data != false) {
+                                            rq_tabledata = v.data;
+                                        } else {
+                                            rq_tabledata = [];
+                                        }
+                                        $('#RenderQueueReportLoading').hide();
+                                        $('#RenderQueueReportResults').show();
+                                        rq_updatetable();
+                                        rq_Reloading_InCourse = null;
+                                        rq_Countdown();
+                                    } else if (v.type == "GetRenderingQueue") {
+                                        if (v.data != false) {
+                                            renderingq_tabledata = v.data;
+                                        } else {
+                                            renderingq_tabledata = [];
+                                        }
+                                        $('#RenderingQueueReportLoading').hide();
+                                        $('#RenderingQueueReportResults').show();
+                                        renderingq_updatetable();
+                                        renderingq_Reloading_InCourse = null;
+                                        renderingq_Countdown();
                                     } else if (v.type == "CheckNew") {
                                         if (v.data != false) {
                                             self.parseNewMessages(v.data);

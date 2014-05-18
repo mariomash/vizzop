@@ -592,7 +592,6 @@ namespace vizzopWorker
                 thread.SetApartmentState(ApartmentState.STA);
                 thread.Start();
                 thread.Join();
-
             });
 
             // what to do when worker completes its task (notify the user)

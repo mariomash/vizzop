@@ -1,0 +1,263 @@
+﻿@{
+    Layout = null;
+    vizzopWeb.Utils utils = new vizzopWeb.Utils();
+}
+<div class="content-header">
+    <h1>
+        Rendering Queue
+    </h1>
+</div>
+<div id="breadcrumb">
+    <a class="tip-bottom">
+        <i class="icon-home"></i>
+        <span style="vertical-align: middle;">Control Panel</span><a style="vertical-align: middle;" class="current">Rendering Queue</a>
+    </a>
+</div>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div id="RenderingQueueReportResults" style="display: none;">
+            <h3 id="renderingqueue_count_div" style="text-align: center; text-transform: capitalize; margin: 0;" class="alert alert-success">
+                Right now there are
+                <span id="renderingqueue_count">0</span>
+                weblocations rendering
+            </h3>
+            <style type="text/css">
+                #renderingqueue_table th {
+                    white-space: nowrap;
+                }
+            </style>
+            <div id="no_renderingqueue" class="" style="margin-top: 150px; text-align: center; display: none; width: 400px; margin: 100px auto 0;">
+                <h4>We cannot detect visitors at your WebSite</h4>
+                <hr />
+                <p>Did you installed the vizzop script?</p>
+                <p>Go to <a href="#quickstart" onclick="javascript:showQuickStart();">Widget Installation</a> to find out how to install the script.</p>
+            </div>
+            <table class="table table-striped" id="renderingqueue_table">
+                <thead>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div id="RenderingQueueReportLoading" style="margin-top: 150px;">
+            <div class="loading">
+                <div style="text-align: center;">
+                    loading...
+                </div>
+                <div style="text-align: center; margin-top: 5px;">
+                    <img src="@Url.Content("~/Content/images/loading.gif")" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    function showQuickStart() {
+        $('#sidebar a[href="#quickstart"]').tab('show');
+    }
+    var renderingq_update_time = new Number(1);
+    var renderingq_Reloading_InCourse = null;
+    var renderingq_timeout = null;
+    var renderingq_oTable = null;
+    var renderingq_historydata = [];
+    var renderingq_tabledata = [];
+    var renderingq_imagereqs = [];
+    var renderingq_screenshots = [];
+
+    function renderingq_loadExtData() {
+        var self = this;
+        try {
+            if (renderingq_Reloading_InCourse != null) {
+                return false;
+            }
+            var msg = {
+                'username': vizzop.me.UserName,
+                'password': vizzop.me.Password,
+                'domain': vizzop.me.Business.Domain,
+                "messagetype": "GetRenderingQueue"
+            };
+            var ws = vizzop.WSchat;
+            if (ws != null) {
+                if (ws.readyState === undefined || ws.readyState > 1) {
+                    //Abrimos :)
+                    vizzop.Daemon.openWebSockets();
+                    renderingq_Reloading_InCourse = null;
+                    renderingq_Countdown();
+                }
+                if (ws.readyState == WebSocket.OPEN) {
+                    renderingq_Reloading_InCourse = true;
+                    var stringify = JSONVIZZOP.stringify(msg);
+                    ws.send(stringify);
+                } else {
+                    renderingq_Reloading_InCourse = null;
+                    renderingq_Countdown();
+                }
+            } else {
+                var url = '../RenderQueue/GetRenderQueueJson';
+                renderingq_Reloading_InCourse = jVizzop.ajax({
+                    url: url,
+                    type: "POST",
+                    data: msg,
+                    dataType: "json",
+                    success: function (data) {
+                        if (data != null) {
+                            renderingq_tabledata = data;
+                        } else {
+                            renderingq_tabledata = [];
+                        }
+                        $('#RenderingQueueReportLoading').hide();
+                        $('#RenderingQueueReportResults').show();
+                        renderingq_updatetable();
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        vizzoplib.logAjax(url, msg, jqXHR);
+                        renderingq_Reloading_InCourse = null;
+                        renderingq_Countdown();
+                    }
+                });
+            }
+        } catch (err) {
+            //vizzoplib.log(err);
+            renderingq_Reloading_InCourse = null;
+            renderingq_Countdown();
+        }
+    }
+    function renderingq_Countdown() {
+        setTimeout(function () {
+            renderingq_loadExtData();
+        }, 1000);
+    }
+
+    function renderingq_updatetable() {
+
+        if (renderingq_tabledata == null) {
+            return;
+        }
+
+        $('#renderqueue_count').text(renderingq_tabledata.length);
+        if (renderingq_tabledata.length == 0) {
+            $('#renderingqueue_table_wrapper').hide();
+            $('#no_renderingqueue').show();
+        } else {
+            $('#no_renderingqueue').hide();
+            $('#renderingqueue_table_wrapper').show();
+        }
+
+        //Vamos a poner la Tabla a 0 y repintarla
+        renderingq_oTable.fnClearTable(false);
+        renderingq_oTable.fnAddData(renderingq_tabledata);
+        renderingq_Reloading_InCourse = null;
+        renderingq_Countdown();
+    }
+
+    $(document).ready(function () {
+
+        renderingq_oTable = $('#renderqueue_table').dataTable({
+            "aLengthMenu": [
+            [25, 50, 100, 200, -1],
+            [25, 50, 100, 200, "All"]
+            ],
+            "iDisplayLength": -1,
+            "aaData": renderingq_tabledata,
+            "bProcessing": false,
+            "bAutoWidth": false,
+            'fnRowCallback': function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                $('td', nRow).addClass("clickable");
+
+            },
+            "fnInitComplete": function (oSettings, json) {
+            },
+            "aoColumns": [
+                { "sTitle": "ID", "bSearchable": false, "bVisible": true, "bSortable": true, "sWidth": "40px" },
+                {
+                    "sTitle": "Screenshot", "bSortable": false, "bSearchable": false, "sWidth": "150px", "bVisible": true,
+                    "fnRender": function (oObj) {
+                        var imgSrc = "";
+                        try {
+                            if (oObj == null) { return ''; }
+                            if (oObj.aData == null) { return ''; }
+                            imgSrc = oObj.aData[1];
+                        } catch (_err) {
+                        }
+                        if ((imgSrc == null) || (imgSrc == '')) {
+                            return '<div style="position: relative; width: 140px; height: 90px; text-align: center; vertical-align: middle; border-radius: 10px; background-color: rgb(238, 238, 238); color: rgb(170, 170, 170); display: table-cell;"><div style="text-align: center; font-size: 12px;">no image</div></div>';
+                        } else {
+                            return '<div style="position: relative; width: 140px; height: 90px; border-radius: 10px;"><img src="' + imgSrc + '"/></div>';
+                        }
+                    }
+                },
+                { "sTitle": "Width", "sWidth": "35px" },
+                { "sTitle": "Height", "sWidth": "35px" },
+                { "sTitle": "URL" },
+                { "sTitle": "Lang", "sWidth": "40px" },
+                { "sTitle": "Ubication", "sWidth": "80px" },
+                {
+                    "sTitle": "Browser", "sWidth": "60px",
+                    "fnRender": function (oObj) {
+                        var useragent_toCompare = '';
+                        try {
+                            if (oObj == null) { return ''; }
+                            if (oObj.aData == null) { return ''; }
+                            useragent_toCompare = oObj.aData[7];
+                        } catch (_err) {
+                        }
+                        if ((useragent_toCompare == null) || (useragent_toCompare == '')) {
+                            return '';
+                        }
+
+                        useragent_toCompare = useragent_toCompare.toLowerCase();
+
+                        var useragent = "";
+
+                        if (useragent_toCompare.indexOf("windows") > -1) {
+                            useragent += " Windows ";
+                        } else if (useragent_toCompare.indexOf("os x") > -1) {
+                            useragent += " OSX ";
+                        } else if (useragent_toCompare.indexOf("android") > -1) {
+                            useragent += " Android ";
+                        } else if (useragent_toCompare.indexOf("ios") > -1) {
+                            useragent += " IOS ";
+                        } else if (useragent_toCompare.indexOf("ipod") > -1) {
+                            useragent += " IOS ";
+                        } else if (useragent_toCompare.indexOf("ipad") > -1) {
+                            useragent += " IOS ";
+                        } else if (useragent_toCompare.indexOf("iphone") > -1) {
+                            useragent += " IOS ";
+                        }
+
+
+                        if (useragent_toCompare.indexOf("firefox") > -1) {
+                            useragent += " Firefox ";
+                        } else if (useragent_toCompare.indexOf("chrome") > -1) {
+                            useragent += " Chrome ";
+                        } else if (useragent_toCompare.indexOf("trident") > -1) {
+                            useragent += " Internet Explorer ";
+                        }
+
+                        if (useragent == "") {
+                            useragent = oObj.aData[7];
+                        }
+
+                        return useragent;
+                    }
+                },
+                { "sTitle": "Referrer", "sWidth": "200px", "bVisible": false },
+                { "sTitle": "First Access Machine", "bSearchable": false, "bVisible": false, "sType": "date" },
+                { "sTitle": "Since", "bSearchable": false, "bVisible": true, "sType": "date", "iDataSort": 9, "sWidth": "40px" },
+                { "sTitle": "Last Active Machine", "bSearchable": false, "bVisible": false, "sType": "date" },
+                { "sTitle": "Active", "bSearchable": false, "bVisible": true, "sType": "date", "iDataSort": 11, "sWidth": "40px" },
+                { "sTitle": "Last ScreenShot Machine", "bSearchable": false, "bVisible": false, "sType": "date" },
+                { "sTitle": "Captured", "bSearchable": false, "bVisible": true, "sType": "date", "iDataSort": 13, "sWidth": "40px" },
+                { "sTitle": "Last Render Machine", "bSearchable": false, "bVisible": false, "sType": "date" },
+                { "sTitle": "Rendered", "bSearchable": false, "bVisible": true, "sType": "date", "iDataSort": 15, "sWidth": "40px" },
+                { "sTitle": "Name", "bSearchable": false, "bVisible": false, "bSortable": false },
+                { "sTitle": "UserName", "bSearchable": false, "bVisible": false, "bSortable": false },
+                { "sTitle": "Domain", "bSearchable": false, "bVisible": false, "bSortable": false },
+                { "sTitle": "Password", "bSearchable": false, "bVisible": false, "bSortable": false },
+                { "sTitle": "WindowName", "bSearchable": false, "bVisible": false, "bSortable": false }
+            ]
+        });
+        renderingq_Countdown();
+    });
+</script>
