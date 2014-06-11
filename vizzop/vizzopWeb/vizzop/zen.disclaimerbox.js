@@ -47,7 +47,7 @@ var DisclaimerBox = jVizzop.zs_Class.create(Box, {
                     .text('OK')
                     .appendTo(msgbox);
 
-            self.positionBox(function () { jVizzop(self._box).fadeIn(); }, 'fast');
+            self.positionBox(function () { jVizzop(self._box).show(); }, 'fast');
         } catch (err) {
             vizzoplib.log("ShowDisclaimer " + err);
         }

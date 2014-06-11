@@ -94,7 +94,7 @@
                     renderingq_Countdown();
                 }
             } else {
-                var url = '../RenderQueue/GetRenderQueueJson';
+                var url = '../RenderingQueue/GetRenderingQueueJson';
                 renderingq_Reloading_InCourse = jVizzop.ajax({
                     url: url,
                     type: "POST",
@@ -126,16 +126,16 @@
     function renderingq_Countdown() {
         setTimeout(function () {
             renderingq_loadExtData();
-        }, 1000);
+        }, 500);
     }
 
     function renderingq_updatetable() {
 
         if (renderingq_tabledata == null) {
-            return;
+            renderingq_tabledata = [];
         }
 
-        $('#renderqueue_count').text(renderingq_tabledata.length);
+        $('#renderingqueue_count').text(renderingq_tabledata.length);
         if (renderingq_tabledata.length == 0) {
             $('#renderingqueue_table_wrapper').hide();
             $('#no_renderingqueue').show();
@@ -145,6 +145,7 @@
         }
 
         //Vamos a poner la Tabla a 0 y repintarla
+
         renderingq_oTable.fnClearTable(false);
         renderingq_oTable.fnAddData(renderingq_tabledata);
         renderingq_Reloading_InCourse = null;
@@ -153,7 +154,7 @@
 
     $(document).ready(function () {
 
-        renderingq_oTable = $('#renderqueue_table').dataTable({
+        renderingq_oTable = $('#renderingqueue_table').dataTable({
             "aLengthMenu": [
             [25, 50, 100, 200, -1],
             [25, 50, 100, 200, "All"]
@@ -163,8 +164,7 @@
             "bProcessing": false,
             "bAutoWidth": false,
             'fnRowCallback': function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                $('td', nRow).addClass("clickable");
-
+                //$('td', nRow).addClass("clickable");
             },
             "fnInitComplete": function (oSettings, json) {
             },

@@ -37,6 +37,10 @@ namespace vizzopWeb.Models
 
         [Column(TypeName = "ntext")]
         [MaxLength]
+        public string ThumbNail { get; set; }
+
+        [Column(TypeName = "ntext")]
+        [MaxLength]
         public string Blob { get; set; }
 
         [Required]

@@ -48,5 +48,78 @@ namespace vizzopWeb.Controllers
             }
         }
 
+
+        [JsonpFilter]
+#if DEBUG
+#else
+        [RequireHttps]
+#endif
+        public ActionResult GetRenderingQueueJson()
+        {
+            Utils utils = new Utils();
+
+            try
+            {
+                //Converser converser = utils.GetLoggedConverser(HttpContext.Session);
+                if (HttpContext.Session["converser"] == null)
+                {
+                    return null;
+                }
+                var converser = (Converser)HttpContext.Session["converser"];
+                if (converser == null)
+                {
+                    return Json(null);
+                }
+                if (converser.Agent == null)
+                {
+                    return Json(null);
+                }
+
+
+                List<WebLocation> WebLocations = utils.GetRenderingQueue();
+                if (WebLocations != null)
+                {
+
+                    var aaData = WebLocations.Select(x => new[] { 
+                        x.ConverserId.ToString(), 
+                        x.ScreenCapture.ThumbNail,
+                        x.ScreenCapture == null ? null : x.ScreenCapture.Width.ToString(),
+                        x.ScreenCapture == null ? null : x.ScreenCapture.Height.ToString(),
+                        x.Url,
+                        x.Lang,
+                        x.Ubication,
+                        x.UserAgent,
+                        x.Referrer, 
+                        x.TimeStamp_First.ToString("o"),
+                        utils.GetPrettyDate(x.TimeStamp_First),
+                        x.TimeStamp_Last.ToString("o"),
+                        utils.GetPrettyDate(x.TimeStamp_Last),
+                        x.ScreenCapture == null ? null : x.ScreenCapture.CreatedOn.ToString("o"),
+                        x.ScreenCapture == null ? null : utils.GetPrettyDate(x.ScreenCapture.CreatedOn),
+                        x.ScreenCapture.ThumbNail == null ? null : x.ScreenCapture.PicturedOn.ToString("o"),
+                        x.ScreenCapture.ThumbNail == null ? null : utils.GetPrettyDate(x.ScreenCapture.PicturedOn),
+                        x.FullName,
+                        x.UserName,
+                        x.Domain,
+                        x.Password,
+                        x.WindowName
+                        });
+
+                    return Json(aaData, JsonRequestBehavior.AllowGet);
+
+                }
+                else
+                {
+                    return Json(null);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                utils.GrabaLogExcepcion(ex);
+                return Json(null);
+            }
+        }
+
     }
 }

@@ -78,6 +78,7 @@
     function rt_loadExtData() {
         var self = this;
         try {
+
             if (rt_Reloading_InCourse != null) {
                 return false;
             }
@@ -431,7 +432,7 @@
     function rt_updatetable() {
 
         if (rt_tabledata == null) {
-            return;
+            rt_tabledata = [];
         }
 
         $('#people_count').text(rt_tabledata.length);
@@ -454,6 +455,7 @@
         rt_oTable.fnAddData(rt_tabledata);
         rt_Reloading_InCourse = null;
         rt_Countdown();
+
     }
 
     $(document).ready(function () {

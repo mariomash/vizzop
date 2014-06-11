@@ -299,7 +299,6 @@ var Box = jVizzop.zs_Class.create({
 					.draggable("destroy")
 					.addClass('stacked')
 				.show();
-                //.fadeIn();
                 return;
             }
             /* 

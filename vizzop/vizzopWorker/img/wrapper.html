@@ -33,12 +33,16 @@
             try {
                 if (sacafotos == true) {
 
+
                     var iframe = document.getElementById('WrapperIframe');
                     if (iframe.contentDocument) {
                         iframeDoc = iframe.contentDocument;
                     } else {
                         iframeDoc = iframe.contentWindow.document;
                     }
+
+
+                    iframe.contentWindow.scrollTo(data.ScrollLeft, data.ScrollTop);
 
                     var filename = data.UserName + '_' + data.Domain + '_' + data.WindowName + '_' + data.GUID + '_.png';
                     /*
@@ -47,9 +51,18 @@
                                             'filename': filename
                                         });
                     */
-                    if (iframeDoc.readyState.toLowerCase() == 'complete') {
 
-                        iframe.contentWindow.scrollTo(data.ScrollLeft, data.ScrollTop);
+                    window.callPhantom({ 'log': iframeDoc.readyState.toLowerCase() });
+
+                    window.setTimeout(function () {
+                        window.callPhantom({
+                            'command': 'render',
+                            'filename': filename
+                        });
+                        OrdersRequest_InCourse = null;
+                    }, 500);
+
+                    if (iframeDoc.readyState.toLowerCase() == 'complete') {
 
                         window.setTimeout(function () {
                             window.callPhantom({
@@ -57,7 +70,7 @@
                                 'filename': filename
                             });
                             OrdersRequest_InCourse = null;
-                        }, 1000);
+                        }, 500);
 
                         /*
                         window.callPhantom({
@@ -108,7 +121,7 @@
 
                 var msg = {};
                 var url = mainURL + "/Phantom/GetCaptureToRender";
-                //window.callPhantom({ 'log': 'calling ' + url });
+                window.callPhantom({ 'log': 'calling ' + url });
                 OrdersRequest_InCourse = $.ajax({
                     url: url,
                     type: "POST",
@@ -163,7 +176,6 @@
                         style.appendChild(text);
                         document.head.insertBefore(style, document.head.firstChild);
 
-
                         sacafotos = true;
                         //OrdersRequest_InCourse = null;
                     },
@@ -172,6 +184,8 @@
                     }
                 });
             } catch (err) {
+
+                window.callPhantom({ 'log': err });
                 OrdersRequest_InCourse = null;
             }
 

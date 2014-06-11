@@ -49,6 +49,7 @@ namespace vizzopWeb.vizzop
                     ((socket.State == WebSocketState.Connecting) || (socket.State == WebSocketState.Open))
                     )
                 {
+                    List<Object> returnList = new List<object>();
                     try
                     {
                         //Thread.CurrentThread.Priority = ThreadPriority.Highest;
@@ -60,7 +61,6 @@ namespace vizzopWeb.vizzop
                             receivedMessage += Encoding.UTF8.GetString(buffer.Array, 0, result.Count);
                             //string receivedMessage = Encoding.UTF8.GetString(buffer.Array, 0, result.Count);
 
-                            List<Object> returnList = new List<object>();
 
                             if (result.EndOfMessage == true)
                             {
@@ -120,26 +120,28 @@ namespace vizzopWeb.vizzop
                                         }
                                         break;
                                     case "GetRenderQueue":
-                                        if (converser == null)
+                                        try
                                         {
-                                            if ((dict["username"] != null) && (dict["password"] != null) && (dict["domain"] != null))
+                                            if (converser == null)
                                             {
+                                                if ((dict["username"] != null) && (dict["password"] != null) && (dict["domain"] != null))
+                                                {
 
-                                                converser = utils.GetConverserFromSystem(
-                                                    dict["username"].ToString(),
-                                                    dict["password"].ToString(),
-                                                    dict["domain"].ToString());
+                                                    converser = utils.GetConverserFromSystem(
+                                                        dict["username"].ToString(),
+                                                        dict["password"].ToString(),
+                                                        dict["domain"].ToString());
+                                                }
                                             }
-                                        }
-                                        if (converser != null)
-                                        {
-                                            List<WebLocation> _WebLocations = new List<WebLocation>();
-                                            _WebLocations = utils.GetRenderQueue();
-                                            if (_WebLocations.Count > 0)
+                                            if (converser != null)
                                             {
-                                                var aaData = _WebLocations.Select(x => new[] {
+                                                List<WebLocation> _WebLocations = new List<WebLocation>();
+                                                _WebLocations = utils.GetRenderQueue();
+                                                if (_WebLocations.Count > 0)
+                                                {
+                                                    var aaData = _WebLocations.Select(x => new[] {
                                                 x.ConverserId.ToString(), 
-                                                x.ThumbNail,
+                                                x.ScreenCapture.ThumbNail,
                                                 x.ScreenCapture == null ? null : x.ScreenCapture.Width.ToString(),
                                                 x.ScreenCapture == null ? null : x.ScreenCapture.Height.ToString(),
                                                 x.Url,
@@ -153,309 +155,420 @@ namespace vizzopWeb.vizzop
                                                 utils.GetPrettyDate(x.TimeStamp_Last),
                                                 x.ScreenCapture == null ? null : x.ScreenCapture.CreatedOn.ToString("o"),
                                                 x.ScreenCapture == null ? null : utils.GetPrettyDate(x.ScreenCapture.CreatedOn),
-                                                x.ThumbNail == null ? null : x.ScreenCapture.PicturedOn.ToString("o"),
-                                                x.ThumbNail == null ? null : utils.GetPrettyDate(x.ScreenCapture.PicturedOn),
+                                                x.ScreenCapture.ThumbNail == null ? null : x.ScreenCapture.PicturedOn.ToString("o"),
+                                                x.ScreenCapture.ThumbNail == null ? null : utils.GetPrettyDate(x.ScreenCapture.PicturedOn),
                                                 x.FullName,
                                                 x.UserName,
                                                 x.Domain,
                                                 x.Password,
                                                 x.WindowName
                                                 });
-                                                returnList.Add(
-                                                    new
-                                                    {
-                                                        type = "GetRenderQueue",
-                                                        data = aaData
-                                                    });
-                                            }
-                                            else
-                                            {
-                                                returnList.Add(
-                                                    new
-                                                    {
-                                                        type = "GetRenderQueue",
-                                                        data = false
-                                                    });
-                                            }
-                                        }
-
-                                        break;
-                                    case "GetRenderingQueue":
-                                        if (converser == null)
-                                        {
-                                            if ((dict["username"] != null) && (dict["password"] != null) && (dict["domain"] != null))
-                                            {
-
-                                                converser = utils.GetConverserFromSystem(
-                                                    dict["username"].ToString(),
-                                                    dict["password"].ToString(),
-                                                    dict["domain"].ToString());
+                                                    returnList.Add(
+                                                        new
+                                                        {
+                                                            type = "GetRenderQueue",
+                                                            data = aaData.ToList()
+                                                        });
+                                                }
+                                                else
+                                                {
+                                                    returnList.Add(
+                                                        new
+                                                        {
+                                                            type = "GetRenderQueue",
+                                                            data = false
+                                                        });
+                                                }
                                             }
                                         }
-                                        if (converser != null)
-                                        {
-                                            List<WebLocation> _WebLocations = new List<WebLocation>();
-                                            _WebLocations = utils.GetRenderingQueue();
-                                            if (_WebLocations.Count > 0)
-                                            {
-                                                var aaData = _WebLocations.Select(x => new[] {
-                                                x.ConverserId.ToString(), 
-                                                x.ThumbNail,
-                                                x.ScreenCapture == null ? null : x.ScreenCapture.Width.ToString(),
-                                                x.ScreenCapture == null ? null : x.ScreenCapture.Height.ToString(),
-                                                x.Url,
-                                                x.Lang,
-                                                x.Ubication,
-                                                x.UserAgent,
-                                                x.Referrer, 
-                                                x.TimeStamp_First.ToString("o"),
-                                                utils.GetPrettyDate(x.TimeStamp_First),
-                                                x.TimeStamp_Last.ToString("o"),
-                                                utils.GetPrettyDate(x.TimeStamp_Last),
-                                                x.ScreenCapture == null ? null : x.ScreenCapture.CreatedOn.ToString("o"),
-                                                x.ScreenCapture == null ? null : utils.GetPrettyDate(x.ScreenCapture.CreatedOn),
-                                                x.ThumbNail == null ? null : x.ScreenCapture.PicturedOn.ToString("o"),
-                                                x.ThumbNail == null ? null : utils.GetPrettyDate(x.ScreenCapture.PicturedOn),
-                                                x.FullName,
-                                                x.UserName,
-                                                x.Domain,
-                                                x.Password,
-                                                x.WindowName
-                                                });
-                                                returnList.Add(
-                                                    new
-                                                    {
-                                                        type = "GetRenderingQueue",
-                                                        data = aaData
-                                                    });
-                                            }
-                                            else
-                                            {
-                                                returnList.Add(
-                                                    new
-                                                    {
-                                                        type = "GetRenderingQueue",
-                                                        data = false
-                                                    });
-                                            }
-                                        }
-
-                                        break;
-                                    case "GetWebLocations":
-                                        if (converser == null)
-                                        {
-                                            if ((dict["username"] != null) && (dict["password"] != null) && (dict["domain"] != null))
-                                            {
-
-                                                converser = utils.GetConverserFromSystem(
-                                                    dict["username"].ToString(),
-                                                    dict["password"].ToString(),
-                                                    dict["domain"].ToString());
-                                            }
-                                        }
-                                        if (converser != null)
-                                        {
-                                            List<WebLocation> _WebLocations = new List<WebLocation>();
-                                            _WebLocations = utils.GetWebLocations(converser);
-                                            if (_WebLocations.Count > 0)
-                                            {
-                                                var aaData = _WebLocations.Select(x => new[] {
-                                                x.ConverserId.ToString(), 
-                                                x.ThumbNail,
-                                                x.ScreenCapture == null ? null : x.ScreenCapture.Width.ToString(),
-                                                x.ScreenCapture == null ? null : x.ScreenCapture.Height.ToString(),
-                                                x.Url,
-                                                x.Lang,
-                                                x.Ubication,
-                                                x.UserAgent,
-                                                x.Referrer, 
-                                                x.TimeStamp_First.ToString("o"),
-                                                utils.GetPrettyDate(x.TimeStamp_First),
-                                                x.TimeStamp_Last.ToString("o"),
-                                                utils.GetPrettyDate(x.TimeStamp_Last),
-                                                x.ScreenCapture == null ? null : x.ScreenCapture.CreatedOn.ToString("o"),
-                                                x.ScreenCapture == null ? null : utils.GetPrettyDate(x.ScreenCapture.CreatedOn),
-                                                x.ThumbNail == null ? null : x.ScreenCapture.PicturedOn.ToString("o"),
-                                                x.ThumbNail == null ? null : utils.GetPrettyDate(x.ScreenCapture.PicturedOn),
-                                                x.FullName,
-                                                x.UserName,
-                                                x.Domain,
-                                                x.Password,
-                                                x.WindowName
-                                                });
-                                                returnList.Add(
-                                                    new
-                                                    {
-                                                        type = "GetWebLocations",
-                                                        data = aaData
-                                                    });
-                                            }
-                                            else
-                                            {
-                                                returnList.Add(
-                                                    new
-                                                    {
-                                                        type = "GetWebLocations",
-                                                        data = false
-                                                    });
-                                            }
-                                        }
-
-                                        break;
-                                    case "CheckExternal":
-
-                                        List<Message> CheckExternalMessages = new List<Message>();
-                                        if (converser == null)
-                                        {
-                                            if ((dict["username"] != null) && (dict["password"] != null) && (dict["domain"] != null))
-                                            {
-
-                                                converser = utils.GetConverserFromSystem(
-                                                    dict["username"].ToString(),
-                                                    dict["password"].ToString(),
-                                                    dict["domain"].ToString());
-                                            }
-                                        }
-                                        if (converser != null)
-                                        {
-                                            string referrer = null;
-                                            if (dict["referrer"] != null)
-                                            {
-                                                referrer = dict["referrer"].ToString();
-                                            }
-                                            string CommSessionID = null;
-                                            if (dict["CommSessionID"] != null)
-                                            {
-                                                CommSessionID = dict["CommSessionID"].ToString();
-                                            }
-                                            string SessionID = null;
-                                            if (dict["SessionID"] != null)
-                                            {
-                                                SessionID = dict["SessionID"].ToString();
-                                            }
-                                            if (dict["WindowName"] != null)
-                                            {
-                                                WindowName = dict["WindowName"].ToString();
-                                            }
-
-                                            CheckExternalMessages = utils.CheckExternal(
-                                                wrapper,
-                                                dict["username"].ToString(),
-                                                dict["password"].ToString(),
-                                                dict["domain"].ToString(),
-                                                dict["url"].ToString(),
-                                                referrer,
-                                                SessionID,
-                                                CommSessionID,
-                                                WindowName,
-                                                dict["MsgCueAudit"]
-                                                );
-
-                                        }
-
-                                        if (CheckExternalMessages.Count > 0)
+                                        catch (Exception)
                                         {
                                             returnList.Add(
                                                 new
                                                 {
-                                                    type = "CheckExternal",
-                                                    data = CheckExternalMessages
+                                                    type = "GetRenderQueue",
+                                                    data = false
                                                 });
                                         }
+                                        break;
+                                    case "GetRenderingQueue":
+                                        try
+                                        {
+                                            if (converser == null)
+                                            {
+                                                if ((dict["username"] != null) && (dict["password"] != null) && (dict["domain"] != null))
+                                                {
 
+                                                    converser = utils.GetConverserFromSystem(
+                                                        dict["username"].ToString(),
+                                                        dict["password"].ToString(),
+                                                        dict["domain"].ToString());
+                                                }
+                                            }
+                                            if (converser != null)
+                                            {
+                                                List<WebLocation> _WebLocations = new List<WebLocation>();
+                                                _WebLocations = utils.GetRenderingQueue();
+                                                if (_WebLocations.Count > 0)
+                                                {
+                                                    var aaData = _WebLocations.Select(x => new[] {
+                                                x.ConverserId.ToString(), 
+                                                x.ScreenCapture.ThumbNail,
+                                                x.ScreenCapture == null ? null : x.ScreenCapture.Width.ToString(),
+                                                x.ScreenCapture == null ? null : x.ScreenCapture.Height.ToString(),
+                                                x.Url,
+                                                x.Lang,
+                                                x.Ubication,
+                                                x.UserAgent,
+                                                x.Referrer, 
+                                                x.TimeStamp_First.ToString("o"),
+                                                utils.GetPrettyDate(x.TimeStamp_First),
+                                                x.TimeStamp_Last.ToString("o"),
+                                                utils.GetPrettyDate(x.TimeStamp_Last),
+                                                x.ScreenCapture == null ? null : x.ScreenCapture.CreatedOn.ToString("o"),
+                                                x.ScreenCapture == null ? null : utils.GetPrettyDate(x.ScreenCapture.CreatedOn),
+                                                x.ScreenCapture.ThumbNail == null ? null : x.ScreenCapture.PicturedOn.ToString("o"),
+                                                x.ScreenCapture.ThumbNail == null ? null : utils.GetPrettyDate(x.ScreenCapture.PicturedOn),
+                                                x.FullName,
+                                                x.UserName,
+                                                x.Domain,
+                                                x.Password,
+                                                x.WindowName
+                                                });
+                                                    returnList.Add(
+                                                        new
+                                                        {
+                                                            type = "GetRenderingQueue",
+                                                            data = aaData.ToList()
+                                                        });
+                                                }
+                                                else
+                                                {
+                                                    returnList.Add(
+                                                        new
+                                                        {
+                                                            type = "GetRenderingQueue",
+                                                            data = false
+                                                        });
+                                                }
+                                            }
+                                        }
+                                        catch (Exception)
+                                        {
+                                            returnList.Add(
+                                                new
+                                                {
+                                                    type = "GetRenderingQueue",
+                                                    data = false
+                                                });
+                                        }
+                                        break;
+
+                                    case "GetRenderedQueue":
+                                        try
+                                        {
+                                            if (converser == null)
+                                            {
+                                                if ((dict["username"] != null) && (dict["password"] != null) && (dict["domain"] != null))
+                                                {
+
+                                                    converser = utils.GetConverserFromSystem(
+                                                        dict["username"].ToString(),
+                                                        dict["password"].ToString(),
+                                                        dict["domain"].ToString());
+                                                }
+                                            }
+                                            if (converser != null)
+                                            {
+                                                List<WebLocation> _WebLocations = new List<WebLocation>();
+                                                _WebLocations = utils.GetRenderedQueue();
+                                                if (_WebLocations.Count > 0)
+                                                {
+                                                    var aaData = _WebLocations.Select(x => new[] {
+                                                x.ConverserId.ToString(), 
+                                                x.ScreenCapture.ThumbNail,
+                                                x.ScreenCapture == null ? null : x.ScreenCapture.Width.ToString(),
+                                                x.ScreenCapture == null ? null : x.ScreenCapture.Height.ToString(),
+                                                x.Url,
+                                                x.Lang,
+                                                x.Ubication,
+                                                x.UserAgent,
+                                                x.Referrer, 
+                                                x.TimeStamp_First.ToString("o"),
+                                                utils.GetPrettyDate(x.TimeStamp_First),
+                                                x.TimeStamp_Last.ToString("o"),
+                                                utils.GetPrettyDate(x.TimeStamp_Last),
+                                                x.ScreenCapture == null ? null : x.ScreenCapture.CreatedOn.ToString("o"),
+                                                x.ScreenCapture == null ? null : utils.GetPrettyDate(x.ScreenCapture.CreatedOn),
+                                                x.ScreenCapture.ThumbNail == null ? null : x.ScreenCapture.PicturedOn.ToString("o"),
+                                                x.ScreenCapture.ThumbNail == null ? null : utils.GetPrettyDate(x.ScreenCapture.PicturedOn),
+                                                x.FullName,
+                                                x.UserName,
+                                                x.Domain,
+                                                x.Password,
+                                                x.WindowName
+                                                    });
+                                                    returnList.Add(
+                                                        new
+                                                        {
+                                                            type = "GetRenderedQueue",
+                                                            data = aaData.ToList()
+                                                        });
+                                                }
+                                                else
+                                                {
+                                                    returnList.Add(
+                                                        new
+                                                        {
+                                                            type = "GetRenderedQueue",
+                                                            data = false
+                                                        });
+                                                }
+                                            }
+                                        }
+                                        catch (Exception)
+                                        {
+                                            returnList.Add(
+                                                new
+                                                {
+                                                    type = "GetRenderedQueue",
+                                                    data = false
+                                                });
+                                        }
+                                        break;
+                                    case "GetWebLocations":
+                                        try
+                                        {
+                                            if (converser == null)
+                                            {
+                                                if ((dict["username"] != null) && (dict["password"] != null) && (dict["domain"] != null))
+                                                {
+
+                                                    converser = utils.GetConverserFromSystem(
+                                                        dict["username"].ToString(),
+                                                        dict["password"].ToString(),
+                                                        dict["domain"].ToString());
+                                                }
+                                            }
+                                            if (converser != null)
+                                            {
+                                                List<WebLocation> _WebLocations = new List<WebLocation>();
+                                                _WebLocations = utils.GetWebLocations(converser);
+                                                if (_WebLocations.Count > 0)
+                                                {
+                                                    var aaData = _WebLocations.Select(x => new[] {
+                                                        x.ConverserId.ToString(), 
+                                                        x.ScreenCapture == null ? null : x.ScreenCapture.ThumbNail,
+                                                        x.ScreenCapture == null ? null : x.ScreenCapture.Width.ToString(),
+                                                        x.ScreenCapture == null ? null : x.ScreenCapture.Height.ToString(),
+                        x.Url,
+                        x.Lang,
+                        x.Ubication,
+                        x.UserAgent,
+                        x.Referrer, 
+                        x.TimeStamp_First.ToString("o"),
+                        utils.GetPrettyDate(x.TimeStamp_First),
+                        x.TimeStamp_Last.ToString("o"),
+                        utils.GetPrettyDate(x.TimeStamp_Last),
+                        x.ScreenCapture == null ? null : x.ScreenCapture.CreatedOn.ToString("o"),
+                        x.ScreenCapture == null ? null : utils.GetPrettyDate(x.ScreenCapture.CreatedOn),
+                        x.ScreenCapture == null ? null : x.ScreenCapture.PicturedOn.ToString("o"),
+                        x.ScreenCapture == null ? null : utils.GetPrettyDate(x.ScreenCapture.PicturedOn),
+                        x.FullName,
+                        x.UserName,
+                        x.Domain,
+                        x.Password,
+                        x.WindowName
+                                                });
+                                                    returnList.Add(
+                                                        new
+                                                        {
+                                                            type = "GetWebLocations",
+                                                            data = aaData.ToList()
+                                                        });
+                                                }
+                                                else
+                                                {
+                                                    returnList.Add(
+                                                        new
+                                                        {
+                                                            type = "GetWebLocations",
+                                                            data = false
+                                                        });
+                                                }
+                                            }
+                                        }
+                                        catch (Exception)
+                                        {
+                                            returnList.Add(
+                                                new
+                                                {
+                                                    type = "GetWebLocations",
+                                                    data = false
+                                                });
+                                        }
+                                        break;
+                                    case "CheckExternal":
+                                        try
+                                        {
+                                            List<Message> CheckExternalMessages = new List<Message>();
+                                            if (converser == null)
+                                            {
+                                                if ((dict["username"] != null) && (dict["password"] != null) && (dict["domain"] != null))
+                                                {
+
+                                                    converser = utils.GetConverserFromSystem(
+                                                        dict["username"].ToString(),
+                                                        dict["password"].ToString(),
+                                                        dict["domain"].ToString());
+                                                }
+                                            }
+                                            if (converser != null)
+                                            {
+                                                string referrer = null;
+                                                if (dict["referrer"] != null)
+                                                {
+                                                    referrer = dict["referrer"].ToString();
+                                                }
+                                                string CommSessionID = null;
+                                                if (dict["CommSessionID"] != null)
+                                                {
+                                                    CommSessionID = dict["CommSessionID"].ToString();
+                                                }
+                                                string SessionID = null;
+                                                if (dict["SessionID"] != null)
+                                                {
+                                                    SessionID = dict["SessionID"].ToString();
+                                                }
+                                                if (dict["WindowName"] != null)
+                                                {
+                                                    WindowName = dict["WindowName"].ToString();
+                                                }
+
+                                                CheckExternalMessages = utils.CheckExternal(
+                                                    wrapper,
+                                                    dict["username"].ToString(),
+                                                    dict["password"].ToString(),
+                                                    dict["domain"].ToString(),
+                                                    dict["url"].ToString(),
+                                                    referrer,
+                                                    SessionID,
+                                                    CommSessionID,
+                                                    WindowName,
+                                                    dict["MsgCueAudit"]
+                                                    );
+
+                                            }
+
+                                            if (CheckExternalMessages.Count > 0)
+                                            {
+                                                returnList.Add(
+                                                    new
+                                                    {
+                                                        type = "CheckExternal",
+                                                        data = CheckExternalMessages
+                                                    });
+                                            }
+
+                                        }
+                                        catch (Exception) { }
                                         break;
                                     case "Screen":
                                         //vizzopWeb.Controllers.RealTimeController rt = new vizzopWeb.Controllers.RealTimeController();
                                         //var serializedData = new JavaScriptSerializer().Serialize(dict["data"]);
-
-                                        utils.TrackScreen(
-                                            dict["username"].ToString(),
-                                            dict["password"].ToString(),
-                                            dict["domain"].ToString(),
-                                            dict["data"],
-                                            dict["listeners"].ToString(),
-                                            false,
-                                            wrapper
-                                            );
-
+                                        try
+                                        {
+                                            utils.TrackScreen(
+                                                dict["username"].ToString(),
+                                                dict["password"].ToString(),
+                                                dict["domain"].ToString(),
+                                                dict["data"],
+                                                dict["listeners"].ToString(),
+                                                false,
+                                                wrapper
+                                                );
+                                        }
+                                        catch (Exception) { }
                                         break;
-
                                     case "Plain":
-
-                                        string ToArr = dict.ContainsKey("To") == false ? "" : dict["To"] == null ? null : dict["To"].ToString();
-                                        foreach (var ToComplete in ToArr.Split(','))
+                                        try
                                         {
-                                            string To = ToComplete;
-                                            if (To.Contains("::"))
+                                            string ToArr = dict.ContainsKey("To") == false ? "" : dict["To"] == null ? null : dict["To"].ToString();
+                                            foreach (var ToComplete in ToArr.Split(','))
                                             {
-                                                To = ToComplete.Split(new string[] { "::" }, StringSplitOptions.None)[1].ToString();
-                                            }
-                                            string From = dict.ContainsKey("From") == false ? "" : dict["From"] == null ? null : dict["From"].ToString();
+                                                string To = ToComplete;
+                                                if (To.Contains("::"))
+                                                {
+                                                    To = ToComplete.Split(new string[] { "::" }, StringSplitOptions.None)[1].ToString();
+                                                }
+                                                string From = dict.ContainsKey("From") == false ? "" : dict["From"] == null ? null : dict["From"].ToString();
 
-                                            string From_FullName = dict.ContainsKey("From_FullName") == false ? "" : dict["From_FullName"] == null ? null : dict["From_FullName"].ToString();
-                                            if ((From_FullName == "null") || (From_FullName == ""))
+                                                string From_FullName = dict.ContainsKey("From_FullName") == false ? "" : dict["From_FullName"] == null ? null : dict["From_FullName"].ToString();
+                                                if ((From_FullName == "null") || (From_FullName == ""))
+                                                {
+                                                    From_FullName = null;
+                                                }
+
+                                                string Subject = dict.ContainsKey("Subject") == false ? "" : dict["Subject"] == null ? null : dict["Subject"].ToString();
+                                                string Content = dict.ContainsKey("Content") == false ? "" : dict["Content"] == null ? null : dict["Content"].ToString();
+                                                string _clientid = dict.ContainsKey("_clientid") == false ? "" : dict["_clientid"] == null ? null : dict["_clientid"].ToString();
+
+                                                if ((_clientid == null) || (_clientid == "null") && (_clientid == ""))
+                                                {
+                                                    DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+                                                    TimeSpan diff = DateTime.Now.ToUniversalTime() - origin;
+                                                    _clientid = Math.Floor(diff.TotalSeconds).ToString();
+                                                }
+
+                                                string _status = dict.ContainsKey("_status") == false ? "" : dict["_status"] == null ? null : dict["_status"].ToString();
+
+                                                string TimeStamp = DateTime.UtcNow.ToString("o");
+                                                /*
+                                                dict.ContainsKey("TimeStamp") == false ? "" : dict["TimeStamp"] == null ? null : dict["TimeStamp"].ToString();
+                                            if ((TimeStamp == null) || (TimeStamp == "null") && (TimeStamp == ""))
                                             {
-                                                From_FullName = null;
+                                                TimeStamp = DateTime.UtcNow.ToString("o");
                                             }
+                                                */
 
-                                            string Subject = dict.ContainsKey("Subject") == false ? "" : dict["Subject"] == null ? null : dict["Subject"].ToString();
-                                            string Content = dict.ContainsKey("Content") == false ? "" : dict["Content"] == null ? null : dict["Content"].ToString();
-                                            string _clientid = dict.ContainsKey("_clientid") == false ? "" : dict["_clientid"] == null ? null : dict["_clientid"].ToString();
+                                                string TimeStampSenderSending = dict.ContainsKey("TimeStampSenderSending") == false ? "" : dict["TimeStampSenderSending"] == null ? null : dict["TimeStampSenderSending"].ToString();
+                                                if ((TimeStampSenderSending == null) || (TimeStampSenderSending == "null") && (TimeStampSenderSending == ""))
+                                                {
+                                                    TimeStampSenderSending = DateTime.UtcNow.ToString("o");
+                                                }
 
-                                            if ((_clientid == null) || (_clientid == "null") && (_clientid == ""))
-                                            {
-                                                DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-                                                TimeSpan diff = DateTime.Now.ToUniversalTime() - origin;
-                                                _clientid = Math.Floor(diff.TotalSeconds).ToString();
+                                                string commsessionid = dict.ContainsKey("commsessionid") == false ? "" : dict["commsessionid"] == null ? null : dict["commsessionid"].ToString();
+                                                string SetTicketState = dict.ContainsKey("SetTicketState") == false ? "" : dict["SetTicketState"] == null ? null : dict["SetTicketState"].ToString();
+
+                                                string lang = utils.GetLang(context);
+
+                                                Content = Content.Replace(Environment.NewLine, null);
+
+                                                NewMessage newmessage = new NewMessage();
+                                                newmessage.From = From;
+                                                newmessage.From_FullName = From_FullName;
+                                                newmessage.To = To;
+                                                newmessage.CC = ToArr;
+                                                newmessage.Subject = Subject;
+                                                newmessage.Content = Content;
+                                                newmessage._clientid = _clientid;
+                                                newmessage._status = _status;
+                                                newmessage.TimeStamp = TimeStamp;
+                                                newmessage.TimeStampSenderSending = TimeStampSenderSending;
+                                                newmessage.TimeStampSrvAccepted = DateTime.Now.ToUniversalTime();
+                                                newmessage.commsessionid = commsessionid;
+                                                newmessage.Lang = lang;
+                                                newmessage.MessageType = "chat";
+
+                                                bool sent = utils.SendMessage(newmessage, SetTicketState);
+
+                                                if (sent == false)
+                                                {
+                                                    utils.GrabaLog(vizzopWeb.Utils.NivelLog.error, "Msg Not Sent : " + newmessage.Subject + "," + newmessage.Content);
+                                                }
                                             }
-
-                                            string _status = dict.ContainsKey("_status") == false ? "" : dict["_status"] == null ? null : dict["_status"].ToString();
-
-                                            string TimeStamp = DateTime.UtcNow.ToString("o");
-                                            /*
-                                            dict.ContainsKey("TimeStamp") == false ? "" : dict["TimeStamp"] == null ? null : dict["TimeStamp"].ToString();
-                                        if ((TimeStamp == null) || (TimeStamp == "null") && (TimeStamp == ""))
-                                        {
-                                            TimeStamp = DateTime.UtcNow.ToString("o");
                                         }
-                                            */
-
-                                            string TimeStampSenderSending = dict.ContainsKey("TimeStampSenderSending") == false ? "" : dict["TimeStampSenderSending"] == null ? null : dict["TimeStampSenderSending"].ToString();
-                                            if ((TimeStampSenderSending == null) || (TimeStampSenderSending == "null") && (TimeStampSenderSending == ""))
-                                            {
-                                                TimeStampSenderSending = DateTime.UtcNow.ToString("o");
-                                            }
-
-                                            string commsessionid = dict.ContainsKey("commsessionid") == false ? "" : dict["commsessionid"] == null ? null : dict["commsessionid"].ToString();
-                                            string SetTicketState = dict.ContainsKey("SetTicketState") == false ? "" : dict["SetTicketState"] == null ? null : dict["SetTicketState"].ToString();
-
-                                            string lang = utils.GetLang(context);
-
-                                            Content = Content.Replace(Environment.NewLine, null);
-
-                                            NewMessage newmessage = new NewMessage();
-                                            newmessage.From = From;
-                                            newmessage.From_FullName = From_FullName;
-                                            newmessage.To = To;
-                                            newmessage.CC = ToArr;
-                                            newmessage.Subject = Subject;
-                                            newmessage.Content = Content;
-                                            newmessage._clientid = _clientid;
-                                            newmessage._status = _status;
-                                            newmessage.TimeStamp = TimeStamp;
-                                            newmessage.TimeStampSenderSending = TimeStampSenderSending;
-                                            newmessage.TimeStampSrvAccepted = DateTime.Now.ToUniversalTime();
-                                            newmessage.commsessionid = commsessionid;
-                                            newmessage.Lang = lang;
-                                            newmessage.MessageType = "chat";
-
-                                            bool sent = utils.SendMessage(newmessage, SetTicketState);
-
-                                            if (sent == false)
-                                            {
-                                                utils.GrabaLog(vizzopWeb.Utils.NivelLog.error, "Msg Not Sent : " + newmessage.Subject + "," + newmessage.Content);
-                                            }
-                                        }
+                                        catch (Exception) { }
                                         break;
                                 }
                             }

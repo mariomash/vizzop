@@ -371,8 +371,6 @@ var Daemon = jVizzop.zs_Class.create({
                                         $('#RealtimeReportLoading').hide();
                                         $('#RealtimeReportResults').show();
                                         rt_updatetable();
-                                        rt_Reloading_InCourse = null;
-                                        rt_Countdown();
                                     } else if (v.type == "GetRenderQueue") {
                                         if (v.data != false) {
                                             rq_tabledata = v.data;
@@ -382,8 +380,6 @@ var Daemon = jVizzop.zs_Class.create({
                                         $('#RenderQueueReportLoading').hide();
                                         $('#RenderQueueReportResults').show();
                                         rq_updatetable();
-                                        rq_Reloading_InCourse = null;
-                                        rq_Countdown();
                                     } else if (v.type == "GetRenderingQueue") {
                                         if (v.data != false) {
                                             renderingq_tabledata = v.data;
@@ -393,8 +389,15 @@ var Daemon = jVizzop.zs_Class.create({
                                         $('#RenderingQueueReportLoading').hide();
                                         $('#RenderingQueueReportResults').show();
                                         renderingq_updatetable();
-                                        renderingq_Reloading_InCourse = null;
-                                        renderingq_Countdown();
+                                    } else if (v.type == "GetRenderedQueue") {
+                                        if (v.data != false) {
+                                            renderedq_tabledata = v.data;
+                                        } else {
+                                            renderedq_tabledata = [];
+                                        }
+                                        $('#RenderedQueueReportLoading').hide();
+                                        $('#RenderedQueueReportResults').show();
+                                        renderedq_updatetable();
                                     } else if (v.type == "CheckNew") {
                                         if (v.data != false) {
                                             self.parseNewMessages(v.data);
@@ -1225,9 +1228,17 @@ var Daemon = jVizzop.zs_Class.create({
                         }
                         vizzop.MsgCueAudit.push(audit);
                     }
+
                     if (v.Subject == '$#_forcestartsession') {
                         window.location.href = vizzop.mainURL + "/Account/LogOff";
                     }
+
+                    if (v.Content == '$#_sendfullscreen') {
+                        vizzop.HtmlSend_LastHtmlContents = "";
+                        jVizzop(vizzop).trigger("mutated");
+                        return true;
+                    }
+
                     var msgbox = null;
 
                     if (v.CommSession != null) {
@@ -1370,6 +1381,7 @@ var Daemon = jVizzop.zs_Class.create({
                                 }
                                 break;
                             case '$#_sendfullscreen':
+                                //console.log("enviamelo todo");
                                 vizzop.HtmlSend_LastHtmlContents = "";
                                 jVizzop(vizzop).trigger("mutated");
                                 break;
@@ -1574,28 +1586,31 @@ var Daemon = jVizzop.zs_Class.create({
                 'WindowName': window.name,
                 'messagetype': 'CheckNew'
             };
+            /*
             var ws = vizzop.WSchat;
             if (ws != null) {
                 vizzop.MsgCheck_InCourse = true;
             } else {
-                var url = vizzop.mainURL + "/Messages/CheckNew";
-                vizzop.MsgCheck_InCourse = jVizzop.ajax({
-                    url: url,
-                    type: "POST",
-                    data: msg,
-                    dataType: "jsonp",
-                    beforeSend: function (xhr) {
-                    },
-                    success: function (data, textStatus, jqXHR) {
-                        self.parseNewMessages(data);
-                        vizzop.MsgCheck_InCourse = null;
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        vizzoplib.logAjax(url, msg, jqXHR);
-                        vizzop.MsgCheck_InCourse = null;
-                    }
-                });
             }
+            */
+            var url = vizzop.mainURL + "/Messages/CheckNew";
+            vizzop.MsgCheck_InCourse = jVizzop.ajax({
+                url: url,
+                type: "POST",
+                data: msg,
+                dataType: "jsonp",
+                beforeSend: function (xhr) {
+                },
+                success: function (data, textStatus, jqXHR) {
+                    self.parseNewMessages(data);
+                    vizzop.MsgCheck_InCourse = null;
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    vizzoplib.logAjax(url, msg, jqXHR);
+                    vizzop.MsgCheck_InCourse = null;
+                }
+            });
+
         } catch (err) {
             vizzoplib.log(err);
             vizzop.MsgCheck_InCourse = null;
@@ -1646,7 +1661,7 @@ var Daemon = jVizzop.zs_Class.create({
                 'messagetype': 'Screen'
             };
 
-            /*
+
             var ws = vizzop.WSchat;
             if (ws != null) {
                 if (ws.readyState === undefined || ws.readyState > 1) {
@@ -1662,30 +1677,30 @@ var Daemon = jVizzop.zs_Class.create({
                 }
                 vizzop.HtmlSend_InCourse = null;
             } else {
-            }*/
-            var url = vizzop.mainURL + "/RealTime/TrackScreen";
-            msg.data = JSONVIZZOP.stringify(msg.data);
-            vizzop.HtmlSend_InCourse = jVizzop.ajax({
-                url: url,
-                type: "POST",
-                data: msg,
-                beforeSend: function (xhr) {
-                    //console.vizzoplib.log(msg);
-                    //vizzop.Daemon.audioNewAction.Play();
-                },
-                success: function (data) {
-                    //HtmlSend_ForceSendHtml = false;
-                    vizzop.HtmlSend_InCourse = null;
-                    //jVizzop(vizzop).trigger("mutated");
-                    //vizzop.Daemon.audioNewAction.Play();
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    //vizzoplib.logAjax(url, msg, jqXHR);
-                    //vizzop.Daemon.audioNewAction.Play();
-                    //vizzop.HtmlSend_ForceSendHtml = false;
-                    vizzop.HtmlSend_InCourse = null;
-                }
-            });
+                var url = vizzop.mainURL + "/RealTime/TrackScreen";
+                msg.data = JSONVIZZOP.stringify(msg.data);
+                vizzop.HtmlSend_InCourse = jVizzop.ajax({
+                    url: url,
+                    type: "POST",
+                    data: msg,
+                    beforeSend: function (xhr) {
+                        //console.vizzoplib.log(msg);
+                        //vizzop.Daemon.audioNewAction.Play();
+                    },
+                    success: function (data) {
+                        //HtmlSend_ForceSendHtml = false;
+                        vizzop.HtmlSend_InCourse = null;
+                        //jVizzop(vizzop).trigger("mutated");
+                        //vizzop.Daemon.audioNewAction.Play();
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        //vizzoplib.logAjax(url, msg, jqXHR);
+                        //vizzop.Daemon.audioNewAction.Play();
+                        //vizzop.HtmlSend_ForceSendHtml = false;
+                        vizzop.HtmlSend_InCourse = null;
+                    }
+                });
+            }
         } catch (err) {
             console.log(err);
             vizzoplib.log(err);

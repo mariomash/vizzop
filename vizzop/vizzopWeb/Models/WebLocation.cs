@@ -73,7 +73,11 @@ namespace vizzopWeb.Models
         public bool MustGenerateScreenshot { get; set; }
         public string CaptureProcessId { get; set; }
         public ScreenCapture ScreenCapture { get; set; }
+
+        /*
         public string ThumbNail { get; set; }
+         */
+
         public string CompleteHtml { get; set; }
     }
 }

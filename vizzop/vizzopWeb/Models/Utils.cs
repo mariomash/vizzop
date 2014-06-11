@@ -1202,7 +1202,7 @@ namespace vizzopWeb
                             string strBase64 = ImageToJpegBase64(tBitmap, 100L);
 
                             WebLocation weblocation = null;
-                            string region = "WebLocations";
+                            string region = "WebLocationsRendering";
                             object result = SingletonCache.Instance.GetInRegion(key, region);
                             if (result != null) weblocation = (WebLocation)result;
                             if (weblocation == null) return;
@@ -1216,17 +1216,19 @@ namespace vizzopWeb
                                 false),
                             40L);
 
+                            /*
                             DataCacheLockHandle lockHandle;
                             result = SingletonCache.Instance.GetInRegionWithLock(key, region, out lockHandle);
                             if (result != null) weblocation = (WebLocation)result;
                             if (weblocation == null) return;
+                            */
 
                             weblocation.ScreenCapture.Data = strBase64;
                             weblocation.ScreenCapture.GUID = Guid.NewGuid().ToString();
                             weblocation.ScreenCapture.PicturedOn = DateTime.UtcNow;
-                            weblocation.ThumbNail = ThumbNail;
+                            weblocation.ScreenCapture.ThumbNail = ThumbNail;
 
-                            SingletonCache.Instance.InsertInRegionWithLock(key, weblocation, region, lockHandle);
+                            SingletonCache.Instance.InsertInRegion(key, weblocation, "WebLocationsRendered");
 
                             wb.Dispose();
                         }
@@ -2391,6 +2393,7 @@ namespace vizzopWeb
                                 listenersArr.Add(agent.Converser.UserName + "@" + agent.Converser.Business.Domain);
                             }
                         }
+
                         foreach (string listenerUD in listenersArr)
                         {
                             var newmessage = new NewMessage();
@@ -2423,13 +2426,10 @@ namespace vizzopWeb
                         {
                             if ((dict["blob"] != null) && (dict["blob"].ToString() != "null") && (new_screencapture.Data == null))
                             {
-
                                 string SerializedBlob = new JavaScriptSerializer().Serialize(dict["blob"]);
                                 new_screencapture.Blob = SerializedBlob;
-
                             }
                         }
-
 
                         if (new_screencapture.Data == null)
                         {
@@ -2441,8 +2441,9 @@ namespace vizzopWeb
                         string _region = "WebLocations";
                         string _key = UserName + @"@" + Domain + @"@" + new_screencapture.WindowName;
 
-                        DataCacheLockHandle _lockHandle;
-                        object _result = SingletonCache.Instance.GetInRegionWithLock(_key, _region, out _lockHandle);
+                        //DataCacheLockHandle _lockHandle;
+                        //object _result = SingletonCache.Instance.GetInRegionWithLock(_key, _region, out _lockHandle);
+                        object _result = SingletonCache.Instance.GetInRegion(_key, _region);
                         if (_result != null)
                         {
                             OriginalWebLocation = (WebLocation)_result;
@@ -2463,7 +2464,7 @@ namespace vizzopWeb
                             OriginalWebLocation.Domain = converser.Business.Domain;
                             OriginalWebLocation.WindowName = new_screencapture.WindowName;
 
-                            SingletonCache.Instance.InsertInRegionWithLock(_key, OriginalWebLocation, _region, _lockHandle);
+                            //SingletonCache.Instance.InsertInRegion(_key, OriginalWebLocation, _region);
                         }
 
                         string processedHtml = "";
@@ -2560,26 +2561,28 @@ namespace vizzopWeb
                             newmessage.MessageType = "chat";
                             var message = new Message(newmessage);
                             message.AddToCache();
+                            return false;
                         }
 
                         //processedHtml = processedHtml.Replace("&amp;", @"&").Replace("&lt;", @"<").Replace("&gt;", @">");
                         //processedHtml = HttpUtility.UrlDecode(processedHtml);
 
-                        _result = SingletonCache.Instance.GetInRegionWithLock(_key, _region, out _lockHandle);
-                        if (_result != null)
-                        {
-                            OriginalWebLocation = (WebLocation)_result;
-                        }
 
+                        DataCacheLockHandle _lockHandle;
+                        _result = SingletonCache.Instance.GetInRegionWithLock(_key, _region, out _lockHandle);
+                        if (_result != null) OriginalWebLocation = (WebLocation)_result;
                         OriginalWebLocation.Url = new_screencapture.Url;
                         OriginalWebLocation.TimeStamp_Last = DateTime.UtcNow;
                         OriginalWebLocation.CompleteHtml = processedHtml;
-                        OriginalWebLocation.ScreenCapture = new_screencapture;
                         SingletonCache.Instance.InsertInRegionWithLock(_key, OriginalWebLocation, _region, _lockHandle);
+
+                        OriginalWebLocation.ScreenCapture = new_screencapture;
 
                         if ((OriginalWebLocation.CompleteHtml != "") && (OriginalWebLocation.CompleteHtml != null))
                         {
                             string rKey = OriginalWebLocation.UserName + @"@" + OriginalWebLocation.Domain + @"@" + OriginalWebLocation.WindowName;
+                            string rRegion = "WebLocationsToRender";
+                            SingletonCache.Instance.InsertInRegion(rKey, OriginalWebLocation, rRegion);
 
                             /*
                             Thread thread = new Thread(() => CapturaImagenEnWebBrowser(processedHtml, new_screencapture, rKey));
@@ -2590,9 +2593,9 @@ namespace vizzopWeb
 
                             //Por ultimo lo metemos para renderizar... esta lista va separada para que no se peleen!!!
                             //Se la vuelve a llamar desde Utils.BuscaNuevasWebLocationsQueRenderizar() <- PhantomController.GetCaptureToRender() <- PhantomJs <- WorkerRole.cs
-                            string rRegion = "WebLocationsToRender";
-                            SingletonCache.Instance.InsertInRegion(rKey, OriginalWebLocation, rRegion);
 
+
+                            //GrabaLog(Utils.NivelLog.info, "enviando a renderizar");
                         }
 
                         //Y ahora a la DB
@@ -2730,8 +2733,10 @@ namespace vizzopWeb
 
         public Status TrackPageView(Converser converser, string url, string referrer, string language, string useragent, string sIP, string headers, string windowname)
         {
-            try
+
+            if ((url != null) && (converser != null))
             {
+
                 if (url.Length > 3999) { url = url.Substring(0, 3999); }
                 if (referrer == null) { referrer = ""; }
                 if (referrer.Length > 3999) { referrer = referrer.Substring(0, 3999); }
@@ -2739,13 +2744,15 @@ namespace vizzopWeb
 
                 TimeZone localZone = TimeZone.CurrentTimeZone;
                 DateTime loctime = localZone.ToUniversalTime(DateTime.Now);
-                if ((url != null) && (converser != null))
+
+                string region = "WebLocations";
+                string key = converser.UserName + @"@" + converser.Business.Domain + @"@" + windowname; ;
+                DataCacheLockHandle lockHandle = null;
+
+                try
                 {
 
-                    string region = "WebLocations";
-                    string key = converser.UserName + @"@" + converser.Business.Domain + @"@" + windowname;
-                    DataCacheLockHandle _lockHandle;
-                    object result = SingletonCache.Instance.GetInRegionWithLock(key, region, out _lockHandle);
+                    object result = SingletonCache.Instance.GetInRegionWithLock(key, region, out lockHandle);
 
                     WebLocation weblocation = null;
                     if (result != null)
@@ -2757,7 +2764,7 @@ namespace vizzopWeb
                         weblocation.Url = url;
                         weblocation.TimeStamp_Last = loctime;
                         weblocation.UserAgent = useragent;
-                        SingletonCache.Instance.InsertInRegionWithLock(key, weblocation, region, _lockHandle);
+                        SingletonCache.Instance.InsertInRegionWithLock(key, weblocation, region, lockHandle);
                     }
                     else
                     {
@@ -2780,23 +2787,25 @@ namespace vizzopWeb
                         weblocation.Ubication = GetUbicationFromIP(sIP);
                         weblocation.Headers = headers;
                         weblocation.WindowName = windowname;
-                        SingletonCache.Instance.InsertInRegionWithLock(key, weblocation, region, _lockHandle);
+                        SingletonCache.Instance.InsertInRegion(key, weblocation, region);
                     }
 
                     return new Status(true, null);
                 }
-                else
+                catch (Exception e)
                 {
-                    return new Status(false, "no url or converser");
+                    try { SingletonCache.Instance.UnLockInRegion(key, lockHandle, region); }
+                    catch (Exception) { }
+
+                    GrabaLogExcepcion(e);
+                    GrabaLog(Utils.NivelLog.error, converser.UserName + @"_" + converser.Password + @"_" + converser.Business.Domain + @"_" + url + @"_" + referrer + @"_" + language + @"_" + useragent + @"_" + sIP);
+                    //return null;
+                    return new Status(false, e.Message);
                 }
             }
-            catch (Exception e)
+            else
             {
-                //SingletonCache.Instance.UnLock(key, lockHandle);
-                GrabaLogExcepcion(e);
-                GrabaLog(Utils.NivelLog.error, converser.UserName + @"_" + converser.Password + @"_" + converser.Business.Domain + @"_" + url + @"_" + referrer + @"_" + language + @"_" + useragent + @"_" + sIP);
-                //return null;
-                return new Status(false, e.Message);
+                return new Status(false, "no url or converser");
             }
         }
 
@@ -3473,10 +3482,91 @@ namespace vizzopWeb
         }
         */
 
-        public bool IsNotBlackImage(Bitmap bitmap)
+        /*
+        public bool IsBlankImage(Bitmap b)
         {
-            var imgStatistics = new AForge.Imaging.ImageStatistics(bitmap);
-            return imgStatistics.PixelsCountWithoutBlack != 0;
+            double stdDev = GetStdDev(b);
+            return stdDev < 100000;
+        }
+        public double GetStdDev(Bitmap b)
+        {
+            double total = 0, totalVariance = 0;
+            int count = 0;
+            double stdDev = 0;
+
+            // First get all the bytes
+            using (b)
+            {
+                BitmapData bmData = b.LockBits(new Rectangle(0, 0, b.Width, b.Height), ImageLockMode.ReadOnly, b.PixelFormat);
+                int stride = bmData.Stride;
+                IntPtr Scan0 = bmData.Scan0;
+                unsafe
+                {
+                    byte* p = (byte*)(void*)Scan0;
+                    int nOffset = stride - b.Width * 3;
+                    for (int y = 0; y < b.Height; ++y)
+                    {
+                        for (int x = 0; x < b.Width; ++x)
+                        {
+                            count++;
+
+                            byte blue = p[0];
+                            byte green = p[1];
+                            byte red = p[2];
+
+                            int pixelValue = Color.FromArgb(0, red, green, blue).ToArgb();
+                            total += pixelValue;
+                            double avg = total / count;
+                            totalVariance += Math.Pow(pixelValue - avg, 2);
+                            stdDev = Math.Sqrt(totalVariance / count);
+
+                            p += 3;
+                        }
+                        p += nOffset;
+                    }
+                }
+
+                b.UnlockBits(bmData);
+            }
+
+            return stdDev;
+        }
+        
+        */
+        public bool IsBlankImage(Bitmap bitmap)
+        {
+            try
+            {
+                var result = true;
+                var imgStatistics = new AForge.Imaging.ImageStatistics(bitmap);
+                if (imgStatistics.PixelsCountWithoutBlack != 0)
+                {
+                    result = false;
+                }
+
+                //Ok pero vamos a ve si es completamente blanca....
+                //La invertimos luego miramos si tiene algun pixel que sea negro
+                if (result == false)
+                {
+                    // create filter
+                    RectangleF CloneRect = new RectangleF(0, 0, bitmap.Width, bitmap.Height);
+                    Bitmap ClonedBitmap = bitmap.Clone(CloneRect, PixelFormat.Format24bppRgb);
+                    AForge.Imaging.Filters.Invert filter = new AForge.Imaging.Filters.Invert();
+                    // apply the filter
+                    filter.ApplyInPlace(ClonedBitmap);
+                    imgStatistics = new AForge.Imaging.ImageStatistics(ClonedBitmap);
+                    if (imgStatistics.PixelsCountWithoutBlack == 0)
+                    {
+                        result = true;
+                    }
+                }
+
+                return result;
+            }
+            catch (Exception)
+            {
+                return true;
+            }
         }
 
 
@@ -3552,7 +3642,7 @@ namespace vizzopWeb
                                     using (var image = Image.FromStream(stream))
                                     {
                                         Bitmap bitmap = new Bitmap(image);
-                                        if (IsNotBlackImage(bitmap) == false)
+                                        if (IsBlankImage(bitmap) == false)
                                         {
                                             if (File.Exists(path))
                                             {
@@ -3594,20 +3684,12 @@ namespace vizzopWeb
                                             false),
                                         40L);
 
-                                        DataCacheLockHandle lockHandle;
-                                        result = SingletonCache.Instance.GetInRegionWithLock(key, region, out lockHandle);
-                                        if (result != null)
-                                        {
-                                            weblocation = (WebLocation)result;
-                                        }
-                                        if (weblocation != null)
-                                        {
-                                            weblocation.ScreenCapture.Data = strBase64;
-                                            weblocation.ScreenCapture.GUID = Guid.NewGuid().ToString();
-                                            weblocation.ScreenCapture.PicturedOn = DateTime.UtcNow;
-                                            weblocation.ThumbNail = ThumbNail;
-                                            SingletonCache.Instance.InsertInRegionWithLock(key, weblocation, region, lockHandle);
-                                        }
+
+                                        weblocation.ScreenCapture.Data = strBase64;
+                                        weblocation.ScreenCapture.GUID = Guid.NewGuid().ToString();
+                                        weblocation.ScreenCapture.PicturedOn = DateTime.UtcNow;
+                                        weblocation.ScreenCapture.ThumbNail = ThumbNail;
+                                        SingletonCache.Instance.InsertInRegion(key, weblocation, "WebLocationsRendered");
                                     }
                                 }
                             }
@@ -3620,6 +3702,7 @@ namespace vizzopWeb
                     }
                 };
 
+
                 process.ErrorDataReceived += (sender, e) => actionWrite(sender, e);
                 process.OutputDataReceived += (sender, e) => actionWrite(sender, e);
 
@@ -3630,21 +3713,22 @@ namespace vizzopWeb
 
                 process.WaitForExit();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //GrabaLog(Utils.NivelLog.error, ex.Message);
+                GrabaLogExcepcion(ex);
             }
         }
 
 
         public void LaunchWebBrowserProcess()
         {
-            WebLocation wl = null;
             System.Windows.Forms.WebBrowser wb = new System.Windows.Forms.WebBrowser();
             wb.ScrollBarsEnabled = false;
             wb.ScriptErrorsSuppressed = true;
             wb.AllowNavigation = true;
+            string key = null;
 
+            /*
             Action<object, System.Windows.Forms.WebBrowserDocumentCompletedEventArgs> actionWrite = (sender, e) =>
             {
                 try
@@ -3653,89 +3737,116 @@ namespace vizzopWeb
                     if (wb.ReadyState == System.Windows.Forms.WebBrowserReadyState.Complete)
                     {
 
-                        wb.Document.Window.ScrollTo(wl.ScreenCapture.ScrollLeft, wl.ScreenCapture.ScrollTop);
+                    }
+                }
+                catch (Exception _ex)
+                {
+                    GrabaLogExcepcion(_ex);
+                }
+            };
 
-                        Bitmap tBitmap = new Bitmap(wb.Width, wb.Height);
-                        wb.DrawToBitmap(tBitmap, new Rectangle(0, 0, wb.Width, wb.Height));
+            wb.DocumentCompleted += (sender, e) => actionWrite(sender, e);
+            */
+
+            try
+            {
+
+                WebLocation wl = BuscaNuevasWebLocationsQueRenderizar();
+
+                if (wl != null)
+                {
+
+                    key = wl.UserName + @"@" + wl.Domain + @"@" + wl.WindowName;
+                    SingletonCache.Instance.InsertInRegion(
+                        key,
+                        wl,
+                        "WebLocationsRendering"
+                        );
+
+                    wb.Width = wl.ScreenCapture.Width;
+                    wb.Height = wl.ScreenCapture.Height;
+
+                    string HTML = HttpUtility.UrlDecode(wl.CompleteHtml);
+                    HTML = ScrubHTML(HTML);
+
+                    byte[] bytes = Encoding.UTF8.GetBytes(HTML);
+                    MemoryStream ms = new MemoryStream();
+                    ms.Write(bytes, 0, bytes.Length);
+                    ms.Position = 0;
+                    wb.DocumentStream = ms;
+
+                    //GrabaLog(Utils.NivelLog.info, "Iniciando Render");
+                    DateTime loading_end_time = DateTime.Now.AddSeconds(5);
+                    while ((DateTime.Now < loading_end_time) && (wb.ReadyState != System.Windows.Forms.WebBrowserReadyState.Complete))
+                    {
+                        System.Windows.Forms.Application.DoEvents();
+                    }
+
+                    wb.Document.Window.ScrollTo(wl.ScreenCapture.ScrollLeft, wl.ScreenCapture.ScrollTop);
+
+                    Bitmap tBitmap = new Bitmap(wb.Width, wb.Height);
+                    wb.DrawToBitmap(tBitmap, new Rectangle(0, 0, wb.Width, wb.Height));
+                    if (IsBlankImage(tBitmap) == true)
+                    {
+                        object result = SingletonCache.Instance.GetInRegion(key, "WebLocationsToRender");
+                        if (result == null)
+                        {
+                            SingletonCache.Instance.InsertInRegion(
+                                key,
+                                wl,
+                                "WebLocationsToRender");
+                        }
+                    }
+                    else
+                    {
+
+                        /*
+                        while (IsBlankImage(tBitmap) == true)
+                        {
+                            wb.Document.Window.ScrollTo(wl.ScreenCapture.ScrollLeft, wl.ScreenCapture.ScrollTop);
+                        }
+                        //GrabaLog(Utils.NivelLog.info, "renderizada");
+                        */
+
                         string strBase64 = ImageToJpegBase64(tBitmap, 100L);
 
-                        WebLocation weblocation = null;
-                        string region = "WebLocations";
-                        string key = wl.UserName + @"@" + wl.Domain + @"@" + wl.WindowName;
-                        object result = SingletonCache.Instance.GetInRegion(key, region);
-                        if (result != null) weblocation = (WebLocation)result;
-                        if (weblocation == null) return;
-
-                        weblocation.ScreenCapture.Data = strBase64;
+                        wl.ScreenCapture.Data = strBase64;
                         string ThumbNail = "data:image/jpg;base64," + ImageToJpegBase64(
                         PrepareScreenToReturn(
-                            weblocation.ScreenCapture,
+                            wl.ScreenCapture,
                             "140",
                             "90",
                             false),
                         40L);
 
-                        DataCacheLockHandle lockHandle;
-                        result = SingletonCache.Instance.GetInRegionWithLock(key, region, out lockHandle);
-                        if (result != null) weblocation = (WebLocation)result;
-                        if (weblocation == null) return;
+                        wl.ScreenCapture.GUID = Guid.NewGuid().ToString();
+                        wl.ScreenCapture.PicturedOn = DateTime.UtcNow;
+                        wl.ScreenCapture.ThumbNail = ThumbNail;
 
-                        weblocation.ScreenCapture.Data = strBase64;
-                        weblocation.ScreenCapture.GUID = Guid.NewGuid().ToString();
-                        weblocation.ScreenCapture.PicturedOn = DateTime.UtcNow;
-                        weblocation.ThumbNail = ThumbNail;
+                        //SingletonCache.Instance.InsertScreenCaptureInStorage(wl.ScreenCapture, key);
 
-                        SingletonCache.Instance.InsertInRegionWithLock(key, weblocation, region, lockHandle);
-
-                        region = "WebLocationsRendering";
-                        SingletonCache.Instance.RemoveInRegion(key, region);
+                        SingletonCache.Instance.InsertInRegion(
+                           key,
+                           wl,
+                           "WebLocationsRendered");
 
                     }
-                }
-                catch (Exception ex)
-                {
-                    GrabaLogExcepcion(ex);
-                }
-            };
 
-            wb.DocumentCompleted += (sender, e) => actionWrite(sender, e);
-
-            try
-            {
-
-                DateTime start_time = DateTime.Now;
-                while (DateTime.Now < start_time.AddMinutes(5))
-                {
-                    if (wl != null) continue;
-                    wl = BuscaNuevasWebLocationsQueRenderizar();
-                    if (wl != null)
-                    {
-                        wb.Width = wl.ScreenCapture.Width;
-                        wb.Height = wl.ScreenCapture.Height;
-
-                        //HTML = HttpUtility.UrlDecode(HTML);
-                        string HTML = ScrubHTML(wl.CompleteHtml);
-
-                        byte[] bytes = Encoding.UTF8.GetBytes(HTML);
-                        MemoryStream ms = new MemoryStream();
-                        ms.Write(bytes, 0, bytes.Length);
-                        ms.Position = 0;
-                        wb.DocumentStream = ms;
-
-                        while (wb.ReadyState != System.Windows.Forms.WebBrowserReadyState.Complete)
-                        {
-                            System.Windows.Forms.Application.DoEvents();
-                        }
-
-                        wl = null;
-                    }
-                    Thread.Sleep(TimeSpan.FromSeconds(10));
                 }
             }
             catch (Exception ex)
             {
                 GrabaLogExcepcion(ex);
             }
+
+            if (key != null)
+            {
+                SingletonCache.Instance.RemoveInRegion(
+                    key,
+                    "WebLocationsRendering");
+            }
+
+            LaunchWebBrowserProcess();
         }
 
 
@@ -4047,30 +4158,42 @@ namespace vizzopWeb
             WebLocation wl = null;
             try
             {
+                /*
                 DateTime start_time = DateTime.Now;
-                string rRegion = "WebLocationsToRender";
-
                 while ((wl == null) && (DateTime.Now < start_time.AddSeconds(25)))
                 {
-                    object result = SingletonCache.Instance.GetAllInRegion(rRegion);
-                    IEnumerable<KeyValuePair<string, object>> WebLocations = null;
-                    if (result != null)
+                }
+                 **/
+                string rRegion = "WebLocationsToRender";
+                object result = SingletonCache.Instance.GetAllInRegion(rRegion);
+                IEnumerable<KeyValuePair<string, object>> WebLocations = null;
+                if (result != null)
+                {
+                    WebLocations = (IEnumerable<KeyValuePair<string, object>>)result;
+                    wl = (WebLocation)(from m in WebLocations
+                                       //where ((WebLocation)m.Value).TimeStamp_Last > DateTime.UtcNow.AddSeconds(-40)
+                                       orderby ((WebLocation)m.Value).ScreenCapture.CreatedOn ascending
+                                       select m).FirstOrDefault().Value;
+                }
+                /*
+                if (wl != null)
+                {
+                    if (wl.TimeStamp_Last < DateTime.UtcNow.AddSeconds(-40))
                     {
-                        WebLocations = (IEnumerable<KeyValuePair<string, object>>)result;
-                        wl = (WebLocation)(from m in WebLocations
-                                           where ((WebLocation)m.Value).TimeStamp_Last > DateTime.UtcNow.AddSeconds(-40)
-                                           orderby ((WebLocation)m.Value).ScreenCapture.CreatedOn ascending
-                                           select m).FirstOrDefault().Value;
+                        string key = wl.UserName + @"@" + wl.Domain + @"@" + wl.WindowName;
+                        SingletonCache.Instance.RemoveInRegion(key, rRegion);
+                        wl = null;
                     }
                 }
+                 */
                 if (wl != null)
                 {
                     string key = wl.UserName + @"@" + wl.Domain + @"@" + wl.WindowName;
                     SingletonCache.Instance.RemoveInRegion(key, rRegion);
 
-                    rRegion = "WebLocationsRendering";
-                    SingletonCache.Instance.InsertInRegion(key, wl, rRegion);
+                    //GrabaLog(Utils.NivelLog.info, "nueva que renderizar ");
                 }
+
             }
             catch (Exception ex)
             {
@@ -4143,6 +4266,38 @@ namespace vizzopWeb
             return _WebLocations;
         }
 
+        internal List<WebLocation> GetRenderedQueue()
+        {
+            List<WebLocation> _WebLocations = new List<WebLocation>();
+            try
+            {
+
+                string region = "WebLocationsRendered";
+                object result = SingletonCache.Instance.GetAllInRegion(region);
+                if (result != null)
+                {
+
+                    IEnumerable<KeyValuePair<string, object>> WebLocations = (IEnumerable<KeyValuePair<string, object>>)result;
+                    /*
+                    WebLocations = (from m in WebLocations
+                                    where ((WebLocation)m.Value).TimeStamp_Last > DateTime.UtcNow.AddSeconds(-30)
+                                    select m);
+                    */
+                    foreach (var m in WebLocations)
+                    {
+                        WebLocation loc = (WebLocation)m.Value;
+                        _WebLocations.Add(loc);
+                    }
+                    return _WebLocations;
+                }
+            }
+            catch (Exception ex)
+            {
+                GrabaLogExcepcion(ex);
+            }
+            return _WebLocations;
+        }
+
 
         internal List<WebLocation> GetWebLocations(Converser converser)
         {
@@ -4175,6 +4330,37 @@ namespace vizzopWeb
                     foreach (var m in WebLocations)
                     {
                         WebLocation loc = (WebLocation)m.Value;
+
+
+                        WebLocation sc_loc = null;
+                        //ScreenCapture sc_result = SingletonCache.Instance.GetScreenCaptureInStorage(loc.UserName + @"@" + loc.Domain + @"@" + loc.WindowName);
+                        object sc_result = SingletonCache.Instance.GetInRegion(loc.UserName + @"@" + loc.Domain + @"@" + loc.WindowName, "WebLocationsRendered");
+                        if (sc_result != null)
+                        {
+                            sc_loc = (WebLocation)sc_result;
+                            loc.ScreenCapture = sc_loc.ScreenCapture;
+                            //loc.ScreenCapture = sc_result;
+                        }
+                        else
+                        {
+                            object sc_resultRendering = SingletonCache.Instance.GetInRegion(loc.UserName + @"@" + loc.Domain + @"@" + loc.WindowName, "WebLocationsRendering");
+                            if (sc_resultRendering == null)
+                            {
+                                object sc_resultToRender = SingletonCache.Instance.GetInRegion(loc.UserName + @"@" + loc.Domain + @"@" + loc.WindowName, "WebLocationsToRender");
+                                if (sc_resultToRender == null)
+                                {
+                                    var newmessage = new NewMessage();
+                                    newmessage.From = @"admin@vizzop";
+                                    newmessage.To = converser.UserName + @"@" + converser.Business.Domain;
+                                    newmessage.Subject = "$#_sendfullscreen";
+                                    newmessage.Content = "";
+                                    newmessage.MessageType = "chat";
+                                    var message = new Message(newmessage);
+                                    message.AddToCache();
+                                }
+                            }
+                        }
+
                         _WebLocations.Add(loc);
                     }
                     return _WebLocations;
@@ -4349,49 +4535,33 @@ namespace vizzopWeb
 
                 try
                 {
-                    if (converser.Agent == null)
-                    {
-
-                        string key = UserName + @"@" + Domain + @"@" + WindowName;
-                        string region = "WebLocations";
-
-                        WebLocation weblocation = null;
-                        object result = SingletonCache.Instance.GetInRegion(key, region);
-                        if (result != null)
+                    /*
+                        if (converser.Agent == null)
                         {
-                            weblocation = (WebLocation)result;
-                            if ((weblocation.CompleteHtml == null) || (weblocation.CompleteHtml == ""))
+
+                            string key = UserName + @"@" + Domain + @"@" + WindowName;
+                            string region = "WebLocations";
+
+                            WebLocation weblocation = null;
+                            object result = SingletonCache.Instance.GetInRegion(key, region);
+                            if (result != null)
                             {
-                                Message mm = new Message();
-                                mm.Content = null;
-                                mm.From = new Converser();
-                                mm.From.ID = 0;
-                                mm.From.UserName = "vizzop";
-                                mm.From.FullName = "";
-                                mm.From.Password = null;
-                                mm.From.Business = new Business();
-                                mm.From.Business.Domain = "vizzop";
-                                mm.ID = 0;
-                                mm.To = new Converser();
-                                mm.To.ID = converser.ID;
-                                mm.To.UserName = converser.UserName;
-                                mm.To.FullName = converser.FullName;
-                                mm.To.Password = null;
-                                mm.To.Business = new Business();
-                                mm.To.Business.Domain = converser.Business.Domain;
-                                mm.ID = 0;
-                                mm.Status = 1;
-                                mm.CommSession = new CommSession();
-                                mm.CommSession.ID = 0;
-                                mm.Subject = "$#_sendfullscreen";
-                                mm.db = null;
-                                mm.utils = null;
-                                returnmessages.Add(mm);
+                                weblocation = (WebLocation)result;
+                                if ((weblocation.CompleteHtml == null) || (weblocation.CompleteHtml == ""))
+                                {
+                                    var newmessage = new NewMessage();
+                                    newmessage.From = @"admin@vizzop";
+                                    newmessage.To = converser.UserName + @"@" + converser.Business.Domain;
+                                    newmessage.Subject = "$#_sendfullscreen";
+                                    newmessage.Content = "";
+                                    newmessage.MessageType = "chat";
+                                    var message = new Message(newmessage);
+                                    message.AddToCache();
+                                }
+
                             }
-
                         }
-                    }
-
+                    */
                     if ((converser.Agent == null) && ((CommSessionID == null) || (CommSessionID == "null") || (CommSessionID == "")))
                     {
                         /*

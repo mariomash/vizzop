@@ -35,8 +35,6 @@
     </LocalResources>
     <Startup priority="-2">
       <Task commandLine="Microsoft.WindowsAzure.Caching\ClientPerfCountersInstaller.exe install" executionContext="elevated" taskType="simple" />
-      <Task commandLine="Microsoft.WindowsAzure.Caching\ClientPerfCountersInstaller.exe install" executionContext="elevated" taskType="simple" />
-      <Task commandLine="Microsoft.WindowsAzure.Caching\ClientPerfCountersInstaller.exe install" executionContext="elevated" taskType="simple" />
     </Startup>
   </WebRole>
   <WorkerRole name="vizzopWorker" vmsize="Small">
@@ -61,8 +59,6 @@
       <Setting name="SaveScreenShotsInDebug" />
     </ConfigurationSettings>
     <Startup priority="-2">
-      <Task commandLine="Microsoft.WindowsAzure.Caching\ClientPerfCountersInstaller.exe install" executionContext="elevated" taskType="simple" />
-      <Task commandLine="Microsoft.WindowsAzure.Caching\ClientPerfCountersInstaller.exe install" executionContext="elevated" taskType="simple" />
       <Task commandLine="Microsoft.WindowsAzure.Caching\ClientPerfCountersInstaller.exe install" executionContext="elevated" taskType="simple" />
     </Startup>
   </WorkerRole>

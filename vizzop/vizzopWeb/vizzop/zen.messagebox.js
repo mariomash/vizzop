@@ -883,28 +883,15 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                                     try { jVizzop(self._handle).remove(); } catch (err) { }
                                     self._boxinfo
                                         .show();
-
                                     self._boxtitletext
                                         .show();
-
                                     self.positionBox(function () { jVizzop(self._box).show(); }, 'fast');
                                 });
                             self._boxinfo.hide();
                             self._boxtitletext.hide();
                             self._bubbletext
                                 .html(LLang('new_message_from_agent', null));
-                            self._bubble.fadeOut(300, function () {
-                                self._bubble.fadeIn(300, function () {
-                                    self._bubble.fadeOut(300, function () {
-                                        self._bubble.fadeIn(300, function () {
-                                            self._bubble.fadeOut(300, function () {
-                                                self._bubble.fadeIn(300, function () {
-                                                });
-                                            });
-                                        });
-                                    });
-                                });
-                            });
+                            self._bubble.show();
                         } else {
                             try { jVizzop(self._handle).remove(); } catch (err) { }
                             vizzoplib.setCookie(name_acceptschatidcookie, self._commsessionid);
@@ -919,7 +906,7 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                 self._preferredwidth = 'auto';
                 self._preferredheight = 'auto';
                 self._status = 'start_TextChat';
-
+                
                 /*
                 self.hideBox();
                 */
@@ -955,6 +942,7 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                 self._boxcontents = jVizzop('<div></div>')
                     .css('white-space', 'nowrap')
                     .appendTo(self._boxinfo);
+
 
                 //share
                 self._col0 = jVizzop('<span></span>')
@@ -1491,7 +1479,7 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                             jVizzop(self.loading).hide();
                             jVizzop(self.alert)
                                 .html(LLang('error_login', null))
-                                .fadeIn();
+                                .show();
                         }
                     }
                 },
@@ -1509,7 +1497,7 @@ var MessageBox = jVizzop.zs_Class.create(Box, {
                     jVizzop(self.loading).hide();
                     jVizzop(self.alert)
                     .html(LLang('error_login', null))
-                    .fadeIn();
+                    .show();
                     return false;
                 }
             });

@@ -175,7 +175,7 @@
             //console.log(html);
             //html = "<html>" + html + "</html>";
 
-            //html = escape(html);
+            html = escape(html);
 
             //console.log(html);
             return html;

@@ -216,6 +216,7 @@
     <Compile Include="Controllers\PanelController.cs" />
     <Compile Include="Controllers\PhantomController.cs" />
     <Compile Include="Controllers\RealTimeController.cs" />
+    <Compile Include="Controllers\RenderedQueueController.cs" />
     <Compile Include="Controllers\RenderingQueueController.cs" />
     <Compile Include="Controllers\RenderQueueController.cs" />
     <Compile Include="Controllers\ScreenshotController.cs" />
@@ -875,6 +876,7 @@
     <Content Include="vizzop\PhantomSocket.ashx" />
     <Content Include="Views\RenderQueue\Index.cshtml" />
     <Content Include="Views\RenderingQueue\Index.cshtml" />
+    <Content Include="Views\RenderedQueue\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

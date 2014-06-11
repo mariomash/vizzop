@@ -1,13 +1,19 @@
 ﻿using System;
 using Microsoft.ApplicationServer.Caching;
 using System.Collections.Generic;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Blob;
+using Microsoft.WindowsAzure;
 
 namespace vizzopWeb.Models
 {
     sealed class SingletonCache
     {
 
-        public static readonly SingletonCache Instance = new SingletonCache();
+        //public static readonly SingletonCache Instance = new SingletonCache();
+
+        private static volatile SingletonCache instance;
+        private static object syncRoot = new Object();
 
         private DataCacheFactory _factory = new DataCacheFactory();
         private DataCache _cache = new DataCache();
@@ -16,17 +22,128 @@ namespace vizzopWeb.Models
         private TimeSpan ObjTimeout = TimeSpan.FromMinutes(15);
         private string region = @"vizzop";
 
+
+        CloudStorageAccount storageAccount;
+        CloudBlobClient blobClient;
+
+
         private SingletonCache()
         {
             try
             {
                 _cache = _factory.GetDefaultCache();
                 _cache.CreateRegion(this.region);
+
+                storageAccount = CloudStorageAccount.Parse(CloudConfigurationManager.GetSetting("StorageConnectionString"));
+                blobClient = storageAccount.CreateCloudBlobClient();
+
             }
             catch (Exception)
             {
                 //utils.GrabaLogExcepcion(ex);
                 _cache = null;
+            }
+        }
+
+
+        public static SingletonCache Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    lock (syncRoot)
+                    {
+                        if (instance == null)
+                            instance = new SingletonCache();
+                    }
+                }
+
+                return instance;
+            }
+        }
+
+        public bool InsertScreenCaptureInStorage(ScreenCapture sc, string key)
+        {
+            try
+            {
+                // Retrieve storage account from connection string.
+                CloudBlobContainer container = blobClient.GetContainerReference("rtscreencaptures");
+                // Create the container if it does not already exist.
+                container.CreateIfNotExists();
+
+                CloudBlockBlob blockBlob = container.GetBlockBlobReference(key);
+                blockBlob.DeleteIfExists();
+                blockBlob.UploadText(sc.Data);
+                blockBlob.Metadata["checksum"] = sc.checksum;
+                blockBlob.Metadata["CreatedOn"] = sc.CreatedOn.ToString();
+                //blockBlob.Metadata["Blob"] = sc.Blob;
+                blockBlob.Metadata["GUID"] = sc.GUID;
+                //blockBlob.Metadata["Headers"] = sc.Headers;
+                blockBlob.Metadata["Height"] = sc.Height.ToString();
+                blockBlob.Metadata["ID"] = sc.ID.ToString();
+                blockBlob.Metadata["MouseX"] = sc.MouseX.ToString();
+                blockBlob.Metadata["MouseY"] = sc.MouseY.ToString();
+                blockBlob.Metadata["PicturedOn"] = sc.PicturedOn.ToString();
+                blockBlob.Metadata["ReceivedOn"] = sc.ReceivedOn.ToString();
+                blockBlob.Metadata["ScrollLeft"] = sc.ScrollLeft.ToString();
+                blockBlob.Metadata["ScrollTop"] = sc.ScrollTop.ToString();
+                blockBlob.Metadata["ThumbNail"] = sc.ThumbNail;
+                blockBlob.Metadata["Url"] = sc.Url;
+                blockBlob.Metadata["Width"] = sc.Width.ToString();
+                blockBlob.Metadata["WindowName"] = sc.WindowName;
+                blockBlob.SetMetadata();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                utils.GrabaLogExcepcion(ex);
+                return false;
+            }
+        }
+
+        public ScreenCapture GetScreenCaptureInStorage(string key)
+        {
+            try
+            {
+                // Retrieve storage account from connection string.
+                CloudBlobContainer container = blobClient.GetContainerReference("rtscreencaptures");
+                // Create the container if it does not already exist.
+                container.CreateIfNotExists();
+                CloudBlockBlob blockBlob = container.GetBlockBlobReference(key);
+                if (blockBlob.Exists())
+                {
+                    container.FetchAttributes();
+                    ScreenCapture sc = new ScreenCapture();
+                    sc.Data = blockBlob.DownloadText();
+                    sc.checksum = blockBlob.Metadata["checksum"];
+                    sc.CreatedOn = Convert.ToDateTime(blockBlob.Metadata["CreatedOn"]);
+                    //sc.Blob = blockBlob.Metadata["Blob"];
+                    sc.GUID = blockBlob.Metadata["GUID"];
+                    //sc.Headers = blockBlob.Metadata["Headers"];
+                    sc.Height = Convert.ToInt16(blockBlob.Metadata["Height"]);
+                    sc.ID = Convert.ToInt16(blockBlob.Metadata["ID"]);
+                    sc.MouseX = Convert.ToInt16(blockBlob.Metadata["MouseX"]);
+                    sc.MouseY = Convert.ToInt16(blockBlob.Metadata["MouseY"]);
+                    sc.PicturedOn = Convert.ToDateTime(blockBlob.Metadata["PicturedOn"]);
+                    sc.ReceivedOn = Convert.ToDateTime(blockBlob.Metadata["ReceivedOn"]);
+                    sc.ScrollLeft = Convert.ToInt16(blockBlob.Metadata["ScrollLeft"]);
+                    sc.ScrollTop = Convert.ToInt16(blockBlob.Metadata["ScrollTop"]);
+                    sc.ThumbNail = blockBlob.Metadata["ThumbNail"];
+                    sc.Url = blockBlob.Metadata["Url"];
+                    sc.Width = Convert.ToInt16(blockBlob.Metadata["Width"]);
+                    sc.WindowName = blockBlob.Metadata["WindowName"];
+
+                    return sc;
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                utils.GrabaLogExcepcion(ex);
+                return null;
             }
         }
 
@@ -64,7 +181,7 @@ namespace vizzopWeb.Models
             {
                 bool islocked = true;
                 DateTime start_time = DateTime.Now;
-                while ((islocked == true) && (DateTime.Now < start_time.AddSeconds(3)))
+                while ((islocked == true) && (DateTime.Now < start_time.AddSeconds(20)))
                 {
                     islocked = false;
                     try
@@ -81,10 +198,12 @@ namespace vizzopWeb.Models
                         }
                     }
                 }
+                /*
                 if (ObjCache == null)
                 {
                     ObjCache = GetInRegion(key, _region);
                 }
+                 */
             }
             catch (Exception ex)
             {
@@ -128,7 +247,7 @@ namespace vizzopWeb.Models
             {
                 bool islocked = true;
                 DateTime start_time = DateTime.Now;
-                while ((islocked == true) && (DateTime.Now < start_time.AddSeconds(3)))
+                while ((islocked == true) && (DateTime.Now < start_time.AddSeconds(20)))
                 {
                     try
                     {
@@ -144,10 +263,12 @@ namespace vizzopWeb.Models
                         }
                     }
                 }
+                /*
                 if (ObjCache == null)
                 {
                     ObjCache = GetInRegion(key, region);
                 }
+                */
             }
             catch (Exception ex)
             {
@@ -207,7 +328,7 @@ namespace vizzopWeb.Models
                     }
                     else
                     {
-                        return this.InsertInRegion(key, obj, _region);
+                        this.InsertInRegion(key, obj, _region);
                     }
                 }
                 return true;

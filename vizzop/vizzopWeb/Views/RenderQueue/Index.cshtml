@@ -4,13 +4,13 @@
 }
 <div class="content-header">
     <h1>
-        Render Queue
+        To Render Queue
     </h1>
 </div>
 <div id="breadcrumb">
     <a class="tip-bottom">
         <i class="icon-home"></i>
-        <span style="vertical-align: middle;">Control Panel</span><a style="vertical-align: middle;" class="current">Render Queue</a>
+        <span style="vertical-align: middle;">Control Panel</span><a style="vertical-align: middle;" class="current">To Render Queue</a>
     </a>
 </div>
 <div class="container-fluid">
@@ -126,13 +126,13 @@
     function rq_Countdown() {
         setTimeout(function () {
             rq_loadExtData();
-        }, 1000);
+        }, 500);
     }
 
     function rq_updatetable() {
 
         if (rq_tabledata == null) {
-            return;
+            rq_tabledata = [];
         }
 
         $('#renderqueue_count').text(rq_tabledata.length);

@@ -80,7 +80,7 @@ namespace vizzopWeb.Controllers
 
                     var aaData = WebLocations.Select(x => new[] { 
                         x.ConverserId.ToString(), 
-                        x.ThumbNail,
+                        x.ScreenCapture.ThumbNail,
                         x.ScreenCapture == null ? null : x.ScreenCapture.Width.ToString(),
                         x.ScreenCapture == null ? null : x.ScreenCapture.Height.ToString(),
                         x.Url,
@@ -94,8 +94,8 @@ namespace vizzopWeb.Controllers
                         utils.GetPrettyDate(x.TimeStamp_Last),
                         x.ScreenCapture == null ? null : x.ScreenCapture.CreatedOn.ToString("o"),
                         x.ScreenCapture == null ? null : utils.GetPrettyDate(x.ScreenCapture.CreatedOn),
-                        x.ThumbNail == null ? null : x.ScreenCapture.PicturedOn.ToString("o"),
-                        x.ThumbNail == null ? null : utils.GetPrettyDate(x.ScreenCapture.PicturedOn),
+                        x.ScreenCapture.ThumbNail == null ? null : x.ScreenCapture.PicturedOn.ToString("o"),
+                        x.ScreenCapture.ThumbNail == null ? null : utils.GetPrettyDate(x.ScreenCapture.PicturedOn),
                         x.FullName,
                         x.UserName,
                         x.Domain,

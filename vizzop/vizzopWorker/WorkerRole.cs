@@ -39,7 +39,25 @@ namespace vizzopWorker
                 MaximumPhantomNumber = Convert.ToInt16(CloudConfigurationManager.GetSetting("MaximumPhantomNumber"));
                 for (var i = 0; i < MaximumPhantomNumber; i++)
                 {
-                    LanzaYControlaProcesoPhantom();
+                    /*
+                    Task.Factory.StartNew(() =>
+                        {
+                            while (true)
+                            {
+                                Thread thread = new Thread(() => utils.LaunchWebBrowserProcess());
+                                thread.SetApartmentState(ApartmentState.STA);
+                                thread.Start();
+                                thread.Join();
+                            }
+                        });
+                     */
+                    //LanzaYControlaProcesoPhantom();
+
+                    Thread thread = new Thread(() => utils.LaunchWebBrowserProcess());
+                    thread.SetApartmentState(ApartmentState.STA);
+                    thread.Start();
+                    //thread.Join();
+
                 }
 
                 //LanzaYControlaProcesoCreaVideos();
@@ -573,6 +591,19 @@ namespace vizzopWorker
             bw.RunWorkerAsync();
         }
 
+        private void ExecuteSubTasks()
+        {
+            var tasks = new Task[]
+            {
+                new Task(() => utils.LaunchWebBrowserProcess())
+            };
+
+            foreach (var task in tasks)
+                task.Start();
+            Task.WaitAll(tasks);
+        }
+
+
         private void LanzaYControlaProcesoPhantom()
         {
 
@@ -592,6 +623,7 @@ namespace vizzopWorker
                 thread.SetApartmentState(ApartmentState.STA);
                 thread.Start();
                 thread.Join();
+
             });
 
             // what to do when worker completes its task (notify the user)
