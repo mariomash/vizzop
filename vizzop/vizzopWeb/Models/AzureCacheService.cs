@@ -472,6 +472,20 @@ namespace vizzopWeb.Models
                 utils.GrabaLogExcepcion(ex);
             }
         }
+
+        internal void CleanRegion(string p)
+        {
+            try
+            {
+                _cache.RemoveRegion(p);
+                _cache.CreateRegion(p);
+            }
+            catch (Exception ex)
+            {
+                utils.GrabaLogExcepcion(ex);
+            }
+            //throw new NotImplementedException();
+        }
     }
 
 }

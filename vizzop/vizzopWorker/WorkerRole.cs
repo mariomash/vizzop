@@ -35,6 +35,9 @@ namespace vizzopWorker
 
                 utils.GrabaLog(Utils.NivelLog.info, "vizzopWorker entry point called");
 
+                utils.LimpiaCache();
+                //"WebLocationsRendering");
+
                 int MaximumPhantomNumber = 0;
                 MaximumPhantomNumber = Convert.ToInt16(CloudConfigurationManager.GetSetting("MaximumPhantomNumber"));
                 for (var i = 0; i < MaximumPhantomNumber; i++)

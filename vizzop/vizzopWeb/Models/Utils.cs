@@ -3823,13 +3823,14 @@ namespace vizzopWeb
                         wl.ScreenCapture.PicturedOn = DateTime.UtcNow;
                         wl.ScreenCapture.ThumbNail = ThumbNail;
 
-                        //SingletonCache.Instance.InsertScreenCaptureInStorage(wl.ScreenCapture, key);
+                        SingletonCache.Instance.InsertScreenCaptureInStorage(wl.ScreenCapture, key);
 
+                        /*
                         SingletonCache.Instance.InsertInRegion(
                            key,
                            wl,
                            "WebLocationsRendered");
-
+                        */
                     }
 
                 }
@@ -4332,14 +4333,14 @@ namespace vizzopWeb
                         WebLocation loc = (WebLocation)m.Value;
 
 
-                        WebLocation sc_loc = null;
-                        //ScreenCapture sc_result = SingletonCache.Instance.GetScreenCaptureInStorage(loc.UserName + @"@" + loc.Domain + @"@" + loc.WindowName);
-                        object sc_result = SingletonCache.Instance.GetInRegion(loc.UserName + @"@" + loc.Domain + @"@" + loc.WindowName, "WebLocationsRendered");
+                        //WebLocation sc_loc = null;
+                        ScreenCapture sc_result = SingletonCache.Instance.GetScreenCaptureInStorage(loc.UserName + @"@" + loc.Domain + @"@" + loc.WindowName);
+                        //object sc_result = SingletonCache.Instance.GetInRegion(loc.UserName + @"@" + loc.Domain + @"@" + loc.WindowName, "WebLocationsRendered");
                         if (sc_result != null)
                         {
-                            sc_loc = (WebLocation)sc_result;
-                            loc.ScreenCapture = sc_loc.ScreenCapture;
-                            //loc.ScreenCapture = sc_result;
+                            //sc_loc = (WebLocation)sc_result;
+                            //loc.ScreenCapture = sc_loc.ScreenCapture;
+                            loc.ScreenCapture = sc_result;
                         }
                         else
                         {
@@ -4844,6 +4845,12 @@ namespace vizzopWeb
                 GrabaLogExcepcion(ex);
             }
             return returnmessages;
+        }
+
+        public void LimpiaCache()
+        {
+            SingletonCache.Instance.CleanRegion("WebLocationsRendering");
+            throw new NotImplementedException();
         }
     }
 
