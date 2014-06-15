@@ -42,25 +42,7 @@ namespace vizzopWorker
                 MaximumPhantomNumber = Convert.ToInt16(CloudConfigurationManager.GetSetting("MaximumPhantomNumber"));
                 for (var i = 0; i < MaximumPhantomNumber; i++)
                 {
-                    /*
-                    Task.Factory.StartNew(() =>
-                        {
-                            while (true)
-                            {
-                                Thread thread = new Thread(() => utils.LaunchWebBrowserProcess());
-                                thread.SetApartmentState(ApartmentState.STA);
-                                thread.Start();
-                                thread.Join();
-                            }
-                        });
-                     */
-                    //LanzaYControlaProcesoPhantom();
-
-                    Thread thread = new Thread(() => utils.LaunchWebBrowserProcess());
-                    thread.SetApartmentState(ApartmentState.STA);
-                    thread.Start();
-                    //thread.Join();
-
+                    LanzaYControlaProcesoPhantom();
                 }
 
                 //LanzaYControlaProcesoCreaVideos();
