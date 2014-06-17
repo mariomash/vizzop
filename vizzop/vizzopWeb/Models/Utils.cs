@@ -3826,6 +3826,15 @@ namespace vizzopWeb
                         //SingletonCache.Instance.InsertScreenCaptureInStorage(wl.ScreenCapture, key);
 
 
+                        DataCacheLockHandle _lockHandle;
+                        string _key = wl.UserName + @"@" + wl.Domain + @"@" + wl.WindowName;
+                        string _region = "WebLocations";
+                        object _result = SingletonCache.Instance.GetInRegionWithLock(_key, _region, out _lockHandle);
+                        WebLocation OriginalWebLocation = null;
+                        if (_result != null) OriginalWebLocation = (WebLocation)_result;
+                        OriginalWebLocation.ScreenCapture = wl.ScreenCapture;
+                        SingletonCache.Instance.InsertInRegionWithLock(_key, OriginalWebLocation, _region, _lockHandle);
+
                         SingletonCache.Instance.InsertInRegion(
                            key,
                            wl,
@@ -4159,42 +4168,41 @@ namespace vizzopWeb
             WebLocation wl = null;
             try
             {
-                /*
+
                 DateTime start_time = DateTime.Now;
-                while ((wl == null) && (DateTime.Now < start_time.AddSeconds(25)))
+                while ((wl == null) && (DateTime.Now < start_time.AddSeconds(10)))
                 {
-                }
-                 **/
-                string rRegion = "WebLocationsToRender";
-                object result = SingletonCache.Instance.GetAllInRegion(rRegion);
-                IEnumerable<KeyValuePair<string, object>> WebLocations = null;
-                if (result != null)
-                {
-                    WebLocations = (IEnumerable<KeyValuePair<string, object>>)result;
-                    wl = (WebLocation)(from m in WebLocations
-                                       //where ((WebLocation)m.Value).TimeStamp_Last > DateTime.UtcNow.AddSeconds(-40)
-                                       orderby ((WebLocation)m.Value).ScreenCapture.CreatedOn ascending
-                                       select m).FirstOrDefault().Value;
-                }
-                /*
-                if (wl != null)
-                {
-                    if (wl.TimeStamp_Last < DateTime.UtcNow.AddSeconds(-40))
+                    string rRegion = "WebLocationsToRender";
+                    object result = SingletonCache.Instance.GetAllInRegion(rRegion);
+                    IEnumerable<KeyValuePair<string, object>> WebLocations = null;
+                    if (result != null)
+                    {
+                        WebLocations = (IEnumerable<KeyValuePair<string, object>>)result;
+                        wl = (WebLocation)(from m in WebLocations
+                                           //where ((WebLocation)m.Value).TimeStamp_Last > DateTime.UtcNow.AddSeconds(-40)
+                                           orderby ((WebLocation)m.Value).ScreenCapture.CreatedOn ascending
+                                           select m).FirstOrDefault().Value;
+                    }
+                    /*
+                    if (wl != null)
+                    {
+                        if (wl.TimeStamp_Last < DateTime.UtcNow.AddSeconds(-40))
+                        {
+                            string key = wl.UserName + @"@" + wl.Domain + @"@" + wl.WindowName;
+                            SingletonCache.Instance.RemoveInRegion(key, rRegion);
+                            wl = null;
+                        }
+                    }
+                     */
+                    if (wl != null)
                     {
                         string key = wl.UserName + @"@" + wl.Domain + @"@" + wl.WindowName;
                         SingletonCache.Instance.RemoveInRegion(key, rRegion);
-                        wl = null;
+
+                        //GrabaLog(Utils.NivelLog.info, "nueva que renderizar ");
                     }
-                }
-                 */
-                if (wl != null)
-                {
-                    string key = wl.UserName + @"@" + wl.Domain + @"@" + wl.WindowName;
-                    SingletonCache.Instance.RemoveInRegion(key, rRegion);
 
-                    //GrabaLog(Utils.NivelLog.info, "nueva que renderizar ");
                 }
-
             }
             catch (Exception ex)
             {
@@ -4326,13 +4334,12 @@ namespace vizzopWeb
                         WebLocations = (from m in WebLocations
                                         where ((WebLocation)m.Value).Domain == converser.Business.Domain
                                         select m);
-                    }
+                    };
                     _WebLocations = new List<WebLocation>();
                     foreach (var m in WebLocations)
                     {
                         WebLocation loc = (WebLocation)m.Value;
-
-
+                        /*
                         WebLocation sc_loc = null;
                         //ScreenCapture sc_result = SingletonCache.Instance.GetScreenCaptureInStorage(loc.UserName + @"@" + loc.Domain + @"@" + loc.WindowName);
                         object sc_result = SingletonCache.Instance.GetInRegion(loc.UserName + @"@" + loc.Domain + @"@" + loc.WindowName, "WebLocationsRendered");
@@ -4344,46 +4351,30 @@ namespace vizzopWeb
                         }
                         else
                         {
-                            object sc_resultRendering = SingletonCache.Instance.GetInRegion(loc.UserName + @"@" + loc.Domain + @"@" + loc.WindowName, "WebLocationsRendering");
-                            if (sc_resultRendering == null)
+                            Task.Factory.StartNew(() =>
                             {
-                                object sc_resultToRender = SingletonCache.Instance.GetInRegion(loc.UserName + @"@" + loc.Domain + @"@" + loc.WindowName, "WebLocationsToRender");
-                                if (sc_resultToRender == null)
+                                object sc_resultRendering = SingletonCache.Instance.GetInRegion(loc.UserName + @"@" + loc.Domain + @"@" + loc.WindowName, "WebLocationsRendering");
+                                if (sc_resultRendering == null)
                                 {
-                                    var newmessage = new NewMessage();
-                                    newmessage.From = @"admin@vizzop";
-                                    newmessage.To = converser.UserName + @"@" + converser.Business.Domain;
-                                    newmessage.Subject = "$#_sendfullscreen";
-                                    newmessage.Content = "";
-                                    newmessage.MessageType = "chat";
-                                    var message = new Message(newmessage);
-                                    message.AddToCache();
+                                    object sc_resultToRender = SingletonCache.Instance.GetInRegion(loc.UserName + @"@" + loc.Domain + @"@" + loc.WindowName, "WebLocationsToRender");
+                                    if (sc_resultToRender == null)
+                                    {
+                                        var newmessage = new NewMessage();
+                                        newmessage.From = @"admin@vizzop";
+                                        newmessage.To = converser.UserName + @"@" + converser.Business.Domain;
+                                        newmessage.Subject = "$#_sendfullscreen";
+                                        newmessage.Content = "";
+                                        newmessage.MessageType = "chat";
+                                        var message = new Message(newmessage);
+                                        message.AddToCache();
+                                    }
                                 }
-                            }
+                            });
                         }
-
+                        */
                         _WebLocations.Add(loc);
                     }
                     return _WebLocations;
-                    /*
-                    var GroupedWebLocations = (from m in WebLocations
-                                               group m by new
-                                               {
-                                                   ((WebLocation)m.Value).ConverserId,
-                                                   ((WebLocation)m.Value).WindowName
-                                               });
-                    if (GroupedWebLocations.Count() > 0)
-                    {
-                        _WebLocations = new List<WebLocation>();
-                        foreach (var Group in GroupedWebLocations)
-                        {
-                            var m = Group.OrderByDescending(x => ((WebLocation)x.Value).TimeStamp_Last).FirstOrDefault();
-                            _WebLocations.Add((WebLocation)m.Value);
-                        }
-
-                    }
-                     * 
-                     */
                 }
             }
             catch (Exception ex)
@@ -4849,7 +4840,10 @@ namespace vizzopWeb
 
         public void LimpiaCache()
         {
+            SingletonCache.Instance.CleanRegion("WebLocations");
             SingletonCache.Instance.CleanRegion("WebLocationsRendering");
+            SingletonCache.Instance.CleanRegion("WebLocationsRendered");
+            SingletonCache.Instance.CleanRegion("WebLocationsToRender");
         }
     }
 

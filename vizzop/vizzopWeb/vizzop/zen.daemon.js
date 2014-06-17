@@ -429,6 +429,7 @@ var Daemon = jVizzop.zs_Class.create({
                 };
                 vizzop.WSchat.onclose = function () {
                     //vizzoplib.log("Socket Closed");
+                    vizzop.Daemon.openWebSockets();
                 };
             }
 
@@ -1661,7 +1662,7 @@ var Daemon = jVizzop.zs_Class.create({
                 'messagetype': 'Screen'
             };
 
-
+            /*
             var ws = vizzop.WSchat;
             if (ws != null) {
                 if (ws.readyState === undefined || ws.readyState > 1) {
@@ -1677,30 +1678,31 @@ var Daemon = jVizzop.zs_Class.create({
                 }
                 vizzop.HtmlSend_InCourse = null;
             } else {
-                var url = vizzop.mainURL + "/RealTime/TrackScreen";
-                msg.data = JSONVIZZOP.stringify(msg.data);
-                vizzop.HtmlSend_InCourse = jVizzop.ajax({
-                    url: url,
-                    type: "POST",
-                    data: msg,
-                    beforeSend: function (xhr) {
-                        //console.vizzoplib.log(msg);
-                        //vizzop.Daemon.audioNewAction.Play();
-                    },
-                    success: function (data) {
-                        //HtmlSend_ForceSendHtml = false;
-                        vizzop.HtmlSend_InCourse = null;
-                        //jVizzop(vizzop).trigger("mutated");
-                        //vizzop.Daemon.audioNewAction.Play();
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        //vizzoplib.logAjax(url, msg, jqXHR);
-                        //vizzop.Daemon.audioNewAction.Play();
-                        //vizzop.HtmlSend_ForceSendHtml = false;
-                        vizzop.HtmlSend_InCourse = null;
-                    }
-                });
-            }
+            */
+            var url = vizzop.mainURL + "/RealTime/TrackScreen";
+            msg.data = JSONVIZZOP.stringify(msg.data);
+            vizzop.HtmlSend_InCourse = jVizzop.ajax({
+                url: url,
+                type: "POST",
+                data: msg,
+                beforeSend: function (xhr) {
+                    //console.vizzoplib.log(msg);
+                    //vizzop.Daemon.audioNewAction.Play();
+                },
+                success: function (data) {
+                    //HtmlSend_ForceSendHtml = false;
+                    vizzop.HtmlSend_InCourse = null;
+                    //jVizzop(vizzop).trigger("mutated");
+                    //vizzop.Daemon.audioNewAction.Play();
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    //vizzoplib.logAjax(url, msg, jqXHR);
+                    //vizzop.Daemon.audioNewAction.Play();
+                    //vizzop.HtmlSend_ForceSendHtml = false;
+                    vizzop.HtmlSend_InCourse = null;
+                }
+            });
+            //}
         } catch (err) {
             console.log(err);
             vizzoplib.log(err);

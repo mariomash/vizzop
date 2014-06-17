@@ -27,7 +27,7 @@
       <Setting name="Scheme" value="https" />
       <Setting name="WsScheme" value="wss" />
       <Setting name="Microsoft.WindowsAzure.Plugins.Caching.ClientDiagnosticLevel" value="1" />
-      <Setting name="MaximumPhantomNumber" value="1" />
+      <Setting name="MaximumPhantomNumber" value="2" />
       <Setting name="CreateLogsInRelease" value="true" />
       <Setting name="CreateLogsInDebug" value="true" />
       <Setting name="SaveScreenShotsInRelease" value="false" />

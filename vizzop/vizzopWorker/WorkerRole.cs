@@ -24,6 +24,7 @@ namespace vizzopWorker
         //private vizzopContext db = new vizzopContext();
         private Utils utils = new Utils(new vizzopContext());
         private string tempPath;
+        private int phantomsworking = 0;
 
         public override void Run()
         {
@@ -32,18 +33,10 @@ namespace vizzopWorker
                 var localResource = RoleEnvironment.GetLocalResource("LocalImageProcessingTemp");
                 tempPath = localResource.RootPath;
 
-
                 utils.GrabaLog(Utils.NivelLog.info, "vizzopWorker entry point called");
 
                 utils.LimpiaCache();
                 //"WebLocationsRendering");
-
-                int MaximumPhantomNumber = 0;
-                MaximumPhantomNumber = Convert.ToInt16(CloudConfigurationManager.GetSetting("MaximumPhantomNumber"));
-                for (var i = 0; i < MaximumPhantomNumber; i++)
-                {
-                    LanzaYControlaProcesoPhantom();
-                }
 
                 //LanzaYControlaProcesoCreaVideos();
                 //LanzaYControlaProcesoLimpiaWebLocations();
@@ -56,7 +49,15 @@ namespace vizzopWorker
 
             while (true)
             {
-                Thread.Sleep(TimeSpan.FromMinutes(1));
+                Thread.Sleep(TimeSpan.FromSeconds(1));
+
+                int MaximumPhantomNumber = 0;
+                MaximumPhantomNumber = Convert.ToInt16(CloudConfigurationManager.GetSetting("MaximumPhantomNumber"));
+                for (var i = phantomsworking; i < MaximumPhantomNumber; i++)
+                {
+                    LanzaYControlaProcesoPhantom();
+                }
+
             }
         }
 
@@ -591,6 +592,7 @@ namespace vizzopWorker
 
         private void LanzaYControlaProcesoPhantom()
         {
+            phantomsworking++;
 
             BackgroundWorker bw = new BackgroundWorker();
 
@@ -615,7 +617,8 @@ namespace vizzopWorker
             bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(
             delegate(object o, RunWorkerCompletedEventArgs args)
             {
-                LanzaYControlaProcesoPhantom();
+                phantomsworking--;
+                //LanzaYControlaProcesoPhantom();
             });
 
             bw.RunWorkerAsync();
