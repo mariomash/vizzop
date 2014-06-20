@@ -35,7 +35,10 @@ namespace vizzopWorker
 
                 utils.GrabaLog(Utils.NivelLog.info, "vizzopWorker entry point called");
 
-                utils.LimpiaCache();
+
+                SingletonCache.Instance.CleanRegion("WebLocationsRendering");
+
+                //utils.LimpiaCache();
                 //"WebLocationsRendering");
 
                 //LanzaYControlaProcesoCreaVideos();
@@ -49,7 +52,7 @@ namespace vizzopWorker
 
             while (true)
             {
-                Thread.Sleep(TimeSpan.FromSeconds(1));
+                Thread.Sleep(TimeSpan.FromMilliseconds(100));
 
                 int MaximumPhantomNumber = 0;
                 MaximumPhantomNumber = Convert.ToInt16(CloudConfigurationManager.GetSetting("MaximumPhantomNumber"));

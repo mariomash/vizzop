@@ -20,6 +20,7 @@
       <Setting name="WsScheme" />
       <Setting name="StorageConnectionString" />
       <Setting name="Microsoft.WindowsAzure.Plugins.Caching.ClientDiagnosticLevel" />
+      <Setting name="MaximumPhantomNumber" />
       <Setting name="CreateLogsInRelease" />
       <Setting name="CreateLogsInDebug" />
       <Setting name="SaveScreenShotsInRelease" />

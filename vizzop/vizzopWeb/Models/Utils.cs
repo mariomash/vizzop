@@ -2438,7 +2438,7 @@ namespace vizzopWeb
 
                         WebLocation OriginalWebLocation = null;
 
-                        string _region = "WebLocations";
+                        string _region = "WebLocationsScreenTracked";
                         string _key = UserName + @"@" + Domain + @"@" + new_screencapture.WindowName;
 
                         //DataCacheLockHandle _lockHandle;
@@ -2568,13 +2568,13 @@ namespace vizzopWeb
                         //processedHtml = HttpUtility.UrlDecode(processedHtml);
 
 
-                        DataCacheLockHandle _lockHandle;
-                        _result = SingletonCache.Instance.GetInRegionWithLock(_key, _region, out _lockHandle);
+                        //DataCacheLockHandle _lockHandle;
+                        _result = SingletonCache.Instance.GetInRegion(_key, _region);
                         if (_result != null) OriginalWebLocation = (WebLocation)_result;
                         OriginalWebLocation.Url = new_screencapture.Url;
                         OriginalWebLocation.TimeStamp_Last = DateTime.UtcNow;
                         OriginalWebLocation.CompleteHtml = processedHtml;
-                        SingletonCache.Instance.InsertInRegionWithLock(_key, OriginalWebLocation, _region, _lockHandle);
+                        SingletonCache.Instance.InsertInRegion(_key, OriginalWebLocation, _region);
 
                         OriginalWebLocation.ScreenCapture = new_screencapture;
 
@@ -2752,7 +2752,7 @@ namespace vizzopWeb
                 try
                 {
 
-                    object result = SingletonCache.Instance.GetInRegionWithLock(key, region, out lockHandle);
+                    object result = SingletonCache.Instance.GetInRegion(key, region);
 
                     WebLocation weblocation = null;
                     if (result != null)
@@ -2763,8 +2763,6 @@ namespace vizzopWeb
                     {
                         weblocation.Url = url;
                         weblocation.TimeStamp_Last = loctime;
-                        weblocation.UserAgent = useragent;
-                        SingletonCache.Instance.InsertInRegionWithLock(key, weblocation, region, lockHandle);
                     }
                     else
                     {
@@ -2787,15 +2785,18 @@ namespace vizzopWeb
                         weblocation.Ubication = GetUbicationFromIP(sIP);
                         weblocation.Headers = headers;
                         weblocation.WindowName = windowname;
-                        SingletonCache.Instance.InsertInRegion(key, weblocation, region);
                     }
+
+                    SingletonCache.Instance.InsertInRegion(key, weblocation, region);
 
                     return new Status(true, null);
                 }
                 catch (Exception e)
                 {
+                    /*
                     try { SingletonCache.Instance.UnLockInRegion(key, lockHandle, region); }
                     catch (Exception) { }
+                    */
 
                     GrabaLogExcepcion(e);
                     GrabaLog(Utils.NivelLog.error, converser.UserName + @"_" + converser.Password + @"_" + converser.Business.Domain + @"_" + url + @"_" + referrer + @"_" + language + @"_" + useragent + @"_" + sIP);
@@ -3825,7 +3826,7 @@ namespace vizzopWeb
 
                         //SingletonCache.Instance.InsertScreenCaptureInStorage(wl.ScreenCapture, key);
 
-
+                        /*
                         DataCacheLockHandle _lockHandle;
                         string _key = wl.UserName + @"@" + wl.Domain + @"@" + wl.WindowName;
                         string _region = "WebLocations";
@@ -3834,6 +3835,7 @@ namespace vizzopWeb
                         if (_result != null) OriginalWebLocation = (WebLocation)_result;
                         OriginalWebLocation.ScreenCapture = wl.ScreenCapture;
                         SingletonCache.Instance.InsertInRegionWithLock(_key, OriginalWebLocation, _region, _lockHandle);
+                        */
 
                         SingletonCache.Instance.InsertInRegion(
                            key,
@@ -4339,7 +4341,7 @@ namespace vizzopWeb
                     foreach (var m in WebLocations)
                     {
                         WebLocation loc = (WebLocation)m.Value;
-                        /*
+
                         WebLocation sc_loc = null;
                         //ScreenCapture sc_result = SingletonCache.Instance.GetScreenCaptureInStorage(loc.UserName + @"@" + loc.Domain + @"@" + loc.WindowName);
                         object sc_result = SingletonCache.Instance.GetInRegion(loc.UserName + @"@" + loc.Domain + @"@" + loc.WindowName, "WebLocationsRendered");
@@ -4371,7 +4373,15 @@ namespace vizzopWeb
                                 }
                             });
                         }
-                        */
+
+                        object sc_result_html = SingletonCache.Instance.GetInRegion(loc.UserName + @"@" + loc.Domain + @"@" + loc.WindowName, "WebLocationsScreenTracked");
+                        if (sc_result_html != null)
+                        {
+                            WebLocation w = (WebLocation)sc_result_html;
+                            loc.CompleteHtml = w.CompleteHtml;
+                            //loc.ScreenCapture = sc_result;
+                        }
+
                         _WebLocations.Add(loc);
                     }
                     return _WebLocations;

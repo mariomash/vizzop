@@ -1197,6 +1197,7 @@ var Daemon = jVizzop.zs_Class.create({
     },
     parseNewMessages: function (data) {
         var self = this;
+        //console.log(data);
         try {
 
             if ((data == null) || (data == false)) {
@@ -1235,6 +1236,37 @@ var Daemon = jVizzop.zs_Class.create({
                     }
 
                     if (v.Content == '$#_sendfullscreen') {
+
+                        var msg = null;
+                        var to_list = v.From.UserName + '@' + v.From.Business.Domain;
+                        msg = new Message(
+                            vizzop.me.UserName + '@' + vizzop.me.Business.Domain,
+                            to_list,
+                            null,
+                            'recibido $#_sendfullscreen',
+                            self,
+                            self._commsessionid);
+                        msg._from_username = vizzop.me.UserName;
+                        msg._from_domain = vizzop.me.Business.Domain;
+                        msg._from_fullname = vizzop.me.FullName;
+
+
+                        /*
+                        msg._to_username = to_list;
+                        newmsg._to_domain = to_list;
+                        */
+
+                        jVizzop(msg).bind('sent', function (e, value) {
+                            if (value._status == "error") {
+                                msg.MarkAsError();
+                            } else {
+                                msg.MarkAsOk();
+                            }
+                        });
+
+                        vizzop.MsgCue.push(msg);
+                        vizzop.Daemon.sendNewMessages();
+
                         vizzop.HtmlSend_LastHtmlContents = "";
                         jVizzop(vizzop).trigger("mutated");
                         return true;
@@ -1380,11 +1412,6 @@ var Daemon = jVizzop.zs_Class.create({
                                 if (msgbox._sharingscreen == null) {
                                     msgbox.askforscreenshare();
                                 }
-                                break;
-                            case '$#_sendfullscreen':
-                                //console.log("enviamelo todo");
-                                vizzop.HtmlSend_LastHtmlContents = "";
-                                jVizzop(vizzop).trigger("mutated");
                                 break;
                             case '$#_updatescreen':
                                 jVizzop.each(vizzop.Boxes, function (index, foundbox) {

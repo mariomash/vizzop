@@ -7,7 +7,7 @@ using Microsoft.WindowsAzure;
 
 namespace vizzopWeb.Models
 {
-    sealed class SingletonCache
+    public sealed class SingletonCache
     {
 
         //public static readonly SingletonCache Instance = new SingletonCache();
@@ -18,7 +18,7 @@ namespace vizzopWeb.Models
         private DataCacheFactory _factory = new DataCacheFactory();
         private DataCache _cache = new DataCache();
         private Utils utils = new Utils();
-        private TimeSpan LockTimeout = TimeSpan.FromSeconds(15);
+        private TimeSpan LockTimeout = TimeSpan.FromSeconds(5);
         private TimeSpan ObjTimeout = TimeSpan.FromMinutes(15);
         private string region = @"vizzop";
 
@@ -461,7 +461,7 @@ namespace vizzopWeb.Models
 
 
 
-        internal void RemoveInRegion(string key, string _region)
+        public void RemoveInRegion(string key, string _region)
         {
             try
             {
@@ -473,7 +473,7 @@ namespace vizzopWeb.Models
             }
         }
 
-        internal void CleanRegion(string p)
+        public void CleanRegion(string p)
         {
             try
             {
