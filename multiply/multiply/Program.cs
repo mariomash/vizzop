@@ -6,48 +6,36 @@ using System.Threading.Tasks;
 
 namespace multiply
 {
-    class Utils
+    public enum OutputOption
     {
-
-        public void PrintErrorAndExit(string ErrorDescription)
-        {
-            PrintError(ErrorDescription);
-            //System.Environment.Exit(0);
-            Console.ReadLine();
-        }
-
-        public void PrintError(string ErrorDescription)
-        {
-            string UsageMsg = "multiply.exe rows [cols] [output-format: CSV|HTML]";
-            string OutputMsg = string.Format("USAGE: {0}\n", UsageMsg);
-
-            if (ErrorDescription != null)
-            {
-                OutputMsg = string.Format("ERROR: {0}\n{1}\n", ErrorDescription.ToString(), OutputMsg);
-            }
-
-            Console.Write(OutputMsg);
-        }
+        console = 0,
+        csv = 1,
+        html = 2
     }
 
     class Program
     {
-        public enum OutputOption
-        {
-            console = 0,
-            csv = 1,
-            html = 2
-        }
 
         static void Main(string[] args)
         {
             Utils utils = new Utils();
+
+            const int MINIMUMNUMBER = 1;
+            const int MAXIMUMNUMBER = 20;
+
             try
             {
-                int firstnumber;
-                int secondnumber;
-                OutputOption outputoption = OutputOption.console;
+                /*
+                 * These are the default parameters
+                 */
+                int rows = 0;
+                int cols = 0;
+                OutputOption selectedoutput = OutputOption.console;
 
+                /*
+                 * Now we check all params passed by console...
+                 * If there is some error we exit the application informing...
+                 */
                 if (args == null)
                 {
                     utils.PrintError("We need at least one param");
@@ -56,41 +44,60 @@ namespace multiply
                 {
                     if (args.Length > 0)
                     {
-                        if (Int32.TryParse(args[0], out firstnumber) == false)
+                        if (Int32.TryParse(args[0], out rows) == false)
                         {
-                            utils.PrintErrorAndExit(String.Format("First param must be a number smaller than {0}", Int32.MaxValue.ToString()));
+                            utils.PrintErrorAndExit("Rows param must be a number");
                         }
+                        if (rows > MAXIMUMNUMBER || rows < MINIMUMNUMBER)
+                        {
+                            utils.PrintErrorAndExit(String.Format("Rows param must be a number between {0} and {1}", MINIMUMNUMBER, MAXIMUMNUMBER));
+                        }
+                        cols = rows;
+
                         if (args.Length > 1)
                         {
-                            if (Int32.TryParse(args[1], out secondnumber) == false)
+                            if (Int32.TryParse(args[1], out cols) == false)
                             {
-                                utils.PrintErrorAndExit(String.Format("Second param must be a number smaller than {0}", Int32.MaxValue.ToString()));
-                            }
-
-                            if (args.Length > 2)
-                            {
-                                if ((args[2].ToString().ToUpperInvariant() != "CSV") || (args[2].ToString().ToUpperInvariant() != "HTML"))
+                                if (args[1].ToString().ToUpperInvariant() == "HTML")
                                 {
-                                    utils.PrintErrorAndExit("Third param must be CSV or HTML");
+                                    selectedoutput = OutputOption.html;
+                                }
+                                else if (args[1].ToString().ToUpperInvariant() == "CSV")
+                                {
+                                    selectedoutput = OutputOption.csv;
                                 }
                                 else
                                 {
-                                    switch (args[2].ToString().ToUpperInvariant())
-                                    {
-                                        case "HTML":
-                                            outputoption = OutputOption.html;
-                                            break;
-                                        case "CSV":
-                                            outputoption = OutputOption.csv;
-                                            break;
-                                        default:
-                                            break;
-                                    }
+                                    utils.PrintErrorAndExit("columns param must be a number");
+                                }
+                            }
+                            if (cols > MAXIMUMNUMBER)
+                            {
+                                utils.PrintErrorAndExit(String.Format("Columns param must be a number between {0} and {1}", MINIMUMNUMBER, MAXIMUMNUMBER));
+                            }
+
+                            if (selectedoutput == OutputOption.console && args.Length > 2)
+                            {
+                                switch (args[2].ToString().ToUpperInvariant())
+                                {
+                                    case "HTML":
+                                        selectedoutput = OutputOption.html;
+                                        break;
+                                    case "CSV":
+                                        selectedoutput = OutputOption.csv;
+                                        break;
+                                    default:
+                                        utils.PrintErrorAndExit("Third param must be CSV or HTML");
+                                        break;
                                 }
                                 if (args.Length > 3)
                                 {
                                     utils.PrintErrorAndExit("Too Much parameters");
                                 }
+                            }
+                            else
+                            {
+                                utils.PrintErrorAndExit("Output param is repeated");
                             }
                         }
                     }
@@ -98,6 +105,19 @@ namespace multiply
                     {
                         utils.PrintErrorAndExit("We need at least one param");
                     }
+
+                    /*
+                     * First we create the Multidimensional array with the table, so we can reuse the results...
+                     */
+                    MultiplicationTableCreator tablecreator = new MultiplicationTableCreator(rows, cols);
+                    int[][] table = tablecreator.CreateTable();
+
+                    /*
+                     * Then we create the file we will save or return depending on the selected option...
+                     */
+                    MultiplicationOutputCreator outputcreador = new MultiplicationOutputCreator(table, selectedoutput);
+                    string result = outputcreador.CreateOutput();
+
                 }
             }
             catch (Exception ex)
